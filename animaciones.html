@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animaciones</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; font-family:monospace; color:#eee; background:#14121a; display:flex; flex-direction:column; }
+  header { display:flex; align-items:center; gap:12px; padding:10px 12px; background:#0006; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:20px; flex:1; color:#e8b830; }
+  header a, button { min-height:44px; padding:8px 16px; font:bold 15px monospace; border:2px solid #222; border-radius:8px;
+                     background:#e9e4d8; color:#222; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
+  .controles { display:flex; align-items:center; gap:10px; font-size:14px; flex-wrap:wrap; }
+  .controles input[type=range] { width:140px; }
+  main { flex:1; display:flex; min-height:0; }
+  /* Índice de personajes */
+  nav { width:220px; flex:none; padding:12px; display:flex; flex-direction:column; gap:8px; background:#1d1a24; overflow-y:auto; }
+  nav button { width:100%; flex-direction:column; align-items:flex-start; text-align:left; background:#2e2a38; color:#eee; border-color:#4a4458; }
+  nav button.on { background:#e8b830; color:#222; }
+  nav button small { display:block; font-weight:normal; font-size:11px; }
+  /* Visor */
+  #visor { flex:1; padding:16px; overflow-y:auto; }
+  #visor h2 { margin:0 0 4px; color:#e8b830; } #visor > p { margin:0 0 16px; color:#aaa; font-size:13px; }
+  .anims { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; }
+  .anim { background:#2e2a38; border:2px solid #4a4458; border-radius:12px; padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .anim h3 { margin:0; font-size:15px; display:flex; justify-content:space-between; } .anim h3 small { color:#aaa; font-weight:normal; }
+  .escenario { position:relative; height:240px; border-radius:8px; overflow:hidden; display:flex; align-items:flex-end; justify-content:center;
+               background:linear-gradient(#5b8bd6 0 72%, #4c9a3f 72%); }
+  .escenario.oscuro { background:linear-gradient(#1c1b20 0 72%, #2e2d33 72%); }
+  .sprite { position:relative; flex:none; transform-origin:50% 100%; margin-bottom:8px; }
+  .sprite .capa { position:absolute; inset:0; background-repeat:no-repeat; image-rendering:pixelated; }
+  .sprite.respira { animation:respira 2s ease-in-out infinite; }
+  @keyframes respira { 50% { transform:scale(1.015,.975) translateY(1px); } }
+  .golpe { animation:golpe .6s ease-out infinite; }
+  @keyframes golpe { 0%,100%{transform:translate(0,0)} 15%{transform:translate(-18px,-5px) rotate(-8deg); filter:brightness(4) saturate(0)} 30%{filter:none} 45%{filter:brightness(4) saturate(0)} 60%{filter:none} }
+  .cuadros { display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; }
+  .cuadros button { flex:none; min-height:0; padding:2px; flex-direction:column; gap:2px; background:#1d1a24; border:2px solid #4a4458; color:#ccc; font-size:11px; }
+  .cuadros button.on { border-color:#e8b830; color:#e8b830; }
+  .mini { position:relative; overflow:hidden; }
+  .mini .capa { position:absolute; inset:0; background-repeat:no-repeat; image-rendering:pixelated; }
+  .acciones { display:flex; gap:6px; } .acciones button { min-height:36px; padding:4px 10px; font-size:13px; }
+  @media (max-width: 700px) {
+    main { flex-direction:column; }
+    nav { width:auto; flex-direction:row; overflow-x:auto; } nav button { width:auto; flex:none; }
+    .anims { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Animaciones</h1>
+    <div class="controles">
+      <label>Velocidad <input type="range" id="vel" min="0.25" max="2" step="0.25" value="1"> <b id="velTxt">x1</b></label>
+      <button id="pausa">Pausar todo</button>
+      <a href="index.html">← Juego</a>
+    </div>
+  </header>
+  <main>
+    <nav id="indice"></nav>
+    <section id="visor"></section>
+  </main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const G = 'img/guerrero/';
+  const CAPAS_GUERRERO = ['tela', 'armadura', 'adornos', 'casco', 'espada'].map(c => G + c + '.png');
+  const seq = (desde, hasta, ms) => Array.from({ length: hasta - desde + 1 }, (_, i) => [desde + i, ms]);
+
+  // Catálogo: cada personaje = hoja (una o varias capas apiladas) con cuadros de ancho x alto; cada
+  // animación = lista de [cuadro, ms]. Una animación puede usar otra hoja (p. ej. la bola de fuego de Cerbero).
+  // Los tiempos son los mismos que usa el juego.
+  const PERSONAJES = [
+    { id: 'guerrero', nombre: 'Guerrero', desc: 'Jugador · 14 cuadros por capa', capas: CAPAS_GUERRERO, ancho: 185, alto: 130, total: 14, escala: 1.6, animaciones: [
+      { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
+      { nombre: 'Ataque', cuadros: [[1, 250], [2, 170], [3, 90], [4, 160], [5, 120], [6, 200], [7, 150], [0, 600]] },
+      { nombre: 'Estocada (habilidad)', cuadros: [[1, 590], [5, 380], [6, 220], [7, 150], [0, 600]] },
+      { nombre: 'Tajo ascendente (habilidad)', cuadros: [[1, 200], [4, 110], [12, 70], [13, 220], [6, 200], [7, 150], [0, 600]] },
+      { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
+      { nombre: 'Reposo alternativo (sin usar)', cuadros: seq(8, 11, 200) },
+    ] },
+    { id: 'parca', nombre: 'Parca', desc: 'Campaña · 7 cuadros', capas: ['img/enemigos/parca.png'], ancho: 260, alto: 200, total: 7, escala: 1, espejo: true, animaciones: [
+      { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
+      { nombre: 'Ataque', cuadros: [[1, 220], [2, 260], [3, 260], [4, 250], [0, 600]] },
+      { nombre: 'Recibir golpe', cuadros: [[5, 250], [6, 550], [0, 600]] },
+    ] },
+    { id: 'jefe', nombre: 'Parca Ancestral', desc: 'Jefe de Difícil · sin pies', capas: ['img/enemigos/parca_jefe.png'], ancho: 260, alto: 200, total: 7, escala: 1, espejo: true,
+      filtro: 'brightness(.7) sepia(.4) hue-rotate(220deg) saturate(1.6)', animaciones: [
+      { nombre: 'Reposo (flota)', cuadros: [[0, 1000]], respira: true },
+      { nombre: 'Ataque', cuadros: [[1, 220], [2, 260], [3, 260], [4, 250], [0, 600]] },
+      { nombre: 'Recibir golpe', cuadros: [[5, 250], [6, 550], [0, 600]] },
+    ] },
+    { id: 'cerbero', nombre: 'Cerbero', desc: 'Jefe mundial · normal', capas: ['img/jefes/cerbero/cerbero.png'], ancho: 240, alto: 210, total: 24, escala: 1, espejo: true, oscuro: true, animaciones: [
+      { nombre: 'Reposo', cuadros: seq(0, 3, 220) },
+      { nombre: 'Mordisco', cuadros: [[4, 180], [5, 200], [6, 150], [7, 420], [0, 500]] },
+      { nombre: 'Muerte', cuadros: [...seq(8, 11, 260), [11, 900]] },
+    ] },
+    { id: 'asmodeo', nombre: 'Asmodeo', desc: 'Jefe mundial · señor demonio', capas: ['img/jefes/asmodeo/asmodeo.png'], ancho: 150, alto: 200, total: 17, escala: 1, espejo: true, oscuro: true, animaciones: [
+      { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
+      { nombre: 'Barrido', cuadros: [[4, 260], [5, 460], [5, 180], [0, 600]] },
+      { nombre: 'Ráfaga de garras', cuadros: [[4, 260], [6, 460], [6, 180], [0, 600]] },
+      { nombre: 'Onda de alas (habilidad)', cuadros: [[4, 320], [7, 600], [0, 600]] },
+      { nombre: 'Curación (habilidad)', hoja: { capas: ['img/jefes/asmodeo/cura.png'], ancho: 210, alto: 220, total: 14, escala: 1 },
+        cuadros: [[11, 400], [12, 180], [13, 180], [0, 220], [1, 200], [3, 220], [2, 240], [6, 260], [7, 240], [8, 260], [9, 200], [10, 200], [11, 700]] },
+      { nombre: 'Escudo (habilidad)', hoja: { capas: ['img/jefes/asmodeo/escudo.png'], ancho: 260, alto: 220, total: 36, escala: 1 },
+        cuadros: [...seq(2, 15, 95), ...seq(16, 28, 75), [29, 95], ...seq(31, 35, 95), [30, 600]] },
+      { nombre: 'Recibir golpe', cuadros: [[13, 800], [0, 600]] },
+      { nombre: 'Retroceso (golpe de habilidad)', cuadros: [[14, 800], [0, 600]] },
+      { nombre: 'Muerte', cuadros: [...seq(8, 12, 300), [12, 900]] },
+      { nombre: 'Victoria', cuadros: [[16, 1200]] },
+      { nombre: 'Poses sin usar (giro, espalda, 3/4)', cuadros: [[1, 700], [2, 700], [3, 700]] },
+    ] },
+    { id: 'fenix', nombre: 'Fénix', desc: 'Mascota · bucle de vuelo', capas: ['img/mascotas/fenix.png'], ancho: 272, alto: 232, total: 26, escala: 1, animaciones: [
+      { nombre: 'Vuelo (bucle, del vídeo)', cuadros: seq(0, 25, 59) },
+    ] },
+    { id: 'minotauro', nombre: 'Gran Minotauro', desc: 'Jefe mundial · coloso', capas: ['img/jefes/minotauro/minotauro.png'], ancho: 280, alto: 230, total: 25, escala: 1, espejo: true, oscuro: true, animaciones: [
+      { nombre: 'Reposo (6 cuadros)', cuadros: seq(0, 5, 180) },
+      { nombre: 'Ataque', cuadros: [[6, 150], [7, 130], [8, 140], [9, 160], [10, 110], [11, 120], [12, 320], [0, 500]] },
+      { nombre: 'Gran Tajo (habilidad)', hoja: { capas: ['img/jefes/minotauro/gran_tajo.png'], ancho: 640, alto: 420, total: 15, escala: .5 },
+        cuadros: [[0, 170], [3, 130], [1, 150], [2, 160], [4, 170], [5, 280], [6, 160], [9, 70], [10, 70], [11, 70], [7, 140], [12, 70], [13, 70], [14, 70], [8, 400]] },
+      { nombre: 'Furia (habilidad)', cuadros: [[0, 300], [20, 180], [21, 180], [22, 200], [23, 300], [24, 260], [0, 600]] },
+      { nombre: 'Recibir golpe', cuadros: [[13, 500], [14, 400], [0, 500]] },
+      { nombre: 'Retroceso (golpe de habilidad)', cuadros: [[13, 90], [14, 90], [15, 200], [14, 90], [13, 90], [0, 500]] },
+      { nombre: 'Muerte', cuadros: [[13, 300], [16, 300], [17, 300], [18, 900]] },
+      { nombre: 'Victoria', cuadros: [[19, 1200]] },
+    ] },
+    { id: 'infernal', nombre: 'Cerbero infernal', desc: 'Jefe mundial · bajo 50 %', capas: ['img/jefes/cerbero/cerbero.png'], ancho: 240, alto: 210, total: 24, escala: 1, espejo: true, oscuro: true, animaciones: [
+      { nombre: 'Reposo', cuadros: seq(12, 15, 220) },
+      { nombre: 'Mordisco', cuadros: [[16, 180], [17, 200], [18, 150], [19, 420], [12, 500]] },
+      { nombre: 'Carga de la bola de fuego', hoja: { capas: ['img/jefes/cerbero/carga.png'], ancho: 240, alto: 210, total: 8, escala: 1 },
+        cuadros: [...seq(0, 3, 140), ...seq(4, 7, 120), [7, 500]] },
+      { nombre: 'Lanzallamas largo (llama)', hoja: { capas: ['img/jefes/cerbero/lanzallamas.png'], ancho: 255, alto: 96, total: 25, escala: 1.15 },
+        cuadros: [...seq(0, 3, 70), ...seq(4, 7, 90), ...seq(8, 24, 65), ...seq(8, 24, 65), [24, 400]] },
+      { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/jefes/cerbero/bola_fuego.png'], ancho: 130, alto: 90, total: 6, escala: 2 },
+        cuadros: [...seq(0, 3, 110), [4, 160], [5, 160], [5, 400]] },
+      { nombre: 'Muerte', cuadros: [...seq(20, 23, 260), [23, 900]] },
+    ] },
+  ];
+
+  let velocidad = 1, pausado = false, timers = [];
+
+  function montarSprite(cont, h, clase = 'sprite') {
+    const el = document.createElement('div');
+    el.className = clase;
+    el.style.width = h.ancho * h.escala + 'px'; el.style.height = h.alto * h.escala + 'px';
+    for (const url of h.capas) {
+      const c = document.createElement('div'); c.className = 'capa';
+      c.style.backgroundImage = `url(${url})`;
+      c.style.backgroundSize = `${h.total * h.ancho * h.escala}px ${h.alto * h.escala}px`;
+      if (h.filtro) c.style.filter = h.filtro;
+      if (h.espejo) c.style.transform = 'scaleX(-1)';   // se espeja cada capa: así no choca con respirar/golpe
+      el.appendChild(c);
+    }
+    cont.appendChild(el);
+    return { el, ver: i => el.querySelectorAll('.capa').forEach(c => c.style.backgroundPositionX = (-i * h.ancho * h.escala) + 'px') };
+  }
+
+  function mostrar(id) {
+    timers.forEach(clearTimeout); timers = [];
+    const p = PERSONAJES.find(x => x.id === id);
+    document.querySelectorAll('#indice button').forEach(b => b.classList.toggle('on', b.dataset.id === id));
+    try { localStorage.setItem('animaciones.sel', id); } catch {}
+    $('visor').innerHTML = `<h2>${p.nombre}</h2><p>${p.desc} · toca un cuadro para congelarlo</p><div class="anims"></div>`;
+    for (const a of p.animaciones) {
+      const h = { ...p, ...(a.hoja || {}), filtro: p.filtro };
+      const card = document.createElement('div'); card.className = 'anim';
+      card.innerHTML = `<h3>${a.nombre}<small>${a.cuadros.length} pasos · ${a.cuadros.reduce((t, c) => t + c[1], 0)} ms</small></h3>
+        <div class="escenario${p.oscuro ? ' oscuro' : ''}"></div><div class="cuadros"></div>
+        <div class="acciones"><button data-a="play">Pausar</button></div>`;
+      $('visor').querySelector('.anims').appendChild(card);
+      // ajusta la escala para que el personaje quepa en la tarjeta
+      const visorAncho = 300, esc = Math.min(h.escala, visorAncho / h.ancho, 228 / h.alto);
+      const s = montarSprite(card.querySelector('.escenario'), { ...h, escala: esc });
+      if (a.respira) s.el.classList.add('respira');
+      if (a.golpe) s.el.classList.add('golpe');
+      // miniaturas de los cuadros usados (sin repetir)
+      const usados = [...new Set(a.cuadros.map(c => c[0]))];
+      const tira = card.querySelector('.cuadros');
+      usados.forEach(i => {
+        const b = document.createElement('button'); b.dataset.i = i;
+        const m = montarSprite(b, { ...h, escala: 56 / h.alto }, 'mini'); m.ver(i);
+        b.append(`#${i}`); tira.appendChild(b);
+      });
+      // reproducción en bucle; tocar un cuadro lo congela
+      let paso = 0, congelado = null, parado = false;
+      const marcar = i => tira.querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+      const tick = () => {
+        if (!pausado && !parado && congelado === null) {
+          const [i, ms] = a.cuadros[paso % a.cuadros.length]; paso++;
+          s.ver(i); marcar(i);
+          return timers.push(setTimeout(tick, ms / velocidad));
+        }
+        timers.push(setTimeout(tick, 100));
+      };
+      tick();
+      tira.addEventListener('click', e => {
+        const b = e.target.closest('button'); if (!b) return;
+        const i = +b.dataset.i; congelado = congelado === i ? null : i;
+        if (congelado !== null) { s.ver(i); marcar(i); }
+        card.querySelector('[data-a="play"]').textContent = congelado !== null ? 'Reanudar' : 'Pausar';
+      });
+      card.querySelector('[data-a="play"]').onclick = e => {
+        if (congelado !== null) congelado = null; else parado = !parado;
+        e.target.textContent = parado ? 'Reanudar' : 'Pausar';
+      };
+    }
+  }
+
+  $('indice').innerHTML = PERSONAJES.map(p => `<button data-id="${p.id}">${p.nombre}<small>${p.desc}</small></button>`).join('');
+  $('indice').addEventListener('click', e => { const b = e.target.closest('button'); if (b) mostrar(b.dataset.id); });
+  $('vel').oninput = e => { velocidad = +e.target.value; $('velTxt').textContent = 'x' + velocidad; };
+  $('pausa').onclick = e => { pausado = !pausado; e.target.textContent = pausado ? 'Reanudar todo' : 'Pausar todo'; };
+  let inicial = 'guerrero';
+  try { inicial = localStorage.getItem('animaciones.sel') || inicial; } catch {}
+  mostrar(PERSONAJES.some(p => p.id === inicial) ? inicial : 'guerrero');
+</script>
+</body>
+</html>
