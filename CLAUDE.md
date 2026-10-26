@@ -1,0 +1,10 @@
+# Batalla
+
+## Pruebas en navegador
+- Las pruebas en el navegador las hace el usuario. No abrir el navegador para verificar cambios normales.
+- Solo probar en el navegador cuando el cambio sea muy fuerte (motor de batalla, reescrituras grandes, cambios que puedan romper la carga del juego), para optimizar tiempo y uso.
+
+## Web y Android
+- Todo el desarrollo debe funcionar igual en web y en la app Android (`C:\PROYECTOS\BATALLA-MOBILE`). Pensar siempre en ambos lados.
+- No usar diálogos nativos del navegador (`alert`, `confirm`, `prompt`): en Android no funcionan igual. Usar el diálogo propio del juego (`confirmar()` en `index.html`) o avisos (`avisar()`).
+- Evitar lo que solo existe en escritorio: hover como única forma de ver algo, atajos de teclado obligatorios, clic derecho, `window.open`, descargas de archivos. Todo debe poder hacerse con toques.

@@ -1,0 +1,221 @@
+# Versiones de Batalla
+
+La versión del juego está en `VERSION_JUEGO` (`index.html`). Se muestra abajo a la izquierda del Campamento y en el menú 🧪 de pruebas. Cada partida guarda con qué versión se grabó (`jugador.version`).
+
+En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `package.json` y en `android/app/build.gradle`:
+
+- `versionName`: la versión del juego.
+- `versionCode`: un número entero que sube en cada entrega a Google Play.
+
+## 0.2.1 — 2026-10-25
+
+### 🛡 Batalla por grupos (Campaña y Torre)
+- Formación en rombo 1-2-1: Frente, Arriba, Abajo y Retaguardia. Botón «🛡 Formación» en Campaña y Torre para elegir tu casilla y llevar hasta 2 bots como aliados (máx. 3 jugadores).
+- Hasta 4 enemigos a la vez, con el jefe al frente.
+- Los golpes normales eligen objetivo según la casilla (Frente 50 %, Arriba 20 %, Abajo 20 %, Retaguardia 10 %); las habilidades caen sobre cualquiera.
+- Todos actúan en cada ronda: tú eliges tus habilidades y los aliados usan las suyas solos. El Guerrero ataca cuerpo a cuerpo; Arquero y Mago disparan desde su casilla.
+- Estados por unidad; la mascota y el botín funcionan como antes.
+- Equilibrio provisional: daño enemigo ×0,5 en grupo y +70 % de vida enemiga por aliado.
+- La Arena sigue siendo 1 contra 1.
+
+### 👥 Salas multijugador (Torre de reyes)
+- La pantalla de la Torre de reyes muestra la lista de salas abiertas (número y jugadores, p. ej. 👥 2/3): puedes crear una o unirte.
+- 3 huecos que se llenan de izquierda a derecha con el personaje y su nombre: el dueño y luego los que llegan. El dueño invita, expulsa, elige dificultad y formación (rombo) y empieza.
+- Cada invitado pulsa Ready desde su lado; Empezar se habilita cuando todos están listos. Si el dueño sale, el jugador 2 pasa a ser el dueño.
+- Al volver de una batalla (o huir), la sala vuelve a la fase previa: los invitados deben pulsar Ready otra vez.
+- Dentro de una sala no hay flecha de volver: la única salida es «Abandonar sala».
+- Pruebas: los invitados son bots, aceptan y pulsan Ready 1 s después de llegar; si sales de tu sala, salen todos. Hay 2 bots nuevos (Sigrid y Elric). Los reyes son réplicas del top 3, así que esos jugadores también pueden entrar e invitarse.
+- El ranking del servidor tiene su propia pantalla (🏅 Ranking en el Campamento): al elegir un jugador se ve su personaje a la derecha.
+- Los jefes mundiales siguen siendo 1 contra 1, sin sala.
+
+### 🏰 Calabozo multijugador
+- Al pulsar BATALLA eliges entre 📜 Campaña y 🏰 Calabozo multijugador.
+- El calabozo usa las mismas salas que la Torre de reyes (lista, crear/unirse, invitar, Ready, formación). Tu grupo lucha contra 3 monstruos y un jefe a la vez.
+- El calabozo se elige en un combo arriba de la lista: se ven sus salas y «Crear sala» abre una para ese calabozo. 4 calabozos: ⚰️ Cripta del cementerio (Nv 3), 🏛️ Mausoleo ancestral (Nv 6), 🌫️ Ciénaga de la bruja (Nv 9) y 🌋 Abismo de brasas (Nv 14); cada uno se desbloquea al superar el anterior. La dificultad la elige el dueño en la sala; cambiarla obliga a pulsar Ready otra vez.
+- Cuesta ⚡ 10 como la campaña y paga el doble de su premio, más el botín de cada enemigo. +70 % de vida enemiga por aliado.
+- Turno con tiempo en multijugador (calabozo y Torre de reyes): tienes 10 s para elegir tu ataque; si no pulsas nada, se lanza un ataque normal. La cuenta se ve sobre el botón de atacar y se pausa con el autoataque.
+- Sin acelerador en multijugador (calabozo y Torre de reyes): se juega a x1 y el botón ⏩ no aparece, salvo en modo pruebas. En combates individuales (campaña, torre, arena, jefes) sigue igual.
+- Cambiar la dificultad de una sala devuelve a todos a la fase previa: hay que pulsar Ready otra vez.
+
+### ⚖️ Correcciones de la auditoría
+- Torre: el botín de los enemigos solo se cobra si superas el piso (perder a propósito era farmeo infinito, porque no cuesta estamina).
+- Bots solo en modo pruebas: fuera de él no hay aliados bot en la formación, ni invitaciones, ni salas de bots en las listas. (El ranking y los reyes siguen simulando el servidor.)
+- Encantamiento: éxito +10..+12 60 %, +13..+15 35 %, +16..+20 22 %, +21..+25 10 %. Desde +15, fallar tiene un 50 % de bajar un nivel. Bendición: +10 % y sin degradación por 400 × nivel de oro y (nivel − 9) almas. A +18: sin bendición ~70k oro y ~1 100 almas; con bendición ~155k oro y ~320 almas.
+- Calabozo: niveles 3, 5, 8 y 10 (dentro de la campaña) y premio ×1,5 en vez de ×2. En la sala de otro no se desbloquea un calabozo saltándose el anterior.
+- Jefes mundiales calibrados para 25-30k de poder: Cerbero 15 000 de vida y 250-350 de daño, Asmodeo 20 000 y 320-430, Gran Minotauro 25 000 y 300-400. Con 25k se quitan ~9 900 por intento (Cerbero en 2 intentos, Minotauro en 3). Recompensas por daño reajustadas a la nueva vida.
+- Abandonar a mitad de ronda ya no cuenta muertes para misiones, bestiario ni maestría.
+- Aviso si la partida no se puede guardar (almacenamiento lleno), en vez de perderse en silencio.
+- Una sola pestaña a la vez: si el juego ya está abierto en otra, esta queda bloqueada sin guardar; «Jugar aquí» la recupera y bloquea la otra.
+
+### Seguridad
+- El modo pruebas ya no se activa con `?pruebas` en cualquier dirección: solo abriendo el archivo (file://) o en un servidor local 127.0.0.1 con `?pruebas`. En la web desplegada y en la app Android nunca aparece.
+
+### Interfaz
+- Nombre del jugador: se edita en Héroe → perfil (✏️), 3-14 caracteres y distinto de los jugadores del ranking. Se ve en el Campamento, la batalla, las salas y los rankings. Las partidas sin nombre reciben uno provisional (Héroe1234).
+- Filtros de objetos (bolsa y herrería) como iconos de ranura con su contador.
+
+### 👑 Torre de reyes: 3 contra 3 y dificultades
+- Ahora tu grupo lucha contra los 3 reyes a la vez en el rombo (n.º 1 al frente). Los reyes luchan como jugadores: su aspecto, sus habilidades de clase, golpes de estado y efectos (esquiva, reducción, resistencia, robo, contraataque), con inmunidad a control encadenado.
+- Dificultades según un % de los atributos reales de los reyes (ataque, defensa, vida y armadura): Normal 60 %, Difícil 80 %, Pesadilla 100 % e Infierno 130 %.
+- Premio de cada dificultad la primera vez que se gana en la semana: Normal ● 5 000 y 10 almas · Difícil ● 10 000, 20 almas y 5 polvo · Pesadilla ● 20 000, 40 almas y 15 polvo · Infierno ● 35 000, 70 almas y 30 polvo. Título «Matarreyes» al ganar en Pesadilla o Infierno.
+- 3 intentos al día. Botón de pruebas para reiniciar intentos y premios.
+
+### 🐞 Corrección: Arena y Torre de reyes demasiado fáciles
+- Tu golpe ignoraba la armadura y la defensa de los rivales, mientras que el suyo sí pasaba por las tuyas. Ahora los rivales (Arena y reyes) se defienden con la misma fórmula que tú; la penetración les quita armadura y los golpes perforantes la ignoran. La mordida de la mascota también cuenta su defensa.
+- Los rivales usan sus efectos defensivos reales: esquiva, reducción de daño, resistencia a estados, robo de vida y contraataque (en la Arena, los tuyos, porque el rival es tu espejo).
+- Inmunidad a control para todos los rivales, como los jefes: tras un aturdimiento o una congelación no se les puede volver a controlar enseguida.
+
+## 0.2.0 — 2026-10-25
+
+### 👑 Torre de reyes (evento semanal)
+- Subes la torre venciendo en orden a los 3 reyes, que son el top 3 del ranking del servidor sin contarte a ti.
+- Cada rey lucha con sus estadísticas y efectos reales (vida, ataque, armadura, crítico y daño crítico) y usa un Golpe real cada 4 turnos.
+- 3 intentos al día; el progreso se reinicia cada lunes.
+- Premios: rey n.º 3 ● 5 000 y 10 almas; n.º 2 ● 10 000, 20 almas y 10 polvo; n.º 1 ● 20 000, 40 almas y 20 polvo, más el título mítico «Matarreyes».
+
+### Bots y ranking del servidor
+- 4 bots de distintas clases, con perfiles completos montados con las piezas reales del juego. Su Poder lo calcula la misma función `poder()`:
+
+  | Bot | Clase | Nivel | Poder |
+  |---|---|---|---|
+  | Thorin | Mago | 60 | ⚔ 29 294 |
+  | Kaito | Guerrero | 57 | ⚔ 27 054 |
+  | Lyra | Arquero | 56 | ⚔ 25 870 |
+  | Morgana | Guerrero | 54 | ⚔ 25 273 |
+
+- Ranking del servidor en la Torre de reyes, con los bots y tu personaje.
+- Modo pruebas (🧪): "Jugar con un bot" carga un bot como partida. Tu partida se guarda aparte y vuelve con "Volver a mi partida". El bot con el que juegas no aparece duplicado ni te toca como rey.
+
+## 0.1.9 — 2026-10-25
+
+### Sistemas de retención (alargan el juego sin crear contenido nuevo)
+- **🗼 Torre infinita:** pisos generados por fórmula y siempre iguales para cada número. No gasta estamina.
+  - Jefe cada 10 pisos; modificadores en los pisos múltiplos de 5, en los jefes y en todos los pisos desde el 30.
+  - Recompensa por cada piso, y en cada hito de 10 pisos almas, oro y un objeto.
+  - El piso 37 equivale aproximadamente a 1-10 Normal, y el 80 supera al Infierno.
+- **📋 Misiones:**
+  - 7 diarias y 6 semanales, cada grupo con un bonus por completar 5.
+  - Login diario en un ciclo de 7 días, cuyas recompensas suben un 25 % por semana completa (hasta ×3).
+- **🧭 Expediciones:** mandas una mascota que no lleves puesta durante 2, 4 u 8 horas y trae oro y materiales (más cuanto mejor es la mascota).
+- **Jefes con modificadores semanales:** 2 cada semana (Frenesí, Coraza, Espinas, Regeneración, Ígneo, Gélido o Venenoso) y recompensas +30 %.
+- **Conjuntos de jefe:** 2 piezas del mismo jefe activan un bono: Cerbero +6 % crítico y +25 % daño crítico; Asmodeo +15 % habilidades y +4 % robo; Minotauro +15 % penetración y +15 % daño a jefes.
+- **Temporadas de Arena:** cada mes se entrega el premio de la liga alcanzada (de ● 1 000 a ● 20 000 y 45 almas) y los puntos por encima de 1 000 se reducen a la mitad.
+- **⭐ Ascensión:** al nivel 80 vuelves al 1 y se reinician los árboles, a cambio de +5 % a todo y +2 puntos de habilidad por ascensión (máximo 10).
+- **Eventos por calendario:** fin de semana doble botín, miércoles +50 % de oro y viernes +50 % de experiencia.
+
+## 0.1.8 — 2026-10-25
+
+### Progresión más larga (meta: que un jugador free to play no termine el juego en menos de un mes)
+- **Encantamiento:**
+  - Probabilidad de éxito según el nivel al que se sube: hasta +9 siempre sale; +10 a +12, 50 %; +13 a +15, 20 %; +16 a +20, 12 %; +21 a +25, 6 %.
+  - Estando en +13 o más, fallar baja el objeto un nivel.
+  - Desde +10 también cuesta **Polvo de almas**: 2 para +10, 12 para +15 y 32 para +25.
+  - La Bendición pasa de +70 % a +15 % de éxito, evita la degradación y cuesta oro y 2 almas más.
+- **Desguace:**
+  - El equipo se puede desguazar y da 💠 Polvo de almas según su rareza: rara 1, épica 3, legendaria 8, mítica 20, más 1 por cada 3 niveles de encantamiento.
+  - Las piezas comunes no dan almas, así que se siguen vendiendo por oro.
+  - Botón "Desguazar comunes y raras" en la Herrería.
+- **Oro inicial:** 3 000 en lugar de 500, para pasar el bache de 1-4.
+- **Jefes mundiales:** 3 entradas de jefe al día en lugar de estamina; la estamina queda solo para la campaña.
+- **Equipo exclusivo de jefe:** 6 piezas míticas (2 por jefe) que no salen en cofres.
+  - Todas sus líneas extra son atributos secundarios al azar.
+  - Probabilidad: 35 % al derrotar al jefe; si no, hasta un 10 % según el daño causado.
+- **Nuevo atributo secundario "Experiencia extra":** hasta +50 %.
+
+## 0.1.7 — 2026-10-25
+
+### Clases Arquero y Mago
+- **Cambio de clase:** se elige en Héroe → Habilidades con las pestañas de clase y el botón "Jugar como…". Es gratis fuera de batalla, y cada clase conserva su árbol y su maestría.
+- **Arquero:**
+  - Atributos: +10 % ataque, −12 % vida, −20 % defensa, +5 % crítico, +4 % esquiva.
+  - Habilidades: Disparo certero (×2,2), Lluvia de flechas (×1,6, sangrado) y Flecha perforante (×3,2, ignora la armadura; se aprende en el árbol).
+  - Árbol: Precisión, Supervivencia y Cacería.
+- **Mago:**
+  - Atributos: +6 % ataque, −15 % vida, −25 % armadura, +15 % daño de habilidades, +5 % resistencia.
+  - Habilidades: Bola de fuego (×2, quemadura), Lanza de hielo (×1,7, congelación) y Meteoro (×4, quemadura; se aprende en el árbol).
+  - Árbol: Fuego, Hielo y Arcano.
+- **Mejoras del árbol genéricas:** daño de una habilidad, menos recarga, estados al golpear y habilidades cargadas al empezar. Las especiales del Guerrero (Segundo aliento, Último bastión) solo cuentan siendo Guerrero.
+- Arquero y Mago usan el sprite y las animaciones del guerrero hasta tener los suyos.
+
+## 0.1.6 — 2026-10-25
+
+- **Corrección:** las habilidades listas se veían aplastadas y sin icono. Su clase `lista` coincidía con la lista de niveles de la Campaña; ahora se llama `cargada`.
+- BATALLA-MOBILE sigue en la 0.1.5: solo se sincroniza cuando se pide.
+
+## 0.1.5 — 2026-10-25
+
+### Escritorio y tablet: el juego se amplía
+- En pantallas grandes en horizontal (más de 520 px de alto), el juego se dibuja a 412 px de alto, igual que en un móvil en horizontal, y se amplía entero hasta llenar la ventana. Se ve como en el móvil pero grande, sin bandas negras. Por ejemplo, en 1280×720 se amplía ×1,75.
+- Las reglas responsive (`@media`) pasan a ser `@container` sobre el lienzo (`body`). En móvil el lienzo es la pantalla, así que ahí todo se ve igual que antes. En vertical tampoco se amplía.
+- La escala de la batalla y la de los menús miden el lienzo y no la ventana.
+- Barras de scroll finas y del color del juego; en escritorio ocupan espacio y cortaban el panel del Héroe.
+
+## 0.1.4 — 2026-10-25
+
+### Batalla en móvil horizontal
+- **Personaje que se agrandaba al golpear:** la animación de temblor anulaba la escala del escenario; ahora usa `translate`, así que la escala se mantiene.
+- **Escala de la escena:** se calcula con el hueco real que queda y no con 220 px fijos. Los combatientes están más juntos (100 px en vez de 240) y los avances de los ataques se acortan en lo mismo, así que el golpe sigue llegando al rival. En 440×330 los personajes pasan de 0,41 a 0,6 de escala.
+- **Botones de la barra:** más pequeños (habilidades de 46 px y ataque de 60 px), y la barra cabe entera; antes el botón de ataque podía quedar cortado.
+- **Jefe mundial y Arena:** se quita el rótulo sobre la escena, que se montaba sobre la barra de vida del jefe.
+
+### Presentación de los jefes mundiales
+- Dos columnas: a la izquierda el jefe (nombre, retrato, vida y Desafiar) y a la derecha las reglas y el ranking. Cabe sin scroll en móvil horizontal.
+
+## 0.1.3 — 2026-10-25
+
+### Ajustes de tamaño en móvil horizontal
+- **Botones:** los genéricos son más pequeños (texto de 14 px y menos relleno), como "Cambiar rivales" en la Arena. Los del Campamento y la batalla no cambian.
+- **Tienda:** cada cofre es una tarjeta horizontal (imagen, nombre y probabilidades, y botones apilados); los 4 cofres caben a la vez.
+- **Héroe:** la vitrina es más baja para que el Poder y los atributos se vean sin bajar.
+- **Herrería:** el panel izquierdo es más ancho y su contenido ya no se sale. El icono y el nombre del objeto son más pequeños, y los filtros caben en una línea.
+
+## 0.1.2 — 2026-10-25
+
+### Proporciones como el Campamento en móvil horizontal
+- **Escala según la altura de la pantalla:** sustituye al 80 % fijo y va de 0,7 en pantallas de 320 px a 1 en pantallas de 450 px o más.
+- **Cabecera:** siempre en una sola línea.
+- **Fichas de skin y de mascota del inventario:** en horizontal, con la imagen a la izquierda y los datos a la derecha.
+- **Listas de skins y mascotas:** más compactas.
+- **Campamento:** el título del héroe va dentro de la etiqueta del nombre; antes flotaba separado del personaje.
+
+## 0.1.1 — 2026-10-25
+
+### Pantallas más compactas en móvil horizontal (referencia: King God Castle)
+- Todas las pantallas salvo el Campamento y la batalla se ven algo más pequeñas y usan todo el ancho en varias columnas.
+- **Inventario y Herrería:** dos paneles, cada uno con su propio scroll.
+- **Campaña y Colección:** en varias columnas.
+- **Árbol de habilidades:** el árbol ocupa toda la altura a la izquierda; maestría, clase, puntos y descripción van a la derecha.
+- **Jefe mundial:** en dos columnas.
+- **Mascotas:** rejilla de iconos con una columna por categoría y la ficha al lado; las 15 mascotas se ven sin scroll, en móvil y en escritorio.
+
+## 0.1.0 — 2026-10-25
+
+Primera versión numerada. Incluye:
+
+### Campañas y modos de juego
+- **Campaña:** Etapa 1 con los niveles 1-1 a 1-10, cada uno en Normal, Difícil, Pesadilla e Infierno.
+- **Jefes mundiales:** Cerbero, Asmodeo y Gran Minotauro.
+- **Arena:** PvP asíncrono contra rivales controlados por la IA.
+
+### Progresión del guerrero
+- **Equipo:** cuatro piezas (casco, armadura, espada y capa) con rarezas de Común a Mítica.
+- **Atributos:** cuatro base y siete secundarios, con topes.
+- **Herrería:** encantamiento y refinado.
+- **Mejoras permanentes:**
+  - Árbol de habilidades (1 punto cada 2 niveles, hasta el nivel 80, con botón de guardar).
+  - Maestría.
+  - Runas.
+  - Reliquias.
+  - Colección.
+  - Títulos.
+- **Mascotas:** 15 en 5 categorías.
+- **Skins:** 10, con estrellas y brillo al llegar a ★5.
+
+### Combate y equilibrio
+- **Efectos de estado:** quemadura, veneno, sangrado, congelación y aturdimiento.
+- **Balance revisado:** defensa con rendimiento decreciente y daño mínimo del 15 %, topes de secundarios y de Fortuna, economía y Arena ajustadas, y jefes inmunes al control.
+
+### Interfaz
+- **Campamento** como menú principal, adaptado a móvil en horizontal.
+- **Barra de batalla** con iconos y botón para huir.
+- **Modo pruebas** (al abrir el archivo directamente o con `?pruebas`), con los botones de prueba reunidos en el menú 🧪.
