@@ -37,6 +37,47 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Sin acelerador en multijugador (calabozo y Torre de reyes): se juega a x1 y el botón ⏩ no aparece, salvo en modo pruebas. En combates individuales (campaña, torre, arena, jefes) sigue igual.
 - Cambiar la dificultad de una sala devuelve a todos a la fase previa: hay que pulsar Ready otra vez.
 
+### ✨ Pulido — skins, Poder, economía y bugs
+- Skins: el efecto especial crece con las estrellas (★1 60 % → ★5 100 % de su valor, más brillo en ★5); la ficha muestra lo que da la siguiente ★. Bonos pequeños con identidad (Infernal daño, Cristalino crítico, Necro-guardián aguante, Áurico economía, Obsidiana jefes); ninguna es obligatoria.
+- Poder: cada set de 4 piezas completo suma +4 %.
+- Herrería: convertir piedras en almas (🔷 40 + ● 500 → 💠 1, hasta 10 de una vez). Sumidero de piedras y red de seguridad para las almas.
+- Bug: con la pantalla de misiones abierta al cambiar de día, un botón viejo podía cobrar otra vez; ahora se revalida antes de pagar.
+- Bug: comprar una mascota que ya tenías la devolvía a nivel 1, y «mejorar» sin tenerla costaba 0. Mandar una expedición con otra en curso la sobrescribía.
+- Debug: los botones de prueba (oro, estamina, jefes, fases, perfiles de bot) y los valores iniciales de prueba solo existen en modo pruebas.
+
+### 🔁 Fase 4 — Retención
+- Eventos rotativos, uno por día: lunes 🔨 Forja (+50 % piedras y polvo, encantar −25 % de oro) · martes 🏹 Cacería (+50 % de equipo y +15 % de subir rareza) · miércoles 💰 Oro (+50 %) · jueves 👹 Jefes (+50 % de recompensas y de piezas de set) · viernes 📈 Experiencia (+50 %, también maestría) · fin de semana 🎁 Botín (doble equipo y polvo). El aviso del Campamento muestra también el de mañana.
+- Cada modo tiene una recompensa propia: Torre → almas cada 5 pisos (el recurso escaso de encantar) · Arena → polvo de refinamiento (5 + liga) · Calabozo → un objeto garantizado (épico en Normal; legendario o mítico en Pesadilla e Infierno) · Jefes → reliquias y piezas de set · Campaña → equipo y piedras · Torre de reyes → premio semanal y título.
+- 🎯 Objetivos en el Campamento: los 3 más cercanos de distinto tipo (nivel, maestría y especialización, siguiente ★ de skin, mascota, set n/4, pieza casi perfecta, encantamiento, piso de Torre, calabozo), con barra de progreso; tocar uno lleva a su pantalla.
+- Bug: un premio con un recurso que el botín no llevaba (almas) daba NaN; ahora se suma bien y se muestra en el resultado.
+
+### 🧩 Fase 3 — Builds
+- Reliquias: solo 3 activas a la vez (botones ACTIVAR/Quitar en Runas). Valen más por nivel que antes (resistencia 4, jefes 5, esquiva 3, habilidad 5, penetración 4, daño crítico 8 %/nivel). Partidas sin elección usan las 3 de más nivel.
+- Especialización de maestría desde Nv 10, una por clase: 💥 Destructor (+8 % habilidad, +6 % penetración), 🛡️ Bastión (+5 % reducción, +10 % curación) o ⚔️ Gladiador (+4 % crítico, +6 % contraataque). ×1,5 en Nv 30 y ×2 en Nv 50. La primera es gratis; cambiarla cuesta ● 3 000.
+- Árbol de habilidades con tope de 45 puntos (el árbol completo cuesta 51): incluso con todas las ascensiones hay que elegir.
+- Jefes como prueba de build:
+  - Cerbero (crítico): en modo infernal los críticos solo se dividen entre 1,5 (el resto, entre 3).
+  - Asmodeo (sostenido y habilidades): una habilidad rompe su escudo; quemado, envenenado o sangrando se cura la mitad. Curación del 10 % al 4 % (con su vida actual anulaba casi todo el daño).
+  - Gran Minotauro (aguante): la reducción de daño frena el doble la parte del Gran Tajo que va por tu vida.
+  - Cada jefe indica en sus reglas qué build premia.
+- El modificador semanal Regeneración ya no sale en jefes mundiales (curaba 300-500 por turno); sigue en la Torre.
+
+### 🎯 Fase 2 — Progresión
+- Calidad del objeto según las estrellas de sus líneas: Mala, Decente, Buena, Excelente, Casi perfecta (85 %+) o Perfecta (todo ★5). Se ve en la ficha y en la herrería.
+- Refinamiento: nuevo **Pulir ★** (● 300 · ✨ 3) que vuelve a sortear solo las estrellas de una línea, manteniendo el atributo, para terminar piezas casi perfectas. Garantía: tras 9 sorteos sin ★4+ en un objeto, el siguiente sale ★4 o ★5. El equipo de jefe refina solo atributos secundarios, como al crearse.
+- Encantamiento con protección contra rachas: cada fallo seguido suma probabilidad y la garantía llega tras 3/5/8/15 fallos seguidos (éxito base 60/35/22/10 %). Se muestra en la herrería; un éxito reinicia la racha y bajar de nivel no la borra.
+- Runas raras (15 %) y perfectas (3 %) al crearlas: suman un efecto secundario a 1/3 o 2/3 del valor por nivel. La fusión conserva la mejor calidad (10 % de subirla). Nuevo **Pulir** (● 1 000 · ✨ 10): sube la calidad (30 % a rara, 8 % a perfecta, garantía en 4 y 12 pulidos) o cambia el secundario.
+- Sets de jefe de 4 piezas (6 piezas nuevas): 2 piezas bono pequeño, 3 piezas bono importante y 4 piezas efecto especial. Cerbero: los críticos queman. Asmodeo: cada habilidad cura un 6 % de la vida. Minotauro: golpes de más del 15 % de la vida se reducen un 35 %. Funcionan en 1 contra 1 y en grupo.
+- Garantía de pieza de set: 8 intentos seguidos contra un jefe sin pieza dan una segura, preferentemente una que aún no tengas.
+
+### ⚔️ Fase 1 — Combate y balance
+- Bonos en % (mascota, skin, árbol, runas, maestría, colección, ascensión y título) se suman en un solo bloque y se aplican una vez; antes se multiplicaban en cadena y el endgame crecía de forma exponencial. La clase sigue aparte. Poder de los bots: −2 % a −7 %.
+- Un solo orden de cálculo del golpe en 1 contra 1 y en grupo: bruto → (habilidad + jefes + remate en el mismo bloque) → crítico → armadura/defensa → reducción de daño → escudos y fases. En grupo el daño de habilidades ya no se multiplica aparte.
+- La armadura de monstruos y jefes reduce tu daño con la misma fórmula que la tuya; la penetración quita armadura efectiva y los golpes perforantes la ignoran. Antes la armadura enemiga no hacía nada sin penetración. La mordida de la mascota también cuenta la armadura.
+- Resistencia con una sola tirada: el 60 % de su valor evita el estado y el 40 % reduce su daño (al tope: 45 % de evitarlo, −30 % de daño). También atenúa la bola de fuego de Cerbero y el Gran Tajo. Antes contaba dos veces y al tope anulaba casi todo.
+- Topes nuevos: robo de vida 25 %, contraataque 35 %, remate 50 %, curación 100 %.
+- Jefes recomprobados: con 25k de poder, ~8 500 de daño a Cerbero por intento (sigue cayendo en 2).
+
 ### ⚖️ Correcciones de la auditoría
 - Torre: el botín de los enemigos solo se cobra si superas el piso (perder a propósito era farmeo infinito, porque no cuesta estamina).
 - Bots solo en modo pruebas: fuera de él no hay aliados bot en la formación, ni invitaciones, ni salas de bots en las listas. (El ranking y los reyes siguen simulando el servidor.)
