@@ -73,6 +73,11 @@
   .unidad .sombra { left:90px; } .unidad.enemigo .sombra { left:70px; }
   .unidad .vida { top:-6px; width:150px; } .unidad .vida b { font-size:14px; }
   .unidad.yo .vida b { color:#ffd84a; }
+  .unidad.enemigo, .unidad.unidad-rey { cursor:pointer; }   /* tocar un enemigo lo elige como objetivo */
+  .unidad.objetivo .pj { filter:drop-shadow(0 0 8px #ff4040) drop-shadow(0 0 3px #ff4040); }
+  .unidad.objetivo::before { content:'🎯'; position:absolute; left:50%; top:-60px; transform:translateX(-50%); font-size:48px; z-index:6; pointer-events:none;
+                             animation:latido 1.2s ease-in-out infinite; }
+  .unidad.objetivo.muerto::before { display:none; }
   .unidad.enemigo .frames { width:260px; height:200px; animation-delay:-1s; background:url(img/enemigos/parca.png) 0 0 / 1820px 200px no-repeat; }
   .unidad.enemigo .espejo, .unidad.unidad-rey .espejo { transform:scaleX(-1); }   /* los reyes: sprite de jugador mirando a la izquierda */
   .unidad.unidad-rey.jefe .vida b { color:#ffd84a; }
@@ -88,6 +93,16 @@
   /* pantalla de formación: rombo (retaguardia | arriba/abajo | frente) */
   .rombo { display:grid; grid-template-columns:repeat(3, minmax(90px, 140px)); grid-template-rows:repeat(2, 64px); gap:8px; justify-content:center;
            grid-template-areas:"atras arriba frente" "atras abajo frente"; }
+  .rombo.fila { grid-template-columns:repeat(4, minmax(80px, 140px)); grid-template-rows:56px; grid-template-areas:"atras frente arriba abajo"; }
+  .rombo.fila .casilla { height:46px; } .rombo.fila { grid-template-rows:46px; gap:6px; }
+  /* sala compacta: todo a la vista sin scroll */
+  .sala-slot { min-height:0; padding:4px; gap:1px; } .sala-slot .pj-mini { height:84px; } .sala-slot .pj-mini .escala { transform:scale(.4); }
+  button.pj-mini.vacio { margin:0; border:none; color:#fffa; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; }
+  button.pj-mini.vacio small { font-size:12px; color:#eee; }
+  #calabozoCont, #reyesCont { display:flex; flex-direction:column; gap:4px; }
+  #pCalabozo .panel, #pReyes .panel { gap:4px; } #pCalabozo .liga, #pReyes .liga { padding:4px 10px; } #pCalabozo .liga .ic, #pReyes .liga .ic { font-size:26px; }
+  .sala-slot .pj-mini { height:62px; } .sala-slot .pj-mini .escala { transform:scale(.3); } .sala-slot b { font-size:12px; } .sala-slot small { font-size:10px; }
+  .sala-acciones button { min-height:36px; padding:4px 12px; }
   .casilla { margin:0; min-height:0; padding:4px; border-radius:12px; background:#2e2a38; color:#eee; border:2px dashed #4a4458; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:13px; }
   .casilla[data-pos="atras"] { grid-area:atras; align-self:center; height:64px; } .casilla[data-pos="frente"] { grid-area:frente; align-self:center; height:64px; }
   .casilla[data-pos="arriba"] { grid-area:arriba; } .casilla[data-pos="abajo"] { grid-area:abajo; }
@@ -144,6 +159,31 @@
   .camp-objetivos b { font-size:11px; color:#ffd84a; }
   .camp-objetivos button { margin:0; min-height:30px; padding:2px 4px; background:none; border:none; color:#eee; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:2px; }
   .barra-obj { display:block; width:100%; height:4px; background:#0008; border-radius:2px; overflow:hidden; } .barra-obj i { display:block; height:100%; background:#8adf3c; }
+  /* funciones aún bloqueadas por nivel: se ven (son un objetivo) pero apagadas y con su nivel */
+  .bloqueado { position:relative; filter:grayscale(1); opacity:.55; }
+  .bloqueado::before { content:'🔒 ' attr(data-nv); position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:3; white-space:nowrap;
+                       background:#000c; color:#fff; font-size:10px; font-weight:bold; padding:1px 5px; border-radius:6px; pointer-events:none; }
+  button.sin-recursos { opacity:.6; }
+  .difs-cab { display:flex; gap:4px; margin-top:3px; flex-wrap:wrap; }
+  .difs-cab button { margin:0; min-height:30px; padding:2px 10px; font-size:12px; background:#2e2a38; color:#ddd; border:1px solid #4a4458; }
+  .difs-cab button.on { background:#e8b830; color:#222; border-color:#e8b830; } .difs-cab button:disabled { opacity:.5; }
+  .obtenidos { display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .obtenidos .item { margin:0; width:48px; height:48px; min-height:0; padding:3px; display:flex; align-items:center; justify-content:center; }
+  .obtenidos .item .icono { width:100%; height:100%; margin:0; background-size:contain; background-position:center; background-repeat:no-repeat; } #detalle { z-index:60; }
+  .dia-prueba { display:flex; align-items:center; gap:4px; background:#000a; border:1px dashed #8adf3c; border-radius:14px; padding:2px 4px 2px 10px; font-size:12px; color:#8adf3c; font-weight:bold; white-space:nowrap; }
+  .dia-prueba button { margin:0; min-height:28px; width:28px; padding:0; border-radius:50%; font-size:16px; }
+  .login30 { display:grid; grid-template-columns:repeat(6, 1fr); gap:4px; margin:6px 0; }
+  .dia30 { margin:0; min-height:46px; padding:2px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:10px; background:#2e2a38; color:#ddd; border:1px solid #4a4458; }
+  .dia30 b { font-size:13px; } .dia30 small { font-size:9px; line-height:1.1; } .dia30.grande { border-color:#e8b830; }
+  .dia30.hecho { opacity:.45; } .dia30.hoy { background:#e8b830; color:#222; animation:latido 1.2s ease-in-out infinite; } .dia30:disabled { cursor:default; }
+  .campana .autos { margin-top:4px; }
+  .campana .autos button { margin:0; min-height:30px; padding:2px 8px; font-size:11px; background:#2e2a38; color:#ffd84a; border:1px solid #e8b83088; }
+  /* herrería: la ficha de la izquierda cabe entera sin scroll */
+  #herPanel { gap:5px; padding:8px; } #herPanel .icono { width:44px; height:44px; } #herPanel h2 { margin:0; font-size:16px; }
+  #herPanel p { margin:2px 0; font-size:13px; } #herPanel .atributos { padding:4px 8px; font-size:12px; } #herPanel .tabs button { min-height:34px; padding:4px; }
+  #herPanel .fila button { min-height:38px; margin:0; } #herPanel .bendicion { font-size:12px; margin:0; }
+  .mat-hud { font-weight:bold; white-space:nowrap; cursor:pointer; } .mat-slot { cursor:pointer; }
+  .ir-bolsa { margin:8px 0 0; width:100%; min-height:44px; }
   .camp-version { position:absolute; left:6px; bottom:3px; font-size:10px; color:#fff7; pointer-events:none; z-index:1; }
   .camp-luna { position:absolute; left:12%; top:6%; width:54px; height:54px; border-radius:50%; background:#f4ecd0; box-shadow:0 0 30px #f4ecd088; }
   .camp-deco { position:absolute; bottom:12%; font-size:44px; filter:drop-shadow(0 4px 2px #0008); pointer-events:none; }
@@ -185,7 +225,7 @@
   .modos-batalla button[data-modo-batalla] { margin:0; min-height:64px; font-size:17px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   .modos-batalla button small { font-size:11px; font-weight:normal; opacity:.8; }
   #otraPestana { z-index:2000; background:#000e; } #otraPestana p { text-align:center; line-height:1.4; } #otraPestana .fila { display:flex; justify-content:center; }
-  #dialogo { z-index:1000; } #dialogo p { margin:4px 0 12px; text-align:center; line-height:1.4; } #dialogo .fila { display:flex; gap:8px; justify-content:center; }
+  #dialogo { z-index:1000; } #dialogo p { margin:4px 0 12px; text-align:center; line-height:1.4; white-space:pre-line; } #dialogo .fila { display:flex; gap:8px; justify-content:center; }
   #pruebasMenu .caja { display:flex; flex-direction:column; gap:8px; }
   /* Móvil en horizontal (poca altura): todo más compacto; los accesos laterales en 2 columnas a la derecha
      y el héroe desplazado a la izquierda para que no se tapen */
@@ -255,7 +295,10 @@
   .rejilla .item.bloq { filter:grayscale(1); opacity:.45; }
   .rejilla .item b { font-size:11px; }
   .ranuras-runa { grid-template-columns:repeat(4, 1fr); }
-  .item.runa button { margin:4px 0 0; min-height:32px; padding:4px 6px; font-size:12px; width:100%; }
+  .item.runa button { margin:0; min-height:30px; padding:3px 6px; font-size:12px; width:100%; }
+  .rejilla:has(.item.runa) { grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); }   /* tarjetas de runa anchas: texto en pocas líneas */
+  .rejilla.ranuras-runa { grid-template-columns:repeat(4, 1fr); }
+  .item.runa { gap:3px; } .acc-runa { display:grid; grid-template-columns:1fr 1fr; gap:4px; width:100%; }
   .item.runa .fusionar { background:#6a3fd1; color:#fff; }
   .item.runa .mejorar { background:#2f9e44; color:#fff; line-height:1.2; } .item.runa .mejorar small { font-size:10px; }
   .item.runa .fundir { background:#3a3546; color:#ccc; font-size:11px; min-height:28px; }
@@ -767,10 +810,18 @@
 </head>
 <body>
   <!-- Menú principal: campamento -->
+  <!-- Diálogos globales: fuera de las pantallas para que se vean en cualquiera -->
+    <div class="modal" id="otraPestana"><div class="caja"><h2>Batalla ya está abierto</h2>
+      <p>El juego está abierto en otra pestaña o ventana. Solo puede jugarse en una a la vez para no perder progreso.</p>
+      <div class="fila"><button id="usarAqui">Jugar aquí</button></div></div></div>
+    <div class="modal" id="dialogo"><div class="caja"><p id="dialogoTexto"></p>
+      <div class="fila"><button id="dialogoNo">Cancelar</button><button id="dialogoSi">Aceptar</button></div></div></div>
+
   <div class="pantalla activa" id="menu">
     <div class="camp-top">
       <button class="camp-avatar" data-ir="pInventario" id="campAvatar" aria-label="Héroe"></button>
       <div class="camp-recursos" id="campRecursos"></div>
+      <span class="dia-prueba prueba"><span id="diaPrueba"></span><button id="sumarDia" aria-label="Pasar al día siguiente">+</button></span>
       <button class="prueba-mini" id="abrirPruebas" title="Pruebas" aria-label="Pruebas">🧪</button>
     </div>
     <div class="camp-escena">
@@ -787,6 +838,8 @@
         <button class="camp-icono" data-ir="pArbol" id="campArbol">📖<small>Habilidades</small></button>
         <button class="camp-icono" id="campTitulos">📜<small>Títulos</small></button>
         <button class="camp-icono" data-ir="pArena" id="campArena">🏆<small>Arena</small></button>
+        <button class="camp-icono" id="campLogin">📅<small>Login</small></button>
+        <button class="camp-icono" data-ir="pBolsa" id="campBolsa">🎒<small>Inventario</small></button>
         <button class="camp-icono" data-ir="pRanking" id="campRanking">🏅<small>Ranking</small></button>
         <button class="camp-icono" data-ir="pColeccion" id="campColeccion">📚<small>Colección</small></button>
         <button class="camp-icono" data-ir="pTorre" id="campTorre">🗼<small>Torre</small></button>
@@ -845,8 +898,7 @@
         <div class="tabs inv-tabs"><button data-invtab="objetos" class="on">Objetos</button><button data-invtab="mascota">Mascota</button><button data-invtab="skins">Skins</button><button data-invtab="titulos">Títulos</button></div>
         <div id="tabObjetos">
           <h3>Equipado</h3><div class="ranuras" id="ranuras"></div>
-          <h3>Materiales</h3><div class="bolsa" id="mats"></div>
-          <h3>Objetos</h3><div class="tabs bolsa-filtros" id="bolsaFiltros"></div><div id="bolsa"></div>
+          <button class="ir-bolsa" data-ir="pBolsa">🎒 Ver inventario (objetos y materiales)</button>
         </div>
         <div id="tabMascota" hidden></div>
         <div id="tabSkins" hidden></div>
@@ -876,6 +928,15 @@
   </div>
 
   <!-- Torre de reyes (evento semanal contra el top 3) -->
+  <!-- Inventario: todos los objetos sin equipar (con filtros) y los materiales -->
+  <div class="pantalla" id="pBolsa">
+    <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Inventario</h2><div class="hud"></div></div>
+    <div class="panel">
+      <h3>Materiales</h3><div class="bolsa" id="mats"></div>
+      <h3>Objetos</h3><div class="tabs bolsa-filtros" id="bolsaFiltros"></div><div id="bolsa"></div>
+    </div>
+  </div>
+
   <div class="pantalla" id="pRanking">
     <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Ranking del servidor</h2><div class="hud"></div></div>
     <div class="panel" id="ranking"></div>
@@ -980,11 +1041,6 @@
       </div>
     </div>
     <div class="botones" id="pruebas" style="padding-top:0"></div>
-    <div class="modal" id="otraPestana"><div class="caja"><h2>Batalla ya está abierto</h2>
-      <p>El juego está abierto en otra pestaña o ventana. Solo puede jugarse en una a la vez para no perder progreso.</p>
-      <div class="fila"><button id="usarAqui">Jugar aquí</button></div></div></div>
-    <div class="modal" id="dialogo"><div class="caja"><p id="dialogoTexto"></p>
-      <div class="fila"><button id="dialogoNo">Cancelar</button><button id="dialogoSi">Aceptar</button></div></div></div>
     <div class="modal" id="resultado"><div class="caja">
       <h2 id="resTitulo"></h2><p id="resTexto"></p>
       <button id="resOtra">Reintentar</button>
@@ -1026,14 +1082,35 @@
   // Devuelve una promesa: true si se acepta.
   function confirmar(texto, si = 'Aceptar', no = 'Cancelar') {
     return new Promise(res => {
-      $('dialogoTexto').textContent = texto; $('dialogoSi').textContent = si; $('dialogoNo').textContent = no;
+      $('dialogoTexto').textContent = texto; $('dialogoSi').textContent = si; $('dialogoNo').textContent = no; $('dialogoNo').hidden = false;
       const fin = v => { $('dialogo').classList.remove('visible'); $('dialogoSi').onclick = $('dialogoNo').onclick = null; res(v); };
       $('dialogoSi').onclick = () => fin(true); $('dialogoNo').onclick = () => fin(false);
       $('dialogo').classList.add('visible');
     });
   }
+  // Desbloqueo por nivel: el juego se abre poco a poco ("¡Arena desbloqueada!") en vez de enseñar todo de golpe.
+  // Claves: pantallas (data-ir) y partes de pantalla. Quien ya pasó el nivel (o ascendió) lo tiene abierto (también en pruebas).
+  const DESBLOQUEOS = {
+    pHerreria: [3, 'Herrería'], pMascota: [5, 'Mascotas'], mascota: [5, 'Mascotas'], pArbol: [8, 'Habilidades'], pTorre: [10, 'Torre'],
+    refinar: [12, 'Refinar y pulir'], pArena: [15, 'Arena'], pRunas: [18, 'Runas y reliquias'], expedicion: [18, 'Expediciones'],
+    skins: [20, 'Skins'], titulos: [20, 'Títulos'], pColeccion: [20, 'Colección'], pCalabozo: [25, 'Calabozo multijugador'],
+    pEvento: [30, 'Jefes mundiales'], pReyes: [35, 'Torre de reyes'],
+  };
+  const nivelDesbloqueo = id => (DESBLOQUEOS[id] || [0])[0];
+  const desbloqueado = id => !DESBLOQUEOS[id] || jugador.nivel >= DESBLOQUEOS[id][0] || (jugador.ascension || 0) > 0;
+  const avisoBloqueo = id => avisar(`🔒 ${DESBLOQUEOS[id][1]}: se desbloquea en el nivel ${DESBLOQUEOS[id][0]}`);
+  // Mensaje que solo se cierra con OK (mismo diálogo que confirmar, sin botón de cancelar). Se encadenan si llegan varios.
+  let colaMensaje = Promise.resolve();
+  function mensaje(texto, ok = 'OK') {
+    return colaMensaje = colaMensaje.then(() => new Promise(res => {
+      $('dialogoTexto').textContent = texto; $('dialogoSi').textContent = ok; $('dialogoNo').hidden = true;
+      $('dialogoSi').onclick = () => { $('dialogo').classList.remove('visible'); $('dialogoNo').hidden = false; $('dialogoSi').onclick = null; res(); };
+      $('dialogo').classList.add('visible');
+    }));
+  }
   let pantallaActual = 'menu';
   function ir(id) {
+    if (!desbloqueado(id)) return avisoBloqueo(id);
     if (candidato && id !== 'pHerreria') { avisar('Acepta o descarta el refinamiento'); return; }
     if (pantallaActual === 'pArbol' && id !== 'pArbol' && borrador) {   // cambios del árbol sin guardar: se pregunta y luego se sigue
       confirmar(`Tienes ${puntosSinGuardar()} punto(s) de habilidad sin guardar. ¿Guardarlos?`, 'Guardar', 'Descartar')
@@ -1057,6 +1134,7 @@
     if (id === 'pReyes') pintarReyes();
     if (id === 'pFormacion') pintarFormacion();
     if (id === 'pRanking') pintarRanking();
+    if (id === 'pBolsa') pintarInventario();
     if (id === 'pCalabozo') pintarCalabozo();
     if (id === 'pMisiones') pintarMisiones();
     if (id === 'pArena') pintarArena();
@@ -1176,6 +1254,17 @@
     return e;
   }
   const MATERIALES = { piedra: '🔷 Piedra de encantamiento', polvo: '✨ Polvo de refinamiento', almas: '💠 Polvo de almas' };
+  // Qué es cada material, para qué sirve y dónde conseguirlo (se ve al tocar su icono en la barra o en el inventario)
+  const INFO_MATERIALES = {
+    piedra: { uso: 'Encantar equipo.', fuente: 'Campaña, Calabozo, Torre, misiones y login.' },
+    polvo:  { uso: 'Refinar líneas de equipo, mejorar runas.', fuente: 'Arena, botín de campaña, Torre, jefes mundiales, misiones y login.' },
+    almas:  { uso: 'Encantar desde +10 y bendecir.', fuente: 'Torre, desguace, misiones, Torre de reyes, login y piedras convertidas.' },
+  };
+  const infoMaterial = k => mensaje(`${MATERIALES[k]}
+
+Uso: ${INFO_MATERIALES[k].uso}
+Fuente: ${INFO_MATERIALES[k].fuente}`);
+  document.addEventListener('click', e => { const m = e.target.closest('[data-material]'); if (m) infoMaterial(m.dataset.material); });
 
   // Catálogo de modelos (forma + color + rareza). Un objeto del inventario es un modelo con atributos sorteados.
   const MODELOS = [
@@ -1295,7 +1384,12 @@
     catch { if (!guardar.aviso) { guardar.aviso = true; setTimeout(() => avisar('⚠ No se pudo guardar la partida: almacenamiento lleno'), 0); } }
   }
   // Fecha local: al cambiar de día la estamina vuelve al máximo
-  function hoy() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+  // Fecha del juego. En modo pruebas, el botón "Día X +" adelanta días (offset guardado aparte de la partida) para probar
+  // reinicios diarios y semanales: misiones, login, estamina, entradas, eventos…
+  const DIA_PRUEBA = 'batalla.diaPrueba';
+  let offsetDias = 0; try { offsetDias = MODO_PRUEBAS ? +localStorage.getItem(DIA_PRUEBA) || 0 : 0; } catch {}
+  const ahoraJuego = () => new Date(Date.now() + offsetDias * 86400000);
+  function hoy() { const d = ahoraJuego(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
   function revisarEstamina() {
     const ahora = Date.now();
     if (jugador.vistoMax && ahora < jugador.vistoMax - 10 * 60 * 1000) return;   // reloj atrasado: no recarga (adelantarlo solo se evita con servidor)
@@ -1308,7 +1402,9 @@
   const objeto = uid => jugador.objetos.find(o => o.uid === uid);
 
   // Nivel y experiencia
-  const xpParaSubir = n => Math.round(60 * Math.pow(n, 1.5));
+  // Curva: rápida hasta el 30 (desbloqueos y primera semana); desde ahí ×1,03 por nivel para que el nivel siga siendo un
+  // objetivo durante meses. Total a Nv 80: ~3,4 M de XP (antes 1,35 M, que se alcanzaba en 2-3 semanas).
+  const xpParaSubir = n => Math.round(60 * Math.pow(n, 1.5) * (n > 30 ? 1.03 ** (n - 30) : 1));
   const NIVEL_MAX = 80;   // al llegar, la experiencia deja de acumularse
   jugador.nivel = Math.min(jugador.nivel, NIVEL_MAX);
   function ganar(oro, xp, mat = {}) {
@@ -1317,6 +1413,9 @@
     while (jugador.nivel < NIVEL_MAX && jugador.xp >= xpParaSubir(jugador.nivel)) {
       jugador.xp -= xpParaSubir(jugador.nivel); jugador.nivel++;
       avisar(`¡Nivel ${jugador.nivel}!${jugador.nivel % 2 === 0 ? ' +1 punto de habilidad' : ''}`);
+      const nuevos = [...new Set(Object.values(DESBLOQUEOS).filter(([n]) => n === jugador.nivel).map(([, t]) => t))];
+      if (nuevos.length) setTimeout(() => mensaje(`🔓 ¡Nuevo desbloqueado!
+${nuevos.join(' · ')}`), 1200);
     }
     if (jugador.nivel >= NIVEL_MAX) jugador.xp = 0;
     guardar(); pintarHud();
@@ -1330,7 +1429,8 @@
   function pintarHud() {
     const pct = jugador.nivel >= NIVEL_MAX ? 100 : jugador.xp / xpParaSubir(jugador.nivel) * 100;
     document.querySelectorAll('.hud').forEach(h => h.innerHTML =
-      `<span>Nv ${jugador.nivel}${jugador.nivel >= NIVEL_MAX ? ' MAX' : ''}</span><span class="xp" title="${jugador.xp}/${xpParaSubir(jugador.nivel)} XP"><i style="width:${pct}%"></i></span><span class="oro">● ${jugador.oro}</span><span class="estamina" title="Estamina: se recarga cada día">⚡ ${jugador.estamina}/${ESTAMINA_MAX}</span>`);
+      `<span>Nv ${jugador.nivel}${jugador.nivel >= NIVEL_MAX ? ' MAX' : ''}</span><span class="xp" title="${jugador.xp}/${xpParaSubir(jugador.nivel)} XP"><i style="width:${pct}%"></i></span><span class="oro">● ${jugador.oro}</span><span class="estamina" title="Estamina: se recarga cada día">⚡ ${jugador.estamina}/${ESTAMINA_MAX}</span>`
+      + (h.closest('#pHerreria') || h.closest('#pRunas') ? (h.closest('#pRunas') ? ['polvo'] : Object.keys(MATERIALES)).map(k => `<span class="mat-hud" data-material="${k}">${MATERIALES[k].split(' ')[0]} ${jugador.mat[k].toLocaleString('es')}</span>`).join('') : ''));   // en la herrería, también sus materiales
     if (campListo) pintarCampamento();
   }
 
@@ -1835,7 +1935,7 @@
     const garantia = P[jefe] >= GARANTIA_JEFE; P[jefe] = 0;
     const todas = MODELOS.filter(m => m.jefe === jefe), faltan = todas.filter(m => !jugador.objetos.some(o => o.modelo === m.id));
     const o = crearObjeto(elegir(garantia && faltan.length ? faltan : todas).id); jugador.objetos.push(o);
-    return `<br><b>⚔ Equipo de jefe: ${modelo[o.modelo].nombre}</b> (${o.lineas.slice(-3).map(l => nombreAtr(l.a)).join(', ')})${garantia ? ' · garantía' : ''}`;
+    obtenidos.push(o); return '';
   }
 
   // ---------------- Runas ----------------
@@ -1887,16 +1987,16 @@
       <small>${RUNAS[r.tipo].nombre}${r.cal ? ` <b style="color:${CAL_RUNA[r.cal].color}">${CAL_RUNA[r.cal].nombre}</b>` : ''} · Nv ${r.nivel}</small><b>${textoRuna(r)}</b>
       ${puesta ? `<button data-acc="quitar" data-runa="${r.uid}">Quitar</button>`
                : `<button data-acc="equipar" data-runa="${r.uid}" ${hayHueco ? '' : 'disabled'}>EQUIPAR</button>`}
-      ${r.nivel < RUNA_MAX ? `<button class="mejorar" data-acc="mejorar" data-runa="${r.uid}" ${tieneCoste(costeMejoraRuna(r.nivel)) ? '' : 'disabled'}>▲ Nv ${r.nivel + 1}<br><small>● ${costeMejoraRuna(r.nivel).oro} · ✨ ${costeMejoraRuna(r.nivel).polvo}</small></button>` : '<small>Nivel máximo</small>'}
+      <div class="acc-runa">${r.nivel < RUNA_MAX ? `<button class="mejorar${tieneCoste(costeMejoraRuna(r.nivel)) ? '' : ' sin-recursos'}" data-acc="mejorar" data-runa="${r.uid}">▲ Nv ${r.nivel + 1}</button>` : ''}
       ${r.nivel < RUNA_MAX && iguales(r).length >= 2 ? `<button class="fusionar" data-acc="fusionar" data-runa="${r.uid}">Fusionar → Nv ${r.nivel + 1}</button>` : ''}
-      <button class="pulir" data-acc="pulir" data-runa="${r.uid}" ${tieneCoste(COSTE_PULIR_RUNA) ? '' : 'disabled'}>💎 Pulir<br><small>${r.cal < 2 ? `${CAL_RUNA[(r.cal || 0) + 1].nombre} garantizada en ${GARANTIA_PULIR[r.cal || 0] - (r.pul || 0)}` : 'otro secundario'}</small></button>
-      ${puesta ? '' : `<button class="fundir" data-acc="fundir" data-runa="${r.uid}">♻ Fundir +✨${polvoFundir(r)}</button>`}</div>`;
+      <button class="pulir${tieneCoste(COSTE_PULIR_RUNA) ? '' : ' sin-recursos'}" data-acc="pulir" data-runa="${r.uid}">💎 Pulir</button>
+      ${puesta ? '' : `<button class="fundir" data-acc="fundir" data-runa="${r.uid}">♻ Fundir</button>`}</div></div>`;
     const libres = jugador.runas.filter(r => !puestas.includes(r.uid)).sort((a, b) => b.nivel - a.nivel || a.tipo.localeCompare(b.tipo));
     $('runas').innerHTML = `
       <h3>Ranuras de runa</h3>
       <div class="rejilla ranuras-runa">${puestas.map(uid => { const r = jugador.runas.find(x => x.uid === uid);
         return r ? tarjeta(r, true) : '<div class="item vacia"><span style="font-size:28px">◇</span><small>Vacía</small></div>'; }).join('')}</div>
-      <div class="fila" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button data-acc="crear" ${tieneCoste(COSTE_RUNA) ? '' : 'disabled'}>Crear runa al azar</button><small>${textoCoste(COSTE_RUNA)}</small></div>
+      <div class="fila" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button data-acc="crear" ${tieneCoste(COSTE_RUNA) ? '' : 'disabled'}>Crear runa al azar</button><small>Crea una runa de tipo aleatorio · cuesta <span class="${jugador.oro < COSTE_RUNA.oro ? 'falta' : ''}">● ${COSTE_RUNA.oro} oro</span> y <span class="${jugador.mat.polvo < COSTE_RUNA.polvo ? 'falta' : ''}">✨ ${COSTE_RUNA.polvo} polvo</span></small></div>
       <h3>Tus runas (${libres.length})</h3>
       <small class="nota">Junta 3 runas iguales del mismo nivel para fusionarlas en una de nivel superior (máx. Nv ${RUNA_MAX}). Las runas <b style="color:${CAL_RUNA[1].color}">raras</b> y <b style="color:${CAL_RUNA[2].color}">perfectas</b> suman un efecto secundario; púlelas (● ${COSTE_PULIR_RUNA.oro} · ✨ ${COSTE_PULIR_RUNA.polvo}) para subir su calidad o cambiar el secundario.${hayHueco ? '' : ' Las 4 ranuras están llenas: quita una para equipar otra.'}</small>
       <div class="rejilla">${libres.map(r => tarjeta(r, false)).join('') || '<small>Aún no tienes runas sin equipar.</small>'}</div>
@@ -1920,6 +2020,8 @@
     }
     if (r && acc === 'equipar' && puestas.includes(null)) puestas[puestas.indexOf(null)] = r.uid;
     if (r && acc === 'quitar') puestas[puestas.indexOf(r.uid)] = null;
+    if (r && acc === 'mejorar' && !tieneCoste(costeMejoraRuna(r.nivel))) return avisar(`Te falta: ${faltaCoste(costeMejoraRuna(r.nivel))}`);
+    if (r && acc === 'pulir' && !tieneCoste(COSTE_PULIR_RUNA)) return avisar(`Te falta: ${faltaCoste(COSTE_PULIR_RUNA)}`);
     if (r && acc === 'mejorar' && r.nivel < RUNA_MAX && tieneCoste(costeMejoraRuna(r.nivel))) { pagar(costeMejoraRuna(r.nivel)); r.nivel++; avisar(`${RUNAS[r.tipo].nombre} Nv ${r.nivel}`); }
     if (r && acc === 'fundir' && !puestas.includes(r.uid)) {
       if (r.nivel >= 3 && !await confirmar(`¿Fundir ${RUNAS[r.tipo].nombre} Nv ${r.nivel}? Recuperas ${polvoFundir(r)} de polvo.`)) return;
@@ -2033,7 +2135,7 @@
   const LIGAS = [[0, 'Bronce', '🥉'], [1100, 'Plata', '🥈'], [1300, 'Oro', '🥇'], [1600, 'Diamante', '💎'], [2000, 'Leyenda', '👑']];
   const NOMBRES_RIVAL = ['Aldric', 'Brunhilda', 'Kael', 'Morgana', 'Thorin', 'Isolde', 'Ragnar', 'Seraphine', 'Darius', 'Lyra', 'Gorak', 'Elowen'];
   const FILTROS_RIVAL = ['hue-rotate(90deg) saturate(2)', 'hue-rotate(200deg) saturate(2)', 'sepia(1) saturate(4) hue-rotate(10deg)', 'grayscale(1) brightness(1.4)'];
-  const diasFinMes = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate() - d.getDate() + 1; };
+  const diasFinMes = () => { const d = ahoraJuego(); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate() - d.getDate() + 1; };
   const ligaDe = pts => { let i = 0; LIGAS.forEach((l, k) => { if (pts >= l[0]) i = k; }); return i; };
   function generarRivales() {
     const pts = jugador.arena.puntos;
@@ -2042,7 +2144,7 @@
   }
   // Temporadas mensuales: al cambiar de mes se entrega el premio de la liga alcanzada y los puntos se reinician a medias
   const PREMIO_LIGA = [{ oro: 1000 }, { oro: 3000, almas: 5 }, { oro: 6000, almas: 12 }, { oro: 12000, almas: 25 }, { oro: 20000, almas: 45 }];
-  const mesActual = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}`; };
+  const mesActual = () => { const d = ahoraJuego(); return `${d.getFullYear()}-${d.getMonth() + 1}`; };
   function revisarArena() {
     jugador.arena ||= { puntos: 1000, victorias: 0 };
     const A = jugador.arena;
@@ -2199,6 +2301,7 @@
   let invTab = 'objetos';
   document.querySelector('.inv-tabs').addEventListener('click', e => {
     const b = e.target.closest('[data-invtab]'); if (!b) return;
+    if (!desbloqueado(b.dataset.invtab)) return avisoBloqueo(b.dataset.invtab);
     invTab = b.dataset.invtab; pintarInventario();
   });
   function textoAccionMascota(m, n) {
@@ -2269,7 +2372,7 @@
       + Object.entries(OTROS_EFECTOS).filter(([a]) => efecto(a) > 0).map(([a, n]) => `<div class="sec">${n}<b>${textoEfecto(a)}</b></div>`).join('');
     // materiales: cada uno en su propia casilla, solo aquí en el inventario
     $('mats').innerHTML = Object.entries(MATERIALES).map(([k, n]) => { const [ic, ...nom] = n.split(' ');
-      return `<div class="item mat-slot" title="${n}"><span class="mat-ic">${ic}</span><b>${jugador.mat[k].toLocaleString('es')}</b><small>${nom.join(' ')}</small></div>`; }).join('');
+      return `<div class="item mat-slot" data-material="${k}"><span class="mat-ic">${ic}</span><b>${jugador.mat[k].toLocaleString('es')}</b><small>${nom.join(' ')}</small></div>`; }).join('');
     $('ranuras').innerHTML = Object.entries(RANURAS).filter(([, d]) => !d.interna).map(([r, d]) => {
       const o = objeto(jugador.equipado[r]), m = modelo[o.modelo];
       return `<button class="item puesto r-${m.rareza}" data-uid="${o.uid}">${icono(m)}<b>${d.nombre}</b><small>${nombreObj(o)}</small></button>`;
@@ -2295,6 +2398,7 @@
   document.querySelector('.inv-listas').addEventListener('click', e => {
     const b = e.target.closest('button[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid);
   });
+  $('pBolsa').addEventListener('click', e => { const b = e.target.closest('button[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });
 
   // Ventana de detalle de objeto y utilidades de costes
   function filasTotales(t, comparar) {
@@ -2307,8 +2411,11 @@
   const tieneCoste = c => Object.entries(c).every(([k, v]) => k === 'prob' || (k === 'oro' ? jugador.oro >= v : jugador.mat[k] >= v));
   const textoCoste = c => Object.entries(c).filter(([k]) => k !== 'prob').map(([k, v]) => {
     const tengo = k === 'oro' ? jugador.oro : jugador.mat[k], ic = k === 'oro' ? '●' : MATERIALES[k].split(' ')[0];
-    return `<span class="${tengo < v ? 'falta' : ''}">${ic} <b>${v}</b> (tienes ${tengo})</span>`;
+    return `<span class="${tengo < v ? 'falta' : ''}">${ic} <b>${v}</b></span>`;   // en rojo si no alcanza (sin "tienes": ocupaba espacio)
   }).join(' · ');
+  const faltaCoste = c => Object.entries(c).filter(([k]) => k !== 'prob').map(([k, v]) => {
+    const tengo = k === 'oro' ? jugador.oro : jugador.mat[k]; return tengo < v ? `${v - tengo} ${k === 'oro' ? '● oro' : MATERIALES[k]}` : '';
+  }).filter(Boolean).join(' · ');
   function abrirModal(rareza, html) {
     const caja = $('detCaja');
     caja.className = 'caja r-' + rareza; caja.innerHTML = html;
@@ -2378,13 +2485,12 @@
     if (herTab === 'encantar') {
       const c = costeEncantar(o, bendecir);
       cuerpo = o.enc >= max ? `<p class="enc">¡Encantamiento máximo (+${max})!</p>` : `
-        <p>Encantar <span class="enc">+${o.enc}</span> → <span class="enc">+${o.enc + 1}</span> (máx. +${max})<br>Probabilidad de éxito: <b>${c.prob}%</b>
+        <p><span class="enc">+${o.enc}</span> → <span class="enc">+${o.enc + 1}</span> (máx. +${max}) · éxito <b>${c.prob}%</b>
           ${probEncantar(o.enc) < 100 ? `<br><small class="proteccion">🍀 Protección: ${o.fallos ? `+${Math.min(100 - probEncantar(o.enc), bonoProteccion(probEncantar(o.enc), o.fallos))} % por ${o.fallos} fallo${o.fallos > 1 ? 's' : ''} seguido${o.fallos > 1 ? 's' : ''} · ` : ''}garantizado tras ${garantiaEnc(probEncantar(o.enc))} fallos seguidos</small>` : ''}
           ${degradaAl(o.enc) && !bendecir ? `<br><span class="falta">Si falla, ${PROB_DEGRADAR * 100} % de bajar a +${o.enc - 1}</span>` : ''}</p>
-        <div class="atributos">${filasTotales(valores(o, o.enc + 1), valores(o))}</div>
+        <div class="fila"><button data-acc="encantar" class="${tieneCoste(c) ? '' : 'sin-recursos'}">Encantar · ${textoCoste(c)}</button></div>
         <label class="bendicion"><input type="checkbox" id="bendecir" ${bendecir ? 'checked' : ''}> Bendición: +${BENDICION}% de éxito y no se degrada</label>
-        <div class="coste">${textoCoste(c)}</div>
-        <div class="fila"><button data-acc="encantar" ${tieneCoste(c) ? '' : 'disabled'}>Encantar</button></div>`;
+        <div class="atributos">${filasTotales(valores(o, o.enc + 1), valores(o))}</div>`;
     } else {
       cuerpo = `
         <small>Elige una línea. <b>Refinar</b> sortea atributo y estrellas; <b>Pulir</b> mantiene el atributo y solo sortea las estrellas.
@@ -2393,12 +2499,12 @@
         ${candidato ? `
           <div class="atributos"><div><span>Nuevo: ${nombreAtr(candidato.a)} ${estrellas(candidato.e)}</span><span>+${fmtAtr(candidato.a, valorLinea(o, candidato))}</span></div></div>
           <div class="fila"><button data-acc="aceptar">Aceptar</button><button data-acc="descartar">Descartar</button></div>` : `
-          <div class="fila"><button data-acc="refinar" ${tieneCoste(COSTE_REFINAR) ? '' : 'disabled'}>Refinar<br><small>${textoCoste(COSTE_REFINAR)}</small></button>
-            <button data-acc="pulir" ${tieneCoste(COSTE_PULIR) && o.lineas[lineaSel].e < 5 ? '' : 'disabled'}>Pulir ★<br><small>${textoCoste(COSTE_PULIR)}</small></button></div>`}`;
+          <div class="fila"><button data-acc="refinar" class="${tieneCoste(COSTE_REFINAR) ? '' : 'sin-recursos'}">Refinar<br><small>${textoCoste(COSTE_REFINAR)}</small></button>
+            <button data-acc="pulir" class="${tieneCoste(COSTE_PULIR) ? '' : 'sin-recursos'}" ${o.lineas[lineaSel].e < 5 ? '' : 'disabled'}>Pulir ★<br><small>${textoCoste(COSTE_PULIR)}</small></button></div>`}`;
     }
     panel.innerHTML = `
       <span class="icono" style="background-image:url(${RANURAS[m.ranura].icono});filter:${m.color || 'none'}"></span>
-      <h2>${nombreObj(o)}</h2><div class="rareza">${r.nombre} · ${RANURAS[m.ranura].nombre} · ${etiquetaCalidad(o)}</div>
+      <h2>${nombreObj(o)}</h2>
       <div class="atributos">${lineasHtml(o)}</div>
       <div class="tabs">${[['encantar', 'Encantar'], ['refinar', 'Refinar']].map(([t, n]) =>
         `<button data-tab="${t}" class="${t === herTab ? 'on' : ''}" ${candidato ? 'disabled' : ''}>${n}</button>`).join('')}</div>
@@ -2431,9 +2537,18 @@
   $('herPanel').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b || b.disabled) return;
     const o = objeto(herSel);
+    if (b.dataset.tab && !desbloqueado(b.dataset.tab)) return avisoBloqueo(b.dataset.tab);
     if (b.dataset.tab) { herTab = b.dataset.tab; lineaSel = 0; return pintarHerreria(); }
     if (b.dataset.linea) { lineaSel = +b.dataset.linea; return pintarHerreria(); }
     const acc = b.dataset.acc;
+    // sin recursos: aviso breve que no tapa la pantalla (en vez de un botón desactivado sin explicación)
+    const costeAcc = { encantar: () => costeEncantar(o, bendecir), refinar: () => COSTE_REFINAR, pulir: () => COSTE_PULIR }[acc];
+    if (costeAcc && !tieneCoste(costeAcc())) {   // qué falta, con su nombre, y al tocar el aviso de un material se explica dónde conseguirlo
+      const c = costeAcc(), mat = Object.keys(MATERIALES).find(k => c[k] && jugador.mat[k] < c[k]);
+      return mat ? mensaje(`Te falta: ${faltaCoste(c)}
+
+Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
+    }
     if (acc === 'encantar') {
       const c = costeEncantar(o, bendecir); pagar(c); contarMision('encantar');
       if (Math.random() * 100 < c.prob) { o.enc++; o.fallos = 0; avisar(`¡Éxito! +${o.enc}`); }
@@ -2529,9 +2644,14 @@
     };
   });
 
+  $('campLogin').onclick = () => abrirLogin();
+  // pruebas: "Día X +" pasa al día siguiente (reinicia lo diario; lo semanal, al cumplirse la semana)
+  $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
+  $('sumarDia').onclick = () => { if (!MODO_PRUEBAS) return; try { localStorage.setItem(DIA_PRUEBA, offsetDias + 1); } catch {} guardar(); location.reload(); };
   $('navBatalla').onclick = () => $('modoBatalla').classList.add('visible');
   $('cerrarModoBatalla').onclick = () => $('modoBatalla').classList.remove('visible');
   $('modoBatalla').addEventListener('click', e => { const b = e.target.closest('[data-modo-batalla]'); if (!b) return;
+    if (!desbloqueado(b.dataset.modoBatalla)) return avisoBloqueo(b.dataset.modoBatalla);
     $('modoBatalla').classList.remove('visible'); ir(b.dataset.modoBatalla); });
   $('abrirPruebas').onclick = () => $('pruebasMenu').classList.add('visible');
   $('cerrarPruebas').onclick = () => $('pruebasMenu').classList.remove('visible');
@@ -2543,7 +2663,9 @@
     if (!await confirmar('¿Reiniciar el personaje? Vuelve al nivel 1 sin oro, materiales ni progreso. No se puede deshacer.', 'Reiniciar', 'Cancelar')) return;
     const nombre = jugador.nombre; jugador = partidaNueva(); jugador.nombre = nombre; jugador.oro = 0;
     for (const k in jugador.mat) jugador.mat[k] = 0;
-    guardar(); location.reload();
+    // si el juego está abierto en otra pestaña, se bloquea (si no, volvería a guardar encima la partida vieja)
+    if (canalPestanas) canalPestanas.postMessage({ t: 'tomar', id: idPestana });
+    pestanaBloqueada = false; guardar(); location.reload();
   };
   $('reyesPrueba').onclick = () => { const R = revisarReyes(); R.entradas = INTENTOS_REYES; R.vencidas = {}; guardar(); pintarCampamento();
     if (pantallaActual === 'pReyes') pintarReyes(); avisar('Torre de reyes reiniciada'); };
@@ -2684,13 +2806,38 @@
             const ok = desbloqueada(c, d), dif = c.dificultades[d];
             const nota = !ok ? `🔒 ${razonBloqueo(c, d)}` : `⚡ ${ESTAMINA_CAMPANA} · ${dif.enemigos.length} enem.${superada(c.id, d) ? ' · ✔' : ''}`;
             return `<button class="d-${d}" data-campana="${c.id}" data-dif="${d}" ${ok ? '' : 'disabled'}>${DIFICULTADES[d]}<small>${nota}</small></button>`;
-          }).join('')}</div>` : `<small>🔒 ${razonBloqueo(c, 'normal')}</small>`}</div>`;
+          }).join('')}</div>${ORDEN_DIF.some(d => superada(c.id, d)) ? `<div class="difs autos">${ORDEN_DIF.map(d => superada(c.id, d)   // cada Auto debajo de su dificultad
+            ? `<button data-auto="${d}" data-campana="${c.id}" aria-label="Auto ${DIFICULTADES[d]}">⚡ Auto</button>` : '<span></span>').join('')}</div>` : ''}` : `<small>🔒 ${razonBloqueo(c, 'normal')}</small>`}</div>`;
       }).join('');
     }).join('');
     if (pantallaActual === 'pCampana') requestAnimationFrame(() => { const a = $('listaCampanas').querySelector('.actual'); if (a) a.scrollIntoView({ block: 'center' }); });
   }
   pintarCampanas();
+  // Auto (barrido): en un nivel ya superado en esa dificultad, cobra sus recompensas sin pelear gastando la misma estamina.
+  // Da lo mismo que ganar la batalla: premio, oro/XP y botín de cada enemigo (con eventos y efectos), misiones y maestría.
+  function barrido(c, d) {
+    revisarEstamina();
+    if (!superada(c.id, d)) return;
+    if (jugador.estamina < ESTAMINA_CAMPANA) return avisar('Sin estamina: vuelve mañana');
+    jugador.estamina -= ESTAMINA_CAMPANA; contarMision('estamina', ESTAMINA_CAMPANA); contarMision('victoria');
+    const dif = c.dificultades[d], b = dif.botin, ev = eventoHoy() || {}, dropEv = ev.drop || 1, g = { ...dif.premio, almas: 0 }, objetos = [];
+    for (const k of ['oro', 'xp', 'piedra', 'polvo']) g[k] = g[k] || 0;
+    for (const e of dif.enemigos) {
+      const x = e.jefe ? 3 : 1;
+      sumarLogro('enemigos'); contarMision('enemigos'); (jugador.bestiario ||= {})[e.nombre] = (jugador.bestiario[e.nombre] || 0) + 1; sumarMaestria(e.jefe ? 5 : 1);
+      g.oro += e.oro; g.xp += e.xp; g.piedra += azar(...b.piedra) * x; g.polvo += (Math.random() < b.polvo * (1 + efecto('fortuna')) * dropEv ? 1 : 0) * x;
+      if (b.cofre && Math.random() < (e.jefe ? .3 : .06) * (b.drop || 1) * (1 + efecto('fortuna')) * dropEv)
+        objetos.push(objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + (ev.caza || 0)));
+    }
+    g.oro = Math.round(g.oro * (1 + efecto('oro')) * (ev.oro || 1)); g.xp = Math.round(g.xp * (ev.xp || 1) * (1 + efecto('experiencia')));
+    g.piedra = Math.round(g.piedra * (ev.mat || 1)); g.polvo = Math.round(g.polvo * (ev.mat || 1));
+    jugador.objetos.push(...objetos);
+    ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo });
+    avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
+    pintarCampanas();
+  }
   $('listaCampanas').addEventListener('click', e => {
+    const a = e.target.closest('[data-auto]'); if (a) return barrido(CAMPANAS.find(x => x.id === a.dataset.campana), a.dataset.auto);
     const b = e.target.closest('[data-dif]'); if (!b) return;
     const c = CAMPANAS.find(x => x.id === b.dataset.campana), dif = c.dificultades[b.dataset.dif];
     iniciarCampana({ nombre: `${c.nombre} · ${DIFICULTADES[b.dataset.dif]}`, idCampana: c.id, dif: b.dataset.dif, ...dif });
@@ -3274,7 +3421,7 @@
 
   async function iniciarCampana(c) {
     revisarEstamina();
-    const coste = c.arena || c.mundial || c.torre || c.reyes ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
+    const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
     if (jugador.estamina < coste) { avisar('Sin estamina: vuelve mañana'); return; }
     jugador.estamina -= coste; if (coste) contarMision('estamina', coste); guardar(); pintarHud();
     danoHecho = 0; turnoBola = 0; turnoLanza = 0; turnoOnda = 0; turnoCura = 0; turnoEscudo = 0; escudoRestante = 0; slots[1].classList.remove('escudado'); turnoFuria = FURIA.turnos - 1; furiaRestante = 0; especialMinotauro = null; turnoTajo = 0; slots[1].classList.remove('tajando'); slots[1].classList.remove('furia'); especialAsmodeo = null; prepararMascota();
@@ -3335,15 +3482,18 @@
   $('resSalir').onclick = () => salirBatalla(campana.mundial ? 'pEvento' : campana.arena ? 'pArena' : campana.torre ? 'pTorre' : campana.reyes ? 'pReyes' : 'pCampana');
   $('resOtra').onclick = () => campana.mundial ? iniciarMundial() : campana.torre ? iniciarTorre() : iniciarCampana(campana);
 
+  $('resTexto').addEventListener('click', e => { const b = e.target.closest('[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });
+  let obtenidos = [];   // objetos ganados en la batalla: se muestran como iconos en el resultado
   function mostrarResultado(gano) {
+    obtenidos = [];
     terminada = true; auto = false;
     btnAuto.title = 'Autoataque: OFF'; btnAuto.classList.remove('activo');
     // las recompensas se cobran al terminar (victoria o derrota); abandonando no se cobra nada.
     // Torre: no cuesta estamina, así que el botín de los enemigos solo se cobra si superas el piso (si no, perder a
     // propósito sería farmeo infinito).
     const sinBotin = campana.torre && !gano;
-    if (sinBotin) ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };
-    if (gano) for (const k in campana.premio) ganado[k] = (ganado[k] || 0) + campana.premio[k];
+    if (sinBotin || campana.ayuda) ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };   // ayuda: sin recompensa
+    if (gano && !campana.ayuda) for (const k in campana.premio) ganado[k] = (ganado[k] || 0) + campana.premio[k];
     if (campana.mundial) {   // jefe mundial: recompensa según el daño causado en este intento
       ganado.oro += Math.round(danoHecho * .2); ganado.xp += Math.round(danoHecho * .1);   // ajustado a la vida actual de los jefes
       ganado.piedra += Math.floor(danoHecho / 100); ganado.polvo += Math.floor(danoHecho / 375);
@@ -3356,14 +3506,16 @@
     if (campana.mundial && ev.jefes) for (const k of ['oro', 'xp', 'piedra', 'polvo']) ganado[k] = Math.round(ganado[k] * ev.jefes);   // Día de Jefes
     ganado.xp = Math.round(ganado.xp * (1 + efecto('experiencia')));   // línea secundaria "Experiencia extra"
     let extraRes = '';
-    if (ganado.objetos.length) { jugador.objetos.push(...ganado.objetos); extraRes += `<br>🎁 ${ganado.objetos.map(o => modelo[o.modelo].nombre).join(', ')}`; }
+    obtenidos = [...ganado.objetos];
+    if (ganado.objetos.length) jugador.objetos.push(...ganado.objetos);
     if (campana.mundial) { extraRes += botinReliquia(campana.mundial, gano) + botinEquipoJefe(campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
     if (campana.arena) extraRes += resultadoArena(gano);
     if (campana.torre && gano) extraRes += pisoSuperado(campana.torre);
-    if (campana.calabozo && gano) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
+    if (campana.calabozo && gano && !campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
       extraRes += calabozoSuperado(campana.cal);
+      if (difAbierta(campana.cal, campana.calabozo)) jugador.calabozosDif[`${campana.cal}:${campana.calabozo}`] = true;
       const o = objetoAzar(OBJETO_CALABOZO[campana.calabozo], efecto('fortuna') / 3); jugador.objetos.push(o);
-      extraRes += `<br><b>🏰 Botín del calabozo: ${modelo[o.modelo].nombre}</b> (${RAREZAS[modelo[o.modelo].rareza].nombre})`;
+      obtenidos.push(o);
     }
     if (campana.reyes && gano) extraRes += reyVencido(campana.reyes);
     if ((campana.reyes || campana.calabozo) && sala) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // de vuelta a la fase previa: todos pulsan Ready otra vez
@@ -3384,10 +3536,11 @@
       pintarCampanas();
     }
     $('resTitulo').textContent = gano ? '¡Victoria!' : 'Derrota';
-    $('resTexto').innerHTML = (campana.mundial ? (gano ? `¡Has derrotado a ${enemigo.nombre}!` : `Daño causado: <b>${danoHecho}</b>. A ${enemigo.nombre} le quedan ${Math.max(0, vidaE)} de vida.`) :
-      gano ? `Has superado ${campana.nombre}.` : `Caíste ante ${enemigo.nombre}.`) +
-      `<br><br><span class="recompensa">Total ganado: ● ${ganado.oro} oro · ${ganado.xp} XP<br>🔷 ${ganado.piedra} piedras · ✨ ${ganado.polvo} polvo${ganado.almas ? ` · 💠 ${ganado.almas} almas` : ''}</span>`;
-    $('resTexto').innerHTML += extraRes + (sinBotin ? '<br><small>En la Torre el botín solo se cobra al superar el piso.</small>' : '');
+    $('resTexto').innerHTML = (campana.mundial ? (gano ? `¡Has derrotado a ${enemigo.nombre}!<br><br>` : `Daño causado: <b>${danoHecho}</b>. A ${enemigo.nombre} le quedan ${Math.max(0, vidaE)} de vida.<br><br>`) :
+      gano ? '' : `Caíste ante ${enemigo.nombre}.<br><br>`) +
+      `<span class="recompensa">Total ganado: ● ${ganado.oro} oro · ${ganado.xp} XP<br>🔷 ${ganado.piedra} piedras · ✨ ${ganado.polvo} polvo${ganado.almas ? ` · 💠 ${ganado.almas} almas` : ''}</span>`;
+    $('resTexto').innerHTML += extraRes + (sinBotin ? '<br><small>En la Torre el botín solo se cobra al superar el piso.</small>' : '')
+      + (obtenidos.length ? `<div class="obtenidos">Obtenido: ${obtenidos.map(o => `<button class="item r-${modelo[o.modelo].rareza}" data-uid="${o.uid}">${icono(modelo[o.modelo])}</button>`).join('')}</div>` : '');
     $('resOtra').textContent = campana.torre ? (gano ? `Subir al piso ${campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
     $('resOtra').style.display = (campana.mundial && gano) || campana.arena || campana.reyes || campana.calabozo ? 'none' : '';
     $('resSalir').textContent = campana.mundial ? 'Volver al evento' : campana.arena ? 'Volver a la arena' : campana.torre ? 'Volver a la torre' : campana.reyes ? 'Volver a la Torre de reyes' : campana.calabozo ? 'Volver al calabozo' : 'Volver a campaña';
@@ -3683,7 +3836,7 @@
   };
 
   // ---------------- Utilidades de recompensa y calendario ----------------
-  const ICONO_PREMIO = { oro: '●', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡' };
+  const ICONO_PREMIO = { oro: '●', xp: 'XP', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡' };
   const textoPremio = pr => Object.entries(pr).filter(([, v]) => v).map(([k, v]) => `${ICONO_PREMIO[k]} ${Math.round(v).toLocaleString('es')}`).join(' · ');
   function darPremio(pr) {
     for (const [k, v] of Object.entries(pr)) {
@@ -3693,7 +3846,7 @@
     }
   }
   // lunes de la semana actual (clave de misiones semanales y modificadores de jefe)
-  function semana() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+  function semana() { const d = ahoraJuego(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
   function azarSemilla(semilla) {   // generador reproducible (mismo piso / misma semana = mismo resultado)
     let t = [...String(semilla)].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 2654435761) >>> 0, 1779033703);
     return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ t >>> 15, 1 | t); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; };
@@ -3714,7 +3867,7 @@
     { icono: '🎁', nombre: 'Fin de semana de botín', desc: 'doble prob. de equipo y polvo', drop: 2 },   // sábado
   ];
   const eventoDia = d => EVENTOS[d];
-  function eventoHoy() { return eventoDia(new Date().getDay()); }
+  function eventoHoy() { return eventoDia(ahoraJuego().getDay()); }
 
 
   // ---------------- Modificadores (jefes semanales y Torre) ----------------
@@ -3733,22 +3886,23 @@
   const modsSemana = () => elegirMods(azarSemilla('jefes' + semana()), 2, MODIFICADORES.filter(md => !md.soloTorre));
 
   // ---------------- Torre infinita ----------------
-  // Pisos generados por fórmula: el piso n equivale al nivel de campaña 1 + (n-1)/4 en Normal, con modificadores al azar
-  // (siempre los mismos para cada piso). Jefe cada 10 pisos. No gasta estamina; recompensas al superar cada piso
-  // y botín extra cada 10. Piso ~37 ≈ 1-10 Normal; piso ~80 ≈ dificultad de Infierno con equipo de final de juego.
+  // Pisos generados por fórmula: el piso n equivale al nivel de campaña 1 + (n-1)/3,5 en Normal con +15 % de vida, y
+  // modificadores al azar (siempre los mismos para cada piso). Jefe cada 10 pisos. No gasta estamina.
+  // Una sola recompensa al superar el piso (los monstruos no sueltan botín) y hito cada 10. Antes el botín por monstruo y
+  // premios del doble permitían encadenar muchos pisos, mejorar y volver a encadenar: acortaba demasiado el juego.
   const TIPOS_TORRE = ['parca', 'sombria', 'carmesi', 'maldita', 'pantano', 'escarcha', 'ignea', 'brasas'];
   function pisoTorre(n) {
-    const rnd = azarSemilla('torre' + n), nEq = 1 + (n - 1) / 4, jefe = n % 10 === 0;
+    const rnd = azarSemilla('torre' + n), nEq = 1 + (n - 1) / 3.5, jefe = n % 10 === 0;
     const tipos = jefe ? [n % 20 === 0 ? 'bruja' : 'ancestral'] : [0, 1].map(() => TIPOS_TORRE[Math.floor(rnd() * TIPOS_TORRE.length)]);
     const d = crearDificultad(nEq, 'normal', tipos);
     const nMods = jefe ? 2 : n >= 30 || n % 5 === 0 ? 1 : 0, mods = elegirMods(rnd, nMods, MODIFICADORES);
-    for (const e of d.enemigos) for (const md of mods) md.ap(e);
+    for (const e of d.enemigos) { for (const md of mods) md.ap(e); e.vida = Math.round(e.vida * 1.15); e.oro = 0; e.xp = 0; }   // sin botín por monstruo
     return { enemigos: d.enemigos, mods, jefe,
-      premio: { oro: 100 * n, xp: 60 * n, piedra: 2 + Math.floor(n / 3), polvo: n % 5 === 0 ? 3 + Math.floor(n / 10) : 0,
-                almas: n % 5 === 0 ? 2 + Math.floor(n / 10) : 0 },   // la Torre es la fuente propia de almas (cada 5 pisos)
-      botin: { piedra: [0, 1], polvo: .15, cofre: cofreDeNivel(Math.ceil(nEq)), drop: 1 } };
+      premio: { oro: 50 * n, xp: 30 * n, piedra: 1 + Math.floor(n / 6), polvo: n % 5 === 0 ? 2 + Math.floor(n / 20) : 0,
+                almas: n % 5 === 0 ? 1 + Math.floor(n / 20) : 0 },   // la Torre es la fuente propia de almas (cada 5 pisos)
+      botin: { piedra: [0, 0], polvo: 0 }, cofreHito: cofreDeNivel(Math.ceil(nEq)) };
   }
-  const premioHito = n => ({ almas: 5 + Math.floor(n / 10) * 2, oro: 500 * n });   // cada 10 pisos
+  const premioHito = n => ({ almas: 3 + Math.floor(n / 10), oro: 250 * n });   // cada 10 pisos
   jugador.torre ||= { mejor: 0 };
   function iniciarTorre() {
     const n = jugador.torre.mejor + 1, p = pisoTorre(n);
@@ -3759,9 +3913,9 @@
     jugador.torre.mejor = n; contarMision('torre');
     let t = `<br><b>🗼 Piso ${n} superado</b>`;
     if (n % 10 === 0) {   // hito: almas, oro y un objeto del cofre de ese tramo
-      const h = premioHito(n), o = objetoAzar(COFRES.find(k => k.id === pisoTorre(n).botin.cofre).probs, .1);
+      const h = premioHito(n), o = objetoAzar(COFRES.find(k => k.id === pisoTorre(n).cofreHito).probs, .1);
       darPremio(h); jugador.objetos.push(o);
-      t += `<br>🏅 Hito: ${textoPremio(h)} · 🎁 ${modelo[o.modelo].nombre}`;
+      t += `<br>🏅 Hito: ${textoPremio(h)}`; obtenidos.push(o);
     }
     guardar(); return t;
   }
@@ -3888,48 +4042,72 @@
   let rankSel = 0;
   // ---------------- Calabozo multijugador ----------------
   // Mazmorra en grupo (hasta 3, desde una sala) contra 3 monstruos y un jefe a la vez, en el rombo. El dueño elige el
-  // calabozo (niveles dentro de la campaña: 3, 5, 8 y 10) y la dificultad; cada uno se desbloquea al superar el anterior.
-  // Cuesta estamina como la campaña y paga 1,5 veces su premio (más el botín de cada enemigo): compensa ir en grupo sin
+  // calabozo y la dificultad; cada uno se desbloquea al superar el anterior. Niveles 10/12/14/16, calibrados con un perfil
+  // de ~5,7k de poder (lo normal al desbloquearlo en Nv 25): la Cripta en Normal se pierde por poco yendo solo y se gana
+  // con 3 jugadores con ~50-75 % de vida.
+  // No gasta estamina (2 intentos al día) y paga 1,5 veces su premio (más el botín de cada enemigo): compensa ir en grupo sin
   // dejar la campaña sin sentido. Los enemigos tienen +70 % de vida por aliado.
   const CALABOZOS = [
-    { id: 1, nombre: 'Cripta del cementerio', icono: '⚰️', n: 3,  tipos: ['parca', 'sombria', 'carmesi'],  jefe: 'ancestral' },
-    { id: 2, nombre: 'Mausoleo ancestral',    icono: '🏛️', n: 5,  tipos: ['carmesi', 'maldita', 'sombria'], jefe: 'ancestral' },
-    { id: 3, nombre: 'Ciénaga de la bruja',   icono: '🌫️', n: 8,  tipos: ['pantano', 'escarcha', 'ignea'],  jefe: 'bruja' },
-    { id: 4, nombre: 'Abismo de brasas',      icono: '🌋', n: 10, tipos: ['ignea', 'brasas', 'maldita'],    jefe: 'bruja' },
+    { id: 1, nombre: 'Cripta del cementerio', icono: '⚰️', n: 10,  tipos: ['parca', 'sombria', 'carmesi'],  jefe: 'ancestral' },
+    { id: 2, nombre: 'Mausoleo ancestral',    icono: '🏛️', n: 12,  tipos: ['carmesi', 'maldita', 'sombria'], jefe: 'ancestral' },
+    { id: 3, nombre: 'Ciénaga de la bruja',   icono: '🌫️', n: 14,  tipos: ['pantano', 'escarcha', 'ignea'],  jefe: 'bruja' },
+    { id: 4, nombre: 'Abismo de brasas',      icono: '🌋', n: 16, tipos: ['ignea', 'brasas', 'maldita'],    jefe: 'bruja' },
   ];
   jugador.calabozos ||= {};
   const calabozo = id => CALABOZOS.find(c => c.id === id) || CALABOZOS[0];
   const calabozoAbierto = id => id === 1 || !!jugador.calabozos[id - 1];
+  // Dificultades: Normal abierta; cada una se desbloquea al superar la anterior en ese calabozo
+  jugador.calabozosDif ||= {};
+  const difAbierta = (id, d) => d === 'normal' || !!jugador.calabozosDif[`${id}:${ORDEN_DIF[ORDEN_DIF.indexOf(d) - 1]}`];
   const premioCalabozo = (id, dif) => Object.fromEntries(Object.entries(crearDificultad(calabozo(id).n, dif, []).premio).map(([k, v]) => [k, Math.round(v * 1.5)]));
+  // Sin estamina: 2 intentos al día
+  const INTENTOS_CALABOZO = 2;
+  function revisarCalabozo() { const C = jugador.calabozoDia ||= {}; if (C.dia !== hoy()) { C.dia = hoy(); C.entradas = INTENTOS_CALABOZO; } return C; }
   function iniciarCalabozo(dif, aliados, posiciones, id) {
+    const C = revisarCalabozo(), ayuda = C.entradas <= 0;   // sin intentos: puedes ayudar al grupo, pero no recibes recompensa
+    if (!ayuda) { C.entradas--; guardar(); }
     const c = calabozo(id), tipos = [0, 1, 2].map(() => elegir(c.tipos)), d = crearDificultad(c.n, dif, [c.jefe, ...tipos]);
-    iniciarCampana({ nombre: `${c.icono} ${c.nombre} · ${DIFICULTADES[dif]}`, calabozo: dif, cal: c.id, aliados, posiciones, premio: premioCalabozo(c.id, dif), botin: d.botin, enemigos: d.enemigos });
+    for (const e of d.enemigos) { e.vida = Math.round(e.vida * MULT_CALABOZO.vida); e.dano = e.dano.map(x => Math.round(x * MULT_CALABOZO.dano)); }
+    iniciarCampana({ nombre: `${c.icono} ${c.nombre} · ${DIFICULTADES[dif]}`, calabozo: dif, cal: c.id, ayuda, aliados, posiciones, premio: premioCalabozo(c.id, dif), botin: d.botin, enemigos: d.enemigos });
   }
+  const MULT_CALABOZO = { vida: 2.3, dano: 1.5 };   // un free player de ~5,8k lo pasaba solo: ahora pide grupo
   const OBJETO_CALABOZO = { normal: { epica: 100 }, dificil: { epica: 70, legendaria: 30 }, pesadilla: { legendaria: 90, mitica: 10 }, infierno: { legendaria: 75, mitica: 25 } };
   function calabozoSuperado(id) {
     if (jugador.calabozos[id] || !calabozoAbierto(id)) return '';   // en la sala de otro no te saltas el anterior
     jugador.calabozos[id] = true; guardar(); const sig = CALABOZOS.find(c => c.id === id + 1);
-    return `<br><b>🏰 ${calabozo(id).nombre} superado</b>${sig ? ` · desbloqueado: ${sig.icono} ${sig.nombre}` : ''}`;
+    return sig ? `<br>🔓 ${sig.icono} ${sig.nombre}` : '';
   }
   // el calabozo se elige arriba (combo): la lista muestra sus salas y "Crear sala" abre una para ese calabozo
-  let calSel = 1;
+  let calSel = 1, difCal = 'normal';
   function pintarCalabozo() {
     if (!calabozoAbierto(calSel)) calSel = 1;
+    if (!difAbierta(calSel, difCal)) difCal = 'normal';
     const enSala = sala && sala.modo === 'calabozo';
     $('calabozo').innerHTML = `<div class="liga"><span class="ic">🏰</span><div style="flex:1"><b>Calabozo multijugador</b><br>
-        <small>Tu grupo contra 3 monstruos y un jefe a la vez · superados: ${Object.keys(jugador.calabozos).length}/${CALABOZOS.length} · ⚡ ${jugador.estamina}/${ESTAMINA_MAX}</small></div>
+        <div class="difs-cab" id="difBtns"></div></div>
         <select id="calSel" class="combo" ${enSala ? 'disabled' : ''}>${CALABOZOS.map(c => `<option value="${c.id}" ${c.id === (enSala ? sala.cal : calSel) ? 'selected' : ''} ${calabozoAbierto(c.id) ? '' : 'disabled'}>${c.icono} ${c.nombre} · Nv ${c.n}${jugador.calabozos[c.id] ? ' ✔' : calabozoAbierto(c.id) ? '' : ` 🔒 supera ${calabozo(c.id - 1).nombre}`}</option>`).join('')}</select></div>
       ${(() => { const sig = CALABOZOS.find(c => !calabozoAbierto(c.id)); return sig ? `<small class="nota">🔒 ${sig.icono} ${sig.nombre}: supera ${calabozo(sig.id - 1).icono} ${calabozo(sig.id - 1).nombre} en cualquier dificultad para desbloquearlo.</small>` : ''; })()}
       <div id="calabozoCont"></div>`;
-    $('calSel').onchange = e => { calSel = +e.target.value; pintarSala(); };
+    $('calSel').onchange = e => { calSel = +e.target.value; pintarCalabozo(); };   // repinta: las dificultades abiertas dependen del calabozo
     pintarSala();
   }
-  $('calabozo').addEventListener('click', clickSala);
+  // dificultades como botones bajo el título (bloqueadas hasta superar la anterior en ese calabozo)
+  function pintarDifsCalabozo() {
+    const enSala = sala && sala.modo === 'calabozo', id = enSala ? sala.cal : calSel, actual = enSala ? sala.dif : difCal, fijo = enSala && !esDueno(sala, 'yo');
+    $('difBtns').innerHTML = ORDEN_DIF.map(d => { const ok = difAbierta(id, d);
+      return `<button class="d-${d}${d === actual ? ' on' : ''}" data-difcal="${d}" ${ok && !fijo ? '' : 'disabled'}>${DIFICULTADES[d]}${ok ? '' : ' 🔒'}</button>`; }).join('');
+  }
+  $('calabozo').addEventListener('click', e => {   // en tu sala cambia su dificultad (todos vuelven a pulsar Ready); fuera, la de la próxima sala
+    const b = e.target.closest('[data-difcal]'); if (!b) return clickSala(e);
+    if (b.disabled) return;
+    if (sala && sala.modo === 'calabozo') { if (esDueno(sala, 'yo') && sala.dif !== b.dataset.difcal) { sala.dif = b.dataset.difcal; reiniciarReady(sala); pintarSala(); } }
+    else { difCal = b.dataset.difcal; pintarDifsCalabozo(); }
+  });
 
   function pintarReyes() {
     const R = revisarReyes();
     $('reyes').innerHTML = `<div class="liga"><span class="ic">👑</span><div><b>Torre de reyes</b><br>
-        <small>Tu grupo contra los 3 reyes del servidor a la vez · intentos hoy: ${R.entradas}/${INTENTOS_REYES} · se reinicia en ${(8 - new Date().getDay()) % 7 || 7} días</small></div></div>
+        <small>Tu grupo contra los 3 reyes del servidor a la vez · intentos hoy: ${R.entradas}/${INTENTOS_REYES} · se reinicia en ${(8 - ahoraJuego().getDay()) % 7 || 7} días</small></div></div>
       <div id="reyesCont"></div>`;
     pintarSala();
   }
@@ -4011,7 +4189,8 @@
     return bots().filter(b => !fuera.has(b.nombre));
   }
   const repintarSala = () => { if (pantallaActual === 'pReyes' || pantallaActual === 'pCalabozo') pintarSala(); };
-  const puedeJugar = modo => modo === 'calabozo' ? jugador.estamina >= ESTAMINA_CAMPANA : revisarReyes().entradas > 0;
+  const puedeJugar = modo => modo === 'calabozo' ? true : revisarReyes().entradas > 0;   // calabozo sin intentos: entra como ayuda
+  const ayudaCalabozo = modo => modo === 'calabozo' && revisarCalabozo().entradas <= 0;
   function pintarListaSalas(modo, cont) {
     sembrarSalas(modo);
     const lista = modo === 'calabozo' ? salas[modo].filter(s => s.cal === calSel) : salas[modo];
@@ -4025,7 +4204,8 @@
   function pintarSala() {
     const modo = modoPantalla(), cont = contSala(modo); if (!cont) return;
     $(modo === 'calabozo' ? 'volverCalabozo' : 'volverReyes').style.visibility = sala ? 'hidden' : '';
-    if (modo === 'calabozo' && $('calSel')) { $('calSel').disabled = !!sala; if (sala) $('calSel').value = sala.cal; }   // en sala, la única salida es abandonarla
+    if (modo === 'calabozo' && $('calSel')) { $('calSel').disabled = !!sala; if (sala) $('calSel').value = sala.cal; }
+    if (modo === 'calabozo' && $('difBtns')) pintarDifsCalabozo();   // en sala, la única salida es abandonarla
     if (!sala || sala.modo !== modo) return pintarListaSalas(modo, cont);
     if (sala.trasBatalla) { sala.trasBatalla = false; reiniciarReady(sala); }
     const reyes = modo === 'reyes', R = reyes ? revisarReyes() : null, d = reyes ? DIF_REYES[sala.dif] : null, mio = esDueno(sala, 'yo'), puede = puedeJugar(modo);
@@ -4038,37 +4218,42 @@
       return `<div class="sala-slot ${m.llego ? 'lleno' : 'espera'}"><div class="pj-mini" data-retrato="${m.n === 'yo' ? '' : m.n}"></div><b>${nombreDe(m.n)}</b>${datos(p)}
         ${estado}${mio && i > 0 ? `<button data-expulsar="${m.n}">Expulsar</button>` : ''}</div>`;
     });
-    while (huecos.length < MAX_JUGADORES) huecos.push(`<div class="sala-slot"><div class="pj-mini vacio">➕</div><small>Hueco libre</small>${mio ? '<button data-invitar="1">Invitar</button>' : ''}</div>`);
+    while (huecos.length < MAX_JUGADORES) huecos.push(mio ? `<div class="sala-slot"><button class="pj-mini vacio" data-invitar="1">➕<small>Invitar</small></button></div>`
+      : `<div class="sala-slot"><div class="pj-mini vacio">➕</div></div>`);
     const pendientes = sala.miembros.slice(1).some(m => !m.listo);
-    const motivo = !puede ? (reyes ? ' (sin intentos hoy)' : ' (sin estamina)') : pendientes ? ' (esperando ready…)' : '';
+    const motivo = !puede ? ' (sin intentos hoy)' : pendientes ? ' (esperando ready…)' : '';
     cont.innerHTML = `<b>Sala #${sala.id}</b> <small>· 👥 ${sala.miembros.length}/${MAX_JUGADORES}</small><div class="sala-slots">${huecos.join('')}</div>
       ${sala.invitando ? `<div class="rey"><div class="info"><b>Invitar a un jugador</b>${candidatosSala().map(b =>
           `<small style="display:flex;align-items:center;gap:8px;justify-content:space-between">${CLASES[b.clase].icono} ${b.nombre} · Nv ${b.nivel} · ⚔ ${conPerfil(b, () => poder()).toLocaleString('es')}
            <button data-enviar="${b.nombre}" style="margin:0;min-height:30px;padding:3px 10px">Invitar</button></small>`).join('') || `<small>${MODO_PRUEBAS ? 'No hay más jugadores disponibles' : 'No hay jugadores conectados'}</small>`}</div>
           <button data-cerrar-invitar="1">Cerrar</button></div>` : ''}
-      <b>Formación</b> <small>${mio ? '· toca una casilla y luego otra para intercambiarlas' : '· la elige el dueño'}</small>
-        <div class="rombo">${POSICIONES.map(pos => { const P = posSala(sala), n = Object.keys(P).find(k => P[k] === pos);
-          return `<button class="casilla${n ? ' ocupada' : ''}${sala.selPos === pos ? ' sel' : ''}" data-pos-sala="${pos}" ${mio ? '' : 'disabled'}>${n ? `${CLASES[perfilDe(n).clase].icono} ${nombreDe(n)}` : '—'}<small>${NOMBRE_POS[pos]} · ${PESO_POS[pos]} %</small></button>`; }).join('')}</div>
+      <small><b>Formación</b> · ${mio ? 'toca dos casillas para intercambiarlas' : 'la elige el dueño'}</small>
+        <div class="rombo fila">${POSICIONES.map(pos => { const P = posSala(sala), n = Object.keys(P).find(k => P[k] === pos);
+          return `<button class="casilla${n ? ' ocupada' : ''}${sala.selPos === pos ? ' sel' : ''}" data-pos-sala="${pos}" data-pos="${pos}" ${mio ? '' : 'disabled'}>${n ? `${CLASES[perfilDe(n).clase].icono} ${nombreDe(n)}` : '—'}<small>${NOMBRE_POS[pos]} · ${PESO_POS[pos]} %</small></button>`; }).join('')}</div>
       ${reyes ? `<div class="sala-difs">${Object.entries(DIF_REYES).map(([id, x]) =>
           `<button data-dif-reyes="${id}" class="${id === sala.dif ? 'on' : ''}" ${mio ? '' : 'disabled'}>${x.nombre}<small>${Math.round(x.pct * 100)} % atributos${R.vencidas[id] ? ' · ✔' : ''}</small></button>`).join('')}</div>
         <div class="sala-rivales">${reyesSemana().map(r => `<span>${i18nPuesto(r.puesto - 1)} ${CLASES[r.clase].icono} ${r.nombre} · ⚔ ${Math.round(r.poder * d.pct).toLocaleString('es')}</span>`).join('')}</div>
         <small class="nota">Premio ${d.nombre}${R.vencidas[sala.dif] ? ' (ya cobrado esta semana)' : ''}: ${textoPremio(d.premio)}. Pesadilla o Infierno: título «Matarreyes».</small>`
-      : `<b>${calabozo(sala.cal).icono} ${calabozo(sala.cal).nombre} · Nivel ${calabozo(sala.cal).n}</b>
-        <div class="sala-difs">${ORDEN_DIF.map(id => `<button data-dif-sala="${id}" class="${id === sala.dif ? 'on' : ''}" ${mio ? '' : 'disabled'}>${DIFICULTADES[id]}</button>`).join('')}</div>
-        <div class="sala-rivales"><span>3 monstruos + 👹 ${TIPOS_ENEMIGO[calabozo(sala.cal).jefe].nombre}</span><span>+${VIDA_POR_ALIADO * 100} % de vida por aliado</span></div>
-        <small class="nota">Premio: ${textoPremio(premioCalabozo(sala.cal, sala.dif))} y el botín de cada enemigo · cuesta ⚡ ${ESTAMINA_CAMPANA}</small>`}
+      : `<div class="sala-rivales"><span>3 monstruos + 👹 ${TIPOS_ENEMIGO[calabozo(sala.cal).jefe].nombre}</span><span>+${VIDA_POR_ALIADO * 100} % de vida por aliado</span></div>`}
       <div class="sala-acciones"><button data-salir-sala="1">Abandonar sala</button>
+        ${!reyes ? `<small>Intentos: ${revisarCalabozo().entradas}/${INTENTOS_CALABOZO}</small>` : ''}
         ${mio ? `<button data-empezar="1" ${puede && !pendientes ? '' : 'disabled'}>⚔ Empezar${motivo}</button>` : `<small>${pendientes ? 'Pulsa Ready: el dueño empezará cuando todos estéis listos' : `${nombreDe(sala.miembros[0].n)} va a empezar…`}</small>`}</div>`;
     pintarRetratos(cont);
   }
-  function empezarSala() {
+  async function empezarSala() {
+    if (sala.modo === 'calabozo' && esDueno(sala, 'yo')) {
+      const solo = sala.miembros.length === 1, ayuda = ayudaCalabozo('calabozo');
+      const txt = ayuda ? 'Sin intentos restantes; calabozo sin recompensa. ¿Continuar?'
+        : solo ? 'Vas solo: el calabozo es difícil y gasta un intento. ¿Continuar?' : '';
+      if (txt && !await confirmar(txt, 'Continuar', 'Cancelar')) return;
+    }
     const aliados = sala.miembros.filter(m => m.n !== 'yo' && m.llego).map(m => m.n);
     return (sala.modo === 'calabozo' ? iniciarCalabozo : iniciarReyes)(sala.dif, aliados, { ...posSala(sala) }, sala.cal);
   }
   function clickSala(e) {
     const b = e.target.closest('button'); if (!b) return;
     const modo = modoPantalla();
-    if (b.dataset.crearSala) { sala = { id: idSala(), modo, dif: 'normal', cal: calSel, miembros: [{ n: 'yo', llego: true, listo: true }] }; salas[modo].push(sala); return pintarSala(); }
+    if (b.dataset.crearSala) { sala = { id: idSala(), modo, dif: modo === 'calabozo' ? difCal : 'normal', cal: calSel, miembros: [{ n: 'yo', llego: true, listo: true }] }; salas[modo].push(sala); return pintarSala(); }
     if (b.dataset.unirse) {
       const s = salas[modo].find(x => x.id === +b.dataset.unirse); if (!s || s.miembros.length >= MAX_JUGADORES) return;
       s.miembros.push({ n: 'yo', llego: true, listo: false }); sala = s; return pintarSala();
@@ -4138,10 +4323,39 @@
     return M;
   }
   function contarMision(ev, n = 1) { const M = revisarMisiones(); M.diaria[ev] = (M.diaria[ev] || 0) + n; M.semanal[ev] = (M.semanal[ev] || 0) + n; }
-  const loginDisponible = () => (jugador.login || {}).ultimo !== hoy();
-  const premioLogin = () => { const L = jugador.login || { dias: 0 }, k = Math.min(3, 1 + Math.floor(L.dias / 7) * .25);
+  // Login de 30 días: un casillero por día (se reclama desde el icono 📅 del Campamento); al completar el 30 vuelve al 1.
+  // No hace falta entrar días seguidos: cada día que entras reclamas el siguiente casillero.
+  function premioDia(d) {
+    if (d === 30) return { oro: 10000, almas: 30, polvo: 30 };
+    if (d % 7 === 0) return { oro: 1000 * d / 7, almas: 5 + 3 * d / 7 };
+    if (d % 5 === 0) return { polvo: 5 + d / 5, piedra: 15 };
+    return d % 2 ? { oro: 300 + 50 * d } : { piedra: 5 + d, estamina: d % 4 === 0 ? 30 : 0 };
+  }
+  const login30 = () => jugador.login30 ||= { n: 0, ultimo: null };
+  const loginDisponible = () => login30().ultimo !== hoy();
+  function abrirLogin() {
+    const L = login30(), hecho = L.n >= 30 && loginDisponible() ? 0 : L.n;   // ciclo completo: al día siguiente vuelve al 1
+    abrirModal('comun', `<h2>📅 Login diario</h2><small>Un casillero por día que entres. Al completar el 30, vuelve a empezar.</small>
+      <div class="login30">${Array.from({ length: 30 }, (_, i) => { const d = i + 1, ok = d <= hecho, hoyD = d === hecho + 1 && loginDisponible();
+        return `<button class="dia30${ok ? ' hecho' : ''}${hoyD ? ' hoy' : ''}${d % 7 === 0 || d === 30 ? ' grande' : ''}" ${hoyD ? 'data-login30="1"' : 'disabled'}>
+          <b>${d}</b><small>${ok ? '✔' : textoPremio(premioDia(d))}</small></button>`; }).join('')}</div>
+      <div class="fila"><button data-acc="cerrar">Cerrar</button></div>`);
+    $('detCaja').onclick = e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.acc === 'cerrar') return cerrarModal();
+      if (b.dataset.login30 && loginDisponible()) {
+        const L = login30(); if (L.n >= 30) L.n = 0;
+        L.n++; L.ultimo = hoy(); const pr = premioDia(L.n); darPremio(pr); guardar(); pintarHud();
+        avisar(`📅 Día ${L.n}: ${textoPremio(pr)}`); abrirLogin();
+      }
+    };
+  }
+  const premioLogin = () => premioDia(login30().n % 30 + 1); const premioLoginViejo = () => { const L = jugador.login || { dias: 0 }, k = Math.min(3, 1 + Math.floor(L.dias / 7) * .25);
     return Object.fromEntries(Object.entries(LOGIN[L.dias % 7]).map(([a, v]) => [a, Math.round(v * k)])); };
-  function misionesReclamables(tipo) { const M = revisarMisiones(); return MISIONES[tipo].filter(m => (M[tipo][m.ev] || 0) >= m.meta && !M['r' + tipo][m.id]).length; }
+  // las misiones de un modo aún bloqueado no aparecen (serían imposibles)
+  const MODO_MISION = { jefe: 'pEvento', arena: 'pArena', arenaVict: 'pArena', torre: 'pTorre', encantar: 'pHerreria' };
+  const misionesVisibles = tipo => MISIONES[tipo].filter(m => desbloqueado(MODO_MISION[m.ev]));
+  function misionesReclamables(tipo) { const M = revisarMisiones(); return misionesVisibles(tipo).filter(m => (M[tipo][m.ev] || 0) >= m.meta && !M['r' + tipo][m.id]).length; }
   function bonusDisponible(tipo) { const M = revisarMisiones(); return !M['r' + tipo].bonus && Object.keys(M['r' + tipo]).length >= BONUS_MISIONES[tipo].meta; }
 
   // ---------------- Expediciones ----------------
@@ -4155,12 +4369,12 @@
 
   let misTab = 'diaria', expMasc = null, expHoras = 4;
   function pintarMisiones() {
-    const M = revisarMisiones(), tabs = { diaria: 'Diarias', semanal: 'Semanales', login: 'Login', expedicion: 'Expedición' };
+    const M = revisarMisiones(), tabs = { diaria: 'Diarias', semanal: 'Semanales', expedicion: 'Expedición' };   // el login tiene su propio icono (📅)
     const punto = { diaria: misionesReclamables('diaria') || bonusDisponible('diaria'), semanal: misionesReclamables('semanal') || bonusDisponible('semanal'),
                     login: loginDisponible(), expedicion: expedicionLista() };
     let cuerpo = '';
     if (misTab === 'diaria' || misTab === 'semanal') {
-      const lista = MISIONES[misTab], R = M['r' + misTab], b = BONUS_MISIONES[misTab], hechas = Object.keys(R).filter(k => k !== 'bonus').length;
+      const lista = misionesVisibles(misTab), R = M['r' + misTab], b = BONUS_MISIONES[misTab], hechas = Object.keys(R).filter(k => k !== 'bonus').length;
       cuerpo = `<small class="nota">${misTab === 'diaria' ? 'Se renuevan cada día.' : 'Se renuevan cada lunes.'}</small>` + lista.map(m => {
         const v = Math.min(m.meta, M[misTab][m.ev] || 0), lista_ = v >= m.meta, rec = R[m.id];
         return `<div class="mision${rec ? ' hecha' : lista_ ? ' lista-m' : ''}"><div class="info">${m.txt}<small>${textoPremio(m.premio)}</small>
@@ -4193,13 +4407,13 @@
   $('misiones').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b || b.disabled) return;
     const M = revisarMisiones();
+    if (b.dataset.mtab && !desbloqueado(b.dataset.mtab)) return avisoBloqueo(b.dataset.mtab);
     if (b.dataset.mtab) misTab = b.dataset.mtab;
     if (b.dataset.reclamar) {   // se revalida con el estado actual: un botón viejo (p. ej. tras cambiar de día) no cobra dos veces
       const id = b.dataset.reclamar, R = M['r' + misTab], m = MISIONES[misTab].find(x => x.id === id);
       const hecha = id === 'bonus' ? Object.keys(R).filter(k => k !== 'bonus').length >= BONUS_MISIONES[misTab].meta : m && (M[misTab][m.ev] || 0) >= m.meta;
       if (!R[id] && hecha) { const pr = id === 'bonus' ? BONUS_MISIONES[misTab].premio : m.premio; R[id] = true; darPremio(pr); avisar(textoPremio(pr)); }
     }
-    if (b.id === 'reclamarLogin' && loginDisponible()) { const pr = premioLogin(); jugador.login = { ultimo: hoy(), dias: ((jugador.login || {}).dias || 0) + 1 }; darPremio(pr); avisar(textoPremio(pr)); }
     if (b.dataset.expm) expMasc = b.dataset.expm;
     if (b.dataset.exph) expHoras = +b.dataset.exph;
     if (b.id === 'mandarExp' && !jugador.expedicion) { jugador.expedicion = { mascota: expMasc, horas: expHoras, fin: Date.now() + expHoras * 3600000 }; avisar('🧭 ¡En marcha!'); }
@@ -4318,17 +4532,22 @@
     const yo = heroes.find(h => h.yo), m = mascotaActual();
     if (m) { const a = document.createElement('div'); a.className = 'acompana'; a.innerHTML = dibujoMascota(m, .4); yo.el.appendChild(a); yo.mascotaEl = a; }
     // enemigos: jefe al frente, el resto en las demás casillas; más vida si vienes en grupo
-    const lista = [...c.enemigos].sort((a, b) => (b.jefe ? 1 : 0) - (a.jefe ? 1 : 0)).slice(0, 4);
+    // monstruos: el jefe siempre en la retaguardia y el resto delante (frente, arriba, abajo); los reyes, n.º 1 al frente
+    const reyes = c.enemigos.some(e => e.perfil);
+    const lista = reyes ? c.enemigos.slice(0, 4) : [...c.enemigos.filter(e => !e.jefe), ...c.enemigos.filter(e => e.jefe)].slice(0, 4);
+    const nJefes = reyes ? 0 : lista.filter(e => e.jefe).length, delante = POSICIONES.filter(p => p !== 'atras');
+    const posDe = (e0, i) => reyes ? POSICIONES[i] : e0.jefe && nJefes === 1 ? 'atras' : (nJefes === 1 ? delante : POSICIONES)[i];
     const enemigos = lista.map((e0, i) => {
       if (e0.perfil) return unidadRey(e0, POSICIONES[i]);
-      const e = { ...e0, vida: Math.round(e0.vida * (1 + VIDA_POR_ALIADO * (heroes.length - 1))) }, u = crearUnidad(1, POSICIONES[i], e.nombre);
+      const e = { ...e0, vida: Math.round(e0.vida * (1 + VIDA_POR_ALIADO * (heroes.length - 1))) }, u = crearUnidad(1, posDe(e0, i), e.nombre);
       u.e = e; u.st = { ataque: 0, defensa: 0, vida: e.vida, armadura: e.armadura || 0 }; u.vida = u.vidaMax = e.vida;
       if (e.jefe) u.el.classList.add('jefe');
       u.el.querySelector('.frames').style.filter = e.filtro || '';
       u.pj = personaje(u.el, 260); pintarVida(u.el, u.vida, u.vidaMax);
       return u;
     });
-    grupo = { heroes, enemigos, turnoMascota: 0 };
+    grupo = { heroes, enemigos, turnoMascota: 0, objetivo: null };
+    objetivoJugador();   // se marca el frontal desde el inicio
     enemigo = enemigos[0].e;   // para los textos del resultado
     ajustarGrupo();
     if (c.reyes) avisar('¡Los 3 reyes!'); else if (enemigos.some(u => u.e.jefe)) avisar('¡Jefe!');
@@ -4397,6 +4616,18 @@
     if (control) { fxU(u, 'num-cura', `${control.icono} Pierde el turno`); await wait(500); }
     return !!control;
   }
+  // Objetivo del jugador: el enemigo que toque (golpes y habilidades van a él). Si no eligió o cayó, el más adelantado
+  // (frente, arriba, abajo, retaguardia); también en autoataque. Aliados y enemigos siguen eligiendo por posición.
+  function objetivoJugador() {
+    let t = grupo.objetivo && grupo.objetivo.vida > 0 ? grupo.objetivo : null;
+    if (!t) t = POSICIONES.map(p => grupo.enemigos.find(e => e.pos === p && e.vida > 0)).find(Boolean) || vivos(grupo.enemigos)[0];
+    marcarObjetivo(t); return t;
+  }
+  function marcarObjetivo(t) { grupo.objetivo = t; for (const e of grupo.enemigos) e.el.classList.toggle('objetivo', e === t); }
+  arenaG.addEventListener('click', e => {
+    const el = e.target.closest('.unidad'); if (!el || !grupo) return;
+    const t = grupo.enemigos.find(x => x.el === el); if (t && t.vida > 0) marcarObjetivo(t);
+  });
   async function morirU(u) {
     u.el.classList.add('muerto');
     if (!u.heroe && !u.e.rey) cobrarU(u);   // los reyes no dan botín: el premio es el de la dificultad
@@ -4450,7 +4681,7 @@
   async function accionHeroe(u, hab, rivales = grupo.enemigos) {   // un jugador ataca: héroe contra enemigos, o rey contra héroes
     if (await tickU(u)) return;
     if (!vivos(rivales).length) return;
-    const t = hab ? objetivoAlAzar(rivales) : objetivoPorPosicion(rivales);
+    const t = u.yo && rivales === grupo.enemigos ? objetivoJugador() : hab ? objetivoAlAzar(rivales) : objetivoPorPosicion(rivales);
     const regreso = await animHeroe(u, t, hab);
     if (t.perfil && Math.random() < t.ef('esquiva')) { fxU(t, 'num-cura', '💨 Esquiva'); await wait(250); if (regreso) await regreso(); return; }
     let dano = danoGuerrero(u.st), critico = false;
@@ -4559,14 +4790,14 @@
   function avisosCampamento() {
     const masc = MASCOTAS.some(m => { const n = nivelMascota(m); return n > 0 && n < MASCOTA_MAX && jugador.oro >= costeMejora(m, n); });
     const jefe = entradasJefe() > 0 && Object.keys(MUNDIALES).some(id => estadoMundial(id).vida > 0);
-    const mis = misionesReclamables('diaria') || misionesReclamables('semanal') || bonusDisponible('diaria') || bonusDisponible('semanal') || loginDisponible() || expedicionLista();
+    const mis = misionesReclamables('diaria') || misionesReclamables('semanal') || bonusDisponible('diaria') || bonusDisponible('semanal') || expedicionLista();   // el login avisa en su propio icono
     const R = revisarReyes();
     return { reyes: R.entradas > 0 && Object.keys(R.vencidas).length < 4, misiones: mis, arena: revisarArena().entradas > 0, arbol: puntosLibres() > 0, titulos: !!jugador.tituloNuevo, mascota: masc, batalla: jugador.estamina >= ESTAMINA_MAX, jefe };
   }
   // Objetivos cercanos ("me falta poco"): de todo lo que el jugador puede perseguir, se muestran los 3 más avanzados.
   // Tocar uno lleva a su pantalla.
   function objetivosCercanos() {
-    const L = [], add = (icono, txt, pct, ir) => { if (pct < 1) L.push({ icono, txt, pct: Math.max(0, pct), ir }); };
+    const L = [], add = (icono, txt, pct, ir) => { if (pct < 1 && desbloqueado(ir)) L.push({ icono, txt, pct: Math.max(0, pct), ir }); };
     if (jugador.nivel < NIVEL_MAX) add('⭐', `Nivel ${jugador.nivel + 1}`, jugador.xp / xpParaSubir(jugador.nivel), 'pInventario');
     const ma = maestria(); if (ma.n < MAESTRIA_MAX) add('🏅', ma.n < MAESTRIA_ESPECIAL ? `Maestría Nv ${MAESTRIA_ESPECIAL}: especialización` : `Maestría Nv ${ma.n + 1}`, ma.n < MAESTRIA_ESPECIAL ? (ma.n + ma.xp / ma.falta) / MAESTRIA_ESPECIAL : ma.xp / ma.falta, 'pArbol');
     const k = skinActual(); if (k && estrellasSkin(k.id) < 5) add('✨', `${k.nombre} ★${estrellasSkin(k.id) + 1}`, jugador.oro / COSTE_ESTRELLA(estrellasSkin(k.id)), 'pInventario');
@@ -4575,8 +4806,11 @@
     for (const uid of Object.values(jugador.equipado)) { const o = objeto(uid), q = pctCalidad(o);
       if (q >= 65 && q < 100) add('💎', `${modelo[o.modelo].nombre}: ${calidadObj(o)[1].toLowerCase()} (${q} %)`, q / 100, 'pHerreria');
       if (o.enc < encMax(o)) add('🔨', `${modelo[o.modelo].nombre} +${o.enc + 1}`, Math.min(jugador.mat.piedra / (o.enc + 1), jugador.oro / costeEncantar(o).oro, 1) * .99, 'pHerreria'); }
-    add('🗼', `Torre: piso ${jugador.torre.mejor + 1}`, (jugador.torre.mejor % 10) / 10, 'pTorre');
-    const cal = CALABOZOS.find(c => !jugador.calabozos[c.id]); if (cal && calabozoAbierto(cal.id)) add('🏰', `Supera ${cal.nombre}`, (cal.id - 1) / CALABOZOS.length, 'pCalabozo');
+    const mejor = (jugador.torre || {}).mejor || 0;   // partidas sin Torre ni Calabozo todavía: no debe romper el campamento
+    add('🗼', `Torre: piso ${mejor + 1}`, (mejor % 10) / 10, 'pTorre');
+    const cal = CALABOZOS.find(c => !(jugador.calabozos || {})[c.id]); if (cal && calabozoAbierto(cal.id)) add('🏰', `Supera ${cal.nombre}`, (cal.id - 1) / CALABOZOS.length, 'pCalabozo');
+    const sig = Object.entries(DESBLOQUEOS).filter(([id]) => !desbloqueado(id)).sort((a, b) => a[1][0] - b[1][0])[0];
+    if (sig && sig[1][0] - jugador.nivel <= 3) add('🔓', `${sig[1][1]} en Nv ${sig[1][0]}`, (jugador.nivel + jugador.xp / xpParaSubir(jugador.nivel)) / sig[1][0], 'menu');
     const vistos = new Set();   // uno por tipo, para que no salgan tres encantamientos
     return L.sort((a, b) => b.pct - a.pct).filter(o => !vistos.has(o.icono) && vistos.add(o.icono)).slice(0, 3);
   }
@@ -4592,13 +4826,18 @@
     $('campNombre').innerHTML = `${etiquetaTitulo(tituloActual())}${jugador.nombre} · ${c.nombre} Nv ${jugador.nivel}`;
     $('campMascota').innerHTML = m ? dibujoMascota(m, .3) : '';
     pintarObjetivos();
+    document.querySelectorAll('#menu [data-ir], #modoBatalla [data-modo-batalla], .heroe-tabs [data-ir], [data-invtab]').forEach(b => {
+      const id = b.dataset.ir || b.dataset.modoBatalla || b.dataset.invtab, ok = desbloqueado(id);
+      b.classList.toggle('bloqueado', !ok); if (ok) delete b.dataset.nv; else b.dataset.nv = `Nv ${nivelDesbloqueo(id)}`;
+    });
     $('campArbol').classList.toggle('con-punto', a.arbol);
     $('campTitulos').classList.toggle('con-punto', a.titulos);
     $('campJefe').classList.toggle('con-punto', a.jefe);
     $('campArena').classList.toggle('con-punto', a.arena);
     $('campMisiones').classList.toggle('con-punto', !!a.misiones);
     $('campReyes').classList.toggle('con-punto', a.reyes);
-    const ev = eventoHoy(), man = eventoDia((new Date().getDay() + 1) % 7);
+    $('campLogin').classList.toggle('con-punto', loginDisponible());
+    const ev = eventoHoy(), man = eventoDia((ahoraJuego().getDay() + 1) % 7);
     $('campEvento').innerHTML = ev ? `${ev.icono} ${ev.nombre}: ${ev.desc}<small> · mañana: ${man.icono} ${man.nombre}</small>` : '';
     $('navHeroe').classList.toggle('con-punto', a.arbol || a.titulos);
     $('navMascota').classList.toggle('con-punto', a.mascota);

@@ -31,11 +31,38 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 ### 🏰 Calabozo multijugador
 - Al pulsar BATALLA eliges entre 📜 Campaña y 🏰 Calabozo multijugador.
 - El calabozo usa las mismas salas que la Torre de reyes (lista, crear/unirse, invitar, Ready, formación). Tu grupo lucha contra 3 monstruos y un jefe a la vez.
-- El calabozo se elige en un combo arriba de la lista: se ven sus salas y «Crear sala» abre una para ese calabozo. 4 calabozos: ⚰️ Cripta del cementerio (Nv 3), 🏛️ Mausoleo ancestral (Nv 6), 🌫️ Ciénaga de la bruja (Nv 9) y 🌋 Abismo de brasas (Nv 14); cada uno se desbloquea al superar el anterior. La dificultad la elige el dueño en la sala; cambiarla obliga a pulsar Ready otra vez.
-- Cuesta ⚡ 10 como la campaña y paga el doble de su premio, más el botín de cada enemigo. +70 % de vida enemiga por aliado.
+- El calabozo se elige en un combo arriba de la lista: se ven sus salas y «Crear sala» abre una para ese calabozo. 4 calabozos: ⚰️ Cripta del cementerio (Nv 10), 🏛️ Mausoleo ancestral (Nv 12), 🌫️ Ciénaga de la bruja (Nv 14) y 🌋 Abismo de brasas (Nv 16), calibrados para que con ~5,5k de poder la Cripta en Normal no se pase solo y se gane con 3 jugadores (enemigos del calabozo con ×2,3 de vida y ×1,5 de daño sobre su nivel). La dificultad se elige con botones bajo el título; cada uno se desbloquea al superar el anterior. Dificultades: solo Normal abierta; cada una se desbloquea al superar la anterior en ese calabozo. La dificultad la elige el dueño; cambiarla obliga a pulsar Ready otra vez.
+- No gasta estamina: 2 intentos al día. Si vas solo, pide confirmación (es difícil). Sin intentos puedes entrar igual a ayudar, sin recompensa (se avisa antes). Paga 1,5 veces el premio de la campaña de su nivel, más el botín de cada enemigo. +70 % de vida enemiga por aliado.
 - Turno con tiempo en multijugador (calabozo y Torre de reyes): tienes 10 s para elegir tu ataque; si no pulsas nada, se lanza un ataque normal. La cuenta se ve sobre el botón de atacar y se pausa con el autoataque.
 - Sin acelerador en multijugador (calabozo y Torre de reyes): se juega a x1 y el botón ⏩ no aparece, salvo en modo pruebas. En combates individuales (campaña, torre, arena, jefes) sigue igual.
 - Cambiar la dificultad de una sala devuelve a todos a la fase previa: hay que pulsar Ready otra vez.
+
+### 🗼 Torre rebalanceada y materiales explicados
+- Torre: los monstruos ya no sueltan botín; solo hay una recompensa al superar el piso, y es la mitad que antes (● 50 × piso, 30 XP × piso, menos piedras, polvo y almas cada 5 pisos; hito cada 10: ● 250 × piso y 3 + piso/10 almas). Dificultad algo mayor: el piso n equivale a campaña 1 + (n−1)/3,5 (antes /4) con +15 % de vida. Antes se encadenaban muchos pisos, se mejoraba con lo ganado y se volvía a encadenar, acortando el juego.
+- Materiales: al tocar 🔷 ✨ 💠 en la barra de la Herrería o en el inventario se explica qué es, para qué sirve y dónde conseguirlo. Si falta un material al encantar, refinar o pulir, el aviso dice su nombre y dónde conseguirlo (con OK); si solo falta oro, sigue siendo un aviso breve.
+
+### 🎯 Objetivo y jefe atrás (batallas en grupo)
+- El jefe de los monstruos va siempre en la retaguardia; el resto, delante. Los reyes mantienen su orden.
+- Tocar un enemigo lo elige como objetivo (diana 🎯 y brillo rojo): tus golpes y habilidades van a él. Sin elegir, o si cae, se marca el más adelantado; también en autoataque.
+
+### 📅 Login de 30 días
+- Pruebas: botón «Día X +» arriba en el Campamento. Cada + adelanta un día la fecha del juego: reinicia misiones diarias, login, estamina, entradas y evento del día; lo semanal se reinicia al cumplirse la semana. Solo en modo pruebas.
+- Nuevo icono 📅 Login en la fila de arriba del Campamento (con aviso rojo si hoy toca). Abre una ventana con 30 casilleros: cada día que entras se activa el siguiente (no hace falta que sean seguidos). Premios crecientes, más grandes los días 7, 14, 21 y 28, y el 30 (● 10 000, 💠 30, ✨ 30). Al completar el 30 vuelve al 1.
+- Sustituye al login de 7 días de Misiones.
+
+### ⚡ Auto en campaña
+- En cada nivel de campaña ya superado aparece «⚡ Auto <dificultad>» para las dificultades superadas: cobra las recompensas sin pelear gastando ⚡ 10, como una partida. Da lo mismo que ganarla (premio, oro y XP de los enemigos, piedras, polvo y probabilidad de equipo, con eventos y efectos) y cuenta para misiones, bestiario y maestría. Solo en campaña.
+
+### 🔓 Desbloqueo por nivel
+- Curva de experiencia: igual hasta el nivel 30; desde ahí cada nivel cuesta ×1,03 más por nivel. Nv 51 pasa de 435k a 570k de XP total y Nv 80 de 1,35 M a ~3,4 M.
+- Los candados también se aplican en modo pruebas (solo los bots siguen siendo exclusivos de pruebas).
+- 🎒 Inventario: nuevo acceso en la fila de iconos del Campamento con todos los objetos (con filtros) y los materiales; en Héroe → Objetos queda el equipo puesto y un botón al inventario.
+- Las funciones se abren poco a poco: Herrería Nv 3 · Mascotas Nv 5 · Habilidades Nv 8 · Torre Nv 10 · Refinar y pulir Nv 12 · Arena Nv 15 · Runas, reliquias y expediciones Nv 18 · Skins, títulos y colección Nv 20 · Calabozo Nv 25 · Jefes mundiales Nv 30 · Torre de reyes Nv 35.
+- Lo bloqueado se ve apagado con «🔒 Nv X»; al tocarlo, un aviso dice cuándo se abre. Al subir al nivel, «🔓 ¡Desbloqueado: …!».
+- Las misiones de modos bloqueados no aparecen. El próximo desbloqueo sale en 🎯 Objetivos cuando faltan 3 niveles o menos.
+- Quien ya pasó el nivel, o ha ascendido, lo tiene todo abierto. En modo pruebas, todo está abierto.
+- Bug: el diálogo de confirmación y el aviso de pestaña duplicada estaban dentro de la pantalla de batalla y no se veían fuera de ella (reiniciar, desguazar, fundir runas, ascender, guardar el árbol). Ahora están a nivel de página.
+- Botón de pruebas: reiniciar el personaje (nivel 1, sin oro ni materiales, conserva el nombre).
 
 ### ✨ Pulido — skins, Poder, economía y bugs
 - Skins: el efecto especial crece con las estrellas (★1 60 % → ★5 100 % de su valor, más brillo en ★5); la ficha muestra lo que da la siguiente ★. Bonos pequeños con identidad (Infernal daño, Cristalino crítico, Necro-guardián aguante, Áurico economía, Obsidiana jefes); ninguna es obligatoria.
