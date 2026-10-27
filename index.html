@@ -879,6 +879,7 @@
       <button class="prueba" id="puntosPrueba">+5 puntos de habilidad (pruebas)</button>
       <div class="prueba-check" id="perfilesPrueba"></div>
       <label class="prueba-check"><input type="checkbox" id="pruebasBatalla"> Botones de prueba en batalla</label>
+      <label class="prueba-check"><input type="checkbox" id="vistaVertical"> Vista vertical</label>
       <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
       <button id="cerrarPruebas">Cerrar</button>
     </div></div>
@@ -1062,10 +1063,15 @@
   // Pantallas grandes en horizontal (escritorio, tablet): el juego se dibuja a ALTO_DISENO px de alto, como en un móvil
   // en horizontal, y se amplía entero para llenar la ventana; así se ve igual que en el móvil pero grande, no diminuto.
   const ALTO_DISENO = 412;
+  // pruebas: "Vista vertical" simula un móvil en vertical (lienzo 9:19.5 centrado) aunque la ventana esté en horizontal
+  let vistaVertical = false;
+  try { vistaVertical = MODO_PRUEBAS && !!localStorage.getItem('batalla.vistaVertical'); } catch {}
   function ajustarLienzo() {
-    const W = innerWidth, H = innerHeight, b = document.body, ampliar = W > H && H > 520;
+    const W = innerWidth, H = innerHeight, b = document.body, ampliar = !vistaVertical && W > H && H > 520;
     const k = ampliar ? H / ALTO_DISENO : 1;
-    b.style.width = ampliar ? `${W / k}px` : ''; b.style.height = ampliar ? `${ALTO_DISENO}px` : '';
+    b.style.width = ampliar ? `${W / k}px` : vistaVertical ? `${Math.min(W, Math.round(H * 9 / 19.5))}px` : '';
+    b.style.height = ampliar ? `${ALTO_DISENO}px` : '';
+    b.style.margin = vistaVertical ? '0 auto' : '';
     b.style.transform = ampliar ? `scale(${k})` : '';
     document.documentElement.classList.toggle('ampliado', ampliar);
   }
@@ -2696,6 +2702,10 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const ponerPruebasBatalla = on => { document.documentElement.classList.toggle('con-pruebas-batalla', on); $('pruebasBatalla').checked = on;
     try { localStorage.setItem('batalla.pruebasBatalla', on ? '1' : ''); } catch {} };
   $('pruebasBatalla').onchange = e => ponerPruebasBatalla(e.target.checked);
+  $('vistaVertical').checked = vistaVertical;
+  $('vistaVertical').onchange = e => { vistaVertical = e.target.checked;
+    try { localStorage.setItem('batalla.vistaVertical', vistaVertical ? '1' : ''); } catch {}
+    dispatchEvent(new Event('resize')); };   // reajusta lienzo, escala de batalla y UI
   try { ponerPruebasBatalla(!!localStorage.getItem('batalla.pruebasBatalla')); } catch { ponerPruebasBatalla(false); }
 
   montarGuerrero($('vitrina'));
