@@ -227,6 +227,7 @@
   #otraPestana { z-index:2000; background:#000e; } #otraPestana p { text-align:center; line-height:1.4; } #otraPestana .fila { display:flex; justify-content:center; }
   #dialogo { z-index:1000; } #dialogo p { margin:4px 0 12px; text-align:center; line-height:1.4; white-space:pre-line; } #dialogo .fila { display:flex; gap:8px; justify-content:center; }
   #pruebasMenu .caja { display:flex; flex-direction:column; gap:8px; }
+  #botParar { position:fixed; left:8px; bottom:8px; z-index:1500; min-height:36px; padding:4px 12px; font-size:13px; color:#8adf3c; background:#000c; border-color:#8adf3c; }
   /* Móvil en horizontal (poca altura): todo más compacto; los accesos laterales en 2 columnas a la derecha
      y el héroe desplazado a la izquierda para que no se tapen */
   @container (orientation:landscape) and (max-height:520px) {
@@ -881,9 +882,12 @@
       <button class="prueba" id="puntosPrueba">+5 puntos de habilidad (pruebas)</button>
       <div class="prueba-check" id="perfilesPrueba"></div>
       <label class="prueba-check"><input type="checkbox" id="pruebasBatalla"> Botones de prueba en batalla</label>
+      <button class="prueba" id="botRepetir">🤖 Bot: repetir batalla (pruebas)</button>
+      <button class="prueba" id="botJugar">🤖 Bot: jugar solo (pruebas)</button>
       <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
       <button id="cerrarPruebas">Cerrar</button>
     </div></div>
+    <button class="prueba" id="botParar" hidden>🤖 Parar bot</button>
   </div>
 
   <!-- Inventario -->
@@ -1055,6 +1059,9 @@
 
 <script>
   const $ = id => document.getElementById(id);
+  // Estado de la batalla en curso (vidas, estados, contadores de habilidades de jefes, botín...). Todo junto en un objeto
+  // para poder reiniciarlo, guardarlo o simular batallas aparte de la pantalla. Cada parte define sus campos donde se usa.
+  const batalla = {};
   let campListo = false;   // el campamento se pinta cuando todo el juego está definido
   // Modo pruebas: solo en el equipo de desarrollo. Abriendo el archivo directamente (file://), o en un servidor local
   // en 127.0.0.1 con ?pruebas. En la web desplegada (https://dominio) y en la app Android (https://localhost) nunca se
@@ -1936,7 +1943,7 @@ ${nuevos.join(' · ')}`), 1200);
   }
   // Al terminar un intento contra un jefe mundial: reliquia segura si lo derrotas; si no, probabilidad según el daño
   function botinReliquia(jefe, gano) {
-    const prob = gano ? 1 : Math.min(.6, .15 + danoHecho / MUNDIALES[jefe].enemigo.vida * 3);
+    const prob = gano ? 1 : Math.min(.6, .15 + batalla.danoHecho / MUNDIALES[jefe].enemigo.vida * 3);
     if (Math.random() >= prob) return '';
     const r = elegir(RELIQUIAS.filter(x => x.jefe === jefe)); jugador.reliquias ||= {};
     if (nivelReliquia(r.id) >= RELIQUIA_MAX) { jugador.mat.polvo += 30; return `<br>${r.icono} ${r.nombre} (ya al máximo): ✨ +30 polvo`; }
@@ -1950,7 +1957,7 @@ ${nuevos.join(' · ')}`), 1200);
   const GARANTIA_JEFE = 8;
   function botinEquipoJefe(jefe, gano) {
     const P = jugador.pityJefe ||= {}; P[jefe] = (P[jefe] || 0) + 1;
-    const prob = (gano ? .35 : Math.min(.1, danoHecho / MUNDIALES[jefe].enemigo.vida * .5)) * ((eventoHoy() || {}).jefes || 1);
+    const prob = (gano ? .35 : Math.min(.1, batalla.danoHecho / MUNDIALES[jefe].enemigo.vida * .5)) * ((eventoHoy() || {}).jefes || 1);
     if (Math.random() >= prob && P[jefe] < GARANTIA_JEFE) return `<br><small class="proteccion">🍀 Pieza de set garantizada en ${GARANTIA_JEFE - P[jefe]} intento${GARANTIA_JEFE - P[jefe] > 1 ? 's' : ''}</small>`;
     const garantia = P[jefe] >= GARANTIA_JEFE; P[jefe] = 0;
     const todas = MODELOS.filter(m => m.jefe === jefe), faltan = todas.filter(m => !jugador.objetos.some(o => o.modelo === m.id));
@@ -2898,15 +2905,15 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const avanceReal = mov => Math.max(20, mov - recorteAvance);
   function ajustarEscala() {
     recorteAvance = SEPARACION - (parseFloat(getComputedStyle(arena).columnGap) || SEPARACION);
-    const grande = enemigo && (enemigo.jefe || enemigo.cerbero || enemigo.asmodeo || enemigo.minotauro);   // los jefes ocupan más
-    const alto = grande ? 470 : 270, ancho = (enemigo && enemigo.cerbero ? 1080 : grande ? 960 : 820) - recorteAvance;
+    const grande = batalla.enemigo && (batalla.enemigo.jefe || batalla.enemigo.cerbero || batalla.enemigo.asmodeo || batalla.enemigo.minotauro);   // los jefes ocupan más
+    const alto = grande ? 470 : 270, ancho = (batalla.enemigo && batalla.enemigo.cerbero ? 1080 : grande ? 960 : 820) - recorteAvance;
     const esc = document.querySelector('.escena'), lienzo = document.body;   // medidas del lienzo (no de la ventana: puede estar ampliado)
     const hueco = esc && esc.clientHeight > 50 ? esc.clientHeight - 34 : lienzo.clientHeight - 220;   // 34: rótulo "Enemigo 1/3"
     const e = Math.min(1, (lienzo.clientWidth - 32) / ancho, hueco / alto);
     arena.style.transform = `scale(${e})`;
     arena.style.marginTop = `${-(1 - e) * 240 + (alto - 270) * e}px`;   // recupera el espacio que deja la escala
   }
-  addEventListener('resize', () => campana && campana.grupo ? ajustarGrupo() : ajustarEscala());
+  addEventListener('resize', () => batalla.campana && batalla.campana.grupo ? ajustarGrupo() : ajustarEscala());
 
   // muestra cuánto se curó alguien (guerrero o enemigo): número verde grande sobre su barra de vida
   function mostrarCura(slot, cantidad, icono = '') {
@@ -3021,8 +3028,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       aplica: { estado: 'quemadura', prob: .8, turnos: 3, pct: .3 } },
   );
   // Habilidades de la batalla: las de la clase (las de nodo, si están aprendidas), con las mejoras del árbol
-  let HABILIDADES = [], alientoUsado = false, bastionUsado = false;
-  const carga = {};
+  let HABILIDADES = []; batalla.alientoUsado = false; batalla.bastionUsado = false;
+  batalla.carga = {};
   // habilidades de la clase del jugador actual (con conPerfil, de cualquier perfil) con las mejoras de su árbol
   function calcularHabilidades() {
     const aprendidos = nodosClase().filter(n => rango(n.id));
@@ -3038,12 +3045,12 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   function montarHabilidades() {
     const { habs, llenas } = calcularHabilidades(); HABILIDADES = habs;
-    for (const id in carga) delete carga[id];
-    HABILIDADES.forEach(h => carga[h.id] = llenas ? h.turnos : 0);
+    for (const id in batalla.carga) delete batalla.carga[id];
+    HABILIDADES.forEach(h => batalla.carga[h.id] = llenas ? h.turnos : 0);
     $('habilidades').innerHTML = HABILIDADES.map(h => `<button class="especial" data-hab="${h.id}"></button>`).join('');
-    alientoUsado = bastionUsado = false;
+    batalla.alientoUsado = batalla.bastionUsado = false;
   }
-  const habLista = () => HABILIDADES.find(h => carga[h.id] >= h.turnos) || null;
+  const habLista = () => HABILIDADES.find(h => batalla.carga[h.id] >= h.turnos) || null;
   montarHabilidades();
   $('pruebas').innerHTML = HAB_TODAS.map(h => `<button class="prueba" data-hab="${h.id}" data-prueba="1">${h.nombre} (prueba, sin espera)</button>`).join('') +
     `<button class="prueba" id="infernalPrueba" hidden>Cerbero a modo infernal (prueba)</button>` +
@@ -3051,27 +3058,27 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     `<button class="prueba" id="minoPrueba" hidden>Minotauro al 70 % de vida (prueba)</button>`;
   function pintarEspecial() {
     for (const h of HABILIDADES) {
-      const b = document.querySelector(`#habilidades [data-hab="${h.id}"]`), falta = h.turnos - carga[h.id];
+      const b = document.querySelector(`#habilidades [data-hab="${h.id}"]`), falta = h.turnos - batalla.carga[h.id];
       // botón con el símbolo de la habilidad y los turnos que faltan; el nombre queda como etiqueta (al mantener o pasar el ratón)
       b.innerHTML = `<span class="hab-ic">${h.icono}</span>${falta > 0 ? `<i class="hab-cd">${falta}</i>` : ''}`;
       b.title = h.nombre; b.setAttribute('aria-label', h.nombre);
       b.style.setProperty('--cd', falta > 0 ? falta / h.turnos : 0);
       b.classList.toggle('cargada', falta <= 0);   // 'cargada' (no 'lista': esa clase es la lista de niveles de la campaña)
-      b.disabled = falta > 0 || enRonda || auto || terminada;
+      b.disabled = falta > 0 || enRonda || auto || batalla.terminada;
     }
-    document.querySelectorAll('#pruebas button').forEach(b => b.disabled = enRonda || auto || terminada);
+    document.querySelectorAll('#pruebas button').forEach(b => b.disabled = enRonda || auto || batalla.terminada);
   }
   document.querySelector('#pBatalla').addEventListener('click', e => {
     const b = e.target.closest('[data-hab]'); if (!b || b.disabled) return;
     const h = HABILIDADES.find(x => x.id === b.dataset.hab) || HAB_TODAS.find(x => x.id === b.dataset.hab);
-    if (b.dataset.prueba || carga[h.id] >= h.turnos) ronda(h);
+    if (b.dataset.prueba || batalla.carga[h.id] >= h.turnos) ronda(h);
   });
 
   const ataques = [
     () => guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
-    () => enemigo.cerbero ? ataqueCerbero() : enemigo.asmodeo ? ataqueAsmodeo() : enemigo.minotauro ? ataqueMinotauro() : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
-      [1, 220], [2, 260, enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),
+    tipo => batalla.enemigo.cerbero ? ataqueCerbero(tipo) : batalla.enemigo.asmodeo ? ataqueAsmodeo(tipo) : batalla.enemigo.minotauro ? ataqueMinotauro(tipo) : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
+      [1, 220], [2, 260, batalla.enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),
   ];
 
   // ---------------- Jefe mundial: Cerbero ----------------
@@ -3087,7 +3094,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   //  bola de fuego: cada 4 turnos, quema el 10 % de la vida máxima del guerrero (ignora armadura y defensa)
   //  lanzallamas largo: cada 2 turnos, daño x1.4. Si coinciden, va primero la bola de fuego.
   const BOLA_FUEGO = { turnos: 4, quemadura: .10 }, LANZALLAMAS = { turnos: 2, mult: 1.4 };
-  let infernal = false, turnoBola = 0, turnoLanza = 0, danoHecho = 0, especialCerbero = null;
+  Object.assign(batalla, { infernal: false, turnoBola: 0, turnoLanza: 0, danoHecho: 0, especialCerbero: null });
   // ---------------- Jefe mundial: Asmodeo ----------------
   // Hoja img/jefes/asmodeo/asmodeo.png (150x200 por cuadro): 0 reposo, 4 preparar, 5 barrido, 6 garras, 7 onda de alas,
   // 8-12 muerte (acaba en cristal), 13 daño, 14 retroceso, 15 curación, 16 victoria.
@@ -3096,7 +3103,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const ONDA_ALAS = { turnos: 3, mult: 1.5 }, CURACION = { turnos: 5, pct: .04 };   // 4 % (el 10 % anterior anulaba casi todo el daño con su vida actual)
   // escudo: solo por debajo del 50 %, cada 5 turnos suyos; reduce un 80 % el daño recibido durante 3 golpes del guerrero
   const ESCUDO = { turnos: 5, reduce: .8, dura: 3 };
-  let turnoOnda = 0, turnoCura = 0, turnoEscudo = 0, escudoRestante = 0, especialAsmodeo = null;
+  Object.assign(batalla, { turnoOnda: 0, turnoCura: 0, turnoEscudo: 0, escudoRestante: 0, especialAsmodeo: null });
 
   // Jefes mundiales: cada uno con su vida diaria (compartida entre intentos), su premio y su ranking
   const MUNDIALES = {
@@ -3121,7 +3128,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   // Gran Tajo: cada 5 turnos suyos (sin importar su vida) salta, abre un arco de fuego y lo estrella contra el suelo:
   // golpe al 300 % y además quita el 10 % de la vida máxima del guerrero (ignora armadura y defensa).
   const GRAN_TAJO = { turnos: 5, mult: 3, quema: .10, avance: 240 };
-  let turnoFuria = FURIA.turnos, furiaRestante = 0, especialMinotauro = null, turnoTajo = 0;
+  Object.assign(batalla, { turnoFuria: FURIA.turnos, furiaRestante: 0, especialMinotauro: null, turnoTajo: 0 });
   MUNDIALES.minotauro = { enemigo: MINOTAURO, titulo: 'Gran Minotauro, coloso del laberinto', estamina: 20,
     premio: { oro: 5000, xp: 2500, piedra: 50, polvo: 18 },
     retrato: () => 'background:url(img/jefes/minotauro/minotauro.png) 0 0 / 7000px 230px no-repeat; width:280px; height:230px',
@@ -3194,7 +3201,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   // aspecto del enemigo según su tipo (parca, Cerbero o Asmodeo)
   function modoJefe() {
-    const c = !!enemigo.cerbero, a = !!enemigo.asmodeo, mi = !!enemigo.minotauro;
+    const c = !!batalla.enemigo.cerbero, a = !!batalla.enemigo.asmodeo, mi = !!batalla.enemigo.minotauro;
     slots[1].classList.toggle('asmodeo', a);
     slots[1].classList.toggle('minotauro', mi);
     modoCerbero(c);
@@ -3207,11 +3214,11 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   function modoCerbero(activo) {
     slots[1].classList.toggle('cerbero', activo);
     $('pBatalla').classList.toggle('mazmorra', activo);
-    $('pBatalla').classList.toggle('infernal', activo && infernal);
+    $('pBatalla').classList.toggle('infernal', activo && batalla.infernal);
     parca.setAncho(activo ? 480 : 260);
-    parca.setBase(activo && infernal ? 12 : 0);
+    parca.setBase(activo && batalla.infernal ? 12 : 0);
     parca.frames.classList.remove('quieto');   // si murió en la pelea anterior quedaba congelado en el cuadro de muerte
-    $('infernalPrueba').hidden = !activo || infernal;
+    $('infernalPrueba').hidden = !activo || batalla.infernal;
     parca.ver(parca.base);
   }
   // reposo: un solo cuadro de pie; el movimiento es solo la respiración del CSS
@@ -3263,32 +3270,30 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     })();
     return impacto;
   }
-  function ataqueCerbero() {
-    turnoBola++; turnoLanza++;
-    especialCerbero = !infernal ? null : turnoBola >= BOLA_FUEGO.turnos ? 'bola' : turnoLanza >= LANZALLAMAS.turnos ? 'lanza' : null;
-    if (especialCerbero === 'bola') { turnoBola = 0; return bolaFuego(); }
-    if (especialCerbero === 'lanza') { turnoLanza = 0; return lanzallamas(); }
-    const b = infernal ? 16 : 4;
-    return parca.jugar([[b, 180], [b + 1, 200, enemigo.avance, sonidoMordisco], [b + 2, 150], [b + 3, 220, , r => r()], [b + 3, 200, 0]]);
+  function ataqueCerbero(tipo) {   // tipo: lo que decidió el motor (decidirAtaqueEnemigo)
+    if (tipo === 'bola') return bolaFuego();
+    if (tipo === 'lanza') return lanzallamas();
+    const b = batalla.infernal ? 16 : 4;
+    return parca.jugar([[b, 180], [b + 1, 200, batalla.enemigo.avance, sonidoMordisco], [b + 2, 150], [b + 3, 220, , r => r()], [b + 3, 200, 0]]);
   }
   // prueba: deja a Asmodeo en el 50 % (activa curación y escudo); su escudo se carga ya para verlo en su próximo turno
   $('minoPrueba').onclick = () => {
-    if (enRonda || terminada || !enemigo.minotauro) return;
-    vidaE = Math.min(vidaE, Math.floor(enemigo.vida * FURIA.umbral)); pintarVida(slots[1], vidaE, enemigo.vida);
-    turnoFuria = FURIA.turnos - 1; avisar('Minotauro al 70 %');
+    if (enRonda || batalla.terminada || !batalla.enemigo.minotauro) return;
+    batalla.vidaE = Math.min(batalla.vidaE, Math.floor(batalla.enemigo.vida * FURIA.umbral)); pintarVida(slots[1], batalla.vidaE, batalla.enemigo.vida);
+    batalla.turnoFuria = FURIA.turnos - 1; avisar('Minotauro al 70 %');
   };
   $('asmodeoPrueba').onclick = () => {
-    if (enRonda || terminada || !enemigo.asmodeo) return;
-    vidaE = Math.min(vidaE, Math.floor(enemigo.vida / 2)); pintarVida(slots[1], vidaE, enemigo.vida);
-    turnoEscudo = ESCUDO.turnos - 1; avisar('Asmodeo al 50 %');
+    if (enRonda || batalla.terminada || !batalla.enemigo.asmodeo) return;
+    batalla.vidaE = Math.min(batalla.vidaE, Math.floor(batalla.enemigo.vida / 2)); pintarVida(slots[1], batalla.vidaE, batalla.enemigo.vida);
+    batalla.turnoEscudo = ESCUDO.turnos - 1; avisar('Asmodeo al 50 %');
   };
   $('infernalPrueba').onclick = async () => {
-    if (enRonda || terminada || infernal || !enemigo.cerbero) return;
-    vidaE = Math.min(vidaE, Math.floor(enemigo.vida / 2)); pintarVida(slots[1], vidaE, enemigo.vida);
+    if (enRonda || batalla.terminada || batalla.infernal || !batalla.enemigo.cerbero) return;
+    batalla.vidaE = Math.min(batalla.vidaE, Math.floor(batalla.enemigo.vida / 2)); pintarVida(slots[1], batalla.vidaE, batalla.enemigo.vida);
     await transformar();
   };
-  async function transformar() {
-    infernal = true;
+  async function transformar() { batalla.infernal = true; await animarTransformacion(); }
+  async function animarTransformacion() {
     const d = document.createElement('div'); d.className = 'destello'; document.body.appendChild(d); setTimeout(() => d.remove(), 1300);
     avisar('¡MODO INFERNAL!');
     arena.classList.add('tiembla');
@@ -3313,22 +3318,12 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     })();
     return impacto;
   }
-  function ataqueAsmodeo() {
-    turnoOnda++; turnoCura++;
-    const herido = vidaE <= enemigo.vida / 2;
-    if (herido) turnoEscudo++;
-    if (herido && !escudoRestante && turnoEscudo >= ESCUDO.turnos) {   // el escudo usa su turno, como la curación
-      turnoEscudo = 0; especialAsmodeo = 'escudo';
-      return escudoAsmodeo();
-    }
-    if (herido && turnoCura >= CURACION.turnos) {
-      turnoCura = 0; especialAsmodeo = 'cura';
-      return curacionAsmodeo();
-    }
-    if (turnoOnda >= ONDA_ALAS.turnos) { turnoOnda = 0; especialAsmodeo = 'onda'; return ondaAlas(); }
-    especialAsmodeo = null;
-    const g = Math.random() < .5 ? 6 : 5;   // ráfaga de garras o barrido
-    return parca.jugar([[4, 260], [g, 240, enemigo.avance, sonidoGruñido], [g, 220, , r => r()], [g, 180, 0]]);
+  function ataqueAsmodeo(tipo) {
+    if (tipo === 'escudo') return escudoAsmodeo();
+    if (tipo === 'cura') return curacionAsmodeo();
+    if (tipo === 'onda') return ondaAlas();
+    const g = tipo === 'garras' ? 6 : 5;   // ráfaga de garras o barrido
+    return parca.jugar([[4, 260], [g, 240, batalla.enemigo.avance, sonidoGruñido], [g, 220, , r => r()], [g, 180, 0]]);
   }
   // escudo: mueve los brazos, genera el aura y el círculo, el aura se desvanece y vuelve a su pose;
   // después queda un brillo del color del aura mientras el escudo esté activo.
@@ -3359,14 +3354,11 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   // Gran Minotauro: levanta la espada, avanza y barre; furia: ruge, se envuelve en aura y vuelve a su pose
   // brillando en naranja mientras dura.
-  function ataqueMinotauro() {
-    if (vidaE <= enemigo.vida * FURIA.umbral && !furiaRestante && ++turnoFuria >= FURIA.turnos) {
-      turnoFuria = 0; especialMinotauro = 'furia';
+  function ataqueMinotauro(tipo) {
+    if (tipo === 'furia')
       return parca.jugar([[0, 200], [20, 180, , sonidoMinotauro], [21, 180], [22, 200], [23, 300, , r => r()], [24, 260], [0, 120]]);
-    }
-    if (++turnoTajo >= GRAN_TAJO.turnos) { turnoTajo = 0; especialMinotauro = 'tajo'; return granTajo(); }
-    especialMinotauro = furiaRestante > 0 ? 'golpe-furia' : null;
-    return parca.jugar([[6, 150], [7, 130], [8, 140], [9, 160, enemigo.avance, sonidoMinotauro], [10, 110], [11, 120, , r => { sonidoEspadaMinotauro(); r(); }], [12, 180], [12, 140, 0]]);
+    if (tipo === 'tajo') return granTajo();
+    return parca.jugar([[6, 150], [7, 130], [8, 140], [9, 160, batalla.enemigo.avance, sonidoMinotauro], [10, 110], [11, 120, , r => { sonidoEspadaMinotauro(); r(); }], [12, 180], [12, 140, 0]]);
   }
   // Gran Tajo: alza la espada, salta hacia el guerrero, abre el arco, la estrella contra el suelo (impacto),
   // la explosión de fuego cubre al guerrero, se disipa y vuelve a su sitio.
@@ -3423,7 +3415,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const danoRecibido = (bruto, st) => Math.max(1, Math.round(bruto * factorDefensa(st)));
 
   // Estado de la batalla
-  let campana, iEnemigo, vidaG, vidaMaxG, vidaE, enemigo, st, ganado, terminada = true;
+  batalla.terminada = true;   // y por batalla: campana, enemigo, st (estadísticas del jugador), iEnemigo, vidaG, vidaMaxG, vidaE y ganado
 
   function pintarVida(slot, actual, max) {
     const barra = slot.querySelector('.barra');
@@ -3431,18 +3423,22 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     barra.classList.toggle('baja', actual / max < .3);
   }
 
-  async function sacarEnemigo(i) {
-    enemigo = campana.enemigos[i]; iEnemigo = i; estados[1] = {}; inmuneControl = 0; turnoRival = 0; pintarEstados();
-    vidaE = campana.mundial ? estadoMundial(campana.mundial).vida : enemigo.vida;   // el jefe mundial conserva el daño de otros intentos
-    infernal = !!enemigo.cerbero && vidaE <= enemigo.vida / 2;
-    modoJefe();
-    $('nombreEnemigo').textContent = infernal ? 'Cerbero infernal' : enemigo.nombre;
-    $('oleada').textContent = campana.mundial || campana.arena || campana.reyes ? '' : campana.torre ? `Piso ${campana.torre} · ${i + 1}/${campana.enemigos.length}` : `Enemigo ${i + 1} / ${campana.enemigos.length}`;   // jefe mundial y arena: ya lo dice el título
-    parca.frames.style.filter = enemigo.filtro;
-    slots[1].classList.toggle('jefe', !!enemigo.jefe);
-    if (enemigo.jefe || enemigo.cerbero || enemigo.asmodeo || enemigo.minotauro) avisar(enemigo.jefe ? '¡Jefe!' : `¡${enemigo.nombre}!`);
+  async function sacarEnemigo(i) { siguienteEnemigo(i); await mostrarEnemigo(); }
+  function siguienteEnemigo(i) {   // motor: el enemigo i entra en combate
+    batalla.enemigo = batalla.campana.enemigos[i]; batalla.iEnemigo = i; batalla.estados[1] = {}; batalla.inmuneControl = 0; batalla.turnoRival = 0;
+    batalla.vidaE = batalla.campana.mundial ? estadoMundial(batalla.campana.mundial).vida : batalla.enemigo.vida;   // el jefe mundial conserva el daño de otros intentos
+    batalla.infernal = !!batalla.enemigo.cerbero && batalla.vidaE <= batalla.enemigo.vida / 2;
+  }
+  async function mostrarEnemigo() {
+    const i = batalla.iEnemigo;
+    pintarEstados(); modoJefe();
+    $('nombreEnemigo').textContent = batalla.infernal ? 'Cerbero infernal' : batalla.enemigo.nombre;
+    $('oleada').textContent = batalla.campana.mundial || batalla.campana.arena || batalla.campana.reyes ? '' : batalla.campana.torre ? `Piso ${batalla.campana.torre} · ${i + 1}/${batalla.campana.enemigos.length}` : `Enemigo ${i + 1} / ${batalla.campana.enemigos.length}`;   // jefe mundial y arena: ya lo dice el título
+    parca.frames.style.filter = batalla.enemigo.filtro;
+    slots[1].classList.toggle('jefe', !!batalla.enemigo.jefe);
+    if (batalla.enemigo.jefe || batalla.enemigo.cerbero || batalla.enemigo.asmodeo || batalla.enemigo.minotauro) avisar(batalla.enemigo.jefe ? '¡Jefe!' : `¡${batalla.enemigo.nombre}!`);
     ajustarEscala();
-    pintarVida(slots[1], vidaE, enemigo.vida);
+    pintarVida(slots[1], batalla.vidaE, batalla.enemigo.vida);
     slots[1].classList.remove('muerto');
     slots[1].classList.add('entra');
     await wait(50);
@@ -3455,7 +3451,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
     if (jugador.estamina < coste) { avisar('Sin estamina: vuelve mañana'); return; }
     jugador.estamina -= coste; if (coste) contarMision('estamina', coste); guardar(); pintarHud();
-    danoHecho = 0; turnoBola = 0; turnoLanza = 0; turnoOnda = 0; turnoCura = 0; turnoEscudo = 0; escudoRestante = 0; slots[1].classList.remove('escudado'); turnoFuria = FURIA.turnos - 1; furiaRestante = 0; especialMinotauro = null; turnoTajo = 0; slots[1].classList.remove('tajando'); slots[1].classList.remove('furia'); especialAsmodeo = null; prepararMascota();
+    batalla.id = (batalla.id || 0) + 1;   // identifica la batalla: lo que quede por dibujar de otra anterior se descarta
+    batalla.danoHecho = 0; batalla.turnoBola = 0; batalla.turnoLanza = 0; batalla.turnoOnda = 0; batalla.turnoCura = 0; batalla.turnoEscudo = 0; batalla.escudoRestante = 0; slots[1].classList.remove('escudado'); batalla.turnoFuria = FURIA.turnos - 1; batalla.furiaRestante = 0; batalla.especialMinotauro = null; batalla.turnoTajo = 0; slots[1].classList.remove('tajando'); slots[1].classList.remove('furia'); batalla.especialAsmodeo = null; prepararMascota();
     // por si se salió a mitad de un ataque: ambos vuelven a su sitio
     slots.forEach(s => { s.querySelector('.pj').style.transform = ''; s.classList.remove('golpeado'); });
     marcoGuerrero.classList.remove('carga');
@@ -3465,12 +3462,12 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     const multi = !!(c.reyes || c.calabozo) && !MODO_PRUEBAS;
     $('btnVel').style.display = multi ? 'none' : '';
     if (multi) { VELOCIDAD = 1; document.documentElement.style.setProperty('--vel', 1); } else ponerVelocidad(velElegida);
-    campana = c; montarHabilidades(); st = estadisticas(); vidaMaxG = vidaG = st.vida; ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] }; terminada = false;
-    estados = [{}, {}]; pintarEstados();
+    batalla.campana = c; montarHabilidades(); batalla.st = estadisticas(); batalla.vidaMaxG = batalla.vidaG = batalla.st.vida; batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] }; batalla.terminada = false;
+    batalla.estados = [{}, {}]; pintarEstados();
     $('tituloBatalla').textContent = c.nombre;
     $('nombreGuerrero').innerHTML = `${etiquetaTitulo(tituloActual())}${jugador.nombre} · ${CLASES[jugador.clase].nombre} Nv ${jugador.nivel}`;
     $('resultado').classList.remove('visible');
-    pintarVida(slots[0], vidaG, vidaMaxG);
+    pintarVida(slots[0], batalla.vidaG, batalla.vidaMaxG);
     btn.disabled = false;
     ir('pBatalla');
     const pista = c.mundial ? musicaEpica : musica;
@@ -3480,18 +3477,18 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
 
   function salirBatalla(destino) {
-    if (campana && campana.mundial) {
-      const e = estadoMundial(campana.mundial);
-      if (!terminada) { e.mio = (e.mio || 0) + danoHecho; danoHecho = 0; }   // abandono: el daño cuenta para el ranking
-      e.vida = Math.max(0, vidaE); guardar(); destino = destino === 'pCampana' ? 'pEvento' : destino; }
-    if (campana && campana.arena && !terminada) avisar(resultadoArena(false).replace(/<[^>]+>/g, ' ').trim());   // huir de la arena = derrota
-    if (campana && campana.arena && destino === 'pCampana') destino = 'pArena';
-    if (campana && campana.torre && destino === 'pCampana') destino = 'pTorre';
-    if (campana && campana.reyes && destino === 'pCampana') destino = 'pReyes';
-    if (campana && campana.calabozo && destino === 'pCampana') destino = 'pCalabozo';
-    if (campana && !terminada) campana.abandonada = true;   // la ronda en curso ya no cuenta muertes ni botín
-    if (campana && (campana.reyes || campana.calabozo) && sala && !terminada) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // huyendo también
-    terminada = true; auto = false;
+    if (batalla.campana && batalla.campana.mundial) {
+      const e = estadoMundial(batalla.campana.mundial);
+      if (!batalla.terminada) { e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; }   // abandono: el daño cuenta para el ranking
+      e.vida = Math.max(0, batalla.vidaE); guardar(); destino = destino === 'pCampana' ? 'pEvento' : destino; }
+    if (batalla.campana && batalla.campana.arena && !batalla.terminada) avisar(resultadoArena(false).replace(/<[^>]+>/g, ' ').trim());   // huir de la arena = derrota
+    if (batalla.campana && batalla.campana.arena && destino === 'pCampana') destino = 'pArena';
+    if (batalla.campana && batalla.campana.torre && destino === 'pCampana') destino = 'pTorre';
+    if (batalla.campana && batalla.campana.reyes && destino === 'pCampana') destino = 'pReyes';
+    if (batalla.campana && batalla.campana.calabozo && destino === 'pCampana') destino = 'pCalabozo';
+    if (batalla.campana && !batalla.terminada) batalla.campana.abandonada = true;   // la ronda en curso ya no cuenta muertes ni botín
+    if (batalla.campana && (batalla.campana.reyes || batalla.campana.calabozo) && sala && !batalla.terminada) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // huyendo también
+    batalla.terminada = true; auto = false;
     btnAuto.title = 'Autoataque: OFF'; btnAuto.classList.remove('activo');
     musica.pause(); musicaEpica.pause();
     $('resultado').classList.remove('visible');
@@ -3499,7 +3496,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   // Abandonar: hay que confirmarlo y no se cobra nada de lo ganado en la batalla
   $('huir').onclick = () => {
-    if (terminada) return salirBatalla('pCampana');
+    if (enRonda) return;   // ataque en curso: se puede salir al terminar la ronda
+    if (batalla.terminada) return salirBatalla('pCampana');
     modalFijo = true;
     abrirModal('comun', `<h2>¿Abandonar la batalla?</h2>
       <p>Si sales ahora <b>no recibirás ninguna recompensa</b> (oro, experiencia ni materiales) y la estamina gastada no se devuelve.</p>
@@ -3510,75 +3508,75 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       if (acc === 'salir') salirBatalla('pCampana');
     };
   };
-  $('resSalir').onclick = () => salirBatalla(campana.mundial ? 'pEvento' : campana.arena ? 'pArena' : campana.torre ? 'pTorre' : campana.reyes ? 'pReyes' : 'pCampana');
-  $('resOtra').onclick = () => campana.mundial ? iniciarMundial() : campana.torre ? iniciarTorre() : iniciarCampana(campana);
+  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
+  $('resOtra').onclick = () => batalla.campana.mundial ? iniciarMundial() : batalla.campana.torre ? iniciarTorre() : iniciarCampana(batalla.campana);
 
   $('resTexto').addEventListener('click', e => { const b = e.target.closest('[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });
   let obtenidos = [];   // objetos ganados en la batalla: se muestran como iconos en el resultado
   function mostrarResultado(gano) {
     obtenidos = [];
-    terminada = true; auto = false;
+    batalla.terminada = true; auto = false;
     btnAuto.title = 'Autoataque: OFF'; btnAuto.classList.remove('activo');
     // las recompensas se cobran al terminar (victoria o derrota); abandonando no se cobra nada.
     // Torre: no cuesta estamina, así que el botín de los enemigos solo se cobra si superas el piso (si no, perder a
     // propósito sería farmeo infinito).
-    const sinBotin = campana.torre && !gano;
-    if (sinBotin || campana.ayuda) ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };   // ayuda: sin recompensa
-    if (gano && !campana.ayuda) for (const k in campana.premio) ganado[k] = (ganado[k] || 0) + campana.premio[k];
-    if (campana.mundial) {   // jefe mundial: recompensa según el daño causado en este intento
-      ganado.oro += Math.round(danoHecho * .2); ganado.xp += Math.round(danoHecho * .1);   // ajustado a la vida actual de los jefes
-      ganado.piedra += Math.floor(danoHecho / 100); ganado.polvo += Math.floor(danoHecho / 375);
-      estadoMundial(campana.mundial).vida = Math.max(0, vidaE);
+    const sinBotin = batalla.campana.torre && !gano;
+    if (sinBotin || batalla.campana.ayuda) batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };   // ayuda: sin recompensa
+    if (gano && !batalla.campana.ayuda) for (const k in batalla.campana.premio) batalla.ganado[k] = (batalla.ganado[k] || 0) + batalla.campana.premio[k];
+    if (batalla.campana.mundial) {   // jefe mundial: recompensa según el daño causado en este intento
+      batalla.ganado.oro += Math.round(batalla.danoHecho * .2); batalla.ganado.xp += Math.round(batalla.danoHecho * .1);   // ajustado a la vida actual de los jefes
+      batalla.ganado.piedra += Math.floor(batalla.danoHecho / 100); batalla.ganado.polvo += Math.floor(batalla.danoHecho / 375);
+      estadoMundial(batalla.campana.mundial).vida = Math.max(0, batalla.vidaE);
     }
     const ev = eventoHoy() || {};   // eventos por calendario
-    ganado.oro = Math.round(ganado.oro * (1 + efecto('oro')) * (ev.oro || 1) * (campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
-    ganado.xp = Math.round(ganado.xp * (ev.xp || 1));
-    ganado.piedra = Math.round(ganado.piedra * (ev.mat || 1)); ganado.polvo = Math.round(ganado.polvo * (ev.mat || 1));   // Día de la Forja
-    if (campana.mundial && ev.jefes) for (const k of ['oro', 'xp', 'piedra', 'polvo']) ganado[k] = Math.round(ganado[k] * ev.jefes);   // Día de Jefes
-    ganado.xp = Math.round(ganado.xp * (1 + efecto('experiencia')));   // línea secundaria "Experiencia extra"
+    batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
+    batalla.ganado.xp = Math.round(batalla.ganado.xp * (ev.xp || 1));
+    batalla.ganado.piedra = Math.round(batalla.ganado.piedra * (ev.mat || 1)); batalla.ganado.polvo = Math.round(batalla.ganado.polvo * (ev.mat || 1));   // Día de la Forja
+    if (batalla.campana.mundial && ev.jefes) for (const k of ['oro', 'xp', 'piedra', 'polvo']) batalla.ganado[k] = Math.round(batalla.ganado[k] * ev.jefes);   // Día de Jefes
+    batalla.ganado.xp = Math.round(batalla.ganado.xp * (1 + efecto('experiencia')));   // línea secundaria "Experiencia extra"
     let extraRes = '';
-    obtenidos = [...ganado.objetos];
-    if (ganado.objetos.length) jugador.objetos.push(...ganado.objetos);
-    if (campana.mundial) { extraRes += botinReliquia(campana.mundial, gano) + botinEquipoJefe(campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
-    if (campana.arena) extraRes += resultadoArena(gano);
-    if (campana.torre && gano) extraRes += pisoSuperado(campana.torre);
-    if (campana.calabozo && gano && !campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
-      extraRes += calabozoSuperado(campana.cal);
-      if (difAbierta(campana.cal, campana.calabozo)) jugador.calabozosDif[`${campana.cal}:${campana.calabozo}`] = true;
-      const o = objetoAzar(OBJETO_CALABOZO[campana.calabozo], efecto('fortuna') / 3); jugador.objetos.push(o);
+    obtenidos = [...batalla.ganado.objetos];
+    if (batalla.ganado.objetos.length) jugador.objetos.push(...batalla.ganado.objetos);
+    if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano) + botinEquipoJefe(batalla.campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
+    if (batalla.campana.arena) extraRes += resultadoArena(gano);
+    if (batalla.campana.torre && gano) extraRes += pisoSuperado(batalla.campana.torre);
+    if (batalla.campana.calabozo && gano && !batalla.campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
+      extraRes += calabozoSuperado(batalla.campana.cal);
+      if (difAbierta(batalla.campana.cal, batalla.campana.calabozo)) jugador.calabozosDif[`${batalla.campana.cal}:${batalla.campana.calabozo}`] = true;
+      const o = objetoAzar(OBJETO_CALABOZO[batalla.campana.calabozo], efecto('fortuna') / 3); jugador.objetos.push(o);
       obtenidos.push(o);
     }
-    if (campana.reyes && gano) extraRes += reyVencido(campana.reyes);
-    if ((campana.reyes || campana.calabozo) && sala) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // de vuelta a la fase previa: todos pulsan Ready otra vez
-    if (gano && campana.idCampana) contarMision('victoria');
-    if (campana.mundial) contarMision('jefe');
-    if (campana.arena) contarMision('arena');
-    ganar(ganado.oro, ganado.xp, { piedra: ganado.piedra, polvo: ganado.polvo, almas: ganado.almas || 0 });
-    if (gano && campana.mundial) { jugador.logros ||= {}; (jugador.logros.jefes ||= {})[campana.mundial] = true; guardar(); }
-    if (gano && campana.idCampana) {
+    if (batalla.campana.reyes && gano) extraRes += reyVencido(batalla.campana.reyes);
+    if ((batalla.campana.reyes || batalla.campana.calabozo) && sala) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // de vuelta a la fase previa: todos pulsan Ready otra vez
+    if (gano && batalla.campana.idCampana) contarMision('victoria');
+    if (batalla.campana.mundial) contarMision('jefe');
+    if (batalla.campana.arena) contarMision('arena');
+    ganar(batalla.ganado.oro, batalla.ganado.xp, { piedra: batalla.ganado.piedra, polvo: batalla.ganado.polvo, almas: batalla.ganado.almas || 0 });
+    if (gano && batalla.campana.mundial) { jugador.logros ||= {}; (jugador.logros.jefes ||= {})[batalla.campana.mundial] = true; guardar(); }
+    if (gano && batalla.campana.idCampana) {
       jugador.superadas = jugador.superadas || {};
-      const clave = `${campana.idCampana}:${campana.dif}`, sig = ORDEN_DIF[ORDEN_DIF.indexOf(campana.dif) + 1];
+      const clave = `${batalla.campana.idCampana}:${batalla.campana.dif}`, sig = ORDEN_DIF[ORDEN_DIF.indexOf(batalla.campana.dif) + 1];
       if (!jugador.superadas[clave]) {
         jugador.superadas[clave] = true; guardar();
-        const nx = CAMPANAS[CAMPANAS.findIndex(x => x.id === campana.idCampana) + 1];
-        if (campana.dif === 'normal' && nx) setTimeout(() => avisar(`${nx.id} desbloqueado`), 600);
-        if (sig) setTimeout(() => avisar(`${campana.idCampana} ${DIFICULTADES[sig]} desbloqueado`), campana.dif === 'normal' && nx ? 2200 : 600);
+        const nx = CAMPANAS[CAMPANAS.findIndex(x => x.id === batalla.campana.idCampana) + 1];
+        if (batalla.campana.dif === 'normal' && nx) setTimeout(() => avisar(`${nx.id} desbloqueado`), 600);
+        if (sig) setTimeout(() => avisar(`${batalla.campana.idCampana} ${DIFICULTADES[sig]} desbloqueado`), batalla.campana.dif === 'normal' && nx ? 2200 : 600);
       }
       pintarCampanas();
     }
     $('resTitulo').textContent = gano ? '¡Victoria!' : 'Derrota';
-    $('resTexto').innerHTML = (campana.mundial ? (gano ? `¡Has derrotado a ${enemigo.nombre}!<br><br>` : `Daño causado: <b>${danoHecho}</b>. A ${enemigo.nombre} le quedan ${Math.max(0, vidaE)} de vida.<br><br>`) :
-      gano ? '' : `Caíste ante ${enemigo.nombre}.<br><br>`) +
-      `<span class="recompensa">Total ganado: ● ${ganado.oro} oro · ${ganado.xp} XP<br>🔷 ${ganado.piedra} piedras · ✨ ${ganado.polvo} polvo${ganado.almas ? ` · 💠 ${ganado.almas} almas` : ''}</span>`;
+    $('resTexto').innerHTML = (batalla.campana.mundial ? (gano ? `¡Has derrotado a ${batalla.enemigo.nombre}!<br><br>` : `Daño causado: <b>${batalla.danoHecho}</b>. A ${batalla.enemigo.nombre} le quedan ${Math.max(0, batalla.vidaE)} de vida.<br><br>`) :
+      gano ? '' : `Caíste ante ${batalla.enemigo.nombre}.<br><br>`) +
+      `<span class="recompensa">Total ganado: ● ${batalla.ganado.oro} oro · ${batalla.ganado.xp} XP<br>🔷 ${batalla.ganado.piedra} piedras · ✨ ${batalla.ganado.polvo} polvo${batalla.ganado.almas ? ` · 💠 ${batalla.ganado.almas} almas` : ''}</span>`;
     $('resTexto').innerHTML += extraRes + (sinBotin ? '<br><small>En la Torre el botín solo se cobra al superar el piso.</small>' : '')
       + (obtenidos.length ? `<div class="obtenidos">Obtenido: ${obtenidos.map(o => `<button class="item r-${modelo[o.modelo].rareza}" data-uid="${o.uid}">${icono(modelo[o.modelo])}</button>`).join('')}</div>` : '');
-    $('resOtra').textContent = campana.torre ? (gano ? `Subir al piso ${campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
-    $('resOtra').style.display = (campana.mundial && gano) || campana.arena || campana.reyes || campana.calabozo ? 'none' : '';
-    $('resSalir').textContent = campana.mundial ? 'Volver al evento' : campana.arena ? 'Volver a la arena' : campana.torre ? 'Volver a la torre' : campana.reyes ? 'Volver a la Torre de reyes' : campana.calabozo ? 'Volver al calabozo' : 'Volver a campaña';
+    $('resOtra').textContent = batalla.campana.torre ? (gano ? `Subir al piso ${batalla.campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
+    $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo ? 'none' : '';
+    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : 'Volver a campaña';
     $('resultado').classList.add('visible');
-    if (campana.mundial) { const e = estadoMundial(campana.mundial); e.mio = (e.mio || 0) + danoHecho; danoHecho = 0; guardar(); }
-    if (!gano && enemigo.minotauro) { parca.frames.classList.add('quieto'); parca.ver(19); }   // rugido de victoria
-    if (!gano && enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(16); }   // pose de victoria
+    if (batalla.campana.mundial) { const e = estadoMundial(batalla.campana.mundial); e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; guardar(); }
+    if (!gano && batalla.enemigo.minotauro) { parca.frames.classList.add('quieto'); parca.ver(19); }   // rugido de victoria
+    if (!gano && batalla.enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(16); }   // pose de victoria
   }
 
   // ---------------- Efectos de estado ----------------
@@ -3592,47 +3590,60 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     congelacion:  { icono: '❄️', nombre: 'Congelación', control: true },
     aturdimiento: { icono: '💫', nombre: 'Aturdimiento', control: true },
   };
-  let estados = [{}, {}];   // 0 guerrero, 1 enemigo: id -> { turnos, dano, pilas }
-  let inmuneControl = 0, turnoRival = 0;   // turnos en que el jefe no puede volver a ser controlado · turnos del rival de arena
-  function pintarEstados() {
-    for (const i of [0, 1]) $('estados' + i).innerHTML = Object.entries(estados[i]).map(([id, e]) =>
+  batalla.estados = [{}, {}];   // 0 guerrero, 1 enemigo: id -> { turnos, dano, pilas }
+  batalla.inmuneControl = 0; batalla.turnoRival = 0;   // turnos en que el jefe no puede volver a ser controlado · turnos del rival de arena
+  function pintarEstados(est = batalla.estados) {
+    for (const i of [0, 1]) $('estados' + i).innerHTML = Object.entries(est[i]).map(([id, e]) =>
       `<span title="${ESTADOS[id].nombre}">${ESTADOS[id].icono}${e.pilas > 1 ? '×' + e.pilas : ''} ${e.turnos}</span>`).join('');
   }
   // Al guerrero, la resistencia puede evitarlo y además reduce su daño
+  // ---------------- Motor del combate 1 contra 1 ----------------
+  // El motor resuelve la ronda entera de una vez, sin tocar la pantalla ni esperar animaciones: cambia `batalla` y deja en
+  // una lista los eventos que la interfaz reproduce después (animaciones, números, barras de vida, estados). Así el resultado
+  // de la ronda no depende de lo que tarde la animación, y la misma ronda se puede simular sin dibujar nada.
+  //   [tipo, ...datos] → 'anim' turno, hab|tipo · 'golpe' turno, especial, jefe, clase, texto · 'vida' quien, actual, max, retraso
+  //   'fx' quien, clase, texto, retraso · 'cura' quien, cantidad, icono, retraso · 'clase' quien, nombre, on · 'estados' copia
+  //   'espera' ms · 'estadoAtaque' texto · 'carga' · 'transformar' · 'mascota' avanza · 'muerte' jefe · 'siguiente' · 'resultado' gano
+  let eventos = [];
+  const emitir = (...e) => eventos.push(e);
+  const verVida = (q, retraso = 0) => emitir('vida', q, q === 0 ? batalla.vidaG : batalla.vidaE, q === 0 ? batalla.vidaMaxG : batalla.enemigo.vida, retraso);
+  const verEstados = () => emitir('estados', JSON.parse(JSON.stringify(batalla.estados)));   // copia: luego siguen cambiando
+  const tipoJefe = () => ({ cerbero: !!batalla.enemigo.cerbero, asmodeo: !!batalla.enemigo.asmodeo, minotauro: !!batalla.enemigo.minotauro });
+
   function aplicarEstado(quien, id, turnos, dano = 0) {
-    const def = ESTADOS[id], slot = slots[quien];
+    const def = ESTADOS[id];
     const rs = resistir(quien === 0 ? efecto('resistencia') : efRival('resistencia'));
-    if (rs.evita) { setTimeout(() => fx(slot, 'num-cura', '🛡 Resistido'), 250); return; }
+    if (rs.evita) { emitir('fx', quien, 'num-cura', '🛡 Resistido', 250); return; }
     dano = Math.round(dano * rs.factor);
-    if (quien === 1 && def.control && (enemigo.cerbero || enemigo.asmodeo || enemigo.minotauro || ((enemigo.jefe || enemigo.rival) && inmuneControl > 0))) {
-      setTimeout(() => fx(slot, 'num-cura', '🛡 Inmune'), 250); return;
+    if (quien === 1 && def.control && (batalla.enemigo.cerbero || batalla.enemigo.asmodeo || batalla.enemigo.minotauro || ((batalla.enemigo.jefe || batalla.enemigo.rival) && batalla.inmuneControl > 0))) {
+      emitir('fx', quien, 'num-cura', '🛡 Inmune', 250); return;
     }
-    if (quien === 1 && def.control && (enemigo.jefe || enemigo.rival)) inmuneControl = turnos + 2;   // jefes y rivales: no se encadenan controles
-    const e = estados[quien][id];
+    if (quien === 1 && def.control && (batalla.enemigo.jefe || batalla.enemigo.rival)) batalla.inmuneControl = turnos + 2;   // jefes y rivales: no se encadenan controles
+    const e = batalla.estados[quien][id];
     if (e && def.acumula) { e.pilas = Math.min(def.acumula, e.pilas + 1); e.turnos = Math.max(e.turnos, turnos); e.dano = Math.max(e.dano, dano); }
-    else estados[quien][id] = { turnos, dano, pilas: 1 };
-    setTimeout(() => fx(slot, 'dano', `${def.icono} ${def.nombre}`), 250);
-    pintarEstados();
+    else batalla.estados[quien][id] = { turnos, dano, pilas: 1 };
+    emitir('fx', quien, 'dano', `${def.icono} ${def.nombre}`, 250);
+    verEstados();
   }
   // Al empezar su turno: aplica el daño de sus estados y gasta un turno de cada uno. Devuelve true si pierde el turno.
-  async function tickEstados(quien) {
-    const lista = estados[quien]; let total = 0, iconos = '', control = null;
-    if (quien === 1 && inmuneControl > 0) inmuneControl--;
-    if (quien === 1 && enemigo.regen && vidaE > 0 && vidaE < enemigo.vida) {   // modificador Regeneración
-      const c = Math.min(enemigo.vida - vidaE, Math.round(enemigo.vida * enemigo.regen)); vidaE += c; pintarVida(slots[1], vidaE, enemigo.vida); mostrarCura(slots[1], c, '💚 ');
+  function resolverEstados(quien) {
+    const lista = batalla.estados[quien]; let total = 0, iconos = '', control = null;
+    if (quien === 1 && batalla.inmuneControl > 0) batalla.inmuneControl--;
+    if (quien === 1 && batalla.enemigo.regen && batalla.vidaE > 0 && batalla.vidaE < batalla.enemigo.vida) {   // modificador Regeneración
+      const c = Math.min(batalla.enemigo.vida - batalla.vidaE, Math.round(batalla.enemigo.vida * batalla.enemigo.regen)); batalla.vidaE += c; verVida(1); emitir('cura', 1, c, '💚 ');
     }
     for (const [id, e] of Object.entries(lista)) {
       if (ESTADOS[id].control) control = ESTADOS[id];
       else { total += e.dano * e.pilas; iconos += ESTADOS[id].icono; }
       if (--e.turnos <= 0) delete lista[id];
     }
-    pintarEstados();
+    verEstados();
     if (total > 0) {
-      if (quien === 0) { vidaG -= total; pintarVida(slots[0], vidaG, vidaMaxG); }
-      else { total = Math.min(total, Math.max(0, vidaE)); vidaE -= total; danoHecho += total; pintarVida(slots[1], vidaE, enemigo.vida); }
-      fx(slots[quien], 'dano', `${iconos} -${total}`); await wait(600);
+      if (quien === 0) batalla.vidaG -= total;
+      else { total = Math.min(total, Math.max(0, batalla.vidaE)); batalla.vidaE -= total; batalla.danoHecho += total; }
+      verVida(quien); emitir('fx', quien, 'dano', `${iconos} -${total}`); emitir('espera', 600);
     }
-    if (control) { fx(slots[quien], 'num-cura', `${control.icono} Pierde el turno`); await wait(700); }
+    if (control) { emitir('fx', quien, 'num-cura', `${control.icono} Pierde el turno`); emitir('espera', 700); }
     return !!control;
   }
 
@@ -3641,211 +3652,277 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   // Los rivales (arena y reyes) son jugadores: se defienden con la misma fórmula que tú (armadura y defensa); la penetración
   // les quita armadura y un golpe perforante la ignora entera.
   const factorPenetracion = (perfora = false) =>   // todos los enemigos (monstruos, jefes y rivales) se defienden igual
-    factorDefensa({ armadura: armaduraEfectiva(enemigo.armadura || 0, efecto('penetracion'), perfora), defensa: enemigo.defensa || 0 });
-  const efRival = k => enemigo.rival && enemigo.ef ? enemigo.ef[k] || 0 : 0;   // efectos defensivos del rival
-  // Un ataque: anima, aplica daño y devuelve true si el defensor cayó
-  async function atacar(turno, hab) {
-    const d = slots[1 - turno], especial = !!hab;
-    slots[turno].style.zIndex = 3; d.style.zIndex = '';   // quien ataca, delante
-    await (hab ? hab.anim() : ataques[turno]());
-    if (turno === 1 && especialMinotauro === 'furia') {   // entra en furia en vez de atacar
-      furiaRestante = FURIA.dura; slots[1].classList.add('furia'); fx(slots[1], 'num-cura', '🔥 ¡Furia! x3');
-      especialMinotauro = null; await wait(700); return false;
+    factorDefensa({ armadura: armaduraEfectiva(batalla.enemigo.armadura || 0, efecto('penetracion'), perfora), defensa: batalla.enemigo.defensa || 0 });
+  const efRival = k => batalla.enemigo.rival && batalla.enemigo.ef ? batalla.enemigo.ef[k] || 0 : 0;   // efectos defensivos del rival
+  // Qué hace el enemigo en su turno: especiales de jefe según sus contadores (la animación solo lo dibuja)
+  function decidirAtaqueEnemigo() {
+    if (batalla.enemigo.cerbero) {
+      batalla.turnoBola++; batalla.turnoLanza++;
+      batalla.especialCerbero = !batalla.infernal ? null : batalla.turnoBola >= BOLA_FUEGO.turnos ? 'bola' : batalla.turnoLanza >= LANZALLAMAS.turnos ? 'lanza' : null;
+      if (batalla.especialCerbero === 'bola') batalla.turnoBola = 0;
+      if (batalla.especialCerbero === 'lanza') batalla.turnoLanza = 0;
+      return batalla.especialCerbero || 'normal';
     }
-    if (turno === 1 && especialAsmodeo === 'escudo') {   // levanta el escudo en vez de atacar
-      escudoRestante = ESCUDO.dura; slots[1].classList.add('escudado'); fx(slots[1], 'num-cura', '🛡 Escudo');
-      especialAsmodeo = null; await wait(700); return false;
+    if (batalla.enemigo.asmodeo) {
+      batalla.turnoOnda++; batalla.turnoCura++;
+      const herido = batalla.vidaE <= batalla.enemigo.vida / 2;
+      if (herido) batalla.turnoEscudo++;
+      if (herido && !batalla.escudoRestante && batalla.turnoEscudo >= ESCUDO.turnos) { batalla.turnoEscudo = 0; return batalla.especialAsmodeo = 'escudo'; }   // el escudo usa su turno, como la curación
+      if (herido && batalla.turnoCura >= CURACION.turnos) { batalla.turnoCura = 0; return batalla.especialAsmodeo = 'cura'; }
+      if (batalla.turnoOnda >= ONDA_ALAS.turnos) { batalla.turnoOnda = 0; return batalla.especialAsmodeo = 'onda'; }
+      batalla.especialAsmodeo = null;
+      return Math.random() < .5 ? 'garras' : 'barrido';
     }
-    if (turno === 1 && especialAsmodeo === 'cura') {   // se cura en vez de atacar
-      const herido = ['quemadura', 'veneno', 'sangrado'].some(k => estados[1][k]);   // quemado, envenenado o sangrando: cura la mitad
-      const cura = Math.min(enemigo.vida - vidaE, Math.round(enemigo.vida * CURACION.pct * (herido ? .5 : 1)));
-      if (herido) setTimeout(() => fx(slots[1], 'num-cura', '☠ Curación a la mitad'), 300);
-      vidaE += cura; pintarVida(slots[1], vidaE, enemigo.vida); mostrarCura(slots[1], cura);
-      especialAsmodeo = null; await wait(900); return false;
+    if (batalla.enemigo.minotauro) {
+      if (batalla.vidaE <= batalla.enemigo.vida * FURIA.umbral && !batalla.furiaRestante && ++batalla.turnoFuria >= FURIA.turnos) { batalla.turnoFuria = 0; return batalla.especialMinotauro = 'furia'; }
+      if (++batalla.turnoTajo >= GRAN_TAJO.turnos) { batalla.turnoTajo = 0; return batalla.especialMinotauro = 'tajo'; }
+      batalla.especialMinotauro = batalla.furiaRestante > 0 ? 'golpe-furia' : null;
     }
-    if (turno === 1 && !especialCerbero && !especialAsmodeo && !especialMinotauro && Math.random() < efecto('esquiva')) {
-      fx(d, 'num-cura', '💨 Esquiva'); await wait(700); return false;   // los ataques especiales de jefe no se esquivan
+    return 'normal';
+  }
+  // Un ataque: aplica daño y efectos y devuelve true si el defensor cayó
+  function resolverAtaque(turno, hab) {
+    const q = 1 - turno, especial = !!hab;   // q: quien recibe
+    emitir('anim', turno, turno === 0 ? hab : decidirAtaqueEnemigo());
+    if (turno === 1 && batalla.especialMinotauro === 'furia') {   // entra en furia en vez de atacar
+      batalla.furiaRestante = FURIA.dura; emitir('clase', 1, 'furia', true); emitir('fx', 1, 'num-cura', '🔥 ¡Furia! x3');
+      batalla.especialMinotauro = null; emitir('espera', 700); return false;
     }
-    if (turno === 0 && Math.random() < efRival('esquiva')) { fx(d, 'num-cura', '💨 Esquiva'); await wait(700); return false; }
-    let dano = turno === 0 ? danoGuerrero(st) : danoRecibido(azar(...enemigo.dano), st);
+    if (turno === 1 && batalla.especialAsmodeo === 'escudo') {   // levanta el escudo en vez de atacar
+      batalla.escudoRestante = ESCUDO.dura; emitir('clase', 1, 'escudado', true); emitir('fx', 1, 'num-cura', '🛡 Escudo');
+      batalla.especialAsmodeo = null; emitir('espera', 700); return false;
+    }
+    if (turno === 1 && batalla.especialAsmodeo === 'cura') {   // se cura en vez de atacar
+      const herido = ['quemadura', 'veneno', 'sangrado'].some(k => batalla.estados[1][k]);   // quemado, envenenado o sangrando: cura la mitad
+      const cura = Math.min(batalla.enemigo.vida - batalla.vidaE, Math.round(batalla.enemigo.vida * CURACION.pct * (herido ? .5 : 1)));
+      if (herido) emitir('fx', 1, 'num-cura', '☠ Curación a la mitad', 300);
+      batalla.vidaE += cura; verVida(1); emitir('cura', 1, cura);
+      batalla.especialAsmodeo = null; emitir('espera', 900); return false;
+    }
+    if (turno === 1 && !batalla.especialCerbero && !batalla.especialAsmodeo && !batalla.especialMinotauro && Math.random() < efecto('esquiva')) {
+      emitir('fx', q, 'num-cura', '💨 Esquiva'); emitir('espera', 700); return false;   // los ataques especiales de jefe no se esquivan
+    }
+    if (turno === 0 && Math.random() < efRival('esquiva')) { emitir('fx', q, 'num-cura', '💨 Esquiva'); emitir('espera', 700); return false; }
+    let dano = turno === 0 ? danoGuerrero(batalla.st) : danoRecibido(azar(...batalla.enemigo.dano), batalla.st);
     if (hab) dano = Math.round(dano * hab.mult);
     let critico = false;
     if (turno === 0) {   // efectos de la skin al atacar
-      const esJefe = enemigo.jefe || enemigo.cerbero || enemigo.asmodeo || enemigo.minotauro;
-      let m = multGolpe(efecto, hab, esJefe, vidaE < enemigo.vida / 2) / (hab ? hab.mult : 1);   // el ×hab.mult ya se aplicó arriba
+      const esJefe = batalla.enemigo.jefe || batalla.enemigo.cerbero || batalla.enemigo.asmodeo || batalla.enemigo.minotauro;
+      let m = multGolpe(efecto, hab, esJefe, batalla.vidaE < batalla.enemigo.vida / 2) / (hab ? hab.mult : 1);   // el ×hab.mult ya se aplicó arriba
       if (Math.random() < efecto('critico')) { critico = true; m *= DANO_CRITICO_BASE + efecto('danoCritico'); }
       m *= factorPenetracion(!!(hab && hab.perfora));   // perforante: ignora toda la armadura
       m *= 1 - efRival('reduccion');
       dano = Math.round(dano * m);
     } else {
-      if (enemigo.rival) {   // el rival de la arena: su Estocada cada N turnos y sus críticos
-        if (++turnoRival % enemigo.habilidad.turnos === 0) { dano = Math.round(dano * enemigo.habilidad.mult); fx(slots[1], 'num-cura', `⚔ ${enemigo.habilidad.nombre}`); }
-        if (Math.random() < enemigo.critico) { critico = true; dano = Math.round(dano * enemigo.danoCritico); }
+      if (batalla.enemigo.rival) {   // el rival de la arena: su Estocada cada N turnos y sus críticos
+        if (++batalla.turnoRival % batalla.enemigo.habilidad.turnos === 0) { dano = Math.round(dano * batalla.enemigo.habilidad.mult); emitir('fx', 1, 'num-cura', `⚔ ${batalla.enemigo.habilidad.nombre}`); }
+        if (Math.random() < batalla.enemigo.critico) { critico = true; dano = Math.round(dano * batalla.enemigo.danoCritico); }
       }
       dano = Math.max(1, Math.round(dano * (1 - efecto('reduccion'))));
     }
-    if (infernal) dano = turno === 0 ? Math.max(1, Math.round(dano / (critico ? INFERNAL.defensaCritico : INFERNAL.defensa))) : Math.round(dano * INFERNAL.dano);
-    if (turno === 0 && escudoRestante > 0) {   // escudo de Asmodeo: absorbe el 80 % y gasta un turno; una habilidad lo rompe
-      if (hab) { dano = Math.max(1, Math.round(dano * .7)); escudoRestante = 0; slots[1].classList.remove('escudado'); setTimeout(() => fx(slots[1], 'num-cura', '💥 Escudo roto'), 300); }
-      else { dano = Math.max(1, Math.round(dano * (1 - ESCUDO.reduce))); if (--escudoRestante === 0) slots[1].classList.remove('escudado'); }
+    if (batalla.infernal) dano = turno === 0 ? Math.max(1, Math.round(dano / (critico ? INFERNAL.defensaCritico : INFERNAL.defensa))) : Math.round(dano * INFERNAL.dano);
+    if (turno === 0 && batalla.escudoRestante > 0) {   // escudo de Asmodeo: absorbe el 80 % y gasta un turno; una habilidad lo rompe
+      if (hab) { dano = Math.max(1, Math.round(dano * .7)); batalla.escudoRestante = 0; emitir('clase', 1, 'escudado', false); emitir('fx', 1, 'num-cura', '💥 Escudo roto', 300); }
+      else { dano = Math.max(1, Math.round(dano * (1 - ESCUDO.reduce))); if (--batalla.escudoRestante === 0) emitir('clase', 1, 'escudado', false); }
     }
     if (turno === 0) {
-      dano = Math.min(dano, Math.max(0, vidaE)); vidaE -= dano; danoHecho += dano; pintarVida(d, vidaE, enemigo.vida);
-      if (vidaE > 0) for (const g of golpesEstado()) if (Math.random() < g.prob) aplicarEstado(1, g.estado, g.turnos, Math.max(1, Math.round(st.ataque * g.pct)));
-      if (vidaE > 0 && critico && set4('cerbero')) aplicarEstado(1, 'quemadura', 2, Math.max(1, Math.round(st.ataque * .3)));   // set 4 de Cerbero
-      if (hab && set4('asmodeo') && vidaG < vidaMaxG) { const c = Math.min(vidaMaxG - vidaG, Math.round(vidaMaxG * SET4_CURA)); vidaG += c; pintarVida(slots[0], vidaG, vidaMaxG); setTimeout(() => mostrarCura(slots[0], c, '🔯 '), 300); }
-      if (enemigo.espinas && dano > 0 && vidaG > 1) {   // modificador Espinas: devuelve parte del daño
-        const r = Math.max(1, Math.round(dano * enemigo.espinas)); vidaG = Math.max(1, vidaG - r); pintarVida(slots[0], vidaG, vidaMaxG);
-        setTimeout(() => fx(slots[0], 'dano', `🌵 -${r}`), 300);
+      dano = Math.min(dano, Math.max(0, batalla.vidaE)); batalla.vidaE -= dano; batalla.danoHecho += dano; verVida(1);
+      if (batalla.vidaE > 0) for (const g of golpesEstado()) if (Math.random() < g.prob) aplicarEstado(1, g.estado, g.turnos, Math.max(1, Math.round(batalla.st.ataque * g.pct)));
+      if (batalla.vidaE > 0 && critico && set4('cerbero')) aplicarEstado(1, 'quemadura', 2, Math.max(1, Math.round(batalla.st.ataque * .3)));   // set 4 de Cerbero
+      if (hab && set4('asmodeo') && batalla.vidaG < batalla.vidaMaxG) { const c = Math.min(batalla.vidaMaxG - batalla.vidaG, Math.round(batalla.vidaMaxG * SET4_CURA)); batalla.vidaG += c; verVida(0); emitir('cura', 0, c, '🔯 ', 300); }
+      if (batalla.enemigo.espinas && dano > 0 && batalla.vidaG > 1) {   // modificador Espinas: devuelve parte del daño
+        const r = Math.max(1, Math.round(dano * batalla.enemigo.espinas)); batalla.vidaG = Math.max(1, batalla.vidaG - r); verVida(0);
+        emitir('fx', 0, 'dano', `🌵 -${r}`, 300);
       }
       const robo = Math.round(dano * efecto('robo'));   // robo de vida
-      if (robo > 0 && vidaG < vidaMaxG) { const r = Math.min(robo, vidaMaxG - vidaG); vidaG += r; pintarVida(slots[0], vidaG, vidaMaxG); setTimeout(() => mostrarCura(slots[0], r, '💀 '), 300); }
+      if (robo > 0 && batalla.vidaG < batalla.vidaMaxG) { const r = Math.min(robo, batalla.vidaMaxG - batalla.vidaG); batalla.vidaG += r; verVida(0); emitir('cura', 0, r, '💀 ', 300); }
     }
     else {
-      if (especialCerbero === 'lanza') dano = Math.round(dano * LANZALLAMAS.mult);
-      if (especialAsmodeo === 'onda') { dano = Math.round(dano * ONDA_ALAS.mult); especialAsmodeo = null; }
-      if (especialMinotauro === 'tajo') {   // Gran Tajo: x3 (y x3 más si está en furia) + 10 % de la vida máxima
-        dano *= GRAN_TAJO.mult * (furiaRestante > 0 ? FURIA.mult : 1);
-        if (furiaRestante > 0 && --furiaRestante === 0) slots[1].classList.remove('furia');
-        const corte = Math.max(1, Math.round(vidaMaxG * GRAN_TAJO.quema * resistir(efecto('resistencia')).factor * Math.max(.2, 1 - 2 * efecto('reduccion'))));   // la reducción cuenta doble aquí
-        dano += corte; setTimeout(() => fx(d, 'dano critico', `🪓 -${corte}`), 350); especialMinotauro = null;
+      if (batalla.especialCerbero === 'lanza') dano = Math.round(dano * LANZALLAMAS.mult);
+      if (batalla.especialAsmodeo === 'onda') { dano = Math.round(dano * ONDA_ALAS.mult); batalla.especialAsmodeo = null; }
+      if (batalla.especialMinotauro === 'tajo') {   // Gran Tajo: x3 (y x3 más si está en furia) + 10 % de la vida máxima
+        dano *= GRAN_TAJO.mult * (batalla.furiaRestante > 0 ? FURIA.mult : 1);
+        if (batalla.furiaRestante > 0 && --batalla.furiaRestante === 0) emitir('clase', 1, 'furia', false);
+        const corte = Math.max(1, Math.round(batalla.vidaMaxG * GRAN_TAJO.quema * resistir(efecto('resistencia')).factor * Math.max(.2, 1 - 2 * efecto('reduccion'))));   // la reducción cuenta doble aquí
+        dano += corte; emitir('fx', q, 'dano critico', `🪓 -${corte}`, 350); batalla.especialMinotauro = null;
       }
-      if (especialMinotauro === 'golpe-furia') {   // furia: daño x3, gasta un turno de duración
-        dano *= FURIA.mult; especialMinotauro = null;
-        if (--furiaRestante === 0) slots[1].classList.remove('furia');
+      if (batalla.especialMinotauro === 'golpe-furia') {   // furia: daño x3, gasta un turno de duración
+        dano *= FURIA.mult; batalla.especialMinotauro = null;
+        if (--batalla.furiaRestante === 0) emitir('clase', 1, 'furia', false);
       }
-      if (especialCerbero === 'bola') {   // quemadura de la bola de fuego: daño extra fijo, ignora armadura y defensa
-        const quema = Math.max(1, Math.round(vidaMaxG * BOLA_FUEGO.quemadura * resistir(efecto('resistencia')).factor));
-        dano += quema; setTimeout(() => fx(d, 'dano critico', `🔥 -${quema}`), 350);
+      if (batalla.especialCerbero === 'bola') {   // quemadura de la bola de fuego: daño extra fijo, ignora armadura y defensa
+        const quema = Math.max(1, Math.round(batalla.vidaMaxG * BOLA_FUEGO.quemadura * resistir(efecto('resistencia')).factor));
+        dano += quema; emitir('fx', q, 'dano critico', `🔥 -${quema}`, 350);
       }
-      especialCerbero = null;
-      if (set4('minotauro') && dano > vidaMaxG * SET4_GOLPE) { dano = Math.round(dano * (1 - SET4_REDUCE)); setTimeout(() => fx(d, 'num-cura', '🐂 Aguante'), 200); }   // set 4 del Minotauro
-      vidaG -= dano; pintarVida(d, vidaG, vidaMaxG);
-      const roboR = Math.min(Math.round(dano * efRival('robo')), enemigo.vida - vidaE);   // robo de vida del rival
-      if (roboR > 0 && vidaE > 0) { vidaE += roboR; pintarVida(slots[1], vidaE, enemigo.vida); setTimeout(() => mostrarCura(slots[1], roboR, '💀 '), 300); }
-      if (vidaG <= 0 && rangoClase('bastion') && !bastionUsado) {   // Último bastión
-        bastionUsado = true; vidaG = 1; pintarVida(d, 1, vidaMaxG); setTimeout(() => fx(d, 'num-cura', '🏰 Último bastión'), 400);
+      batalla.especialCerbero = null;
+      if (set4('minotauro') && dano > batalla.vidaMaxG * SET4_GOLPE) { dano = Math.round(dano * (1 - SET4_REDUCE)); emitir('fx', q, 'num-cura', '🐂 Aguante', 200); }   // set 4 del Minotauro
+      batalla.vidaG -= dano; verVida(0);
+      const roboR = Math.min(Math.round(dano * efRival('robo')), batalla.enemigo.vida - batalla.vidaE);   // robo de vida del rival
+      if (roboR > 0 && batalla.vidaE > 0) { batalla.vidaE += roboR; verVida(1); emitir('cura', 1, roboR, '💀 ', 300); }
+      if (batalla.vidaG <= 0 && rangoClase('bastion') && !batalla.bastionUsado) {   // Último bastión
+        batalla.bastionUsado = true; batalla.vidaG = 1; verVida(0); emitir('fx', 0, 'num-cura', '🏰 Último bastión', 400);
       }
-      if (vidaG > 0 && vidaG < vidaMaxG * .3 && rangoClase('aliento') && !alientoUsado) {   // Segundo aliento
-        alientoUsado = true; const c = Math.min(vidaMaxG - vidaG, Math.round(vidaMaxG * .1 * rangoClase('aliento'))); vidaG += c;
-        setTimeout(() => { pintarVida(d, vidaG, vidaMaxG); mostrarCura(d, c, '🌬️ '); }, 500);
+      if (batalla.vidaG > 0 && batalla.vidaG < batalla.vidaMaxG * .3 && rangoClase('aliento') && !batalla.alientoUsado) {   // Segundo aliento
+        batalla.alientoUsado = true; const c = Math.min(batalla.vidaMaxG - batalla.vidaG, Math.round(batalla.vidaMaxG * .1 * rangoClase('aliento'))); batalla.vidaG += c;
+        verVida(0, 500); emitir('cura', 0, c, '🌬️ ', 500);
       }
-      if (vidaG > 0) for (const a of enemigo.aplica || []) if (Math.random() < a.prob) aplicarEstado(0, a.estado, a.turnos, Math.max(1, Math.round(vidaMaxG * (a.pct || 0))));
+      if (batalla.vidaG > 0) for (const a of batalla.enemigo.aplica || []) if (Math.random() < a.prob) aplicarEstado(0, a.estado, a.turnos, Math.max(1, Math.round(batalla.vidaMaxG * (a.pct || 0))));
     }
+    emitir('golpe', turno, especial, tipoJefe(), especial || critico ? 'dano critico' : 'dano', (especial || critico ? '¡' : '-') + dano + (critico ? ' CRÍTICO!' : especial ? '!' : ''));
+    if (turno === 0 && batalla.enemigo.cerbero && !batalla.infernal && batalla.vidaE > 0 && batalla.vidaE <= batalla.enemigo.vida / 2) { batalla.infernal = true; emitir('transformar'); }
+    if (turno === 0 && batalla.vidaE > 0 && batalla.vidaG > 0 && Math.random() < efRival('contra')) {   // contraataque del rival
+      const c = Math.max(1, Math.round(danoRecibido(azar(...batalla.enemigo.dano) * .6, batalla.st) * (1 - efecto('reduccion'))));
+      batalla.vidaG -= c; verVida(0); emitir('fx', 0, 'dano critico', `⚙ Contra -${c}`); emitir('espera', 600);
+    }
+    if (turno === 1 && batalla.vidaG > 0 && batalla.vidaE > 0 && Math.random() < efecto('contra')) {   // contraataque del Gendarme
+      const c = Math.max(1, Math.round(danoGuerrero(batalla.st) * .6 * factorPenetracion() / (batalla.infernal ? INFERNAL.defensa : 1)));
+      batalla.vidaE -= c; batalla.danoHecho += c; verVida(1); emitir('fx', 1, 'dano critico', `⚙ Contra -${c}`); emitir('espera', 600);
+      if (batalla.vidaE <= 0) { batalla.vidaE = 0; }
+    }
+    return turno === 0 ? batalla.vidaE <= 0 : batalla.vidaG <= 0;
+  }
+
+  // Mascota: cada N turnos del guerrero muerde (daño = % de tu ataque) o te cura (% de tu vida máxima)
+  batalla.turnoMascota = 0;
+  function prepararMascota() {
+    const m = mascotaActual(); batalla.turnoMascota = 0;
+    $('acompana').innerHTML = m ? dibujoMascota(m, .5) : '';
+  }
+  function resolverMascota() {
+    const m = mascotaActual(); if (!m) return false;
+    if (++batalla.turnoMascota < m.accion.turnos) return false;
+    batalla.turnoMascota = 0;
+    const pct = valorNivel(m.accion.pct, nivelMascota(m)) / 100;
+    if (m.accion.tipo === 'cura') {
+      const cura = Math.min(batalla.vidaMaxG - batalla.vidaG, Math.round(batalla.vidaMaxG * pct));
+      const curaFinal = Math.min(batalla.vidaMaxG - batalla.vidaG, Math.round(cura * (1 + efecto('curacion'))));   // Druida: +curación
+      batalla.vidaG += curaFinal; verVida(0); emitir('cura', 0, curaFinal, '🔥 ');
+      emitir('espera', 600); return false;
+    }
+    emitir('mascota', true); emitir('espera', 220);
+    const dano = Math.max(1, Math.round(batalla.st.ataque * pct * (batalla.infernal ? 1 / INFERNAL.defensa : 1) * factorPenetracion() * (1 - efRival('reduccion'))));
+    const real = Math.min(dano, Math.max(0, batalla.vidaE)); batalla.vidaE -= real; batalla.danoHecho += real;
+    verVida(1); emitir('fx', 1, 'dano', `🐾 -${real}`);
+    const ap = m.accion.aplica;   // estado que aplica la mascota al morder
+    if (ap && batalla.vidaE > 0 && Math.random() < ap.prob) aplicarEstado(1, ap.estado, ap.turnos, Math.max(1, Math.round(batalla.st.ataque * (ap.pct || 0))));
+    emitir('mascota', false); emitir('espera', 450);
+    return batalla.vidaE <= 0;
+  }
+
+  // Ronda: ataca el guerrero; si el enemigo sigue en pie, responde. Devuelve los eventos para dibujarla.
+  function resolverRonda(hab) {
+    eventos = [];
+    emitir('estadoAtaque', 'Atacando...');
+    const congelado = resolverEstados(0);   // estados del guerrero al empezar su turno
+    for (const h of HABILIDADES) batalla.carga[h.id] = h === hab && !congelado ? 0 : Math.min(h.turnos, batalla.carga[h.id] + 1);   // cada turno carga las demás
+    emitir('carga');
+    let cayo = false;
+    if (batalla.vidaG <= 0) emitir('resultado', false);   // cayó por quemadura, veneno o sangrado
+    else {
+      if (!congelado) {
+        cayo = resolverAtaque(0, hab);
+        if (hab && hab.aturde && !cayo) aplicarEstado(1, 'aturdimiento', 1);
+        const ap = hab && hab.aplica;   // estado de la habilidad (quemadura, congelación, sangrado...)
+        if (ap && !cayo && batalla.vidaE > 0 && Math.random() < ap.prob) aplicarEstado(1, ap.estado, ap.turnos, Math.max(1, Math.round(batalla.st.ataque * (ap.pct || 0))));
+      }
+      if (!cayo) cayo = resolverMascota();
+      if (!cayo) {
+        emitir('estadoAtaque', 'Esperando...');
+        emitir('espera', 600);
+        const pierde = resolverEstados(1);   // estados del enemigo al empezar su turno
+        if (batalla.vidaE <= 0) cayo = true;
+        else if (!pierde && resolverAtaque(1)) emitir('resultado', false);
+        else cayo = batalla.vidaE <= 0;   // el contraataque de la skin puede rematarlo en su turno
+      }
+    }
+    if (cayo && !batalla.campana.abandonada) {
+      sumarLogro('enemigos');
+      // botín del enemigo: se acumula y se cobra al terminar la batalla
+      const x = batalla.enemigo.jefe ? 3 : 1, b = batalla.campana.botin;
+      const dropEv = (eventoHoy() || {}).drop || 1;   // fin de semana: doble botín
+      contarMision('enemigos');
+      const mat = { piedra: azar(...b.piedra) * x, polvo: (Math.random() < b.polvo * (1 + efecto('fortuna')) * dropEv ? 1 : 0) * x };
+      if (b.cofre && Math.random() < (batalla.enemigo.jefe ? .3 : .06) * (b.drop || 1) * (1 + efecto('fortuna')) * dropEv) {   // objeto de equipo (se cobra al terminar)
+        const o = objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + ((eventoHoy() || {}).caza || 0));   // Fortuna: 1/3 de prob. de subir rareza; Cacería: +15 %
+        batalla.ganado.objetos.push(o); emitir('fx', 1, 'premio', `🎁 ${modelo[o.modelo].nombre}`, 700);
+      }
+      if (!batalla.enemigo.rival) { jugador.bestiario ||= {}; jugador.bestiario[batalla.enemigo.nombre] = (jugador.bestiario[batalla.enemigo.nombre] || 0) + 1; }
+      sumarMaestria(batalla.enemigo.jefe || batalla.enemigo.cerbero || batalla.enemigo.asmodeo || batalla.enemigo.minotauro ? 5 : 1);
+      batalla.ganado.oro += batalla.enemigo.oro; batalla.ganado.xp += batalla.enemigo.xp; batalla.ganado.piedra += mat.piedra; batalla.ganado.polvo += mat.polvo;
+      emitir('fx', 1, 'premio', `+${batalla.enemigo.oro} oro  +${batalla.enemigo.xp} XP  🔷${mat.piedra}${mat.polvo ? ' ✨' + mat.polvo : ''}`);
+      emitir('muerte', tipoJefe());
+      if (batalla.iEnemigo + 1 < batalla.campana.enemigos.length) { siguienteEnemigo(batalla.iEnemigo + 1); emitir('siguiente'); }
+      else emitir('resultado', true);
+    }
+    return eventos;
+  }
+
+  // ---------------- Pantalla del combate 1 contra 1: dibuja los eventos del motor ----------------
+  async function reproducir(lista) {
+    const id = batalla.id;
+    for (const [tipo, ...a] of lista) {
+      if (batalla.id !== id) return;   // ya se está en otra batalla: lo que quedaba no se dibuja
+      if (tipo === 'vida') { const [q, actual, max, retraso] = a; const f = () => pintarVida(slots[q], actual, max); retraso ? setTimeout(f, retraso) : f(); }
+      else if (tipo === 'fx') { const [q, cls, texto, retraso] = a; const f = () => fx(slots[q], cls, texto); retraso ? setTimeout(f, retraso) : f(); }
+      else if (tipo === 'cura') { const [q, cantidad, icono, retraso] = a; const f = () => mostrarCura(slots[q], cantidad, icono); retraso ? setTimeout(f, retraso) : f(); }
+      else if (tipo === 'clase') slots[a[0]].classList.toggle(a[1], a[2]);
+      else if (tipo === 'estados') pintarEstados(a[0]);
+      else if (tipo === 'espera') await wait(a[0]);
+      else if (tipo === 'estadoAtaque') estadoAtaque(a[0]);
+      else if (tipo === 'carga') pintarEspecial();
+      else if (tipo === 'anim') await animarAtaque(...a);
+      else if (tipo === 'golpe') await animarGolpe(...a);
+      else if (tipo === 'transformar') await animarTransformacion();
+      else if (tipo === 'mascota') $('acompana').style.transform = a[0] ? `translateX(${avanceReal(420)}px) scale(1.2)` : '';
+      else if (tipo === 'muerte') await animarMuerte(a[0]);
+      else if (tipo === 'siguiente') await mostrarEnemigo();
+      else if (tipo === 'resultado') mostrarResultado(a[0]);
+    }
+  }
+  async function animarAtaque(turno, x) {   // x: la habilidad del guerrero, o lo que decidió hacer el enemigo
+    slots[turno].style.zIndex = 3; slots[1 - turno].style.zIndex = '';   // quien ataca, delante
+    await (turno === 0 ? (x ? x.anim() : ataques[0]()) : ataques[1](x));
+  }
+  async function animarGolpe(turno, especial, jefe, cls, texto) {
+    const d = slots[1 - turno];
     d.classList.add('golpeado');
     arena.classList.add('tiembla');
-    if (turno === 0 && enemigo.minotauro) {
+    if (turno === 0 && jefe.minotauro) {
       parca.frames.classList.add('quieto');
-      const pasos = hab ? [[13, 0], [14, 90], [15, 180], [15, 380], [14, 470], [13, 560]] : [[13, 0], [14, 120], [14, 360], [13, 470]];
+      const pasos = especial ? [[13, 0], [14, 90], [15, 180], [15, 380], [14, 470], [13, 560]] : [[13, 0], [14, 120], [14, 360], [13, 470]];
       pasos.forEach(([c, t]) => setTimeout(() => parca.ver(c), t / VELOCIDAD));
     }
-    if (turno === 0 && enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(hab ? 14 : 13); }   // daño, o retroceso si es una habilidad
-    else if (turno === 0 && !enemigo.cerbero) { parca.frames.classList.add('quieto'); parca.ver(5); setTimeout(() => parca.ver(6), 250); }
-    fx(d, especial || critico ? 'dano critico' : 'dano', (especial || critico ? '¡' : '-') + dano + (critico ? ' CRÍTICO!' : especial ? '!' : ''));
+    if (turno === 0 && jefe.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(especial ? 14 : 13); }   // daño, o retroceso si es una habilidad
+    else if (turno === 0 && !jefe.cerbero) { parca.frames.classList.add('quieto'); parca.ver(5); setTimeout(() => parca.ver(6), 250); }
+    fx(d, cls, texto);
     await wait(650);
     arena.classList.remove('tiembla');
     await wait(150);
     d.classList.remove('golpeado');
-    if (turno === 0 && !enemigo.cerbero) { parca.ver(0); parca.frames.classList.remove('quieto'); }
+    if (turno === 0 && !jefe.cerbero) { parca.ver(0); parca.frames.classList.remove('quieto'); }
     await wait(250);
-    if (turno === 0 && enemigo.cerbero && !infernal && vidaE > 0 && vidaE <= enemigo.vida / 2) await transformar();
-    if (turno === 0 && vidaE > 0 && vidaG > 0 && Math.random() < efRival('contra')) {   // contraataque del rival
-      const c = Math.max(1, Math.round(danoRecibido(azar(...enemigo.dano) * .6, st) * (1 - efecto('reduccion'))));
-      vidaG -= c; pintarVida(slots[0], vidaG, vidaMaxG); fx(slots[0], 'dano critico', `⚙ Contra -${c}`); await wait(600);
-    }
-    if (turno === 1 && vidaG > 0 && vidaE > 0 && Math.random() < efecto('contra')) {   // contraataque del Gendarme
-      const c = Math.max(1, Math.round(danoGuerrero(st) * .6 * factorPenetracion() / (infernal ? INFERNAL.defensa : 1)));
-      vidaE -= c; danoHecho += c; pintarVida(slots[1], vidaE, enemigo.vida); fx(slots[1], 'dano critico', `⚙ Contra -${c}`);
-      await wait(600);
-      if (vidaE <= 0) { vidaE = 0; }
-    }
-    return turno === 0 ? vidaE <= 0 : vidaG <= 0;
+  }
+  async function animarMuerte(jefe) {
+    if (jefe.cerbero) await muerteCerbero();
+    else if (jefe.asmodeo) await muerteAsmodeo();
+    else if (jefe.minotauro) await muerteMinotauro();
+    slots[1].classList.add('muerto');
+    await wait(900);
   }
 
-  // Mascota: cada N turnos del guerrero muerde (daño = % de tu ataque) o te cura (% de tu vida máxima)
-  let turnoMascota = 0;
-  function prepararMascota() {
-    const m = mascotaActual(); turnoMascota = 0;
-    $('acompana').innerHTML = m ? dibujoMascota(m, .5) : '';
-  }
-  async function accionMascota() {
-    const m = mascotaActual(); if (!m) return false;
-    if (++turnoMascota < m.accion.turnos) return false;
-    turnoMascota = 0;
-    const el = $('acompana'), pct = valorNivel(m.accion.pct, nivelMascota(m)) / 100;
-    if (m.accion.tipo === 'cura') {
-      const cura = Math.min(vidaMaxG - vidaG, Math.round(vidaMaxG * pct));
-      const curaFinal = Math.min(vidaMaxG - vidaG, Math.round(cura * (1 + efecto('curacion'))));   // Druida: +curación
-      vidaG += curaFinal; pintarVida(slots[0], vidaG, vidaMaxG); mostrarCura(slots[0], curaFinal, '🔥 ');
-      await wait(600); return false;
-    }
-    el.style.transform = `translateX(${avanceReal(420)}px) scale(1.2)`; await wait(220);
-    const dano = Math.max(1, Math.round(st.ataque * pct * (infernal ? 1 / INFERNAL.defensa : 1) * factorPenetracion() * (1 - efRival('reduccion'))));
-    const real = Math.min(dano, Math.max(0, vidaE)); vidaE -= real; danoHecho += real;
-    pintarVida(slots[1], vidaE, enemigo.vida); fx(slots[1], 'dano', `🐾 -${real}`);
-    const ap = m.accion.aplica;   // estado que aplica la mascota al morder
-    if (ap && vidaE > 0 && Math.random() < ap.prob) aplicarEstado(1, ap.estado, ap.turnos, Math.max(1, Math.round(st.ataque * (ap.pct || 0))));
-    el.style.transform = ''; await wait(450);
-    return vidaE <= 0;
-  }
-
-  // Ronda: ataca el guerrero; si el enemigo sigue en pie, responde
   let enRonda = false, auto = false, bucle = false;
+  // Durante la ronda (tu ataque y la respuesta del rival) no se puede huir: la ronda pendiente seguiría corriendo
+  // sobre la batalla siguiente si se empezara otra enseguida.
+  function marcarRonda(v) { enRonda = v; $('huir').disabled = $('btnHuir').disabled = v; }
   async function ronda(hab) {
-    if (campana && campana.grupo) return rondaGrupo(hab);
-    if (terminada) return;
-    enRonda = true;
+    if (batalla.campana && batalla.campana.grupo) return rondaGrupo(hab);
+    if (batalla.terminada) return;
+    marcarRonda(true);
     btn.disabled = true;
-    estadoAtaque('Atacando...');
-    const congelado = await tickEstados(0);   // estados del guerrero al empezar su turno
-    for (const h of HABILIDADES) carga[h.id] = h === hab && !congelado ? 0 : Math.min(h.turnos, carga[h.id] + 1);   // cada turno carga las demás
-    pintarEspecial();
-    let cayo = false;
-    if (vidaG <= 0) mostrarResultado(false);   // cayó por quemadura, veneno o sangrado
-    else {
-      if (!congelado) {
-        cayo = await atacar(0, hab);
-        if (hab && hab.aturde && !cayo) aplicarEstado(1, 'aturdimiento', 1);
-        const ap = hab && hab.aplica;   // estado de la habilidad (quemadura, congelación, sangrado...)
-        if (ap && !cayo && vidaE > 0 && Math.random() < ap.prob) aplicarEstado(1, ap.estado, ap.turnos, Math.max(1, Math.round(st.ataque * (ap.pct || 0))));
-      }
-      if (!cayo && !terminada) cayo = await accionMascota();
-      if (!cayo && !terminada) {
-        estadoAtaque('Esperando...');
-        await wait(600);
-        const pierde = await tickEstados(1);   // estados del enemigo al empezar su turno
-        if (vidaE <= 0) cayo = true;
-        else if (!pierde && !terminada && await atacar(1)) { mostrarResultado(false); cayo = false; }
-        else cayo = !terminada && vidaE <= 0;   // el contraataque de la skin puede rematarlo en su turno
-      }
-    }
-    if (cayo && !campana.abandonada) {
-      sumarLogro('enemigos');
-      // botín del enemigo: se acumula y se cobra al terminar la batalla
-      const x = enemigo.jefe ? 3 : 1, b = campana.botin;
-      const dropEv = (eventoHoy() || {}).drop || 1;   // fin de semana: doble botín
-      contarMision('enemigos');
-      const mat = { piedra: azar(...b.piedra) * x, polvo: (Math.random() < b.polvo * (1 + efecto('fortuna')) * dropEv ? 1 : 0) * x };
-      if (b.cofre && Math.random() < (enemigo.jefe ? .3 : .06) * (b.drop || 1) * (1 + efecto('fortuna')) * dropEv) {   // objeto de equipo (se cobra al terminar)
-        const o = objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + ((eventoHoy() || {}).caza || 0));   // Fortuna: 1/3 de prob. de subir rareza; Cacería: +15 %
-        ganado.objetos.push(o); setTimeout(() => fx(slots[1], 'premio', `🎁 ${modelo[o.modelo].nombre}`), 700);
-      }
-      if (!enemigo.rival) { jugador.bestiario ||= {}; jugador.bestiario[enemigo.nombre] = (jugador.bestiario[enemigo.nombre] || 0) + 1; }
-      sumarMaestria(enemigo.jefe || enemigo.cerbero || enemigo.asmodeo || enemigo.minotauro ? 5 : 1);
-      ganado.oro += enemigo.oro; ganado.xp += enemigo.xp; ganado.piedra += mat.piedra; ganado.polvo += mat.polvo;
-      fx(slots[1], 'premio', `+${enemigo.oro} oro  +${enemigo.xp} XP  🔷${mat.piedra}${mat.polvo ? ' ✨' + mat.polvo : ''}`);
-      if (enemigo.cerbero) await muerteCerbero();
-      else if (enemigo.asmodeo) await muerteAsmodeo();
-      else if (enemigo.minotauro) await muerteMinotauro();
-      slots[1].classList.add('muerto');
-      await wait(900);
-      if (terminada) return (enRonda = false);
-      if (iEnemigo + 1 < campana.enemigos.length) await sacarEnemigo(iEnemigo + 1);
-      else mostrarResultado(true);
-    }
+    await reproducir(resolverRonda(hab));
     estadoAtaque('Atacar');
-    btn.disabled = auto || terminada;
-    enRonda = false;
+    btn.disabled = auto || batalla.terminada;
+    marcarRonda(false);
     pintarEspecial();
   }
   btn.onclick = () => ronda(null);
@@ -3855,15 +3932,15 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     auto = !auto;
     btnAuto.title = auto ? 'Autoataque: ON' : 'Autoataque: OFF';
     btnAuto.classList.toggle('activo', auto);
-    btn.disabled = auto || enRonda || terminada;
+    btn.disabled = auto || enRonda || batalla.terminada;
     pintarEspecial();
     if (!auto || bucle) return;
     bucle = true;
     while (enRonda) await wait(100);          // si había una ronda manual en curso, espera a que termine
-    while (auto && !terminada) { await ronda(habLista()); if (auto) await wait(500); }
+    while (auto && !batalla.terminada) { await ronda(habLista()); if (auto) await wait(500); }
     bucle = false;
-    btn.disabled = terminada;
-    if (campana && campana.grupo) iniciarCuentaTurno();   // sin autoataque vuelve la cuenta de 10 s del multijugador
+    btn.disabled = batalla.terminada;
+    if (batalla.campana && batalla.campana.grupo) iniciarCuentaTurno();   // sin autoataque vuelve la cuenta de 10 s del multijugador
   };
 
   // ---------------- Utilidades de recompensa y calendario ----------------
@@ -4525,7 +4602,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   });
 
   // ---- montaje de la escena ----
-  let grupo = null;   // { heroes: [...], enemigos: [...], ronda: n }
+  batalla.grupo = null;   // { heroes: [...], enemigos: [...], ronda: n }
   const arenaG = $('arenaGrupo');
   function ajustarGrupo() {
     const esc = document.querySelector('.escena'), e = Math.min(1, (esc.clientWidth - 16) / ANCHO_GRUPO, (esc.clientHeight - 30) / ALTO_GRUPO);
@@ -4551,11 +4628,11 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       if (u.yo) u.el.classList.add('yo');
       const capas = montarCapas(u.el.querySelector('.frames')); conPerfil(m.perfil, () => pintarVista(capas));
       u.pj = personaje(u.el, 296);
-      u.st = u.yo ? st : conPerfil(m.perfil, estadisticas);
+      u.st = u.yo ? batalla.st : conPerfil(m.perfil, estadisticas);
       u.ef = u.yo ? efecto : k => conPerfil(m.perfil, () => efecto(k));
       u.golpes = u.yo ? golpesEstado() : conPerfil(m.perfil, golpesEstado);
       u.s4 = u.yo ? set4 : j => conPerfil(m.perfil, () => set4(j));   // sets de 4 piezas de cada jugador
-      if (u.yo) { u.habs = HABILIDADES; u.carga = carga; }
+      if (u.yo) { u.habs = HABILIDADES; u.carga = batalla.carga; }
       else { const h = conPerfil(m.perfil, calcularHabilidades); u.habs = h.habs; u.carga = Object.fromEntries(h.habs.map(x => [x.id, h.llenas ? x.turnos : 0])); }
       u.vida = u.vidaMax = u.st.vida; pintarVida(u.el, u.vida, u.vidaMax);
       heroes.push(u);
@@ -4577,9 +4654,9 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       u.pj = personaje(u.el, 260); pintarVida(u.el, u.vida, u.vidaMax);
       return u;
     });
-    grupo = { heroes, enemigos, turnoMascota: 0, objetivo: null };
+    batalla.grupo = { heroes, enemigos, turnoMascota: 0, objetivo: null };
     objetivoJugador();   // se marca el frontal desde el inicio
-    enemigo = enemigos[0].e;   // para los textos del resultado
+    batalla.enemigo = enemigos[0].e;   // para los textos del resultado
     ajustarGrupo();
     if (c.reyes) avisar('¡Los 3 reyes!'); else if (enemigos.some(u => u.e.jefe)) avisar('¡Jefe!');
     await wait(500);
@@ -4650,14 +4727,14 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   // Objetivo del jugador: el enemigo que toque (golpes y habilidades van a él). Si no eligió o cayó, el más adelantado
   // (frente, arriba, abajo, retaguardia); también en autoataque. Aliados y enemigos siguen eligiendo por posición.
   function objetivoJugador() {
-    let t = grupo.objetivo && grupo.objetivo.vida > 0 ? grupo.objetivo : null;
-    if (!t) t = POSICIONES.map(p => grupo.enemigos.find(e => e.pos === p && e.vida > 0)).find(Boolean) || vivos(grupo.enemigos)[0];
+    let t = batalla.grupo.objetivo && batalla.grupo.objetivo.vida > 0 ? batalla.grupo.objetivo : null;
+    if (!t) t = POSICIONES.map(p => batalla.grupo.enemigos.find(e => e.pos === p && e.vida > 0)).find(Boolean) || vivos(batalla.grupo.enemigos)[0];
     marcarObjetivo(t); return t;
   }
-  function marcarObjetivo(t) { grupo.objetivo = t; for (const e of grupo.enemigos) e.el.classList.toggle('objetivo', e === t); }
+  function marcarObjetivo(t) { batalla.grupo.objetivo = t; for (const e of batalla.grupo.enemigos) e.el.classList.toggle('objetivo', e === t); }
   arenaG.addEventListener('click', e => {
-    const el = e.target.closest('.unidad'); if (!el || !grupo) return;
-    const t = grupo.enemigos.find(x => x.el === el); if (t && t.vida > 0) marcarObjetivo(t);
+    const el = e.target.closest('.unidad'); if (!el || !batalla.grupo) return;
+    const t = batalla.grupo.enemigos.find(x => x.el === el); if (t && t.vida > 0) marcarObjetivo(t);
   });
   async function morirU(u) {
     u.el.classList.add('muerto');
@@ -4666,16 +4743,16 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   // botín de un enemigo vencido (lo mismo que en la batalla 1 contra 1)
   function cobrarU(u) {
-    if (campana.abandonada) return;
-    const e = u.e, b = campana.botin, x = e.jefe ? 3 : 1, dropEv = (eventoHoy() || {}).drop || 1;
+    if (batalla.campana.abandonada) return;
+    const e = u.e, b = batalla.campana.botin, x = e.jefe ? 3 : 1, dropEv = (eventoHoy() || {}).drop || 1;
     sumarLogro('enemigos'); contarMision('enemigos');
     const mat = { piedra: azar(...b.piedra) * x, polvo: (Math.random() < b.polvo * (1 + efecto('fortuna')) * dropEv ? 1 : 0) * x };
     if (b.cofre && Math.random() < (e.jefe ? .3 : .06) * (b.drop || 1) * (1 + efecto('fortuna')) * dropEv) {
-      const o = objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + ((eventoHoy() || {}).caza || 0)); ganado.objetos.push(o); fxU(u, 'premio', `🎁 ${modelo[o.modelo].nombre}`, 30);
+      const o = objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + ((eventoHoy() || {}).caza || 0)); batalla.ganado.objetos.push(o); fxU(u, 'premio', `🎁 ${modelo[o.modelo].nombre}`, 30);
     }
     jugador.bestiario ||= {}; jugador.bestiario[e.nombre] = (jugador.bestiario[e.nombre] || 0) + 1;
     sumarMaestria(e.jefe ? 5 : 1);
-    ganado.oro += e.oro; ganado.xp += e.xp; ganado.piedra += mat.piedra; ganado.polvo += mat.polvo;
+    batalla.ganado.oro += e.oro; batalla.ganado.xp += e.xp; batalla.ganado.piedra += mat.piedra; batalla.ganado.polvo += mat.polvo;
     fxU(u, 'premio', `+${e.oro} oro +${e.xp} XP`);
   }
 
@@ -4709,10 +4786,10 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   function golpeVisual(t) { t.el.classList.remove('golpeado'); void t.el.offsetWidth; t.el.classList.add('golpeado'); setTimeout(() => t.el.classList.remove('golpeado'), 600); }
 
   // ---- acciones ----
-  async function accionHeroe(u, hab, rivales = grupo.enemigos) {   // un jugador ataca: héroe contra enemigos, o rey contra héroes
+  async function accionHeroe(u, hab, rivales = batalla.grupo.enemigos) {   // un jugador ataca: héroe contra enemigos, o rey contra héroes
     if (await tickU(u)) return;
     if (!vivos(rivales).length) return;
-    const t = u.yo && rivales === grupo.enemigos ? objetivoJugador() : hab ? objetivoAlAzar(rivales) : objetivoPorPosicion(rivales);
+    const t = u.yo && rivales === batalla.grupo.enemigos ? objetivoJugador() : hab ? objetivoAlAzar(rivales) : objetivoPorPosicion(rivales);
     const regreso = await animHeroe(u, t, hab);
     if (t.perfil && Math.random() < t.ef('esquiva')) { fxU(t, 'num-cura', '💨 Esquiva'); await wait(250); if (regreso) await regreso(); return; }
     let dano = danoGuerrero(u.st), critico = false;
@@ -4743,8 +4820,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   async function accionEnemigo(u) {
     if (await tickU(u)) return;
     if (u.e.regen && u.vida < u.vidaMax) curaU(u, Math.min(u.vidaMax - u.vida, Math.round(u.vidaMax * u.e.regen)), '💚 ');
-    if (!vivos(grupo.heroes).length) return;
-    const t = objetivoPorPosicion(grupo.heroes), regreso = await animEnemigo(u, t);
+    if (!vivos(batalla.grupo.heroes).length) return;
+    const t = objetivoPorPosicion(batalla.grupo.heroes), regreso = await animEnemigo(u, t);
     if (Math.random() < t.ef('esquiva')) { fxU(t, 'num-cura', '💨 Esquiva'); await wait(200); await regreso(); return; }
     const dano = aguanteSet4(t, Math.max(1, Math.min(t.vida, Math.round(danoRecibido(azar(...u.e.dano), t.st) * DANO_GRUPO * (1 - t.ef('reduccion'))))));
     t.vida -= dano; pintarVida(t.el, t.vida, t.vidaMax); golpeVisual(t); fxU(t, 'dano', `-${dano}`);
@@ -4757,18 +4834,18 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     }
   }
   async function accionMascotaGrupo() {
-    const m = mascotaActual(), yo = grupo.heroes.find(h => h.yo); if (!m || !yo || yo.vida <= 0) return;
-    if (++grupo.turnoMascota < m.accion.turnos) return; grupo.turnoMascota = 0;
+    const m = mascotaActual(), yo = batalla.grupo.heroes.find(h => h.yo); if (!m || !yo || yo.vida <= 0) return;
+    if (++batalla.grupo.turnoMascota < m.accion.turnos) return; batalla.grupo.turnoMascota = 0;
     const pct = valorNivel(m.accion.pct, nivelMascota(m)) / 100;
     if (m.accion.tipo === 'cura') {   // cura al héroe con menos vida
-      const t = vivos(grupo.heroes).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
+      const t = vivos(batalla.grupo.heroes).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
       curaU(t, Math.min(t.vidaMax - t.vida, Math.round(t.vidaMax * pct * (1 + efecto('curacion')))), '🐾 '); await wait(400); return;
     }
-    const t = objetivoAlAzar(grupo.enemigos); if (!t) return;
+    const t = objetivoAlAzar(batalla.grupo.enemigos); if (!t) return;
     const dt = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };
     const def = factorDefensa({ armadura: armaduraEfectiva(dt.armadura, efecto('penetracion')), defensa: dt.defensa }) * (1 - (t.perfil ? t.ef('reduccion') : 0));
-    const d = Math.max(1, Math.min(t.vida, Math.round(st.ataque * pct * def))); t.vida -= d; pintarVida(t.el, t.vida, t.vidaMax); fxU(t, 'dano', `🐾 -${d}`);
-    const ap = m.accion.aplica; if (ap && t.vida > 0 && Math.random() < ap.prob) aplicarEstadoU(t, ap.estado, ap.turnos, Math.max(1, Math.round(st.ataque * (ap.pct || 0))));
+    const d = Math.max(1, Math.min(t.vida, Math.round(batalla.st.ataque * pct * def))); t.vida -= d; pintarVida(t.el, t.vida, t.vidaMax); fxU(t, 'dano', `🐾 -${d}`);
+    const ap = m.accion.aplica; if (ap && t.vida > 0 && Math.random() < ap.prob) aplicarEstadoU(t, ap.estado, ap.turnos, Math.max(1, Math.round(batalla.st.ataque * (ap.pct || 0))));
     await wait(400); if (t.vida <= 0) await morirU(t);
   }
 
@@ -4779,10 +4856,10 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   function pararCuentaTurno() { clearInterval(cuentaTurno); cuentaTurno = null; delete btn.dataset.cuenta; }
   function iniciarCuentaTurno() {
     pararCuentaTurno();
-    if (!campana || !(campana.reyes || campana.calabozo) || terminada || auto) return;
+    if (!batalla.campana || !(batalla.campana.reyes || batalla.campana.calabozo) || batalla.terminada || auto) return;
     let t = TIEMPO_TURNO; btn.dataset.cuenta = t;
     cuentaTurno = setInterval(() => {
-      if (terminada || auto || pantallaActual !== 'pBatalla') return pararCuentaTurno();
+      if (batalla.terminada || auto || pantallaActual !== 'pBatalla') return pararCuentaTurno();
       if (enRonda) return;
       if (--t > 0) btn.dataset.cuenta = t; else { pararCuentaTurno(); ronda(null); }
     }, 1000);
@@ -4790,30 +4867,30 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
 
   // ---- ronda ----
   async function rondaGrupo(hab) {
-    if (terminada || !grupo) return;
+    if (batalla.terminada || !batalla.grupo) return;
     pararCuentaTurno();
-    enRonda = true; btn.disabled = true; estadoAtaque('Atacando...');
+    marcarRonda(true); btn.disabled = true; estadoAtaque('Atacando...');
     const orden = l => POSICIONES.flatMap(p => l.filter(u => u.pos === p));
-    for (const u of orden(grupo.heroes)) {
-      if (terminada || u.vida <= 0 || !vivos(grupo.enemigos).length) continue;
+    for (const u of orden(batalla.grupo.heroes)) {
+      if (batalla.terminada || u.vida <= 0 || !vivos(batalla.grupo.enemigos).length) continue;
       let h = null;
-      if (u.yo) h = hab && carga[hab.id] >= hab.turnos ? hab : null;
+      if (u.yo) h = hab && batalla.carga[hab.id] >= hab.turnos ? hab : null;
       else h = habAuto(u);   // aliados: su mejor habilidad lista
       if (u.yo) { for (const x of u.habs) u.carga[x.id] = x === h ? 0 : Math.min(x.turnos, u.carga[x.id] + 1); pintarEspecial(); }
       await accionHeroe(u, h);
     }
-    if (vivos(grupo.enemigos).length) await accionMascotaGrupo();
-    if (vivos(grupo.enemigos).length) {
+    if (vivos(batalla.grupo.enemigos).length) await accionMascotaGrupo();
+    if (vivos(batalla.grupo.enemigos).length) {
       estadoAtaque('Esperando...'); await wait(250);
-      for (const u of orden(grupo.enemigos)) {
-        if (terminada || u.vida <= 0 || !vivos(grupo.heroes).length) continue;
-        if (u.perfil) await accionHeroe(u, habAuto(u), grupo.heroes); else await accionEnemigo(u);
+      for (const u of orden(batalla.grupo.enemigos)) {
+        if (batalla.terminada || u.vida <= 0 || !vivos(batalla.grupo.heroes).length) continue;
+        if (u.perfil) await accionHeroe(u, habAuto(u), batalla.grupo.heroes); else await accionEnemigo(u);
       }
     }
-    const yo = grupo.heroes.find(h => h.yo); vidaG = yo.vida;   // por si algo consulta la vida del jugador
-    if (!terminada && !vivos(grupo.enemigos).length) { await wait(400); mostrarResultado(true); }
-    else if (!terminada && !vivos(grupo.heroes).length) mostrarResultado(false);
-    estadoAtaque('Atacar'); btn.disabled = auto || terminada; enRonda = false; pintarEspecial(); iniciarCuentaTurno();   // si caíste, tus aliados siguen: Atacar hace avanzar la ronda
+    const yo = batalla.grupo.heroes.find(h => h.yo); batalla.vidaG = yo.vida;   // por si algo consulta la vida del jugador
+    if (!batalla.terminada && !vivos(batalla.grupo.enemigos).length) { await wait(400); mostrarResultado(true); }
+    else if (!batalla.terminada && !vivos(batalla.grupo.heroes).length) mostrarResultado(false);
+    estadoAtaque('Atacar'); btn.disabled = auto || batalla.terminada; marcarRonda(false); pintarEspecial(); iniciarCuentaTurno();   // si caíste, tus aliados siguen: Atacar hace avanzar la ronda
   }
 
   // ---------------- Campamento (menú principal) ----------------
@@ -4895,6 +4972,132 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   addEventListener('resize', paginarAccesos); paginarAccesos();
   campListo = true; pintarCampamento();
   $('campVersion').textContent = `v${VERSION_JUEGO}${MODO_PRUEBAS ? ' · pruebas' : ''}`; $('pruebasVersion').textContent = `v${VERSION_JUEGO}`;
+  // ---------------- Bot de pruebas ----------------
+  // "repetir": en batalla activa el autoataque y, al terminar, pulsa Jugar de nuevo / Reintentar / Subir piso.
+  // "jugar": además elige qué jugar (campaña, Torre, Arena, jefes mundiales; nada multijugador), se equipa lo de más
+  // poder, reparte los puntos de habilidad y compra cofres con el oro que sobra. Para cuando no queda nada que jugar hoy.
+  let botModo = null, botVel = 1;
+  const botFallos = {};   // derrotas por batalla (clave): a las 2 el bot deja de intentarla
+  const esperar = ms => new Promise(r => setTimeout(r, ms));   // tiempo real (wait() va con la velocidad de batalla)
+  function botCerrarMensajes() {   // mensajes de solo OK (desbloqueos...); los de confirmar se dejan
+    if ($('dialogo').classList.contains('visible') && $('dialogoNo').hidden) $('dialogoSi').click();
+  }
+  function botEquipar() {
+    for (const r of Object.keys(RANURAS)) {
+      let mejor = jugador.equipado[r], pMejor = poder();
+      for (const o of jugador.objetos) {
+        if (modelo[o.modelo].ranura !== r || o.uid === mejor) continue;
+        jugador.equipado[r] = o.uid; const p = poder();
+        if (p > pMejor) { pMejor = p; mejor = o.uid; }
+      }
+      if (mejor) jugador.equipado[r] = mejor; else delete jugador.equipado[r];   // ranura que estaba vacía
+    }
+    aplicarEquipo();
+  }
+  function botArbol() {
+    if (!desbloqueado('pArbol')) return;
+    while (puntosLibres() > 0) {
+      let mejor = null, pMejor = -1;
+      for (const rama of ramasClase()) rama.nodos.forEach((n, i) => {
+        if (rango(n.id) >= n.max || !nodoAbierto(rama, i)) return;
+        jugador.arbol[n.id] = rango(n.id) + 1; const p = poder();
+        if (--jugador.arbol[n.id] <= 0) delete jugador.arbol[n.id];
+        if (p > pMejor) { pMejor = p; mejor = n; }
+      });
+      if (!mejor) break;
+      jugador.arbol[mejor.id] = rango(mejor.id) + 1;
+    }
+  }
+  function botCofres() {   // el mejor cofre x10 que se pueda pagar dejando 2000 de oro
+    const c = [...COFRES].reverse().find(k => k.precio && jugador.oro >= k.precio * 10 + 2000);
+    if (!c) return;
+    jugador.oro -= c.precio * 10; sumarLogro('cofres', 10); contarMision('cofres', 10);
+    for (let i = 0; i < 10; i++) abrirCofre(c);
+  }
+  function botPreparar() { botCofres(); botEquipar(); botArbol(); guardar(); pintarHud(); }
+  // siguiente cosa por jugar: { clave, iniciar } o { barrido: [c, d] }
+  function botSiguiente() {
+    revisarEstamina();
+    const pocos = k => (botFallos[k] || 0) < 2;
+    if (jugador.estamina >= ESTAMINA_CAMPANA) {
+      for (const c of CAMPANAS) for (const d of ORDEN_DIF) {
+        const k = `${c.id}:${d}`, b = $('listaCampanas').querySelector(`[data-campana="${c.id}"][data-dif="${d}"]`);
+        if (b && !b.disabled && !superada(c.id, d) && pocos(k)) return { clave: k, iniciar: () => b.click() };
+      }
+    }
+    const piso = 'torre' + (jugador.torre.mejor + 1);
+    if (desbloqueado('pTorre') && pocos(piso)) return { clave: piso, iniciar: iniciarTorre };
+    if (desbloqueado('pArena') && revisarArena().entradas > 0) {
+      const a = revisarArena(), i = a.rivales.reduce((m, r, k) => r.f < a.rivales[m].f ? k : m, 0);   // el rival más fácil
+      return { clave: 'arena', iniciar: () => { pintarArena(); $('arenaPvp').querySelector(`[data-rival="${i}"]`).click(); } };
+    }
+    if (desbloqueado('pEvento') && entradasJefe() > 0) {
+      const id = Object.keys(MUNDIALES).find(m => estadoMundial(m).vida > 0 && pocos('jefe' + m));
+      if (id) return { clave: 'jefe' + id, iniciar: () => { mundialSel = id; iniciarMundial(); } };
+    }
+    if (jugador.estamina >= ESTAMINA_CAMPANA)   // farmeo: barrido del nivel más alto ya superado
+      for (const c of [...CAMPANAS].reverse()) for (const d of [...ORDEN_DIF].reverse()) if (superada(c.id, d)) return { barrido: [c, d] };
+    return null;
+  }
+  // espera a que termine la batalla en curso con el autoataque puesto: true victoria, false derrota, null si no empezó o se paró
+  async function botBatalla() {
+    if (pantallaActual !== 'pBatalla' || batalla.terminada) return null;
+    await esperar(1500);   // que salgan los enemigos antes de atacar
+    while (!batalla.terminada) {
+      if (!botModo) return null;
+      botCerrarMensajes();
+      if (!auto && !bucle && !enRonda) btnAuto.click();
+      await esperar(300);
+    }
+    await esperar(300);
+    return $('resTitulo').textContent.startsWith('¡Victoria');
+  }
+  async function botRepetir() {
+    while (botModo === 'repetir') {
+      botCerrarMensajes();
+      if (pantallaActual === 'pBatalla' && !batalla.terminada) { ponerVelocidad(VELOCIDADES.at(-1)); if (await botBatalla() === null) continue; }
+      if (pantallaActual === 'pBatalla' && $('resultado').classList.contains('visible')) {
+        if ($('resOtra').style.display === 'none') { avisar('Bot: esta batalla no se repite'); break; }
+        await esperar(800); if (botModo !== 'repetir') break;
+        ponerVelocidad(VELOCIDADES.at(-1)); $('resOtra').click(); await esperar(500);
+        if (batalla.terminada) { avisar('Bot: sin estamina'); break; }   // no pudo empezar otra
+        continue;
+      }
+      await esperar(500);   // fuera de batalla: espera a que el jugador entre en una
+    }
+    botParar();
+  }
+  async function botJugar() {
+    if (pantallaActual === 'pBatalla' && $('resultado').classList.contains('visible')) $('resSalir').click();
+    while (botModo === 'jugar') {
+      botCerrarMensajes(); botPreparar();
+      const acc = botSiguiente();
+      if (!acc) { avisar('Bot: nada más que jugar hoy'); break; }
+      if (acc.barrido) { barrido(...acc.barrido); await esperar(400); continue; }
+      ponerVelocidad(VELOCIDADES.at(-1)); acc.iniciar(); await esperar(100);
+      const gano = await botBatalla();
+      if (!botModo) break;
+      if (!gano) botFallos[acc.clave] = (botFallos[acc.clave] || 0) + 1;   // derrota o no pudo empezar
+      if (pantallaActual === 'pBatalla') { await esperar(600); $('resSalir').click(); }
+      await esperar(400);
+    }
+    botParar();
+  }
+  function botEmpezar(modo) {
+    if (!MODO_PRUEBAS || botModo) return;
+    botModo = modo; botVel = velElegida;
+    $('pruebasMenu').classList.remove('visible'); $('botParar').hidden = false;
+    (modo === 'jugar' ? botJugar() : botRepetir()).catch(e => { console.error(e); avisar('Bot: error, ver consola'); botParar(); });
+  }
+  function botParar() {
+    if (!botModo) return;
+    botModo = null; $('botParar').hidden = true; ponerVelocidad(botVel);
+    if (auto) btnAuto.click();   // quita el autoataque que puso el bot
+    avisar('Bot parado');
+  }
+  $('botRepetir').onclick = () => botEmpezar('repetir');
+  $('botJugar').onclick = () => botEmpezar('jugar');
+  $('botParar').onclick = botParar;
   if (jugador.arbolDevuelto) { delete jugador.arbolDevuelto; guardar(); setTimeout(() => avisar(`Árbol reiniciado: ahora el máximo es ${PUNTOS_ARBOL_MAX} puntos`), 800); }
 </script>
 </body>
