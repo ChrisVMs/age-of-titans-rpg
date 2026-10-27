@@ -698,6 +698,7 @@
   @keyframes estela { from{ transform:scaleX(0); opacity:1 } 60%{ transform:scaleX(1); opacity:1 } to{ transform:scaleX(1); opacity:0 } }
   .sin-pruebas .prueba, .sin-pruebas #abrirPruebas, .sin-pruebas #pruebas { display:none !important; }
   #pruebas { display:none; } .con-pruebas-batalla #pruebas { display:flex; }
+  .camp-mini { flex:none; width:30px; height:30px; min-height:0; padding:0; margin:0; border-radius:50%; background:#000a; color:#eee; border:1px solid #fff5; font-size:14px; line-height:1; }
   .prueba-mini { flex:none; width:30px; height:30px; min-height:0; padding:0; margin:0; border-radius:50%; background:#000a; border:1px dashed #fff5; font-size:14px; line-height:1; }
   .prueba-check { display:flex; align-items:center; gap:8px; font-size:13px; color:#ccc; justify-content:center; }
   .prueba { font-size:13px; padding:8px 12px; min-height:48px; background:#333; color:#ccc; border-style:dashed; }
@@ -823,6 +824,7 @@
       <div class="camp-recursos" id="campRecursos"></div>
       <span class="dia-prueba prueba"><span id="diaPrueba"></span><button id="sumarDia" aria-label="Pasar al día siguiente">+</button></span>
       <button class="prueba-mini" id="abrirPruebas" title="Pruebas" aria-label="Pruebas">🧪</button>
+      <button class="camp-mini" id="btnOrientacion"></button>
     </div>
     <div class="camp-escena">
       <div class="camp-luna"></div>
@@ -879,7 +881,6 @@
       <button class="prueba" id="puntosPrueba">+5 puntos de habilidad (pruebas)</button>
       <div class="prueba-check" id="perfilesPrueba"></div>
       <label class="prueba-check"><input type="checkbox" id="pruebasBatalla"> Botones de prueba en batalla</label>
-      <label class="prueba-check"><input type="checkbox" id="vistaVertical"> Vista vertical</label>
       <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
       <button id="cerrarPruebas">Cerrar</button>
     </div></div>
@@ -1063,19 +1064,32 @@
   // Pantallas grandes en horizontal (escritorio, tablet): el juego se dibuja a ALTO_DISENO px de alto, como en un móvil
   // en horizontal, y se amplía entero para llenar la ventana; así se ve igual que en el móvil pero grande, no diminuto.
   const ALTO_DISENO = 412;
-  // pruebas: "Vista vertical" simula un móvil en vertical (lienzo 9:19.5 centrado) aunque la ventana esté en horizontal
-  let vistaVertical = false;
-  try { vistaVertical = MODO_PRUEBAS && !!localStorage.getItem('batalla.vistaVertical'); } catch {}
+  // Orientación elegida por el jugador (botón del Campamento): auto, horizontal o vertical. Se pide al sistema que gire
+  // la pantalla (screen.orientation.lock); si no se deja (navegador de escritorio, WebView con la orientación fija),
+  // el lienzo se adapta: en vertical con la ventana horizontal se dibuja un móvil vertical centrado, y en horizontal
+  // con la ventana vertical el juego se gira 90° para jugar con el móvil de lado.
+  const ORIENTACIONES = ['auto', 'horizontal', 'vertical'];
+  let orientacion = 'auto';
+  try { const o = localStorage.getItem('batalla.orientacion'); if (ORIENTACIONES.includes(o)) orientacion = o; } catch {}
+  function bloquearOrientacion() {
+    const so = screen.orientation;
+    if (!so) return;
+    if (orientacion === 'auto') { try { so.unlock(); } catch {} return; }
+    if (so.lock) so.lock(orientacion === 'vertical' ? 'portrait' : 'landscape').catch(() => {});
+  }
   function ajustarLienzo() {
-    const W = innerWidth, H = innerHeight, b = document.body, ampliar = !vistaVertical && W > H && H > 520;
-    const k = ampliar ? H / ALTO_DISENO : 1;
-    b.style.width = ampliar ? `${W / k}px` : vistaVertical ? `${Math.min(W, Math.round(H * 9 / 19.5))}px` : '';
-    b.style.height = ampliar ? `${ALTO_DISENO}px` : '';
-    b.style.margin = vistaVertical ? '0 auto' : '';
-    b.style.transform = ampliar ? `scale(${k})` : '';
+    const W = innerWidth, H = innerHeight, b = document.body;
+    const girar = orientacion === 'horizontal' && H > W, vertical = orientacion === 'vertical' && W > H;
+    const AW = girar ? H : W, AH = girar ? W : H;   // ancho y alto del lienzo antes de girarlo
+    const ampliar = !vertical && AW > AH && AH > 520;
+    const k = ampliar ? AH / ALTO_DISENO : 1;
+    b.style.width = ampliar || girar ? `${AW / k}px` : vertical ? `${Math.min(W, Math.round(H * 9 / 19.5))}px` : '';
+    b.style.height = ampliar || girar ? `${AH / k}px` : '';
+    b.style.margin = vertical ? '0 auto' : '';
+    b.style.transform = (girar ? `translate(${W}px,0) rotate(90deg) ` : '') + (ampliar ? `scale(${k})` : '');
     document.documentElement.classList.toggle('ampliado', ampliar);
   }
-  addEventListener('resize', ajustarLienzo); ajustarLienzo();
+  addEventListener('resize', ajustarLienzo); ajustarLienzo(); bloquearOrientacion();
   // Versión del juego: subirla en cada entrega (y la misma en BATALLA-MOBILE: package.json y android/app/build.gradle)
   const VERSION_JUEGO = '0.2.1';
   let VELOCIDAD = 1, velElegida = 1;   // avance rápido en batalla: divide todas las esperas (velElegida: la del jugador)
@@ -2702,10 +2716,17 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const ponerPruebasBatalla = on => { document.documentElement.classList.toggle('con-pruebas-batalla', on); $('pruebasBatalla').checked = on;
     try { localStorage.setItem('batalla.pruebasBatalla', on ? '1' : ''); } catch {} };
   $('pruebasBatalla').onchange = e => ponerPruebasBatalla(e.target.checked);
-  $('vistaVertical').checked = vistaVertical;
-  $('vistaVertical').onchange = e => { vistaVertical = e.target.checked;
-    try { localStorage.setItem('batalla.vistaVertical', vistaVertical ? '1' : ''); } catch {}
-    dispatchEvent(new Event('resize')); };   // reajusta lienzo, escala de batalla y UI
+  // botón de orientación del Campamento: cambia entre auto, horizontal y vertical (se recuerda)
+  const ICONO_ORIENTACION = { auto: '🔄', horizontal: '▭', vertical: '▯' };
+  const pintarOrientacion = () => { $('btnOrientacion').textContent = ICONO_ORIENTACION[orientacion];
+    $('btnOrientacion').setAttribute('aria-label', `Pantalla: ${orientacion}`); };
+  $('btnOrientacion').onclick = () => {
+    orientacion = ORIENTACIONES[(ORIENTACIONES.indexOf(orientacion) + 1) % ORIENTACIONES.length];
+    try { localStorage.setItem('batalla.orientacion', orientacion); } catch {}
+    pintarOrientacion(); bloquearOrientacion(); avisar(`Pantalla: ${orientacion}`);
+    dispatchEvent(new Event('resize'));   // reajusta lienzo, escala de batalla y UI
+  };
+  pintarOrientacion();
   try { ponerPruebasBatalla(!!localStorage.getItem('batalla.pruebasBatalla')); } catch { ponerPruebasBatalla(false); }
 
   montarGuerrero($('vitrina'));

@@ -9,6 +9,11 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 
 ## 0.2.1 — 2026-10-25
 
+### 📱 Pantalla vertical y horizontal
+- Botón de orientación arriba a la derecha del Campamento: 🔄 Auto (gira con el móvil), ▭ Horizontal o ▯ Vertical. Se recuerda.
+- Si el sistema no deja girar la pantalla, el juego se adapta: en Vertical con la ventana horizontal se dibuja un móvil vertical centrado, y en Horizontal con la ventana vertical el juego se gira 90°.
+- Sustituye la casilla «Vista vertical» del menú de pruebas.
+
 ### 🛡 Batalla por grupos (Campaña y Torre)
 - Formación en rombo 1-2-1: Frente, Arriba, Abajo y Retaguardia. Botón «🛡 Formación» en Campaña y Torre para elegir tu casilla y llevar hasta 2 bots como aliados (máx. 3 jugadores).
 - Hasta 4 enemigos a la vez, con el jefe al frente.
