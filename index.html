@@ -1460,7 +1460,8 @@ Fuente: ${INFO_MATERIALES[k].fuente}`);
   // Nivel y experiencia
   // Curva: rápida hasta el 30 (desbloqueos y primera semana); desde ahí ×1,03 por nivel para que el nivel siga siendo un
   // objetivo durante meses. Total a Nv 80: ~3,4 M de XP (antes 1,35 M, que se alcanzaba en 2-3 semanas).
-  const xpParaSubir = n => Math.round(60 * Math.pow(n, 1.5) * (n > 30 ? 1.03 ** (n - 30) : 1));
+  let CURVA_XP = 1.03;   // crecimiento por nivel desde el 30 (let: el simulador de progresión prueba otros valores)
+  const xpParaSubir = n => Math.round(60 * Math.pow(n, 1.5) * (n > 30 ? CURVA_XP ** (n - 30) : 1));
   const NIVEL_MAX = 80;   // al llegar, la experiencia deja de acumularse
   jugador.nivel = Math.min(jugador.nivel, NIVEL_MAX);
   function ganar(oro, xp, mat = {}) {
@@ -2898,6 +2899,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   pintarCampanas();
   // Auto (barrido): en un nivel ya superado en esa dificultad, cobra sus recompensas sin pelear gastando la misma estamina.
   // Da lo mismo que ganar la batalla: premio, oro/XP y botín de cada enemigo (con eventos y efectos), misiones y maestría.
+  let XP_BARRIDO = 1;   // parte de la XP de la batalla que da el barrido (let: lo ajusta el simulador de progresión)
   function barrido(c, d) {
     revisarEstamina();
     if (!superada(c.id, d)) return;
@@ -2912,7 +2914,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       if (b.cofre && rnd() < (e.jefe ? .3 : .06) * (b.drop || 1) * (1 + efecto('fortuna')) * dropEv)
         objetos.push(objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + (ev.caza || 0)));
     }
-    g.oro = Math.round(g.oro * (1 + efecto('oro')) * (ev.oro || 1)); g.xp = Math.round(g.xp * (ev.xp || 1) * (1 + efecto('experiencia')));
+    g.oro = Math.round(g.oro * (1 + efecto('oro')) * (ev.oro || 1)); g.xp = Math.round(g.xp * XP_BARRIDO * (ev.xp || 1) * (1 + efecto('experiencia')));
     g.piedra = Math.round(g.piedra * (ev.mat || 1)); g.polvo = Math.round(g.polvo * (ev.mat || 1));
     jugador.objetos.push(...objetos);
     ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo });
@@ -4724,6 +4726,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const XY_HEROE = { atras: [0, 125], arriba: [170, 30], abajo: [170, 220], frente: [340, 125] };   // coordenadas en la escena
   const XY_ENEMIGO = { frente: [640, 125], arriba: [810, 30], abajo: [810, 220], atras: [980, 125] };
   const ANCHO_GRUPO = 1276, ALTO_GRUPO = 450;
+  let CALABOZO_SOLO = 1;   // vida de los enemigos del calabozo si vas solo (let: lo ajusta el simulador de progresión)
   const VIDA_POR_ALIADO = .7;   // con aliados los enemigos tienen más vida (+70 % por aliado)
   jugador.formacion ||= { pos: 'frente', aliados: [] };
   // (función declarada: la Campaña la usa al dibujarse en el arranque, antes de llegar a este bloque)
@@ -4797,7 +4800,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     const posDe = (e0, i) => reyes ? POSICIONES[i] : e0.jefe && nJefes === 1 ? 'atras' : (nJefes === 1 ? delante : POSICIONES)[i];
     const enemigos = lista.map((e0, i) => {
       if (e0.perfil) return unidadRey(e0, POSICIONES[i]);
-      return unidadMonstruo({ ...e0, vida: Math.round(e0.vida * (1 + VIDA_POR_ALIADO * (heroes.length - 1))) }, posDe(e0, i));
+      const solo = c.calabozo && heroes.length === 1 ? CALABOZO_SOLO : 1;   // el calabozo está pensado para ir en grupo
+      return unidadMonstruo({ ...e0, vida: Math.round(e0.vida * (1 + VIDA_POR_ALIADO * (heroes.length - 1)) * solo) }, posDe(e0, i));
     });
     batalla.grupo = { heroes, enemigos, turnoMascota: 0, objetivo: null };
     elegirObjetivo();   // se marca el frontal desde el inicio
