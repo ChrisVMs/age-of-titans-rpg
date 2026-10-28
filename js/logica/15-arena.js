@@ -7,10 +7,12 @@
   const FILTROS_RIVAL = ['hue-rotate(90deg) saturate(2)', 'hue-rotate(200deg) saturate(2)', 'sepia(1) saturate(4) hue-rotate(10deg)', 'grayscale(1) brightness(1.4)'];
   const diasFinMes = () => { const d = ahoraJuego(); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate() - d.getDate() + 1; };
   const ligaDe = pts => { let i = 0; LIGAS.forEach((l, k) => { if (pts >= l[0]) i = k; }); return i; };
+  // Los rivales tienen su propio azar (mismo día, puntos y victorias = mismos rivales): se generan al mirar la arena o el
+  // Campamento, y con el azar del juego eso cambiaba las batallas siguientes según lo que se hubiera pintado antes.
   function generarRivales() {
-    const pts = jugador.arena.puntos;
-    jugador.arena.rivales = [.85, 1, 1.15].map(f => ({ nombre: elegir(NOMBRES_RIVAL), f: Math.round((f + (rnd() - .5) * .04) * 100) / 100,
-      puntos: Math.max(0, pts + Math.round((f - 1) * 300) + azar(-25, 25)), filtro: elegir(FILTROS_RIVAL) }));
+    const A = jugador.arena, pts = A.puntos, r = azarSemilla(`rivales ${hoy()} ${pts} ${A.victorias || 0}`), de = l => l[Math.floor(r() * l.length)];
+    A.rivales = [.85, 1, 1.15].map(f => ({ nombre: de(NOMBRES_RIVAL), f: Math.round((f + (r() - .5) * .04) * 100) / 100,
+      puntos: Math.max(0, pts + Math.round((f - 1) * 300) + Math.floor(r() * 51) - 25), filtro: de(FILTROS_RIVAL) }));
   }
   // Temporadas mensuales: al cambiar de mes se entrega el premio de la liga alcanzada y los puntos se reinician a medias
   const PREMIO_LIGA = [{ oro: 1000 }, { oro: 3000, almas: 5 }, { oro: 6000, almas: 12 }, { oro: 12000, almas: 25 }, { oro: 20000, almas: 45 }];
@@ -21,7 +23,7 @@
     if (!A.temporada) A.temporada = mesActual();
     else if (A.temporada !== mesActual()) {
       const li = ligaDe(A.puntos), pr = PREMIO_LIGA[li]; darPremio(pr);
-      setTimeout(() => avisar(`🏆 Fin de temporada (${LIGAS[li][1]}): ${textoPremio(pr)}`), 1500);
+      setTimeout(() => ui.avisar(`🏆 Fin de temporada (${LIGAS[li][1]}): ${textoPremio(pr)}`), 1500);
       A.puntos = A.puntos > 1000 ? 1000 + Math.floor((A.puntos - 1000) / 2) : A.puntos; A.temporada = mesActual(); guardar();
     }
     if (jugador.arena.dia !== hoy()) { jugador.arena.dia = hoy(); jugador.arena.entradas = ARENA_ENTRADAS; generarRivales(); }

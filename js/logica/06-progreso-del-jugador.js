@@ -23,7 +23,7 @@
     jugador.sigUid = sigUid; jugador.version = VERSION_JUEGO;   // la partida recuerda con qué versión se guardó (para migraciones)
     if (titulosListos) revisarTitulos();
     try { localStorage.setItem(CLAVE, JSON.stringify(jugador)); }
-    catch { if (!guardar.aviso) { guardar.aviso = true; setTimeout(() => avisar('⚠ No se pudo guardar la partida: almacenamiento lleno'), 0); } }
+    catch { if (!guardar.aviso) { guardar.aviso = true; setTimeout(() => ui.avisar('⚠ No se pudo guardar la partida: almacenamiento lleno'), 0); } }
   }
   // Fecha local: al cambiar de día la estamina vuelve al máximo
   // Fecha del juego. En modo pruebas, el botón "Día X +" adelanta días (offset guardado aparte de la partida) para probar
@@ -55,13 +55,13 @@
     for (const k in mat) jugador.mat[k] += mat[k];
     while (jugador.nivel < NIVEL_MAX && jugador.xp >= xpParaSubir(jugador.nivel)) {
       jugador.xp -= xpParaSubir(jugador.nivel); jugador.nivel++;
-      avisar(`¡Nivel ${jugador.nivel}!${jugador.nivel % 2 === 0 ? ' +1 punto de habilidad' : ''}`);
+      ui.avisar(`¡Nivel ${jugador.nivel}!${jugador.nivel % 2 === 0 ? ' +1 punto de habilidad' : ''}`);
       const nuevos = [...new Set(Object.values(DESBLOQUEOS).filter(([n]) => n === jugador.nivel).map(([, t]) => t))];
-      if (nuevos.length) setTimeout(() => mensaje(`🔓 ¡Nuevo desbloqueado!
+      if (nuevos.length) setTimeout(() => ui.mensaje(`🔓 ¡Nuevo desbloqueado!
 ${nuevos.join(' · ')}`), 1200);
     }
     if (jugador.nivel >= NIVEL_MAX) jugador.xp = 0;
-    guardar(); pintarHud();
+    guardar(); ui.pintarHud();
   }
   // Contadores de logros (para los títulos)
   function sumarLogro(k, n = 1) { jugador.logros ||= {}; jugador.logros[k] = (jugador.logros[k] || 0) + n; }

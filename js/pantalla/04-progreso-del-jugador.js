@@ -13,6 +13,7 @@
     canalPestanas.postMessage({ t: 'hola', id: idPestana });
     document.getElementById('usarAqui').onclick = () => { canalPestanas.postMessage({ t: 'tomar', id: idPestana }); location.reload(); };
   }
+  Object.assign(ui, { avisar, pintarHud });
   function avisar(texto) {
     if (simulando) return;
     const a = document.createElement('div'); a.className = 'aviso'; a.textContent = texto;

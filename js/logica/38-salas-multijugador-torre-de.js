@@ -7,12 +7,11 @@
   // Los reyes son réplicas de los 3 primeros: esos jugadores también pueden entrar e invitarse (si no, el top 3 no podría jugar). Dentro de una sala no hay flecha de volver: solo se sale abandonándola.
   const salas = { reyes: [], calabozo: [] };   // { id, modo, miembros: [{ n: 'yo' | bot, llego, listo }], dif, invitando }
   let sala = null;   // la sala en la que estás
-  const modoPantalla = () => pantallaActual === 'pCalabozo' ? 'calabozo' : 'reyes';
   const nombreDif = (modo, d) => modo === 'reyes' ? DIF_REYES[d].nombre : DIFICULTADES[d];
   // vuelta a la fase previa (tras una batalla o al cambiar la dificultad): los invitados pulsan Ready otra vez
   function reiniciarReady(s) {
     for (const m of s.miembros.slice(1)) m.listo = false;
-    setTimeout(() => { for (const m of s.miembros.slice(1)) if (m.n !== 'yo' && m.llego) m.listo = true; if (sala === s) repintarSala(); }, 1000);   // pruebas: los bots, 1 s después
+    setTimeout(() => { for (const m of s.miembros.slice(1)) if (m.n !== 'yo' && m.llego) m.listo = true; if (sala === s) ui.repintarSala(); }, 1000);   // pruebas: los bots, 1 s después
   }
   const perfilBot = n => bots().find(b => b.nombre === n);
   const perfilDe = n => n === 'yo' ? jugador : perfilBot(n);
@@ -44,22 +43,10 @@
     }
     return P;
   }
-  function salirSala() { if (sala) { quitarDeSala(sala, 'yo'); sala = null; } pintarSala(); }
   function candidatosSala() {
     if (!MODO_PRUEBAS) return [];   // sin servidor no hay jugadores online a los que invitar (los bots, solo en pruebas)
     const fuera = new Set([jugador.nombre, ...sala.miembros.map(m => m.n)]);
     return bots().filter(b => !fuera.has(b.nombre));
   }
-  const repintarSala = () => { if (pantallaActual === 'pReyes' || pantallaActual === 'pCalabozo') pintarSala(); };
   const puedeJugar = modo => modo === 'calabozo' ? true : revisarReyes().entradas > 0;   // calabozo sin intentos: entra como ayuda
   const ayudaCalabozo = modo => modo === 'calabozo' && revisarCalabozo().entradas <= 0;
-  async function empezarSala() {
-    if (sala.modo === 'calabozo' && esDueno(sala, 'yo')) {
-      const solo = sala.miembros.length === 1, ayuda = ayudaCalabozo('calabozo');
-      const txt = ayuda ? 'Sin intentos restantes; calabozo sin recompensa. ¿Continuar?'
-        : solo ? 'Vas solo: el calabozo es difícil y gasta un intento. ¿Continuar?' : '';
-      if (txt && !await confirmar(txt, 'Continuar', 'Cancelar')) return;
-    }
-    const aliados = sala.miembros.filter(m => m.n !== 'yo' && m.llego).map(m => m.n);
-    return (sala.modo === 'calabozo' ? iniciarCalabozo : iniciarReyes)(sala.dif, aliados, { ...posSala(sala) }, sala.cal);
-  }

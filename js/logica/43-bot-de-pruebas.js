@@ -15,7 +15,7 @@
       }
       if (mejor) jugador.equipado[r] = mejor; else delete jugador.equipado[r];   // ranura que estaba vacía
     }
-    aplicarEquipo();
+    ui.aplicarEquipo();
   }
   function botArbol() {
     if (!desbloqueado('pArbol')) return;
@@ -37,4 +37,4 @@
     jugador.oro -= c.precio * 10; sumarLogro('cofres', 10); contarMision('cofres', 10);
     for (let i = 0; i < 10; i++) abrirCofre(c);
   }
-  function botPreparar() { botCofres(); botEquipar(); botArbol(); guardar(); pintarHud(); }
+  function botPreparar() { botCofres(); botEquipar(); botArbol(); guardar(); ui.pintarHud(); }

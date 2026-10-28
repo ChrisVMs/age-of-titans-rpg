@@ -96,7 +96,7 @@
   function barrido(c, d) {
     revisarEstamina();
     if (!superada(c.id, d)) return;
-    if (jugador.estamina < ESTAMINA_CAMPANA) return avisar('Sin estamina: vuelve mañana');
+    if (jugador.estamina < ESTAMINA_CAMPANA) return ui.avisar('Sin estamina: vuelve mañana');
     jugador.estamina -= ESTAMINA_CAMPANA; contarMision('estamina', ESTAMINA_CAMPANA); contarMision('victoria');
     const dif = c.dificultades[d], b = dif.botin, ev = eventoHoy() || {}, dropEv = ev.drop || 1, g = { ...dif.premio, almas: 0 }, objetos = [];
     for (const k of ['oro', 'xp', 'piedra', 'polvo']) g[k] = g[k] || 0;
@@ -111,7 +111,7 @@
     g.piedra = Math.round(g.piedra * (ev.mat || 1)); g.polvo = Math.round(g.polvo * (ev.mat || 1));
     jugador.objetos.push(...objetos);
     ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo });
-    avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
-    pintarCampanas();
+    ui.avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
+    ui.pintarCampanas();
   }
   function batallaCampana(c, d) { return { nombre: `${c.nombre} · ${DIFICULTADES[d]}`, idCampana: c.id, dif: d, ...c.dificultades[d] }; }

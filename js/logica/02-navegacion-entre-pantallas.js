@@ -9,6 +9,6 @@
   };
   const nivelDesbloqueo = id => (DESBLOQUEOS[id] || [0])[0];
   const desbloqueado = id => !DESBLOQUEOS[id] || jugador.nivel >= DESBLOQUEOS[id][0] || (jugador.ascension || 0) > 0;
-  const avisoBloqueo = id => avisar(`🔒 ${DESBLOQUEOS[id][1]}: se desbloquea en el nivel ${DESBLOQUEOS[id][0]}`);
+  const avisoBloqueo = id => ui.avisar(`🔒 ${DESBLOQUEOS[id][1]}: se desbloquea en el nivel ${DESBLOQUEOS[id][0]}`);
   // Mensaje que solo se cierra con OK (mismo diálogo que confirmar, sin botón de cancelar). Se encadenan si llegan varios.
   let colaMensaje = Promise.resolve();

@@ -10,9 +10,9 @@
     { id: 'reliquias', nombre: 'Reliquias', desc: 'Reliquias de jefes mundiales', porEntrada: { armadura: .5 }, completa: { penetracion: 5 },
       entradas: () => RELIQUIAS.map(r => ({ nombre: r.nombre, icono: r.icono, ok: nivelReliquia(r.id) > 0 })) },
   ];
-  // todos los enemigos distintos de las campañas + los jefes mundiales (se definen más abajo: solo cuando el juego ya cargó)
+  // todos los enemigos distintos de las campañas + los jefes mundiales (se definen en archivos posteriores: solo con la lógica cargada)
   function enemigosColeccion() {
-    if (!campListo) return Object.keys(jugador.bestiario || {});
+    if (!logicaLista) return Object.keys(jugador.bestiario || {});
     const n = new Set();
     for (const c of CAMPANAS) for (const d of Object.values(c.dificultades || {})) for (const e of d.enemigos || []) n.add(e.nombre);
     for (const m of Object.values(MUNDIALES)) n.add(m.enemigo.nombre);
@@ -26,7 +26,7 @@
     return t;
   }
   function efectoColeccion(esp) {
-    if (!campListo) return 0;
+    if (!logicaLista) return 0;
     const prog = memoizar('colecciones', () => COLECCIONES.map(progresoColeccion));
     return COLECCIONES.reduce((s, c, i) => { const [ok, tot] = prog[i]; return s + (ok >= tot && c.completa[esp] ? c.completa[esp] / 100 : 0); }, 0);
   }

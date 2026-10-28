@@ -21,7 +21,6 @@
     const p = pisoTorre(n);
     return { nombre: `Torre · Piso ${n}`, torre: n, premio: p.premio, botin: p.botin, enemigos: p.enemigos };
   }
-  function iniciarTorre() { iniciarCampana(batallaTorre()); }
   function pisoSuperado(n) {
     if (n <= jugador.torre.mejor) return '';
     jugador.torre.mejor = n; contarMision('torre');

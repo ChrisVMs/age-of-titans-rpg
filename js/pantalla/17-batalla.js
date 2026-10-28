@@ -83,3 +83,8 @@
   const sonidoEspadaMinotauro = sonidoAzar(['minotaur_sword', 'minotaur_sword2', 'minotaur_sword3', 'minotaur_sword4'].map(n => Object.assign(new Audio(`audio/minotauro/${n}.mp3`), { preload: 'auto' })));
   const sonidoLlamas = sonidoAzar(['flame_cerberus', 'flame_cerberus2'].map(n => Object.assign(new Audio(`audio/cerbero/${n}.mp3`), { preload: 'auto' })));
   musica.loop = true; musica.volume = .35;
+  addEventListener('resize', () => batalla.campana && batalla.campana.grupo ? ajustarGrupo() : ajustarEscala());
+  // Sonidos reales de espada (separados de sword.mp3); el guerrero usa uno al azar
+  const espadas = ['warrior_slash', 'warrior_slash2', 'warrior_slash3', 'warrior_slash4'].map(n => { const a = new Audio(`audio/guerrero/${n}.mp3`); a.preload = 'auto'; return a; });
+  // Sonidos de guadaña para la parca, también al azar
+  const guadanas = ['schyte', 'schyte2', 'schyte3'].map(n => { const a = new Audio(`audio/parca/${n}.mp3`); a.preload = 'auto'; return a; });

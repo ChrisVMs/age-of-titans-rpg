@@ -30,6 +30,7 @@
   // Los jugadores (tú, aliados y reyes) llevan perfil, ef (sus efectos), golpes, s4 (sets), habs y carga; los monstruos, e
   // (sus datos). conEfectos: tiene efectos defensivos propios (esquiva, resistencia, contraataque...): jugadores y rivales de arena.
   // duelo: es del 1 contra 1 (los dos en la casilla del frente), se dibuja en su lado de la escena (slots) en vez de en el rombo.
+  // el: el elemento donde se dibuja (lo pone la pantalla).
   function crearUnidad(lado, pos, nombre) {   // motor: datos de la unidad (dibujarUnidad le pone su elemento)
     const [x, y] = pos ? (lado === 0 ? XY_HEROE : XY_ENEMIGO)[pos] : [];
     return { lado, pos, nombre, x, y, estados: {}, inmune: 0 };
@@ -54,13 +55,13 @@
   }
   // 1 contra 1: tú contra los enemigos de la batalla, de uno en uno
   function armarDuelo() {
-    const yo = unidadJugador({ yo: true, pos: 'frente', perfil: jugador }); yo.duelo = true; yo.el = slots[0];
+    const yo = unidadJugador({ yo: true, pos: 'frente', perfil: jugador }); yo.duelo = true;
     batalla.grupo = { heroes: [yo], enemigos: [], turnoMascota: 0, objetivo: null, duelo: true };
     siguienteEnemigo(0);
   }
   function siguienteEnemigo(i) {   // motor: el enemigo i entra en combate (1 contra 1)
     const e = batalla.campana.enemigos[i], u = unidadMonstruo(e, 'frente');
-    batalla.enemigo = e; batalla.iEnemigo = i; u.duelo = true; u.el = slots[1];
+    batalla.enemigo = e; batalla.iEnemigo = i; u.duelo = true;
     if (batalla.campana.mundial) u.vida = estadoMundial(batalla.campana.mundial).vida;   // el jefe mundial conserva el daño de otros intentos
     batalla.infernal = !!e.cerbero && u.vida <= e.vida / 2;
     batalla.grupo.enemigos = [u]; batalla.grupo.objetivo = u;

@@ -15,17 +15,17 @@ function comodin() {
   return p;
 }
 
-module.exports = function cargar({ archivos = null, pruebas = true } = {}) {
+module.exports = function cargar({ archivos = null, pruebas = true, pantalla = false } = {}) {
   const raiz = path.join(__dirname, '..'), guardado = {};
-  archivos ||= JSON.parse(fs.readFileSync(path.join(raiz, 'js', 'orden.json'), 'utf8'));   // el mismo orden que index.html
+  archivos ||= JSON.parse(fs.readFileSync(path.join(raiz, 'js', 'orden.json'), 'utf8')).filter(f => pantalla || f.startsWith('js/logica/'));   // el orden de index.html
   const ventana = {
     console, Math, Date, JSON, Promise, performance, structuredClone, Intl, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
     requestAnimationFrame: () => 0, addEventListener() {}, removeEventListener() {}, dispatchEvent() {}, innerWidth: 900, innerHeight: 420,
     localStorage: { getItem: k => guardado[k] ?? null, setItem: (k, v) => { guardado[k] = String(v); }, removeItem: k => { delete guardado[k]; } },
     location: { protocol: pruebas ? 'file:' : 'https:', hostname: 'localhost', search: '', href: '' },   // file: = modo pruebas
-    screen: {}, navigator: {}, document: comodin(), Audio: function () { return comodin(); }, Image: function () { return comodin(); },
-    getComputedStyle: () => comodin(),
+    screen: {}, navigator: {},
   };
+  if (pantalla) Object.assign(ventana, { document: comodin(), Audio: function () { return comodin(); }, Image: function () { return comodin(); }, getComputedStyle: () => comodin() });
   ventana.window = ventana; ventana.self = ventana; ventana.globalThis = ventana; delete ventana.BroadcastChannel;
   const ctx = vm.createContext(ventana);
   for (const a of archivos) vm.runInContext(fs.readFileSync(path.join(raiz, a), 'utf8'), ctx, { filename: a });

@@ -45,6 +45,7 @@
  "js/logica/44-simulador-de-batallas.js",
  "js/logica/45-simulador-de-progresion.js",
  "js/logica/46-escenarios-de-prueba.js",
+ "js/logica/47-lista.js",
  "js/pantalla/01-inicio.js",
  "js/pantalla/02-navegacion-entre-pantallas.js",
  "js/pantalla/03-encantamiento-y-refinamiento.js",

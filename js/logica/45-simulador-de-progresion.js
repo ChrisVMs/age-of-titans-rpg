@@ -1,6 +1,6 @@
   // ---------------- Simulador de progresión (pruebas) ----------------
   // simMejor, simRunas, simMejorar, simRefinar y simCobrar: las decisiones del jugador simulado (simularProgresion, abajo).
-  // No llaman a aplicarEquipo(): solo repinta la pantalla, y repintar en cada prueba hacía el simulador varias veces más lento.
+  // No llaman a ui.aplicarEquipo(): solo repinta la pantalla, y repintar en cada prueba hacía el simulador varias veces más lento.
   function simMejor(lista, poner) {   // pone la opción de lista que más poder da
     let mejor = null, p0 = -1;
     for (const x of lista) { poner(x); const p = poder(); if (p > p0) { p0 = p; mejor = x; } }
@@ -106,10 +106,11 @@
           if (c.aliados) c.aliados = aliados();
           const { fin } = jugarHastaFin(c, habLista, 400);
           cacheBots.splice(botsAntes.length);
-          mostrarResultado(fin === true); return fin === true;
+          cobrarResultado(fin === true); return fin === true;
         };
         for (let d = 1; d <= dias; d++) {
           offsetDias = offset0 + d - 1; revisarEstamina(); jugador.estamina += estaminaExtra;   // recargas extra del día (anuncios, diamantes)
+          revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); entradasJefe();   // lo que se renueva cada día, como al abrir el juego (el Campamento lo revisa al pintarse)
           if (loginDisponible()) medir('login', reclamarLogin);
           if (desbloqueado('expedicion')) {   // expediciones de 8 h al día (las que da tiempo a mandar y recoger)
             const m = MASCOTAS.filter(x => nivelMascota(x) > 0 && x.id !== jugador.mascota).sort((a, b) => Object.keys(CAT_MASCOTA).indexOf(b.cat) - Object.keys(CAT_MASCOTA).indexOf(a.cat))[0];

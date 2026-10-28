@@ -1,7 +1,19 @@
   // ---------------- Habilidades (pantalla) ----------------
   // Cada habilidad se carga con los turnos del guerrero (cada ataque suma 1 a todas las demás)
-  // y al usarla vuelve a cero. 'anim' son los pasos cuadro a cuadro del guerrero.
+  // y al usarla vuelve a cero.
   const marcoGuerrero = document.querySelector('#s1 .frames');
+  // Animación de cada habilidad (la habilidad dice cuál usa en h.animacion): pasos cuadro a cuadro del guerrero
+  const ANIM_HAB = {
+    estocada: () => guerrero.jugar([
+        [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 450],               // se agacha y concentra energía
+        [5, 160, 380, () => { marcoGuerrero.classList.remove('carga'); estela(); sonidoEspada(); }],
+        [5, 220, , r => r()], [6, 220, 0], [7, 150]]),
+    tajo: () => guerrero.jugar([
+        [1, 200, 360], [4, 110], [12, 70, , sonidoEspada], [13, 220, , r => { arco(); r(); }], [6, 200, 0], [7, 150]]),
+    aplastante: () => guerrero.jugar([
+        [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 350, 360],
+        [2, 170, , () => marcoGuerrero.classList.remove('carga')], [3, 90, , sonidoEspada], [4, 220, , r => { arco(); r(); }], [5, 120], [6, 200, 0], [7, 150]]),
+  };
   function estela() {
     const e = document.createElement('div'); e.className = 'estela';
     e.style.left = (slots[0].offsetLeft + 150) + 'px'; e.style.top = (slots[0].offsetTop + 120) + 'px'; e.style.width = '520px';

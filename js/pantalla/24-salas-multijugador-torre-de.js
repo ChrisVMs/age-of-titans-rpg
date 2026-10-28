@@ -92,3 +92,17 @@
     pintarSala();
   }
   $('reyes').addEventListener('click', clickSala);   // (necesita clickSala, de este archivo)
+  const modoPantalla = () => pantallaActual === 'pCalabozo' ? 'calabozo' : 'reyes';
+  function salirSala() { if (sala) { quitarDeSala(sala, 'yo'); sala = null; } pintarSala(); }
+  ui.repintarSala = () => repintarSala();
+  const repintarSala = () => { if (pantallaActual === 'pReyes' || pantallaActual === 'pCalabozo') pintarSala(); };
+  async function empezarSala() {
+    if (sala.modo === 'calabozo' && esDueno(sala, 'yo')) {
+      const solo = sala.miembros.length === 1, ayuda = ayudaCalabozo('calabozo');
+      const txt = ayuda ? 'Sin intentos restantes; calabozo sin recompensa. ¿Continuar?'
+        : solo ? 'Vas solo: el calabozo es difícil y gasta un intento. ¿Continuar?' : '';
+      if (txt && !await confirmar(txt, 'Continuar', 'Cancelar')) return;
+    }
+    const aliados = sala.miembros.filter(m => m.n !== 'yo' && m.llego).map(m => m.n);
+    return (sala.modo === 'calabozo' ? iniciarCalabozo : iniciarReyes)(sala.dif, aliados, { ...posSala(sala) }, sala.cal);
+  }

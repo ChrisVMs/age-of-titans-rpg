@@ -118,7 +118,7 @@
   function guardarArbol() {
     if (!borrador) return;
     jugador.arbol = Object.fromEntries(Object.entries(borrador).filter(([, v]) => v > 0));
-    borrador = null; guardar(); avisar('Árbol guardado');
+    borrador = null; guardar(); ui.avisar('Árbol guardado');
   }
   function statsArbol() {
     const t = {};

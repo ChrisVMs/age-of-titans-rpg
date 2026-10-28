@@ -33,7 +33,7 @@
     for (const t of TITULOS) {
       if (jugador.titulos[t.id]) continue;
       const [a, m] = t.prog();
-      if (a >= m) { jugador.titulos[t.id] = true; if (avisos) jugador.tituloNuevo = true; if (avisos) setTimeout(() => avisar(`Nuevo título: «${t.nombre}»`), 900); }
+      if (a >= m) { jugador.titulos[t.id] = true; if (avisos) jugador.tituloNuevo = true; if (avisos) setTimeout(() => ui.avisar(`Nuevo título: «${t.nombre}»`), 900); }
     }
   }
   revisarTitulos(false); titulosListos = true;

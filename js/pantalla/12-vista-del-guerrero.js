@@ -13,6 +13,7 @@
     capaDe._skin = sk; capaDe._skinAnim = ska; capaDe._cont = cont;
     return capaDe;
   }
+  ui.aplicarEquipo = () => aplicarEquipo();
   function aplicarEquipo() {
     for (const capaDe of vistasGuerrero) pintarVista(capaDe);
     pintarInventario();

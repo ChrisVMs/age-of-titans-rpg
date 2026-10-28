@@ -69,7 +69,7 @@
     polvo:  { uso: 'Refinar líneas de equipo, mejorar runas.', fuente: 'Arena, botín de campaña, Torre, jefes mundiales, misiones y login.' },
     almas:  { uso: 'Encantar desde +10 y bendecir.', fuente: 'Torre, desguace, misiones, Torre de reyes, login y piedras convertidas.' },
   };
-  const infoMaterial = k => mensaje(`${MATERIALES[k]}
+  const infoMaterial = k => ui.mensaje(`${MATERIALES[k]}
 
 Uso: ${INFO_MATERIALES[k].uso}
 Fuente: ${INFO_MATERIALES[k].fuente}`);

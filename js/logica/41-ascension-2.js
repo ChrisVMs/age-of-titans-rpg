@@ -1,16 +1,4 @@
   // ---------------- Ascensión (pantalla del árbol) ----------------
-  function htmlAscension() {
-    const a = ascension();
-    if (jugador.nivel < 80 && !a) return '';
-    return `<div class="maestria">⭐ Ascensión <b>${a}/${ASCENSION_MAX}</b>${a ? ` · +${5 * a} % a todo · +${2 * a} puntos de habilidad` : ''}
-      ${jugador.nivel >= 80 && a < ASCENSION_MAX ? `<br><small>Vuelves al nivel 1 y se reinician los árboles; ganas +5 % a todo y 2 puntos de habilidad más.</small><br><button id="ascender">Ascender</button>` : ''}</div>`;
-  }
-  async function ascender() {
-    if (jugador.nivel < 80 || ascension() >= ASCENSION_MAX) return;
-    if (!await confirmar('¿Ascender? Vuelves al nivel 1 y se reinician los árboles de habilidades, a cambio de +5 % a todo y 2 puntos de habilidad extra para siempre.')) return;
-    jugador.ascension = ascension() + 1; jugador.nivel = 1; jugador.xp = 0; jugador.arbol = {}; borrador = null;
-    guardar(); montarHabilidades(); aplicarEquipo(); pintarHud(); avisar(`⭐ Ascensión ${jugador.ascension}`); pintarArbol();
-  }
 
   // ================= Batalla por grupos: formación en rombo 1-2-1 =================
   // Cada lado tiene 4 casillas: retaguardia | arriba y abajo | frente. En solitario ocupas una (a elegir); en grupo sois hasta

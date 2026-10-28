@@ -1,4 +1,5 @@
   // ---------------- Campañas: etapas de 10 niveles (1-1 ... 1-10) (pantalla) ----------------
+  ui.pintarCampanas = () => pintarCampanas();
   function pintarCampanas() {
     const actual = CAMPANAS.find(c => desbloqueada(c, 'normal') && !superada(c.id, 'normal'));   // el siguiente nivel por jugar
     $('listaCampanas').innerHTML = `<div class="formacion-resumen etapa">${textoFormacion()} <button data-ir-formacion="pCampana">🛡 Formación</button></div>` + ETAPAS.map(e => {

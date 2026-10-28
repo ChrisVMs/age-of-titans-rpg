@@ -10,3 +10,4 @@
         <button id="subirTorre">Subir al piso ${n}</button></div>`;
     $('subirTorre').onclick = iniciarTorre;
   }
+  function iniciarTorre() { iniciarCampana(batallaTorre()); }

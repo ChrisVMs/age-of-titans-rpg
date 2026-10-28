@@ -221,6 +221,7 @@
   }
 
   async function mostrarEnemigo() {
+    enemigoDuelo().el = slots[1];
     const i = batalla.iEnemigo;
     for (const u of [heroeYo(), enemigoDuelo()]) pintarEstadosU(u);
     modoJefe();
@@ -243,6 +244,7 @@
     if (jugador.estamina < coste) { avisar('Sin estamina: vuelve mañana'); return; }
     jugador.estamina -= coste; if (coste) contarMision('estamina', coste); guardar(); pintarHud();
     prepararBatalla(c);
+    if (!c.grupo) heroeYo().el = slots[0];   // 1 contra 1: cada unidad se dibuja en su lado de la escena
     slots[1].classList.remove('escudado', 'tajando', 'furia'); prepararMascota();
     // por si se salió a mitad de un ataque: ambos vuelven a su sitio
     slots.forEach(s => { s.querySelector('.pj').style.transform = ''; s.classList.remove('golpeado'); });
@@ -302,58 +304,11 @@
 
   $('resTexto').addEventListener('click', e => { const b = e.target.closest('[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });   // objetos ganados en la batalla: se muestran como iconos en el resultado
   function mostrarResultado(gano) {
-    obtenidos = [];
-    batalla.terminada = true; auto = false;
+    auto = false;
     btnAuto.title = 'Autoataque: OFF'; btnAuto.classList.remove('activo');
-    // las recompensas se cobran al terminar (victoria o derrota); abandonando no se cobra nada.
-    // Torre: no cuesta estamina, así que el botín de los enemigos solo se cobra si superas el piso (si no, perder a
-    // propósito sería farmeo infinito).
-    const sinBotin = batalla.campana.torre && !gano;
-    if (sinBotin || batalla.campana.ayuda) batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };   // ayuda: sin recompensa
-    if (gano && !batalla.campana.ayuda) for (const k in batalla.campana.premio) batalla.ganado[k] = (batalla.ganado[k] || 0) + batalla.campana.premio[k];
-    if (batalla.campana.mundial) {   // jefe mundial: recompensa según el daño causado en este intento
-      batalla.ganado.oro += Math.round(batalla.danoHecho * .2); batalla.ganado.xp += Math.round(batalla.danoHecho * .1);   // ajustado a la vida actual de los jefes
-      batalla.ganado.piedra += Math.floor(batalla.danoHecho / 100); batalla.ganado.polvo += Math.floor(batalla.danoHecho / 375);
-      estadoMundial(batalla.campana.mundial).vida = Math.max(0, enemigoDuelo().vida);
-    }
-    const ev = eventoHoy() || {};   // eventos por calendario
-    batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
-    batalla.ganado.xp = Math.round(batalla.ganado.xp * (ev.xp || 1));
-    batalla.ganado.piedra = Math.round(batalla.ganado.piedra * (ev.mat || 1)); batalla.ganado.polvo = Math.round(batalla.ganado.polvo * (ev.mat || 1));   // Día de la Forja
-    if (batalla.campana.mundial && ev.jefes) for (const k of ['oro', 'xp', 'piedra', 'polvo']) batalla.ganado[k] = Math.round(batalla.ganado[k] * ev.jefes);   // Día de Jefes
-    batalla.ganado.xp = Math.round(batalla.ganado.xp * (1 + efecto('experiencia')));   // línea secundaria "Experiencia extra"
-    let extraRes = '';
-    obtenidos = [...batalla.ganado.objetos];
-    if (batalla.ganado.objetos.length) jugador.objetos.push(...batalla.ganado.objetos);
-    if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano) + botinEquipoJefe(batalla.campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
-    if (batalla.campana.arena) extraRes += resultadoArena(gano);
-    if (batalla.campana.torre && gano) extraRes += pisoSuperado(batalla.campana.torre);
-    if (batalla.campana.calabozo && gano && !batalla.campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
-      extraRes += calabozoSuperado(batalla.campana.cal);
-      if (difAbierta(batalla.campana.cal, batalla.campana.calabozo)) jugador.calabozosDif[`${batalla.campana.cal}:${batalla.campana.calabozo}`] = true;
-      const o = objetoAzar(OBJETO_CALABOZO[batalla.campana.calabozo], efecto('fortuna') / 3); jugador.objetos.push(o);
-      obtenidos.push(o);
-    }
-    if (batalla.campana.reyes && gano) extraRes += reyVencido(batalla.campana.reyes);
-    if ((batalla.campana.reyes || batalla.campana.calabozo) && sala) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // de vuelta a la fase previa: todos pulsan Ready otra vez
-    if (gano && batalla.campana.idCampana) contarMision('victoria');
-    if (batalla.campana.mundial) contarMision('jefe');
-    if (batalla.campana.arena) contarMision('arena');
-    ganar(batalla.ganado.oro, batalla.ganado.xp, { piedra: batalla.ganado.piedra, polvo: batalla.ganado.polvo, almas: batalla.ganado.almas || 0 });
-    if (gano && batalla.campana.mundial) { jugador.logros ||= {}; (jugador.logros.jefes ||= {})[batalla.campana.mundial] = true; guardar(); }
-    if (gano && batalla.campana.idCampana) {
-      jugador.superadas = jugador.superadas || {};
-      const clave = `${batalla.campana.idCampana}:${batalla.campana.dif}`, sig = ORDEN_DIF[ORDEN_DIF.indexOf(batalla.campana.dif) + 1];
-      if (!jugador.superadas[clave]) {
-        jugador.superadas[clave] = true; guardar();
-        const nx = CAMPANAS[CAMPANAS.findIndex(x => x.id === batalla.campana.idCampana) + 1];
-        if (batalla.campana.dif === 'normal' && nx) setTimeout(() => avisar(`${nx.id} desbloqueado`), 600);
-        if (sig) setTimeout(() => avisar(`${batalla.campana.idCampana} ${DIFICULTADES[sig]} desbloqueado`), batalla.campana.dif === 'normal' && nx ? 2200 : 600);
-      }
-      pintarCampanas();
-    }
+    const { extra: extraRes, sinBotin, danoHecho } = cobrarResultado(gano);
     $('resTitulo').textContent = gano ? '¡Victoria!' : 'Derrota';
-    $('resTexto').innerHTML = (batalla.campana.mundial ? (gano ? `¡Has derrotado a ${batalla.enemigo.nombre}!<br><br>` : `Daño causado: <b>${batalla.danoHecho}</b>. A ${batalla.enemigo.nombre} le quedan ${Math.max(0, enemigoDuelo().vida)} de vida.<br><br>`) :
+    $('resTexto').innerHTML = (batalla.campana.mundial ? (gano ? `¡Has derrotado a ${batalla.enemigo.nombre}!<br><br>` : `Daño causado: <b>${danoHecho}</b>. A ${batalla.enemigo.nombre} le quedan ${Math.max(0, enemigoDuelo().vida)} de vida.<br><br>`) :
       gano ? '' : `Caíste ante ${batalla.enemigo.nombre}.<br><br>`) +
       `<span class="recompensa">Total ganado: ● ${batalla.ganado.oro} oro · ${batalla.ganado.xp} XP<br>🔷 ${batalla.ganado.piedra} piedras · ✨ ${batalla.ganado.polvo} polvo${batalla.ganado.almas ? ` · 💠 ${batalla.ganado.almas} almas` : ''}</span>`;
     $('resTexto').innerHTML += extraRes + (sinBotin ? '<br><small>En la Torre el botín solo se cobra al superar el piso.</small>' : '')
@@ -362,7 +317,18 @@
     $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo ? 'none' : '';
     $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : 'Volver a campaña';
     $('resultado').classList.add('visible');
-    if (batalla.campana.mundial) { const e = estadoMundial(batalla.campana.mundial); e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; guardar(); }
     if (!gano && batalla.enemigo.minotauro) { parca.frames.classList.add('quieto'); parca.ver(19); }   // rugido de victoria
     if (!gano && batalla.enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(16); }   // pose de victoria
   }
+  function pintarRanking() {
+    const lista = ranking(), puesto = lista.findIndex(j => j.yo) + 1;
+    return `<div class="ranking"><h3>Top 5 · % de daño hoy</h3>${lista.slice(0, 5).map((j, i) =>
+      `<div class="${j.yo ? 'yo' : ''}"><span>#${i + 1} ${j.nombre}</span><span class="pct"><i style="width:${Math.min(100, j.pct * 4)}%"></i></span><b>${j.pct}%</b></div>`).join('')}
+      ${puesto > 5 ? `<div class="yo"><span>#${puesto} ${jugador.nombre} (tú)</span><span class="pct"><i style="width:${Math.min(100, lista[puesto - 1].pct * 4)}%"></i></span><b>${lista[puesto - 1].pct}%</b></div>` : ''}</div>`;
+  }
+  function iniciarMundial() {
+    if (estadoMundial().vida <= 0 || entradasJefe() <= 0) return;
+    jugador.entradasJefe--; guardar();
+    iniciarCampana(batallaMundial(mundialSel));
+  }
+  async function transformar() { batalla.infernal = true; await animarTransformacion(); }

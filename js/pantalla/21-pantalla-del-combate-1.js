@@ -32,7 +32,7 @@
   }
   async function animarAtaque(turno, x) {   // x: la habilidad del guerrero, o lo que decidió hacer el enemigo
     slots[turno].style.zIndex = 3; slots[1 - turno].style.zIndex = '';   // quien ataca, delante
-    await (turno === 0 ? (x ? x.anim() : ataques[0]()) : ataques[1](x));
+    await (turno === 0 ? (x ? ANIM_HAB[x.animacion]() : ataques[0]()) : ataques[1](x));
   }
   async function animarGolpe(turno, especial, jefe, cls, texto) {
     const d = slots[1 - turno];

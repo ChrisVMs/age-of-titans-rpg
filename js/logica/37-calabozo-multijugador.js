@@ -21,11 +21,6 @@
   // Sin estamina: 2 intentos al día
   const INTENTOS_CALABOZO = 2;
   function revisarCalabozo() { const C = jugador.calabozoDia ||= {}; if (C.dia !== hoy()) { C.dia = hoy(); C.entradas = INTENTOS_CALABOZO; } return C; }
-  function iniciarCalabozo(dif, aliados, posiciones, id) {
-    const C = revisarCalabozo(), ayuda = C.entradas <= 0;   // sin intentos: puedes ayudar al grupo, pero no recibes recompensa
-    if (!ayuda) { C.entradas--; guardar(); }
-    iniciarCampana(batallaCalabozo(dif, aliados, posiciones, id, ayuda));
-  }
   function batallaCalabozo(dif, aliados, posiciones, id, ayuda = false) {   // la batalla del calabozo id (sin gastar el intento)
     const c = calabozo(id), tipos = [0, 1, 2].map(() => elegir(c.tipos)), d = crearDificultad(c.n, dif, [c.jefe, ...tipos]);
     for (const e of d.enemigos) { e.vida = Math.round(e.vida * MULT_CALABOZO.vida); e.dano = e.dano.map(x => Math.round(x * MULT_CALABOZO.dano)); }

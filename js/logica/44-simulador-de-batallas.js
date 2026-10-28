@@ -5,7 +5,7 @@
   // Corre fn(partidaReal) sobre una copia de la partida: lo que haga (botín, misiones, vida de jefes mundiales) no llega
   // a la partida real, no se guarda ni se avisa nada, y al terminar la batalla y el azar vuelven a como estaban.
   function aislado(fn) {
-    if (pantallaActual === 'pBatalla') return null;   // la batalla en curso usa el mismo estado
+    if (ui.enBatalla()) return null;   // la batalla en curso usa el mismo estado
     const real = jugador, uid = sigUid, antes = { ...batalla }, carga = { ...batalla.carga }, habs = HABILIDADES;
     simulando = true; jugador = structuredClone(real);
     try { return fn(real); }

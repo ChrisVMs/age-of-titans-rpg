@@ -4,6 +4,10 @@
   const batalla = {};
   let simulando = false;   // el simulador juega sobre una copia de la partida: mientras tanto no se guarda ni se avisa nada
   let campListo = false;   // el campamento se pinta cuando todo el juego está definido
+  let logicaLista = false;   // toda la lógica cargada (js/logica/47-lista.js): antes, la colección no puede contar campañas ni jefes
+  // La lógica avisa a la pantalla a través de `ui`: sin pantalla (Node, el simulador) son funciones vacías y js/pantalla
+  // pone las de verdad (cada archivo registra las suyas). Así las reglas no dependen de la página.
+  const ui = { avisar() {}, mensaje() {}, pintarHud() {}, pintarCampanas() {}, aplicarEquipo() {}, repintarSala() {}, enBatalla: () => false };
   // Modo pruebas: solo en el equipo de desarrollo. Abriendo el archivo directamente (file://), o en un servidor local
   // en 127.0.0.1 con ?pruebas. En la web desplegada (https://dominio) y en la app Android (https://localhost) nunca se
   // activa, aunque alguien añada ?pruebas a la URL: no hay botones de prueba y la partida empieza con valores reales.

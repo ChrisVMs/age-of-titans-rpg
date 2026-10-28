@@ -11,7 +11,7 @@
     x = Math.round(x * ((eventoHoy() || {}).xp || 1));   // Viernes de experiencia: también maestría
     const antes = maestria().n; jugador.maestria ||= {};
     jugador.maestria[jugador.clase] = (jugador.maestria[jugador.clase] || 0) + x;
-    const n = maestria().n; if (n > antes && !simulando) setTimeout(() => avisar(`🏅 Maestría Nv ${n}`), 1200);
+    const n = maestria().n; if (n > antes && !simulando) setTimeout(() => ui.avisar(`🏅 Maestría Nv ${n}`), 1200);
   }
   function statsMaestria() { const n = maestria().n; return n ? { ataque: n * .5, vida: n * .5, defensa: n * .5, armadura: n * .5 } : {}; }
   // Especialización (una por clase, desde maestría Nv 10): marca el estilo de la build. Crece ×1,5 en Nv 30 y ×2 en Nv 50.

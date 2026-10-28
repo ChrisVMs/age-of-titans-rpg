@@ -24,12 +24,6 @@
     return rankingServidor().filter(x => !x.yo).slice(0, 3).map((t, i) =>
       ({ puesto: i + 1, nombre: t.nombre, clase: t.clase, nivel: t.nivel, poder: t.poder, perfil: t.bot }));
   }
-  function iniciarReyes(dif, aliados, posiciones) {
-    const R = revisarReyes(), d = DIF_REYES[dif];
-    if (R.entradas <= 0) return;
-    R.entradas--; guardar();
-    iniciarCampana(batallaReyes(dif, aliados, posiciones));
-  }
   function batallaReyes(dif, aliados, posiciones) {   // la batalla contra los 3 reyes (sin gastar el intento)
     const d = DIF_REYES[dif];
     return { nombre: `👑 Torre de reyes · ${d.nombre}`, reyes: dif, aliados, posiciones, premio: { xp: 150 * (Object.keys(DIF_REYES).indexOf(dif) + 1) },

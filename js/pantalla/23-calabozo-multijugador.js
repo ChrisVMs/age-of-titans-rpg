@@ -52,3 +52,14 @@
       const capas = montarCapas(fr); conPerfil(p, () => pintarVista(capas));
     });
   }
+  function iniciarReyes(dif, aliados, posiciones) {
+    const R = revisarReyes(), d = DIF_REYES[dif];
+    if (R.entradas <= 0) return;
+    R.entradas--; guardar();
+    iniciarCampana(batallaReyes(dif, aliados, posiciones));
+  }
+  function iniciarCalabozo(dif, aliados, posiciones, id) {
+    const C = revisarCalabozo(), ayuda = C.entradas <= 0;   // sin intentos: puedes ayudar al grupo, pero no recibes recompensa
+    if (!ayuda) { C.entradas--; guardar(); }
+    iniciarCampana(batallaCalabozo(dif, aliados, posiciones, id, ayuda));
+  }

@@ -9,6 +9,7 @@
       $('dialogo').classList.add('visible');
     });
   }
+  Object.assign(ui, { mensaje, enBatalla: () => pantallaActual === 'pBatalla' });
   function mensaje(texto, ok = 'OK') {
     return colaMensaje = colaMensaje.then(() => new Promise(res => {
       $('dialogoTexto').textContent = texto; $('dialogoSi').textContent = ok; $('dialogoNo').hidden = true;

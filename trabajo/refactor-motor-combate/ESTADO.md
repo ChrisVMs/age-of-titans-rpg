@@ -75,8 +75,6 @@ día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 sem
    El usuario lo pidió el 2026-10-27; hoy solo hay aproximaciones (ver **Mediciones**).
 4. Simulador: falta Calabozo y Torre de reyes (necesitan sala; se podrían armar con aliados bot), y opción de jefe
    mundial "desde cero" (hoy parte de la vida que le queda ese día).
-5. La generación de rivales de arena dio rivales distintos con la misma semilla antes de existir `rnd`; revisar si con
-   `sembrar()` ya es determinista.
 
 ## Reglas por tipo de enemigo
 Desde el 2026-10-28 no hay reglas distintas por modo (ver **Medición de `REGLAS`** y **Decisiones**).
