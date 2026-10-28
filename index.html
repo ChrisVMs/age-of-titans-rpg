@@ -4118,7 +4118,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     { id: 'frenesi',  icono: '😡', nombre: 'Frenesí',      desc: '+25 % de daño',                ap: e => { e.dano = e.dano.map(x => Math.round(x * 1.25)); } },
     { id: 'coraza',   icono: '🛡️', nombre: 'Coraza',       desc: '+60 de armadura',              ap: e => { e.armadura = (e.armadura || 0) + 60; } },
     { id: 'robusto',  icono: '💪', nombre: 'Robusto',      desc: '+40 % de vida',                ap: e => { e.vida = Math.round(e.vida * 1.4); }, soloTorre: true },
-    { id: 'espinas',  icono: '🌵', nombre: 'Espinas',      desc: 'te devuelve el 10 % del daño',  ap: e => { e.espinas = .1; } },
+    { id: 'espinas',  icono: '🌵', nombre: 'Espinas',      desc: 'te devuelve el 10 % del daño',  ap: e => { e.espinas = .1; }, torre: { desc: 'te devuelve el 5 % del daño', ap: e => { e.espinas = .05; } } },   // en la Torre, al 10 % los pisos de jefe eran un muro
     { id: 'regen',    icono: '💚', nombre: 'Regeneración', desc: 'recupera el 2 % de vida por turno', ap: e => { e.regen = .02; }, soloTorre: true },   // en jefes mundiales curaba ~300-500 por turno
     { id: 'igneo',    icono: '🔥', nombre: 'Ígneo',        desc: 'sus golpes queman',            ap: e => { e.aplica = [...(e.aplica || []), { estado: 'quemadura', prob: .3, turnos: 2, pct: .04 }]; } },
     { id: 'gelido',   icono: '❄️', nombre: 'Gélido',       desc: 'sus golpes congelan',          ap: e => { e.aplica = [...(e.aplica || []), { estado: 'congelacion', prob: .15, turnos: 1 }]; } },
@@ -4139,7 +4139,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     const tipos = jefe ? [n % 20 === 0 ? 'bruja' : 'ancestral'] : [0, 1].map(() => TIPOS_TORRE[Math.floor(rnd() * TIPOS_TORRE.length)]);
     const d = crearDificultad(nEq, 'normal', tipos);
     const nMods = jefe ? 2 : n >= 30 || n % 5 === 0 ? 1 : 0, mods = elegirMods(rnd, nMods, MODIFICADORES);
-    for (const e of d.enemigos) { for (const md of mods) md.ap(e); e.vida = Math.round(e.vida * 1.15); e.oro = 0; e.xp = 0; }   // sin botín por monstruo
+    for (const e of d.enemigos) { for (const md of mods) (md.torre || md).ap(e); e.vida = Math.round(e.vida * 1.15); e.oro = 0; e.xp = 0; }   // sin botín por monstruo
     return { enemigos: d.enemigos, mods, jefe,
       premio: { oro: 50 * n, xp: 30 * n, piedra: 1 + Math.floor(n / 6), polvo: n % 5 === 0 ? 2 + Math.floor(n / 20) : 0,
                 almas: n % 5 === 0 ? 1 + Math.floor(n / 20) : 0 },   // la Torre es la fuente propia de almas (cada 5 pisos)
@@ -4168,7 +4168,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     $('torre').innerHTML = `<div class="formacion-resumen">${textoFormacion()} <button data-ir-formacion="pTorre">🛡 Formación</button></div><div class="liga"><span class="ic">🗼</span><div><b>Mejor piso: ${jugador.torre.mejor}</b><br><small>Sin estamina · los pisos se generan sin fin y cada uno es siempre igual</small></div></div>
       <div class="torre-card${p.jefe ? ' jefe' : ''}"><h3>Piso ${n}${p.jefe ? ' · JEFE' : ''}</h3>
         <small>${p.enemigos.map(e => e.nombre).join(' · ')}</small>
-        ${p.mods.length ? `<div class="mods">${p.mods.map(md => `<span title="${md.desc}">${md.icono} ${md.nombre}: ${md.desc}</span>`).join('')}</div>` : ''}
+        ${p.mods.length ? `<div class="mods">${p.mods.map(md => { const desc = (md.torre || md).desc; return `<span title="${desc}">${md.icono} ${md.nombre}: ${desc}</span>`; }).join('')}</div>` : ''}
         <small>Recompensa: ${textoPremio({ oro: p.premio.oro, piedra: p.premio.piedra, polvo: p.premio.polvo })} · ${p.premio.xp} XP</small>
         <small>Próximo hito (piso ${hito}): ${textoPremio(premioHito(hito))} + objeto</small>
         <button id="subirTorre">Subir al piso ${n}</button></div>`;

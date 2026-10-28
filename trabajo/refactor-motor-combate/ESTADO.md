@@ -10,18 +10,19 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
 **Pendiente 2-5** (ver **Pendiente**): el refactor en sí está terminado (motor único, sin reglas distintas por modo).
-Recomendado: reequilibrar la Torre alta con el simulador, porque ahora Espinas funciona en ella (ver **Medición de `REGLAS`**).
+Torre ya reequilibrada (Espinas al 5 % en la Torre). Lo siguiente, a elegir por el usuario.
 
 ## Última sesión
 **2026-10-28 · Claude**
-- Medidas las 5 opciones de `REGLAS` y aplicada la decisión del usuario: Espinas funciona en todos los modos; contraataque
-  de la skin (×0,6 sin armadura), Regeneración (después de los estados), habilidad gastada aunque pierdas el turno y sin
-  efectos de habilidad tras una esquiva: como en grupo. `REGLAS` ya solo guarda el ritmo de las animaciones.
-- Escenario nuevo: "Espinas devuelve daño también en grupo" (comprobado que falla si Espinas no funciona).
-- Verificación: 14/14 escenarios; una batalla de cada modo en pantalla sin errores.
-- Commit: este cambio y la medición, en `qa` (ver `git log`).
+- Torre reequilibrada: Espinas devuelve el 5 % en la Torre (`MODIFICADORES` → `torre: { desc, ap }`; `pisoTorre` y
+  `pintarTorre` usan esa versión). Los jefes mundiales siguen al 10 %.
+- Medido (6 bots, 400 batallas por piso): con 10 %, el piso 60 (jefe) bajaba a ~20 % para Sigrid/Elric; con 5 %, 52-65 %
+  (sin Espinas, 82-85 %). Los demás pisos con Espinas (50, 100) no cambian. Espinas + Regeneración no era la causa.
+- Verificación: 14/14 escenarios. Commit en `qa` (ver `git log`).
+- Antes, el mismo día: medición de `REGLAS` y reglas iguales en todos los modos (`d35ed46`, `6141056`).
 
 ## Decisiones
+- 2026-10-28 · Espinas al 5 % solo en la Torre ("5 % solo en la Torre"): al 10 % los pisos de jefe eran un muro.
 - 2026-10-28 · Espinas funciona en todos los modos ("que funcione en todo": el texto del piso dice la verdad; la
   Torre alta se endurece y se reequilibra aparte). Las otras 4 reglas, como en grupo ("igualar como en grupo").
 - 2026-10-27 · Trabajar en la rama `qa`; los commits los hace el usuario.
@@ -64,7 +65,6 @@ Recomendado: reequilibrar la Torre alta con el simulador, porque ahora Espinas f
 | Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-1. Reequilibrar la Torre alta: con Espinas activo, la Torre 60 baja de ~85 % a ~20 % de victorias para arquero y mago.
 2. Entrada en `CHANGELOG.md` con lo de esta rama (el usuario la pidió como opcional; la 0.2.1 aún dice "×0,5 en grupo").
 3. Simulador de progresión para saber **cuánto tarda terminar el juego** (oro, XP y equipo por día con 150 de estamina).
    El usuario lo pidió el 2026-10-27; hoy solo hay aproximaciones (ver **Mediciones**).
