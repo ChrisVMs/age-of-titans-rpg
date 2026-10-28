@@ -8,7 +8,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 | Tema | Estado | Próximo paso | Última sesión |
 |---|---|---|---|
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Decidir si se frena la progresión (Nv 80 en 29-35 días; jefes, reyes y calabozos antes del día 40) | 2026-10-28 · Claude |
-| [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | en curso | Etapa 3: separar por sistemas en js/logica y js/pantalla | 2026-10-28 · Claude |
+| [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | en curso | Etapa 4: separar las funciones mixtas (lógica que aún pinta) | 2026-10-28 · Claude |
 
 ### Estados
 | Estado | Significa | Qué hacer al retomarlo |

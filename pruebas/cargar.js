@@ -15,8 +15,9 @@ function comodin() {
   return p;
 }
 
-module.exports = function cargar({ archivos = ['js/logica.js', 'js/pantalla.js'], pruebas = true } = {}) {
+module.exports = function cargar({ archivos = null, pruebas = true } = {}) {
   const raiz = path.join(__dirname, '..'), guardado = {};
+  archivos ||= JSON.parse(fs.readFileSync(path.join(raiz, 'js', 'orden.json'), 'utf8'));   // el mismo orden que index.html
   const ventana = {
     console, Math, Date, JSON, Promise, performance, structuredClone, Intl, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
     requestAnimationFrame: () => 0, addEventListener() {}, removeEventListener() {}, dispatchEvent() {}, innerWidth: 900, innerHeight: 420,
