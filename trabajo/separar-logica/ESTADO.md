@@ -1,6 +1,6 @@
 # Separar la lógica del juego de la pantalla
 
-**Estado:** en curso · **Rama:** `qa` · **Actualizado:** 2026-10-28
+**Estado:** finalizado · **Rama:** `qa` · **Actualizado:** 2026-10-28
 
 ## Objetivo
 Que las reglas del juego (combate, economía, progresión) sean código que corre sin navegador: las pruebas, el simulador y
@@ -8,10 +8,7 @@ un bot futuro las usan directamente con Node, rápido, en paralelo y función po
 mantenible. La pantalla solo dibuja y llama a esa lógica. Prioridad del usuario: la web, pensada para móvil (será app).
 
 ## Próximo paso
-**Etapa 5: el simulador y las pruebas a `pruebas/`**: `simularProgresion`, `simular`, los escenarios y el bot de decisiones
-(`botEquipar`, `botArbol`, `botCofres`, `sim*`) son herramientas de pruebas, no del juego: pasarlos de `js/logica/` a
-`pruebas/` (el menú 🧪 del juego los cargaría solo en modo pruebas). Hecho cuando el juego publicado no cargue código de
-pruebas y `node pruebas/*.js` siga en verde.
+Nada pendiente.
 
 ## Plan
 1. ✅ El código del juego sale de `index.html` a `js/juego.js` (sin cambiar nada).
@@ -20,29 +17,17 @@ pruebas y `node pruebas/*.js` siga en verde.
    en su paso, con la equivalencia exacta con semilla en verde.
 4. ✅ Separar las funciones mixtas (por ejemplo `mostrarResultado`: cobra y además pinta) en una parte de lógica y otra de
    pantalla, para que el simulador no necesite nada del navegador.
-5. El simulador de progresión, el de batallas y los escenarios pasan a `pruebas/` y corren con Node, en paralelo
+5. ✅ El simulador de progresión, el de batallas y los escenarios pasan a `js/pruebas/` y corren con Node, en paralelo
    (`worker_threads`). El navegador solo para la prueba en pantalla.
 
 ## Última sesión
 **2026-10-28 · Claude**
-- Etapa 4: `js/logica/` carga sola, sin navegador ni comodín. Cambios:
-  - `ui` (en `logica/01-inicio.js`): la lógica avisa a la pantalla por `ui.avisar`, `ui.pintarHud`, `ui.aplicarEquipo`...
-    (vacías sin pantalla); cada archivo de `js/pantalla/` registra las suyas.
-  - `cobrarResultado(gano)` (lógica: cobra y devuelve lo que se enseña) sale de `mostrarResultado` (pantalla: pinta).
-  - A pantalla: `iniciarTorre`, `iniciarReyes`, `iniciarCalabozo`, `iniciarMundial`, `transformar`, `pintarRanking`,
-    `ascender`, `htmlAscension`, `empezarSala`, `salirSala`, `repintarSala`, `modoPantalla`, los sonidos y el `resize`.
-  - Habilidades: los datos dicen qué animación usan (`animacion: 'estocada'`); las animaciones, en `ANIM_HAB` (pantalla).
-  - Las casillas del 1 contra 1 (`u.el`) las pone la pantalla (`iniciarCampana`, `mostrarEnemigo`).
-  - `logicaLista` (`logica/47-lista.js`): la colección ya no espera a la pantalla para contar campañas y jefes.
-- Dos fallos encontrados al comparar con y sin pantalla (la pantalla cambiaba el juego):
-  - Pintar el Campamento generaba los rivales de arena con el azar del juego: ahora `generarRivales` tiene su propio
-    azar (mismo día, puntos y victorias = mismos rivales). Arregla también el pendiente del tema del motor.
-  - El simulador revisa al empezar el día lo que se renueva (arena, reyes, calabozo, misiones, jefes), como al abrir el
-    juego, en vez de depender de cuándo se pintaba el Campamento.
-- `pruebas/sin-pantalla.js`: la misma partida con pantalla y sin ella debe dar lo mismo.
-- Verificación: 14/14 escenarios (Node y navegador); equivalencia exacta con semilla salvo la arena (rivales nuevos);
-  batallas en pantalla y 19 pantallas sin errores; `sin-pantalla.js` en verde. Escenarios en 0,1 s; progresión
-  3 × 90 días en ~15 s.
+- Etapa 5: el bot, los simuladores y los escenarios (lógica y botones) pasaron a `js/pruebas/` (7 archivos). `index.html`
+  los carga solo en modo pruebas; el juego publicado no los pide. `js/orden.json` tiene dos listas: `juego` y `pruebas`.
+  El aviso de "Árbol reiniciado" (código del juego que estaba al final de los escenarios) pasó a `logica/43-lista.js`.
+- Verificación: 14/14 escenarios (Node y navegador), `sin-pantalla.js` en verde, equivalencia con semilla (solo cambia la
+  arena, por los rivales nuevos de la etapa 4), batallas en pantalla y 19 pantallas sin errores; en modo publicado no se
+  pide ningún archivo de pruebas y no hay errores.
 - Commit en `qa` (ver `git log`).
 
 ## Decisiones
@@ -70,7 +55,9 @@ pruebas y `node pruebas/*.js` siga en verde.
 ## Mapa del código
 - `js/logica/NN-sistema.js`: reglas y datos de cada sistema; no usan nada de la página. Avisan a la pantalla por `ui`.
 - `js/pantalla/NN-sistema.js`: dibujar, animar y botones del sistema.
-- `js/orden.json`: orden de carga (el de `index.html`). Un archivo nuevo se añade en los dos sitios.
+- `js/pruebas/`: bot, simuladores y escenarios (1-4 sin pantalla; 5-7, sus botones del menú 🧪). Solo en modo pruebas.
+- `js/orden.json`: orden de carga (`juego` y `pruebas`), el de `index.html`. Un archivo nuevo se añade en los dos sitios.
 - `pruebas/cargar.js`: carga el juego en Node (`correr(código)`); `pruebas/escenarios.js`, `pruebas/progresion.js`.
 
 ## Bitácora
+- 2026-10-28 · Claude · Etapas 1-4: juego a `js/`, cargador de Node, lógica y pantalla por sistemas, lógica sin pantalla.

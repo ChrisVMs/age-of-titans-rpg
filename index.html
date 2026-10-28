@@ -1064,7 +1064,7 @@
   <!-- Detalle de objeto / cofre abierto -->
   <div class="modal" id="detalle"><div class="caja" id="detCaja"></div></div>
 
-<!-- Primero las reglas del juego (js/logica, sin pantalla) y luego la pantalla (js/pantalla). Mismo orden que js/orden.json. -->
+<!-- Primero las reglas del juego (js/logica, sin pantalla) y luego la pantalla (js/pantalla). Mismo orden que js/orden.json ("juego"). -->
 <script src="js/logica/01-inicio.js"></script>
 <script src="js/logica/02-navegacion-entre-pantallas.js"></script>
 <script src="js/logica/03-equipo-del-guerrero-por.js"></script>
@@ -1107,11 +1107,7 @@
 <script src="js/logica/40-expediciones.js"></script>
 <script src="js/logica/41-ascension-2.js"></script>
 <script src="js/logica/42-campamento.js"></script>
-<script src="js/logica/43-bot-de-pruebas.js"></script>
-<script src="js/logica/44-simulador-de-batallas.js"></script>
-<script src="js/logica/45-simulador-de-progresion.js"></script>
-<script src="js/logica/46-escenarios-de-prueba.js"></script>
-<script src="js/logica/47-lista.js"></script>
+<script src="js/logica/43-lista.js"></script>
 <script src="js/pantalla/01-inicio.js"></script>
 <script src="js/pantalla/02-navegacion-entre-pantallas.js"></script>
 <script src="js/pantalla/03-encantamiento-y-refinamiento.js"></script>
@@ -1140,8 +1136,11 @@
 <script src="js/pantalla/26-expediciones.js"></script>
 <script src="js/pantalla/27-ascension.js"></script>
 <script src="js/pantalla/28-campamento.js"></script>
-<script src="js/pantalla/29-bot-de-pruebas.js"></script>
-<script src="js/pantalla/30-simulador-de-progresion.js"></script>
-<script src="js/pantalla/31-escenarios-de-prueba.js"></script>
+<script>
+  // Herramientas de pruebas (menú 🧪: bot, simuladores, escenarios): solo en modo pruebas. Mismo orden que js/orden.json.
+  if (MODO_PRUEBAS) for (const f of ["js/pruebas/1-bot.js", "js/pruebas/2-simulador-de-batallas.js", "js/pruebas/3-simulador-de-progresion.js", "js/pruebas/4-escenarios.js", "js/pruebas/5-bot-pantalla.js", "js/pruebas/6-simuladores-pantalla.js", "js/pruebas/7-escenarios-pantalla.js"]) {
+    const s = document.createElement('script'); s.src = f; s.async = false; document.body.appendChild(s);
+  }
+</script>
 </body>
 </html>

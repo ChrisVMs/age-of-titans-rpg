@@ -17,7 +17,9 @@ function comodin() {
 
 module.exports = function cargar({ archivos = null, pruebas = true, pantalla = false } = {}) {
   const raiz = path.join(__dirname, '..'), guardado = {};
-  archivos ||= JSON.parse(fs.readFileSync(path.join(raiz, 'js', 'orden.json'), 'utf8')).filter(f => pantalla || f.startsWith('js/logica/'));   // el orden de index.html
+  const orden = JSON.parse(fs.readFileSync(path.join(raiz, 'js', 'orden.json'), 'utf8'));   // el orden de index.html
+  // sin pantalla: la lógica del juego y las herramientas de pruebas que no pintan (bot, simuladores, escenarios)
+  archivos ||= [...orden.juego, ...orden.pruebas].filter(f => pantalla || f.startsWith('js/logica/') || /^js\/pruebas\/[1-4]-/.test(f));
   const ventana = {
     console, Math, Date, JSON, Promise, performance, structuredClone, Intl, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
     requestAnimationFrame: () => 0, addEventListener() {}, removeEventListener() {}, dispatchEvent() {}, innerWidth: 900, innerHeight: 420,

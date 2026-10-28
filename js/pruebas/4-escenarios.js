@@ -119,4 +119,3 @@
       return { nombre, ok: r === true, detalle: r === true ? '' : String(r), pendiente };
     });
   }
-  if (jugador.arbolDevuelto) { delete jugador.arbolDevuelto; guardar(); setTimeout(() => ui.avisar(`Árbol reiniciado: ahora el máximo es ${PUNTOS_ARBOL_MAX} puntos`), 800); }
