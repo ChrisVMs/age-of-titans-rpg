@@ -13,7 +13,7 @@
   const XY_HEROE = { atras: [0, 125], arriba: [170, 30], abajo: [170, 220], frente: [340, 125] };   // coordenadas en la escena
   const XY_ENEMIGO = { frente: [640, 125], arriba: [810, 30], abajo: [810, 220], atras: [980, 125] };
   const ANCHO_GRUPO = 1276, ALTO_GRUPO = 450;
-  let CALABOZO_SOLO = 1;   // vida de los enemigos del calabozo si vas solo (let: lo ajusta el simulador de progresión)
+  let CALABOZO_SOLO = 1.5;   // vida ×1,5 de los enemigos del calabozo si vas solo: pide grupo (let: lo ajusta el simulador)
   const VIDA_POR_ALIADO = .7;   // con aliados los enemigos tienen más vida (+70 % por aliado)
   jugador.formacion ||= { pos: 'frente', aliados: [] };
   // (función declarada: la Campaña la usa al dibujarse en el arranque, antes de llegar a este bloque)

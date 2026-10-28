@@ -9,9 +9,9 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Decidir con el usuario si se frena la progresión** (ver **Progresión**): con todo lo que hace un jugador, una partida
-nueva llega a Nv 80 en 29-35 días y vence los 3 jefes mundiales, los reyes en Infierno y casi todos los calabozos antes del
-día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 semillas) antes y después.
+**Contenido para el tramo largo** (decisión del usuario, cuando quiera): con la progresión frenada, el nivel 80 llega en
+3,5-4 meses, pero los jefes mundiales, los reyes, la Torre alta y la campaña en Infierno se superan mucho antes (ver
+**Progresión**). Hacen falta retos de nivel alto (más campaña, calabozos más altos) para acompañar ese tramo.
 
 ## Última sesión
 **2026-10-28 · Claude**
@@ -28,6 +28,8 @@ día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 sem
 - Verificación: mismo poder y efectos exactos que antes en los 6 bots; mismos hitos que el greedy completo; 14/14 escenarios.
 
 ## Decisiones
+- 2026-10-28 · Progresión frenada (el usuario eligió ~3 meses hasta Nv 80 y las palancas barrido, curva y calabozo solo):
+  `XP_BARRIDO = .5`, `CURVA_XP = 1.07`, `CALABOZO_SOLO = 1.5`. Pensado para quien ve anuncios (300 de estamina al día).
 - 2026-10-28 · Espinas al 5 % solo en la Torre ("5 % solo en la Torre"): al 10 % los pisos de jefe eran un muro.
 - 2026-10-28 · Espinas funciona en todos los modos ("que funcione en todo": el texto del piso dice la verdad; la
   Torre alta se endurece y se reequilibra aparte). Las otras 4 reglas, como en grupo ("igualar como en grupo").
@@ -71,7 +73,7 @@ día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 sem
 | Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-1. Decidir si se frena la progresión (ver **Próximo paso**); las palancas ya están (`XP_BARRIDO`, `CURVA_XP`, `CALABOZO_SOLO`).
+1. Contenido de nivel alto para el tramo largo (ver **Próximo paso**).
 2. Simulador de progresión: aún no pule runas ni usa la bendición al encantar; la opción de jefe mundial "desde cero"
    (hoy parte de la vida que le queda ese día).
 
@@ -141,6 +143,14 @@ Con todo lo que hace un jugador (ver **Última sesión**); calabozo y reyes en g
 - XP (20 días, versión anterior del simulador): el barrido domina (~665 k frente a 91 k de la Torre y 77 k de la campaña).
 - Supuestos: juega todo lo que puede cada día; 2 expediciones de 8 h; aliados = copias suyas; no pule runas ni usa la
   bendición; la vida de los jefes mundiales es solo suya (no la comparte con otros jugadores).
+
+## Progresión con el balance aplicado (2026-10-28, 150 días, semillas 1-3)
+| Estamina al día | Nv 70 | Nv 80 | Minotauro | Reyes Infierno | Torre 80 |
+|---|---|---|---|---|---|
+| 150 (gratis) | 76-86 | más de 150 | 45-68 | 14-40 | 22-61 |
+| 300 (+3 anuncios) | 50-60 | 111-124 | 32-61 | 8-29 | 20-67 |
+| 450 (+anuncios y diamantes) | 44-53 | 104-114 | 25-121 | 7-15 | 15-55 |
+Medido con `node pruebas/progresion.js` (ajustes de la propuesta). Antes del cambio, Nv 80 en ~30 días con 150.
 
 ## Medición de `REGLAS` (2026-10-28, 6 bots Nv 44-60, solos, 800 batallas por caso con las mismas semillas)
 Cuánto cambia el % de victorias al pasar cada opción al valor del otro modo. 1 contra 1: arena (rival fuerte) y los 3 jefes

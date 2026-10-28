@@ -19,6 +19,11 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Arreglado: el set 4 del Minotauro podía dejarte vivo ante un golpe mortal en grupo.
 - Durante una ronda no se puede huir.
 
+### 📈 Progresión más larga
+- La experiencia por nivel crece más rápido desde el nivel 30: llegar al 80 lleva unos 3,5-4 meses jugando cada día y viendo anuncios (antes, ~30 días).
+- El Auto (barrido) da la mitad de experiencia que pelear el nivel; el oro y los materiales no cambian.
+- Calabozo: si vas solo, los enemigos tienen +50 % de vida (pide ir en grupo).
+
 ### 🧪 Pruebas
 - Simulador de batallas, escenarios de prueba y bot que juega solo (menú 🧪).
 

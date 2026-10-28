@@ -44,9 +44,10 @@
   const objeto = uid => jugador.objetos.find(o => o.uid === uid);
 
   // Nivel y experiencia
-  // Curva: rápida hasta el 30 (desbloqueos y primera semana); desde ahí ×1,03 por nivel para que el nivel siga siendo un
-  // objetivo durante meses. Total a Nv 80: ~3,4 M de XP (antes 1,35 M, que se alcanzaba en 2-3 semanas).
-  let CURVA_XP = 1.03;   // crecimiento por nivel desde el 30 (let: el simulador de progresión prueba otros valores)
+  // Curva: rápida hasta el 30 (desbloqueos y primera semana); desde ahí ×CURVA_XP por nivel para que el nivel siga siendo un
+  // objetivo durante meses. Total a Nv 80: ~13,5 M de XP. Con 1,03 (3,4 M) se llegaba en ~30 días; con 1,07, simulado:
+  // ~3,5-4 meses viendo anuncios (300 de estamina al día) y más de 5 meses sin ellos (2026-10-28).
+  let CURVA_XP = 1.07;   // crecimiento por nivel desde el 30 (let: el simulador de progresión prueba otros valores)
   const xpParaSubir = n => Math.round(60 * Math.pow(n, 1.5) * (n > 30 ? CURVA_XP ** (n - 30) : 1));
   const NIVEL_MAX = 80;   // al llegar, la experiencia deja de acumularse
   jugador.nivel = Math.min(jugador.nivel, NIVEL_MAX);

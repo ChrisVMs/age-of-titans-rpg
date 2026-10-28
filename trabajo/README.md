@@ -7,7 +7,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 
 | Tema | Estado | Próximo paso | Última sesión |
 |---|---|---|---|
-| [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Decidir si se frena la progresión (Nv 80 en 29-35 días; jefes, reyes y calabozos antes del día 40) | 2026-10-28 · Claude |
+| [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Progresión frenada (Nv 80 en 3,5-4 meses con anuncios); falta contenido de nivel alto para ese tramo | 2026-10-28 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
 
 ### Estados

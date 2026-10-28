@@ -90,9 +90,10 @@
     const i = ORDEN_DIF.indexOf(d);
     return i > 0 ? `Supera ${DIFICULTADES[ORDEN_DIF[i - 1]]}` : `Supera ${CAMPANAS[CAMPANAS.indexOf(c) - 1].id}`;
   }
-  // Auto (barrido): en un nivel ya superado en esa dificultad, cobra sus recompensas sin pelear gastando la misma estamina.
+  // Auto (barrido): en un nivel ya superado en esa dificultad, cobra sus recompensas sin pelear gastando la misma estamina
+  // (la experiencia, a la mitad: XP_BARRIDO).
   // Da lo mismo que ganar la batalla: premio, oro/XP y botín de cada enemigo (con eventos y efectos), misiones y maestría.
-  let XP_BARRIDO = 1;   // parte de la XP de la batalla que da el barrido (let: lo ajusta el simulador de progresión)
+  let XP_BARRIDO = .5;   // parte de la XP de la batalla que da el barrido: la mitad, para que pelear valga más que repetir (let: lo ajusta el simulador)
   function barrido(c, d) {
     revisarEstamina();
     if (!superada(c.id, d)) return;
