@@ -19,6 +19,7 @@ Torre ya reequilibrada (Espinas al 5 % en la Torre). Lo siguiente, a elegir por 
 - Medido (6 bots, 400 batallas por piso): con 10 %, el piso 60 (jefe) bajaba a ~20 % para Sigrid/Elric; con 5 %, 52-65 %
   (sin Espinas, 82-85 %). Los demás pisos con Espinas (50, 100) no cambian. Espinas + Regeneración no era la causa.
 - Verificación: 14/14 escenarios. Commit en `qa` (ver `git log`).
+- `CHANGELOG.md`: sección "Sin publicar (rama `qa`)" con lo que nota el jugador de todo el refactor.
 - Antes, el mismo día: medición de `REGLAS` y reglas iguales en todos los modos (`d35ed46`, `6141056`).
 
 ## Decisiones
@@ -65,7 +66,6 @@ Torre ya reequilibrada (Espinas al 5 % en la Torre). Lo siguiente, a elegir por 
 | Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-2. Entrada en `CHANGELOG.md` con lo de esta rama (el usuario la pidió como opcional; la 0.2.1 aún dice "×0,5 en grupo").
 3. Simulador de progresión para saber **cuánto tarda terminar el juego** (oro, XP y equipo por día con 150 de estamina).
    El usuario lo pidió el 2026-10-27; hoy solo hay aproximaciones (ver **Mediciones**).
 4. Simulador: falta Calabozo y Torre de reyes (necesitan sala; se podrían armar con aliados bot), y opción de jefe

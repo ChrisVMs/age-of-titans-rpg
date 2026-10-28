@@ -7,7 +7,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 
 | Tema | Estado | Próximo paso | Última sesión |
 |---|---|---|---|
-| [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Refactor terminado; quedan extras: CHANGELOG, simulador de progresión | 2026-10-28 · Claude |
+| [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Refactor terminado; queda el extra: simulador de progresión | 2026-10-28 · Claude |
 
 ### Estados
 | Estado | Significa | Qué hacer al retomarlo |

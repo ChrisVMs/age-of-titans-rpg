@@ -7,6 +7,21 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - `versionName`: la versión del juego.
 - `versionCode`: un número entero que sube en cada entrega a Google Play.
 
+## Sin publicar (rama `qa`)
+
+### ⚔️ Combate
+- Un solo motor de combate para todos los modos: la arena y los jefes mundiales siguen las mismas reglas que la campaña, la Torre y el calabozo.
+- El daño enemigo en grupo ya no se divide entre 2 al pegar: los monstruos de grupo tienen directamente la mitad de daño (mismo resultado, números limpios).
+- Último bastión y Segundo aliento funcionan también en grupo.
+- Espinas funciona en todos los modos (antes, en los pisos de la Torre se mostraba pero no hacía nada). En la Torre devuelve el 5 % del daño; en los jefes mundiales, el 10 %.
+- Iguales en todos los modos: el contraataque de tu skin hace el 60 % de tu golpe; la Regeneración del enemigo cura después de sus estados; si pierdes el turno, la habilidad elegida se gasta; si el rival esquiva tu habilidad, no le aplica su estado.
+- Arreglado: el golpe que remataba a Asmodeo con el escudo puesto no lo mataba.
+- Arreglado: el set 4 del Minotauro podía dejarte vivo ante un golpe mortal en grupo.
+- Durante una ronda no se puede huir.
+
+### 🧪 Pruebas
+- Simulador de batallas, escenarios de prueba y bot que juega solo (menú 🧪).
+
 ## 0.2.1 — 2026-10-25
 
 ### 📱 Pantalla vertical y horizontal
