@@ -9,18 +9,20 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Pendiente 2-5** (ver **Pendiente**): el refactor en sí está terminado (motor único, sin reglas distintas por modo).
-Torre ya reequilibrada (Espinas al 5 % en la Torre). Lo siguiente, a elegir por el usuario.
+**Decidir con el usuario si se frena la progresión** (ver **Mediciones** → Progresión): con el simulador de progresión,
+una partida nueva llega a Nv 80 en ~48 días y termina la campaña en Infierno el día 39, sobre todo por el barrido.
+Si quiere frenarla, medir cada propuesta con `simularProgresion` antes y después.
 
 ## Última sesión
 **2026-10-28 · Claude**
-- Torre reequilibrada: Espinas devuelve el 5 % en la Torre (`MODIFICADORES` → `torre: { desc, ap }`; `pisoTorre` y
-  `pintarTorre` usan esa versión). Los jefes mundiales siguen al 10 %.
-- Medido (6 bots, 400 batallas por piso): con 10 %, el piso 60 (jefe) bajaba a ~20 % para Sigrid/Elric; con 5 %, 52-65 %
-  (sin Espinas, 82-85 %). Los demás pisos con Espinas (50, 100) no cambian. Espinas + Regeneración no era la causa.
-- Verificación: 14/14 escenarios. Commit en `qa` (ver `git log`).
-- `CHANGELOG.md`: sección "Sin publicar (rama `qa`)" con lo que nota el jugador de todo el refactor.
-- Antes, el mismo día: medición de `REGLAS` y reglas iguales en todos los modos (`d35ed46`, `6141056`).
+- Simulador de progresión: `simularProgresion({ dias, perfil, semilla, expediciones })` y botón "📈 Simular progresión"
+  (60 días) en el menú 🧪. Un jugador gratuito que cada día recoge el login y 2 expediciones de 8 h, juega como el bot
+  (campaña, Torre, arena, jefes, barrido), cobra misiones, abre cofres, se equipa lo mejor, desguaza el resto, reparte el
+  árbol y gasta el oro en lo que más poder da (`simMejorar`: encantar y mascotas). Mide XP y oro por fuente (`fuentes`).
+- Para que use las mismas acciones que el jugador, salieron de los botones a funciones: `encantar`, `comprarMascota`,
+  `mejorarMascota`, `reclamarLogin`, `reclamarMision` (la interfaz las llama igual).
+- Verificación: la partida real no cambia (comparada antes y después), 14/14 escenarios, sin errores.
+- Commit en `qa` (ver `git log`).
 
 ## Decisiones
 - 2026-10-28 · Espinas al 5 % solo en la Torre ("5 % solo en la Torre"): al 10 % los pisos de jefe eran un muro.
@@ -122,6 +124,14 @@ jugadores (`u.perfil`). La mascota muerde a un enemigo al azar (en 1 contra 1 so
 - Frontera actual (último nivel con ≥50 % en Normal/Difícil/Pesadilla/Infierno · piso de Torre): Nv5 4/1/0/0 · 10,
   Nv10 7/3/2/0 · 25, Nv20 9/7/4/2 · 30, Nv30 10/9/7/3 · 30, Nv40 10/9/9/5 · 50, Kaito Nv57 10/10/10/9 · 60.
 
+## Progresión (2026-10-28, `simularProgresion`, partida nueva guerrero, semilla 1)
+- Día en que llega: Nv 10/20: 3 · Nv 30: 6 · Nv 40: 10 · Nv 50: 16 · Nv 60: 23 · Nv 70: 36 · **Nv 80: 48**.
+- Campaña 1-10: Normal 5 · Difícil 6 · Pesadilla 13 · **Infierno 39**. Torre: piso 50 el día 4, 70 el 14, 80 el 48; se
+  estanca en ~89.
+- XP de 20 días por fuente: barrido 665 k, Torre 91 k, campaña 77 k, jefes 28 k, arena 6 k. **El barrido del nivel más alto
+  superado da ~2 900 XP sin pelear** y domina. La Torre no gasta estamina: el día 3 sube 39 pisos de golpe.
+- Supuestos: juega todo lo que puede cada día y manda 2 expediciones de 8 h; no usa runas, reliquias, skins ni refinar.
+
 ## Medición de `REGLAS` (2026-10-28, 6 bots Nv 44-60, solos, 800 batallas por caso con las mismas semillas)
 Cuánto cambia el % de victorias al pasar cada opción al valor del otro modo. 1 contra 1: arena (rival fuerte) y los 3 jefes
 al 45 % de vida. Grupo: campaña Pesadilla/Infierno alta y Torre 40, 50 y 60.
@@ -144,6 +154,7 @@ Script: `herramientas/reglas.js` (se evalúa en el juego con `correr.js`).
   solo para cambios fuertes.
 
 ## Bitácora
+- 2026-10-28 · Claude · Torre: Espinas al 5 % (`1132e2b`); CHANGELOG (`4e665b6`).
 - 2026-10-28 · Claude · Etapa 4 (motor único), commits `a09c375`, `585bb82`; medición de `REGLAS` `d35ed46`.
 - 2026-10-27 · Claude · Etapa 2b (motor de grupo con eventos), etapa 3 (simulador, azar con semilla, escenarios), ×0,5 a
   los datos, bastión y aliento en grupo, y este sistema `trabajo/`. El usuario lo commiteó como `dd14378` ("refactor pt 2").

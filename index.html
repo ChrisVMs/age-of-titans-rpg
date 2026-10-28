@@ -889,6 +889,7 @@
       <button class="prueba" id="botRepetir">🤖 Bot: repetir batalla (pruebas)</button>
       <button class="prueba" id="botJugar">🤖 Bot: jugar solo (pruebas)</button>
       <button class="prueba" id="simPrueba">📊 Simular batallas (pruebas)</button>
+      <button class="prueba" id="progPrueba">📈 Simular progresión (pruebas)</button>
       <button class="prueba" id="escPrueba">✅ Escenarios de prueba (pruebas)</button>
       <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
       <button id="cerrarPruebas">Cerrar</button>
@@ -1272,6 +1273,14 @@
     if (bendecir) { c.oro += Math.round(400 * t * (1 - forja)); c.almas = (c.almas || 0) + Math.max(2, t - 9); c.prob = Math.min(100, c.prob + BENDICION); }
     return c;
   };
+  // Encantar (paga el coste): 'exito', 'baja' (falló y bajó un nivel) o 'falla'
+  function encantar(o, bendecir) {
+    const c = costeEncantar(o, bendecir); pagar(c); contarMision('encantar');
+    if (rnd() * 100 < c.prob) { o.enc++; o.fallos = 0; return 'exito'; }
+    o.fallos = (o.fallos || 0) + 1;   // la racha sigue aunque baje de nivel: la protección no se pierde
+    if (degradaAl(o.enc) && !bendecir && rnd() < PROB_DEGRADAR) { o.enc--; return 'baja'; }
+    return 'falla';
+  }
   // Desguace: el equipo que no sirve se convierte en Polvo de almas (las comunes dan oro)
   const ALMAS_DESGUACE = { comun: 0, rara: 1, epica: 3, legendaria: 8, mitica: 20 };
   const almasDe = o => ALMAS_DESGUACE[modelo[o.modelo].rareza] + Math.floor((o.enc || 0) / 3);
@@ -1572,14 +1581,22 @@ ${nuevos.join(' · ')}`), 1200);
       <div class="cofre mascota-card${puesta ? ' puesta' : ''}" style="--cm:${c.color}"><span class="tag-cat">${c.nombre}</span><div class="cara">${dibujoMascota(m, .5)}</div>
         <h3>${m.nombre}${tiene ? ` · Nv ${n}` : ''}</h3><ul>${bonos}<li>${textoAccionMascota(m, nv)}</li></ul>${boton}</div>`;
   }
+  // comprar solo si no la tienes (antes reiniciaba su nivel a 1); mejorar solo si es tuya (sin dueño el coste era 0)
+  function comprarMascota(m) {
+    if (nivelMascota(m) > 0 || jugador.oro < m.precio) return false;
+    jugador.oro -= m.precio; jugador.mascotas[m.id] = 1; jugador.mascota = jugador.mascota || m.id; return true;
+  }
+  function mejorarMascota(m) {
+    const n = nivelMascota(m); if (!(n > 0 && n < MASCOTA_MAX && jugador.oro >= costeMejora(m, n))) return false;
+    jugador.oro -= costeMejora(m, n); jugador.mascotas[m.id] = n + 1; return true;
+  }
   $('mascotas').addEventListener('click', e => {
     const t = e.target.closest('[data-msel]'); if (t) { mascSel = t.dataset.msel; pintarMascotas(); return; }
     const b = e.target.closest('[data-masc]'); if (!b || b.disabled) return;
     const m = MASCOTAS.find(x => x.id === b.dataset.masc), n = nivelMascota(m);
-    // comprar solo si no la tienes (antes reiniciaba su nivel a 1); mejorar solo si es tuya (sin dueño el coste era 0)
-    if (b.dataset.acc === 'comprar' && n === 0 && jugador.oro >= m.precio) { jugador.oro -= m.precio; jugador.mascotas[m.id] = 1; jugador.mascota = jugador.mascota || m.id; }
+    if (b.dataset.acc === 'comprar') comprarMascota(m);
     if (b.dataset.acc === 'equipar') jugador.mascota = m.id;
-    if (b.dataset.acc === 'mejorar' && n > 0 && n < MASCOTA_MAX && jugador.oro >= costeMejora(m, n)) { jugador.oro -= costeMejora(m, n); jugador.mascotas[m.id] = n + 1; avisar(`${m.nombre} Nv ${n + 1}`); }
+    if (b.dataset.acc === 'mejorar' && mejorarMascota(m)) avisar(`${m.nombre} Nv ${n + 1}`);
     guardar(); pintarHud(); pintarMascotas(); pintarInventario();
   });
 
@@ -2597,15 +2614,7 @@ ${nuevos.join(' · ')}`), 1200);
 
 Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     }
-    if (acc === 'encantar') {
-      const c = costeEncantar(o, bendecir); pagar(c); contarMision('encantar');
-      if (rnd() * 100 < c.prob) { o.enc++; o.fallos = 0; avisar(`¡Éxito! +${o.enc}`); }
-      else {
-        o.fallos = (o.fallos || 0) + 1;   // la racha sigue aunque baje de nivel: la protección no se pierde
-        if (degradaAl(o.enc) && !bendecir && rnd() < PROB_DEGRADAR) { o.enc--; avisar(`Falló: baja a +${o.enc}`); }
-        else avisar('El encantamiento falló');
-      }
-    }
+    if (acc === 'encantar') { const r = encantar(o, bendecir); avisar(r === 'exito' ? `¡Éxito! +${o.enc}` : r === 'baja' ? `Falló: baja a +${o.enc}` : 'El encantamiento falló'); }
     if (acc === 'refinar') { pagar(COSTE_REFINAR); candidato = { a: elegir(modelo[o.modelo].jefe ? Object.keys(SECUNDARIOS) : POOL_EXTRAS), e: estrellasRefino(o) }; }   // equipo de jefe: secundarios, como al crearse
     if (acc === 'pulir') { pagar(COSTE_PULIR); candidato = { a: o.lineas[lineaSel].a, e: estrellasRefino(o) }; }
     if (acc === 'aceptar') { o.lineas[lineaSel] = candidato; candidato = null; }
@@ -4577,6 +4586,10 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   const login30 = () => jugador.login30 ||= { n: 0, ultimo: null };
   const loginDisponible = () => login30().ultimo !== hoy();
+  function reclamarLogin() {   // el casillero del día; tras el 30 vuelve al 1
+    const L = login30(); if (L.n >= 30) L.n = 0;
+    L.n++; L.ultimo = hoy(); const pr = premioDia(L.n); darPremio(pr); return pr;
+  }
   function abrirLogin() {
     const L = login30(), hecho = L.n >= 30 && loginDisponible() ? 0 : L.n;   // ciclo completo: al día siguiente vuelve al 1
     abrirModal('comun', `<h2>📅 Login diario</h2><small>Un casillero por día que entres. Al completar el 30, vuelve a empezar.</small>
@@ -4587,11 +4600,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     $('detCaja').onclick = e => {
       const b = e.target.closest('button'); if (!b) return;
       if (b.dataset.acc === 'cerrar') return cerrarModal();
-      if (b.dataset.login30 && loginDisponible()) {
-        const L = login30(); if (L.n >= 30) L.n = 0;
-        L.n++; L.ultimo = hoy(); const pr = premioDia(L.n); darPremio(pr); guardar(); pintarHud();
-        avisar(`📅 Día ${L.n}: ${textoPremio(pr)}`); abrirLogin();
-      }
+      if (b.dataset.login30 && loginDisponible()) { const pr = reclamarLogin(); guardar(); pintarHud(); avisar(`📅 Día ${login30().n}: ${textoPremio(pr)}`); abrirLogin(); }
     };
   }
   const premioLogin = () => premioDia(login30().n % 30 + 1); const premioLoginViejo = () => { const L = jugador.login || { dias: 0 }, k = Math.min(3, 1 + Math.floor(L.dias / 7) * .25);
@@ -4648,16 +4657,19 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     }
     $('misiones').innerHTML = `<div class="tabs">${Object.entries(tabs).map(([k, t]) => `<button data-mtab="${k}" class="${k === misTab ? 'on' : ''}${punto[k] ? ' con-punto' : ''}" style="position:relative">${t}</button>`).join('')}</div>${cuerpo}`;
   }
+  // Cobra una misión (o el bonus) si está hecha y sin cobrar; devuelve el premio o null. Se revalida con el estado actual:
+  // un botón viejo (p. ej. tras cambiar de día) no cobra dos veces.
+  function reclamarMision(tipo, id) {
+    const M = revisarMisiones(), R = M['r' + tipo], m = MISIONES[tipo].find(x => x.id === id);
+    const hecha = id === 'bonus' ? Object.keys(R).filter(k => k !== 'bonus').length >= BONUS_MISIONES[tipo].meta : m && (M[tipo][m.ev] || 0) >= m.meta;
+    if (R[id] || !hecha) return null;
+    const pr = id === 'bonus' ? BONUS_MISIONES[tipo].premio : m.premio; R[id] = true; darPremio(pr); return pr;
+  }
   $('misiones').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b || b.disabled) return;
-    const M = revisarMisiones();
     if (b.dataset.mtab && !desbloqueado(b.dataset.mtab)) return avisoBloqueo(b.dataset.mtab);
     if (b.dataset.mtab) misTab = b.dataset.mtab;
-    if (b.dataset.reclamar) {   // se revalida con el estado actual: un botón viejo (p. ej. tras cambiar de día) no cobra dos veces
-      const id = b.dataset.reclamar, R = M['r' + misTab], m = MISIONES[misTab].find(x => x.id === id);
-      const hecha = id === 'bonus' ? Object.keys(R).filter(k => k !== 'bonus').length >= BONUS_MISIONES[misTab].meta : m && (M[misTab][m.ev] || 0) >= m.meta;
-      if (!R[id] && hecha) { const pr = id === 'bonus' ? BONUS_MISIONES[misTab].premio : m.premio; R[id] = true; darPremio(pr); avisar(textoPremio(pr)); }
-    }
+    if (b.dataset.reclamar) { const pr = reclamarMision(misTab, b.dataset.reclamar); if (pr) avisar(textoPremio(pr)); }
     if (b.dataset.expm) expMasc = b.dataset.expm;
     if (b.dataset.exph) expHoras = +b.dataset.exph;
     if (b.id === 'mandarExp' && !jugador.expedicion) { jugador.expedicion = { mascota: expMasc, horas: expHoras, fin: Date.now() + expHoras * 3600000 }; avisar('🧭 ¡En marcha!'); }
@@ -5118,6 +5130,100 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       return { ...r, veces, pctVictoria: Math.round(r.victorias / veces * 100), rondasMedia: Math.round(r.rondas / veces * 10) / 10, vidaMedia: Math.round(r.vida / veces * 100) };
     });
   }
+  // ---------------- Simulador de progresión (pruebas) ----------------
+  // Un jugador gratuito juega días seguidos sin pantalla, con las decisiones del bot: cada día recoge el login y las
+  // expediciones, gasta la estamina, sube la Torre, usa las entradas de arena y jefes, cobra las misiones, abre cofres, se
+  // equipa lo mejor (y desguaza el resto), reparte el árbol y gasta el oro en lo que más poder le da (simMejorar). Las batallas se resuelven
+  // con el motor (autoataque). Devuelve el día en que llega a cada hito. Corre sobre una copia de la partida (aislado).
+  //   perfil: partida de la que parte (por defecto, una nueva) · dias · semilla: azar reproducible · expediciones: de 8 h al día
+  // Gasta como un jugador que mira su poder: repite la mejora que más poder da por oro (encantar una pieza puesta, comprar o
+  // subir una mascota) mientras alguna sume; el encantamiento cuenta su probabilidad de éxito. Luego lleva la mejor mascota.
+  function simMejorar() {
+    const mejorMascota = () => { let m0 = jugador.mascota, p0 = poder();
+      for (const m of MASCOTAS) if (nivelMascota(m) > 0) { jugador.mascota = m.id; const p = poder(); if (p > p0) { p0 = p; m0 = m.id; } }
+      jugador.mascota = m0; };
+    for (let i = 0; i < 500; i++) {
+      const base = poder(); let mejor = null;
+      const valorar = (oro, prob, probar, hacer) => { const g = probar() * prob; if (g > 0 && (!mejor || g / oro > mejor.v)) mejor = { v: g / oro, hacer }; };
+      for (const uid of Object.values(jugador.equipado)) {
+        const o = objeto(uid), c = costeEncantar(o); if (o.enc >= encMax(o) || !tieneCoste(c)) continue;
+        valorar(c.oro, c.prob / 100, () => { o.enc++; const g = poder() - base; o.enc--; return g; }, () => encantar(o));
+      }
+      for (const m of MASCOTAS) {
+        const n = nivelMascota(m), oro = n ? costeMejora(m, n) : m.precio, puesta = jugador.mascota;
+        if ((n && n >= MASCOTA_MAX) || jugador.oro < oro) continue;
+        valorar(oro, 1, () => { jugador.mascotas[m.id] = n + 1; jugador.mascota = m.id; const g = poder() - base; if (n) jugador.mascotas[m.id] = n; else delete jugador.mascotas[m.id]; jugador.mascota = puesta; return g; },
+          () => { if (n) mejorarMascota(m); else comprarMascota(m); mejorMascota(); });
+      }
+      if (!mejor) break;
+      mejor.hacer(); aplicarEquipo();
+    }
+  }
+  function simCobrar() {   // misiones y bonus hechos
+    for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); reclamarMision(tipo, 'bonus'); }
+  }
+  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2 } = {}) {
+    const offset0 = offsetDias, temporizador = window.setTimeout;
+    window.setTimeout = () => 0;   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
+    try {
+      return aislado(() => {
+        sembrar(semilla);
+        jugador = perfil ? structuredClone(perfil) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase: 'guerrero', arbol: {}, torre: { mejor: 0 },
+          calabozos: {}, calabozosDif: {}, mascotas: {}, formacion: { pos: 'frente', aliados: [] } });   // los campos que el juego rellena al cargar
+        const hitos = { nivel: {}, campana: {}, torre: {} }, dia = [], fuentes = {};
+        const xpTotal = () => { let t = jugador.xp; for (let n = 1; n < jugador.nivel; n++) t += xpParaSubir(n); return t; };
+        const medir = (fuente, f) => { const x = xpTotal(), o = jugador.oro, r = f(), F = fuentes[fuente] ||= { xp: 0, oro: 0, veces: 0 };
+          F.xp += xpTotal() - x; F.oro += jugador.oro - o; F.veces++; return r; };   // XP y oro de cada fuente (el oro gastado en mejoras no cuenta: se mide aparte)
+        const jugar = c => {   // como iniciarCampana, sin pantalla: cobra la entrada, pelea y cobra el resultado
+          const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo ? 0 : (c.coste || ESTAMINA_CAMPANA);
+          if (jugador.estamina < coste) return null;
+          jugador.estamina -= coste; if (coste) contarMision('estamina', coste);
+          const { fin } = jugarHastaFin(c, habLista, 400);
+          mostrarResultado(fin === true); return fin === true;
+        };
+        for (let d = 1; d <= dias; d++) {
+          offsetDias = offset0 + d - 1; revisarEstamina();
+          if (loginDisponible()) medir('login', reclamarLogin);
+          if (desbloqueado('expedicion')) {   // expediciones de 8 h al día (las que da tiempo a mandar y recoger)
+            const m = MASCOTAS.filter(x => nivelMascota(x) > 0 && x.id !== jugador.mascota).sort((a, b) => Object.keys(CAT_MASCOTA).indexOf(b.cat) - Object.keys(CAT_MASCOTA).indexOf(a.cat))[0];
+            if (m) for (let i = 0; i < expediciones; i++) medir('expedición', () => darPremio(premioExpedicion(m, 8)));
+          }
+          const fallos = {}, pocos = k => (fallos[k] || 0) < 2;   // como el bot: tras 2 derrotas, eso se deja para otro día
+          let batallas = 0;
+          while (batallas < 200) {
+            medir('misiones', simCobrar); botCofres(); botEquipar(); botArbol();
+            desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));   // lo que no lleva puesto, a almas
+            simMejorar();
+            let k = null, c = null;
+            if (jugador.estamina >= ESTAMINA_CAMPANA)
+              for (const x of CAMPANAS) { for (const df of ORDEN_DIF) if (desbloqueada(x, df) && !superada(x.id, df) && pocos(`${x.id}:${df}`)) { k = `${x.id}:${df}`; c = batallaCampana(x, df); break; } if (c) break; }
+            if (!c && desbloqueado('pTorre') && pocos('torre')) { k = 'torre'; c = batallaTorre(); }
+            if (!c && desbloqueado('pArena') && revisarArena().entradas > 0) {
+              const a = revisarArena(), i = a.rivales.reduce((m, r, j) => r.f < a.rivales[m].f ? j : m, 0);
+              a.entradas--; a.rivalActual = i; k = 'arena'; c = batallaArena(i);
+            }
+            if (!c && desbloqueado('pEvento') && entradasJefe() > 0) {
+              const id = Object.keys(MUNDIALES).find(m => estadoMundial(m).vida > 0 && pocos('jefe' + m));
+              if (id) { jugador.entradasJefe--; k = 'jefe' + id; c = batallaMundial(id); }
+            }
+            if (!c) {   // farmeo: barrido del nivel más alto ya superado
+              const x = jugador.estamina >= ESTAMINA_CAMPANA && [...CAMPANAS].reverse().flatMap(y => [...ORDEN_DIF].reverse().map(df => [y, df])).find(([y, df]) => superada(y.id, df));
+              if (!x) break;
+              medir('barrido', () => barrido(...x)); batallas++; continue;
+            }
+            const gano = medir(c.idCampana ? 'campaña' : c.torre ? 'torre' : c.arena ? 'arena' : 'jefes', () => jugar(c)); batallas++;
+            if (gano === null) break;
+            if (!gano) fallos[k] = (fallos[k] || 0) + 1;
+            if (c.idCampana && gano && !hitos.campana[`${c.idCampana} ${c.dif}`]) hitos.campana[`${c.idCampana} ${c.dif}`] = d;
+            if (c.torre && gano && c.torre % 10 === 0) hitos.torre[c.torre] = d;
+          }
+          for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
+          dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, batallas });
+        }
+        return { hitos, dia, fuentes, final: dia.at(-1) };
+      });
+    } finally { window.setTimeout = temporizador; offsetDias = offset0; }
+  }
   function opcionesSimulacion() {   // batallas que se pueden simular desde el menú de pruebas
     const sig = CAMPANAS.find(c => !superada(c.id, 'normal')) || CAMPANAS.at(-1);
     return [
@@ -5140,6 +5246,22 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       const r = simular(ops[+b.dataset.sim][1]());
       $('sim' + b.dataset.sim).textContent = `${r.pctVictoria} % victorias · ${r.rondasMedia} rondas · ${r.vidaMedia} % de vida${r.sinTerminar ? ` · ${r.sinTerminar} sin terminar` : ''}`;
     };
+  };
+  $('progPrueba').onclick = () => {   // tarda unos segundos: primero se muestra el aviso y luego se simula
+    if (!MODO_PRUEBAS) return;
+    abrirModal('comun', '<h2>Simulando 60 días…</h2>');
+    setTimeout(() => {
+      const r = simularProgresion({ dias: 60 }); pintarHud(); pintarCampamento();   // al simular se pintó la partida simulada
+      if (!r) return cerrarModal();
+      const H = r.hitos, ult = CAMPANAS.at(-1).id, fila = (t, l) => `<p><b>${t}</b><br>${l.join(' · ') || '—'}</p>`;
+      abrirModal('comun', `<h2>Partida nueva: 60 días</h2><small>Juega todo lo que puede cada día, como el bot, y gasta el oro en lo que más poder da.</small>
+        ${fila('Nivel (día)', [10, 20, 30, 40, 50, 60, 70, 80].filter(n => H.nivel[n]).map(n => `Nv ${n}: ${H.nivel[n]}`))}
+        ${fila(`Campaña ${ult} (día)`, ORDEN_DIF.filter(d => H.campana[`${ult} ${d}`]).map(d => `${DIFICULTADES[d]}: ${H.campana[`${ult} ${d}`]}`))}
+        ${fila('Torre (día)', Object.entries(H.torre).map(([p, d]) => `${p}: ${d}`))}
+        ${fila('Día 60', [`Nv ${r.final.nivel}`, `⚔ ${r.final.poder.toLocaleString('es')}`, `piso ${r.final.torre}`])}
+        <div class="fila"><button data-acc="cerrar">Cerrar</button></div>`);
+      $('detCaja').onclick = e => { if (e.target.closest('[data-acc="cerrar"]')) cerrarModal(); };
+    }, 50);
   };
   // ---------------- Escenarios de prueba ----------------
   // Reglas del combate comprobadas con el motor, sin pantalla: cada escenario corre aislado (copia de la partida, semilla
