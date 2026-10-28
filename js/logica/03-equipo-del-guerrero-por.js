@@ -17,8 +17,10 @@
     rojo: 'sepia(1) saturate(4) hue-rotate(-45deg) brightness(.95)', azul: 'sepia(1) saturate(3) hue-rotate(180deg) brightness(.95)',
     obsidiana: 'brightness(.5) contrast(1.25)', esmeralda: 'sepia(1) saturate(3) hue-rotate(85deg)',
     abismo: 'sepia(1) saturate(7) hue-rotate(-40deg) brightness(.75) contrast(1.4)',
+    ancestral: 'sepia(1) saturate(4) hue-rotate(125deg) brightness(1.15) contrast(1.15)',   // provisional hasta su arte
   };
   const TELA = {
     roja: '', azul: 'hue-rotate(225deg)', verde: 'hue-rotate(120deg)', purpura: 'hue-rotate(275deg)',
     negra: 'grayscale(1) brightness(.55)', blanca: 'grayscale(1) brightness(1.9)', abismo: 'saturate(2.4) brightness(.7) contrast(1.3)',
+    ancestral: 'hue-rotate(165deg) saturate(1.6) brightness(1.2)',   // provisional hasta su arte
   };

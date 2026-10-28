@@ -56,7 +56,7 @@
       + Object.entries(OTROS_EFECTOS).filter(([a]) => efecto(a) > 0).map(([a, n]) => `<div class="sec">${n}<b>${textoEfecto(a)}</b></div>`).join('');
     // materiales: cada uno en su propia casilla, solo aquí en el inventario
     $('mats').innerHTML = Object.entries(MATERIALES).map(([k, n]) => { const [ic, ...nom] = n.split(' ');
-      return `<div class="item mat-slot" data-material="${k}"><span class="mat-ic">${ic}</span><b>${jugador.mat[k].toLocaleString('es')}</b><small>${nom.join(' ')}</small></div>`; }).join('');
+      return `<div class="item mat-slot" data-material="${k}"><span class="mat-ic">${ic}</span><b>${(jugador.mat[k] || 0).toLocaleString('es')}</b><small>${nom.join(' ')}</small></div>`; }).join('');
     $('ranuras').innerHTML = Object.entries(RANURAS).filter(([, d]) => !d.interna).map(([r, d]) => {
       const o = objeto(jugador.equipado[r]), m = modelo[o.modelo];
       return `<button class="item puesto r-${m.rareza}" data-uid="${o.uid}">${icono(m)}<b>${d.nombre}</b><small>${nombreObj(o)}</small></button>`;

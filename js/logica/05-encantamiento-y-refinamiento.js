@@ -1,10 +1,10 @@
   // ---------------- Encantamiento (+1 ... +20) y refinamiento ----------------
   // Tope de encantamiento según rareza
-  const ENC_MAX = { comun: 12, rara: 15, epica: 20, legendaria: 20, mitica: 25 };
+  const ENC_MAX = { comun: 12, rara: 15, epica: 20, legendaria: 20, mitica: 25, ancestral: 30 };
   const encMax = o => ENC_MAX[modelo[o.modelo].rareza];
   const ENC_PRINCIPAL = { ataque: 1.5, defensa: .6, vida: 5, armadura: 4 };   // por nivel, x rareza: fortalece el atributo base
   const ENC_PORCENTAJE = .04;                                                // por nivel: +4 % a todas las líneas
-  // Éxito según el nivel al que se sube: hasta +9 siempre; +10..+12 60 %; +13..+15 35 %; +16..+20 22 %; +21..+25 10 %.
+  // Éxito según el nivel al que se sube: hasta +9 siempre; +10..+12 60 %; +13..+15 35 %; +16..+20 22 %; +21..+30 10 %.
   // Estando en +15 o más, fallar tiene un 50 % de bajar el objeto un nivel. Desde +10 también cuesta Polvo de almas.
   // Bendición: +10 % de éxito y evita la degradación, a cambio de oro (400 × nivel) y almas extra (nivel − 9, mín. 2).
   // Coste esperado a +18: sin bendición ~97 intentos, ~70k oro y ~1 100 almas; con bendición ~29 intentos, ~155k oro y
@@ -35,7 +35,7 @@
     return 'falla';
   }
   // Desguace: el equipo que no sirve se convierte en Polvo de almas (las comunes dan oro)
-  const ALMAS_DESGUACE = { comun: 0, rara: 1, epica: 3, legendaria: 8, mitica: 20 };
+  const ALMAS_DESGUACE = { comun: 0, rara: 1, epica: 3, legendaria: 8, mitica: 20, ancestral: 50 };
   const almasDe = o => ALMAS_DESGUACE[modelo[o.modelo].rareza] + Math.floor((o.enc || 0) / 3);
   function desguazar(lista) {
     let almas = 0, oro = 0;
@@ -95,6 +95,10 @@ Fuente: ${INFO_MATERIALES[k].fuente}`);
     { id: 'capa_purpura',  nombre: 'Capa púrpura',       ranura: 'capa',     color: TELA.purpura,    rareza: 'epica' },
     { id: 'capa_negra',    nombre: 'Capa negra',         ranura: 'capa',     color: TELA.negra,      rareza: 'epica' },
     { id: 'capa_blanca',   nombre: 'Capa blanca',        ranura: 'capa',     color: TELA.blanca,     rareza: 'legendaria' },
+    { id: 'casco_antiguo', nombre: 'Yelmo de los Antiguos',  ranura: 'casco',    color: METAL.ancestral, rareza: 'ancestral' },
+    { id: 'arm_antiguo',   nombre: 'Coraza de los Antiguos', ranura: 'armadura', color: METAL.ancestral, rareza: 'ancestral' },
+    { id: 'esp_antigua',   nombre: 'Hoja de los Antiguos',   ranura: 'espada',   color: METAL.ancestral, rareza: 'ancestral' },
+    { id: 'capa_antigua',  nombre: 'Manto de los Antiguos',  ranura: 'capa',     color: TELA.ancestral,  rareza: 'ancestral' },
     { id: 'casco_abismo',  nombre: 'Yelmo del abismo',   ranura: 'casco',    color: METAL.abismo,    rareza: 'mitica' },
     { id: 'arm_abismo',    nombre: 'Coraza del abismo',  ranura: 'armadura', color: METAL.abismo,    rareza: 'mitica' },
     { id: 'esp_caos',      nombre: 'Espada del caos',    ranura: 'espada',   color: METAL.abismo,    rareza: 'mitica' },

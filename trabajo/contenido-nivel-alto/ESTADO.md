@@ -7,13 +7,15 @@ Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga re
 estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre alta caen mucho antes del nivel 80.
 
 ## Próximo paso
-**Paso 2: rareza Ancestral** (por encima de mítica): modelos de equipo, su máximo de encantamiento y valores, y de dónde
-sale (Etapa 3, calabozos 5-8, hitos de la Torre desde el 100). Con iconos provisionales hasta que llegue el arte.
+**Paso 3: Etapa 2 y Etapa 3 de la campaña.** El escalado actual (+23 % de vida y daño por nivel, `crearDificultad`) no
+sirve para 20 niveles más: definir el escalado de las etapas 2-3 con el poder del jugador por día (ver **Mediciones**),
+los 6 tipos de enemigo y 2 jefes nuevos (sprite provisional: parca con color), y que en el juego publicado salgan como
+"Próximamente" hasta tener el arte (`etapa.arte`). Hecho cuando se jueguen en modo pruebas y el simulador las recorra.
 
 ## Plan
 1. ✅ Aura: 10 niveles, +2 % a todo por nivel, con Esencia y oro; se ve bajo el personaje (tenue → late desde el 5 →
    muy brillante con destellos en el 10). Desde el nivel 40.
-2. Rareza Ancestral: equipo por encima de mítico, solo del contenido alto.
+2. ✅ Rareza Ancestral: equipo por encima de mítico, solo del contenido alto.
 3. Etapa 2 «Las ruinas del reino caído» (esqueletos, caballeros espectrales, gárgolas; jefe: Rey Liche) y Etapa 3
    «El Abismo» (diablillos, demonios de fuego, súcubos; jefe: Señor del Abismo). 10 niveles cada una.
 4. Calabozos 5-8.
@@ -25,13 +27,16 @@ sale (Etapa 3, calabozos 5-8, hitos de la Torre desde el 100). Con iconos provis
 
 ## Última sesión
 **2026-10-28 · Claude**
-- Aura: `js/logica/44-aura.js` (`nivelAura`, `costeAura`, `subirAura`, `statsAura`, en `estadisticas`), material
-  `esencia` (`MATERIALES`, partidas viejas con 0), desbloqueo `aura` en Nv 40. Pantalla: `pintarAura` en
-  `pantalla/12-vista-del-guerrero.js` (Campamento, vitrina del Héroe, batalla 1 contra 1 y unidades de grupo con el aura
-  de cada jugador), pestaña "Aura" del Héroe (`pantalla/29-aura.js`), CSS `.aura` en `index.html`.
-- `js/logica/43-lista.js` pasó a `99-lista.js` (siempre la última de la lógica).
-- Verificación: 14/14 escenarios, `sin-pantalla.js` en verde, capturas del aura en los niveles 3, 5 y 10 (Campamento,
-  pestaña, batalla) sin errores. Coste provisional (10 × nivel de Esencia y 15 000 × nivel de oro): se ajusta en el paso 6.
+- Rareza Ancestral (`RAREZAS.ancestral`: ×7, 4 líneas extra, venta 3000, `soloContenidoAlto`), encantamiento hasta +30
+  (+21..+30 al 10 %), desguace 50 almas, color turquesa (`.r-ancestral`). 4 piezas "de los Antiguos" (`casco_antiguo`,
+  `arm_antiguo`, `esp_antigua`, `capa_antigua`) con color provisional. `objetoAncestral(ranura)` para los premios.
+  La Fortuna ya no puede subir un objeto de cofre a Ancestral (`objetoAzar`).
+- Arreglado: los perfiles sin Esencia (bots, perfiles de prueba cargados desde el menú 🧪) rompían el inventario y la barra
+  de la herrería; la herrería ya no muestra la Esencia (no se usa ahí).
+- `pruebas/equivalencia.js`: compara dos versiones del juego con las mismas 234 batallas, sin navegador (otra versión en
+  un `git worktree`).
+- Verificación: 234 batallas idénticas al commit anterior, 14/14 escenarios; Ancestral encanta hasta +30, 0 en 3000 cofres
+  míticos con Fortuna alta; inventario y herrería sin errores.
 - Commit en `qa` (ver `git log`).
 
 ## Decisiones
@@ -42,12 +47,17 @@ sale (Etapa 3, calabozos 5-8, hitos de la Torre desde el 100). Con iconos provis
 
 ## Arte pendiente
 - Aura: hecha con CSS (no necesita imágenes).
+- Equipo Ancestral: casco, armadura, espada y capa "de los Antiguos" (capas del guerrero como las demás piezas; hoy
+  usan las de otra pieza con un filtro turquesa, `METAL.ancestral` y `TELA.ancestral`).
 - (se completa en los pasos 2-5)
 
 ## Cómo verificar
+- `node pruebas/equivalencia.js <otra versión>`: mismas batallas que antes (234 casos).
 - `node pruebas/escenarios.js`, `node pruebas/sin-pantalla.js`, `node pruebas/progresion.js`.
 
 ## Mapa del código
 - `js/logica/44-aura.js`, `js/pantalla/29-aura.js`, `pintarAura` (en `pantalla/12-vista-del-guerrero.js`).
+- Ancestral: `RAREZAS`, `ENC_MAX`, `ALMAS_DESGUACE`, `MODELOS` (`*_antiguo/a`), `objetoAncestral` (`logica/21-tienda-cofres.js`).
 
 ## Bitácora
+- 2026-10-28 · Claude · Aura (`6e66f3c`).

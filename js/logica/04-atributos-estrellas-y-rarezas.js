@@ -24,7 +24,8 @@
     rara:       { nombre: 'Rara',       mult: 1.6, extras: 0, venta: 40 },
     epica:      { nombre: 'Épica',      mult: 2.4, extras: 1, venta: 120 },
     legendaria: { nombre: 'Legendaria', mult: 3.5, extras: 2, venta: 350 },
-    mitica:     { nombre: 'Mítica',     mult: 5,   extras: 3, venta: 1000 },   // la más rara (solo en cofres de hierro y dorados)
+    mitica:     { nombre: 'Mítica',     mult: 5,   extras: 3, venta: 1000 },   // la más rara de los cofres
+    ancestral:  { nombre: 'Ancestral',  mult: 7,   extras: 4, venta: 3000, soloContenidoAlto: true },   // no sale en cofres: Etapa 3, calabozos 5-8 y Torre desde el 100
   };
   // Líneas con las que nace cada tipo de pieza (las épicas y legendarias suman líneas extra al azar)
   const LINEAS_RANURA = { espada: ['ataque'], casco: ['defensa', 'vida'], armadura: ['armadura', 'vida'], capa: ['vida', 'defensa'] };

@@ -36,7 +36,7 @@
     return a;
   }
   function construirBot(d, k) {
-    const b = { nombre: d.nombre, bot: true, nivel: d.nivel, xp: 0, clase: d.clase, oro: 50000, mat: { piedra: 500, polvo: 200, almas: 60 },
+    const b = { nombre: d.nombre, bot: true, nivel: d.nivel, xp: 0, clase: d.clase, oro: 50000, mat: { piedra: 500, polvo: 200, almas: 60, esencia: 0 },
       estamina: ESTAMINA_MAX, diaEstamina: hoy(), objetos: [], equipado: {} };
     for (const ranura of ['casco', 'armadura', 'espada', 'capa']) {
       const m = MODELOS.find(x => x.ranura === ranura && x.rareza === d.rareza && !x.jefe);

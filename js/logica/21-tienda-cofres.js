@@ -17,9 +17,11 @@
     let tirada = rnd() * 100, rareza = 'comun';
     for (const [r, p] of Object.entries(probs)) { if (tirada < p) { rareza = r; break; } tirada -= p; }
     const sig = ORDEN_RAREZA[ORDEN_RAREZA.indexOf(rareza) + 1];
-    if (sig && rnd() < mejora && MODELOS.some(m => m.rareza === sig)) rareza = sig;
+    if (sig && !RAREZAS[sig].soloContenidoAlto && rnd() < mejora && MODELOS.some(m => m.rareza === sig)) rareza = sig;   // la Fortuna no da Ancestral
     return crearObjeto(elegir(MODELOS.filter(m => m.rareza === rareza && !m.jefe)).id);   // el equipo de jefe no sale en cofres
   }
+  // Una pieza Ancestral (de una ranura, o al azar): premio del contenido de nivel alto
+  const objetoAncestral = (ranura = null) => crearObjeto(elegir(MODELOS.filter(m => m.rareza === 'ancestral' && (!ranura || m.ranura === ranura))).id);
   function abrirCofre(c) {
     const o = objetoAzar(c.probs);
     jugador.objetos.push(o);
