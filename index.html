@@ -5237,8 +5237,9 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   // poder le da (simMejorar). Las batallas se resuelven con el motor (autoataque). Devuelve el día de cada hito.
   // Corre sobre una copia de la partida (aislado).
   //   perfil: partida de la que parte (por defecto, una nueva) · dias · semilla: azar reproducible · expediciones: de 8 h al
-  //   día · grupo: jugadores en calabozo y reyes (los aliados son copias del simulado: gente de su mismo nivel)
-  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3 } = {}) {
+  //   día · grupo: jugadores en calabozo y reyes (los aliados son copias del simulado: gente de su mismo nivel) ·
+  //   estaminaExtra: recargas al día además de la gratis (anuncios, diamantes)
+  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0 } = {}) {
     const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()];
     window.setTimeout = () => 0;   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
     try {
@@ -5265,7 +5266,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
           mostrarResultado(fin === true); return fin === true;
         };
         for (let d = 1; d <= dias; d++) {
-          offsetDias = offset0 + d - 1; revisarEstamina();
+          offsetDias = offset0 + d - 1; revisarEstamina(); jugador.estamina += estaminaExtra;   // recargas extra del día (anuncios, diamantes)
           if (loginDisponible()) medir('login', reclamarLogin);
           if (desbloqueado('expedicion')) {   // expediciones de 8 h al día (las que da tiempo a mandar y recoger)
             const m = MASCOTAS.filter(x => nivelMascota(x) > 0 && x.id !== jugador.mascota).sort((a, b) => Object.keys(CAT_MASCOTA).indexOf(b.cat) - Object.keys(CAT_MASCOTA).indexOf(a.cat))[0];
