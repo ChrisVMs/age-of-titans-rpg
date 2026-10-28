@@ -9,7 +9,7 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Decidir con el usuario qué reglas del 1 contra 1 y del grupo se igualan** (etapa 4 terminada, sin commit).
+**Decidir con el usuario qué reglas del 1 contra 1 y del grupo se igualan** (etapa 4 terminada, commit `a09c375`).
 - Las diferencias que quedan son opciones de `REGLAS` (ver **Diferencias de reglas**). Para cada una: medir con el
   simulador cómo cambia el balance, enseñárselo al usuario y que él decida. Cuando todas se igualen, `REGLAS` solo
   guardará el ritmo de las animaciones (`esperas`).
@@ -34,7 +34,7 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
   - Dos arreglos de reglas (ver **Decisiones**): golpe final contra el escudo de Asmodeo y el set 4 del Minotauro.
 - Otros archivos: herramientas nuevas en `herramientas/` (`equivalencia.js`, `medir-semilla.js`, `medir-duelo.js`,
   `pantalla.js`); este `ESTADO.md` y el índice.
-- Sin commit: **todo lo anterior** (rama `qa` sobre `dd14378`).
+- Commit: `a09c375` ("refactor pt 3: motor único para todos los modos"), subido a `qa`.
 - Verificación: grupo (campaña, Torre, calabozo, reyes; 144 casos × 6 semillas) idéntico con semilla; 1 contra 1
   (arena, 3 jefes, duelo; 80 casos × 1500 batallas) con el mismo % de victorias (media −0,02 pp, máx 2,7 pp, ruido);
   13/13 escenarios (nuevo: "Un golpe mortal remata a Asmodeo aunque tenga el escudo"); en pantalla, una batalla de cada
@@ -79,7 +79,7 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 | Escenarios de prueba (`ESCENARIOS`) + botón "✅ Escenarios" | `dd14378` | 12/12 en verde; detectan fallos provocados |
 | ×0,5 a los datos de enemigos de grupo | `dd14378` | % medio de victorias igual en 6 perfiles |
 | Bastión y aliento en grupo | `dd14378` | escenarios + visto en pantalla |
-| Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | sin commit | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
+| Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
 1. Igualar (o no) las reglas de `REGLAS`, ver **Próximo paso**.
