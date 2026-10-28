@@ -9,32 +9,37 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Etapa 4: unir los motores de 1 contra 1 (`resolverRonda`) y de grupo (`resolverRondaGrupo`) en uno.**
-- Enfoque recomendado (pendiente de confirmar con el usuario): modelar 1 contra 1 como un grupo de 1 héroe contra
-  1 enemigo, con las reglas que aún difieren como **opciones por modo**, para que el balance no cambie. Luego el usuario
-  decide, una a una, cuáles igualar.
-- Diferencias que quedan (ver **Diferencias de reglas**). Los especiales de jefe (Cerbero, Asmodeo, Minotauro) solo
-  existen en 1 contra 1: pasarían a ser un "comportamiento" del enemigo (`decidirAtaqueEnemigo` + su resolución).
-- Hecho cuando: un solo `resolverRonda` para todos los modos, `ronda()` sin bifurcar a `rondaGrupo`, equivalencia con
-  semilla igual que antes en todos los modos (ver **Cómo verificar**) y los 12 escenarios en verde.
-- Antes de empezar: preguntar al usuario si confirma el enfoque.
+**Decidir con el usuario qué reglas del 1 contra 1 y del grupo se igualan** (etapa 4 terminada, sin commit).
+- Las diferencias que quedan son opciones de `REGLAS` (ver **Diferencias de reglas**). Para cada una: medir con el
+  simulador cómo cambia el balance, enseñárselo al usuario y que él decida. Cuando todas se igualen, `REGLAS` solo
+  guardará el ritmo de las animaciones (`esperas`).
+- Después, lo que sigue en **Pendiente** (CHANGELOG, simulador de progresión...).
 
 ## Última sesión
-**2026-10-27 · Claude** (después del commit `ec10c87` del usuario)
-- Cambios en `index.html`:
-  - Etapa 2b: `resolverRondaGrupo` y acciones de grupo (`resolverAccionHeroe`, `resolverAccionEnemigo`,
-    `resolverMascotaGrupo`, `resolverTickU`) emiten eventos; `rondaGrupo` solo reproduce; `reproducir` dibuja eventos de grupo.
-  - Etapa 3: `prepararBatalla`, `armarGrupo`/`dibujarGrupo`, `crearUnidad`/`dibujarUnidad`, armadores `batallaCampana`,
-    `batallaTorre`, `batallaArena`, `batallaMundial`; `simular`, `aislado`, `jugarHastaFin`; botón "📊 Simular batallas".
-  - Azar: `rnd`, `sembrar`, `elegirSonido`; 41 `Math.random()` pasaron a `rnd()` (quedan solo identificadores).
-  - Escenarios: `ESCENARIOS`, `correrEscenarios`, `jugadorPrueba`, `batallaPrueba`; botón "✅ Escenarios de prueba".
-  - Balance: `crearDificultad` con daño base 3-5 y sin `DANO_GRUPO`; `nodosVidaU` (bastión y aliento en grupo).
-  - `simulando` desactiva `guardar()` y `avisar()`; `sumarMaestria` no avisa mientras simula.
-- Otros archivos: `CLAUDE.md` (sección "Trabajo en curso") y carpeta `trabajo/` (este sistema).
-- Sin commit: **todo lo anterior** (rama `qa` sobre `ec10c87`).
-- Verificación: equivalencia con semilla frente a la versión previa en cada paso; 12/12 escenarios; dificultad medida
-  igual antes y después del ×0,5; batallas en pantalla sin errores.
-- Quedó a medias: nada. La etapa 4 no se empezó (espera que el usuario confirme el enfoque).
+**2026-10-27 · Claude** (después del commit `dd14378` del usuario)
+- Etapa 4 en `index.html`: un solo motor para todos los modos (el 1 contra 1 es un grupo de 1 contra 1).
+  - Bloque "Motor del combate (todos los modos)": `REGLAS`, `unidadJugador`, `unidadMonstruo`, `armarDuelo`,
+    `siguienteEnemigo`, `aplicarEstado(u, ...)`, `resolverTick`, `resolverAccionJugador`, `resolverAccionEnemigo`,
+    `decidirAtaqueEnemigo(u)`, `especialSinGolpe`, `golpeEspecial`, `resolverMascota`, `morir`, `cobrar`, `resolverRonda`.
+  - Fuera: `resolverRondaGrupo`, `rondaGrupo`, `resolverAtaque`, `resolverEstados`, `aplicarEstadoU`, `resolverTickU`,
+    `resolverMascotaGrupo`, `curaU` (ahora `curar`), `morirU`, `cobrarU`, `nodosVidaU` (ahora `nodosVida`), `efRival`,
+    `factorPenetracion`, `pintarEstados`, `sacarEnemigo`, `objetivoJugador` (no se usaba).
+  - Fuera también el estado propio del 1 contra 1: `batalla.vidaG`, `vidaMaxG`, `vidaE`, `estados`, `inmuneControl`,
+    `turnoRival`, `turnoMascota`, `bastionUsado`, `alientoUsado`. Ahora todo vive en las unidades (`heroeYo()`,
+    `enemigoDuelo()`); el estado de los jefes mundiales (`infernal`, `turnoBola`, `escudoRestante`...) sigue en `batalla`.
+  - `ronda()` ya no bifurca; `reproducir` dibuja los mismos eventos en la escena 1 contra 1 o en el rombo (`u.duelo`);
+    `dibujarGolpe` nuevo. `jugarHastaFin`, `simular` y los escenarios usan solo `resolverRonda`.
+  - Escenario "El Minotauro entra en furia": un comentario se tragaba el resto de la línea (no ponía la vida del héroe);
+    arreglado.
+  - Dos arreglos de reglas (ver **Decisiones**): golpe final contra el escudo de Asmodeo y el set 4 del Minotauro.
+- Otros archivos: herramientas nuevas en `herramientas/` (`equivalencia.js`, `medir-semilla.js`, `medir-duelo.js`,
+  `pantalla.js`); este `ESTADO.md` y el índice.
+- Sin commit: **todo lo anterior** (rama `qa` sobre `dd14378`).
+- Verificación: grupo (campaña, Torre, calabozo, reyes; 144 casos × 6 semillas) idéntico con semilla; 1 contra 1
+  (arena, 3 jefes, duelo; 80 casos × 1500 batallas) con el mismo % de victorias (media −0,02 pp, máx 2,7 pp, ruido);
+  13/13 escenarios (nuevo: "Un golpe mortal remata a Asmodeo aunque tenga el escudo"); en pantalla, una batalla de cada
+  modo con autoataque hasta el resultado, sin errores.
+- Quedó a medias: nada.
 
 ## Decisiones
 - 2026-10-27 · Trabajar en la rama `qa`; los commits los hace el usuario.
@@ -49,6 +54,17 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 - 2026-10-27 · Último bastión y Segundo aliento funcionan en todos los modos (antes solo en 1 contra 1: en grupo eran
   puntos del árbol que no hacían nada). Efecto en balance pequeño (+2-5 % de victorias solo para quien los tiene).
 - 2026-10-27 · No endurecer la curva "de rebote": cambios de dificultad se deciden con números (simulador), aparte.
+- 2026-10-27 · Etapa 4 con el enfoque recomendado: 1 contra 1 = grupo de 1 contra 1, y las reglas que difieren como
+  opciones por modo (`REGLAS`). El usuario lo confirmó ("continua etapa 4").
+- 2026-10-27 · En 1 contra 1 el azar se tira ahora en el orden del motor de grupo (objetivo, esquiva, crítico, estados...).
+  No cambia el balance (medido), pero la misma semilla da otra batalla que antes en arena y jefes mundiales. También se
+  igualaron detalles de redondeo y de números (daño de habilidad redondeado una vez, mascota con la fórmula de grupo y
+  su icono 🐾, el daño de los estados no deja la vida en negativo) y un caso raro de la arena: si el contraataque del
+  rival te mataba, la ronda seguía y su golpe podía "revivirte" con el Último bastión.
+- 2026-10-27 · Arreglado: el golpe que remata a Asmodeo con el escudo puesto se recortaba a su vida antes de pasar por el
+  escudo y no lo mataba (en 1 contra 1 antes no pasaba; apareció al unir los motores y se corrigió en la misma sesión).
+- 2026-10-27 · Arreglado en grupo: el set 4 del Minotauro reducía el golpe ya recortado a tu vida restante, así que con
+  poca vida un golpe mortal podía dejarte vivo. Ahora reduce el golpe entero, como ya hacía el 1 contra 1.
 
 ## Hecho
 | Paso | Commit | Verificación |
@@ -57,15 +73,16 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 | Etapa 1: estado de batalla en `batalla.*` | `ec10c87` | campaña, arena, 3 jefes sin errores |
 | Bloqueo de huida durante la ronda | `ec10c87` | probado en 1v1 y grupo |
 | Etapa 2a: motor 1v1 con eventos (`resolverRonda` + `reproducir`) | `ec10c87` | equivalencia con semilla: idéntico |
-| Etapa 2b: motor de grupo con eventos (`resolverRondaGrupo`) | sin commit | equivalencia: campaña, Torre, Calabozo, reyes, con y sin aliados |
-| Etapa 3: simulador (`simular`) + botón "📊 Simular batallas" | sin commit | equivalencia + fidelidad (simulada = jugada) + aislamiento |
-| Azar con semilla (`rnd`, `sembrar`) | sin commit | 7 batallas idénticas a la versión previa |
-| Escenarios de prueba (`ESCENARIOS`) + botón "✅ Escenarios" | sin commit | 12/12 en verde; detectan fallos provocados |
-| ×0,5 a los datos de enemigos de grupo | sin commit | % medio de victorias igual en 6 perfiles |
-| Bastión y aliento en grupo | sin commit | escenarios + visto en pantalla |
+| Etapa 2b: motor de grupo con eventos (`resolverRondaGrupo`) | `dd14378` | equivalencia: campaña, Torre, Calabozo, reyes, con y sin aliados |
+| Etapa 3: simulador (`simular`) + botón "📊 Simular batallas" | `dd14378` | equivalencia + fidelidad (simulada = jugada) + aislamiento |
+| Azar con semilla (`rnd`, `sembrar`) | `dd14378` | 7 batallas idénticas a la versión previa |
+| Escenarios de prueba (`ESCENARIOS`) + botón "✅ Escenarios" | `dd14378` | 12/12 en verde; detectan fallos provocados |
+| ×0,5 a los datos de enemigos de grupo | `dd14378` | % medio de victorias igual en 6 perfiles |
+| Bastión y aliento en grupo | `dd14378` | escenarios + visto en pantalla |
+| Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | sin commit | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-1. Etapa 4 (motor único), ver **Próximo paso**.
+1. Igualar (o no) las reglas de `REGLAS`, ver **Próximo paso**.
 2. Entrada en `CHANGELOG.md` con lo de esta rama (el usuario la pidió como opcional; la 0.2.1 aún dice "×0,5 en grupo").
 3. Simulador de progresión para saber **cuánto tarda terminar el juego** (oro, XP y equipo por día con 150 de estamina).
    El usuario lo pidió el 2026-10-27; hoy solo hay aproximaciones (ver **Mediciones**).
@@ -74,21 +91,31 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 5. La generación de rivales de arena dio rivales distintos con la misma semilla antes de existir `rnd`; revisar si con
    `sembrar()` ya es determinista.
 
-## Diferencias de reglas entre 1 contra 1 y grupo (para la etapa 4)
-| Regla | 1 contra 1 | Grupo |
+## Diferencias de reglas entre 1 contra 1 y grupo
+Opciones de `REGLAS` (`duelo` / `grupo`) en `index.html`. Cada una cambia el balance: se igualan cuando lo decida el usuario.
+| Opción | 1 contra 1 | Grupo |
 |---|---|---|
-| Contraataque de tu skin | descuenta armadura (`factorPenetracion`) e infernal | `danoGuerrero × .6` sin armadura |
-| Control (aturdir, congelar) a jefes | jefes mundiales inmunes siempre; jefes/rivales con inmunidad temporal | jefes y reyes: inmunidad temporal |
-| Regeneración del enemigo | al empezar su turno, antes de estados | al actuar, después de estados |
-| Mordida de la mascota | al enemigo actual | a un enemigo al azar |
-| Especiales de jefe, espinas | sí | no existen (esos jefes solo están en 1v1) |
-| Rival de arena / reyes | rival con Estocada y crítico propios | reyes con sus habilidades de clase reales |
+| `contraDefensa`: contraataque de tu skin | descuenta la armadura del enemigo y el modo infernal | `daño × 0,6` sin armadura |
+| `regenAntes`: Regeneración del enemigo | al empezar su turno, antes de sus estados (aunque pierda el turno) | al actuar, después de sus estados |
+| `espinas`: modificador Espinas | devuelve el 10 % del daño | no hace nada (**ojo: los pisos de la Torre con Espinas lo muestran y no funciona**) |
+| `gastaHabControlado`: pierdes el turno con una habilidad elegida | no se gasta | se gasta |
+| `habTrasEsquiva`: el rival esquiva tu habilidad | su aturdimiento y su estado se aplican igual (parece un error) | no se aplican |
+
+Ya no son diferencias de modo, sino del tipo de enemigo (valen en los dos): jefes mundiales inmunes al control y sus
+especiales (`decidirAtaqueEnemigo`, `especialSinGolpe`, `golpeEspecial`); jefes, rivales y reyes con inmunidad temporal
+al control; el rival de la arena con Estocada, críticos, robo y contraataque propios (`e.rival`); los reyes, como
+jugadores (`u.perfil`). La mascota muerde a un enemigo al azar (en 1 contra 1 solo hay uno).
 
 ## Cómo verificar
 - **Escenarios:** Pruebas → "✅ Escenarios de prueba", o `correrEscenarios()` en la consola. Todos en verde.
   Para añadir uno: entrada en `ESCENARIOS` (nombre + función que devuelve `true` o un texto con lo que falló).
 - **Simulador:** Pruebas → "📊 Simular batallas", o `simular(batallaTorre(10), { veces: 100, semilla: 5 })`.
-- **Equivalencia antes/después de un cambio** (lo que se usó en cada etapa):
+- **Equivalencia automática** (lo que se usó en la etapa 4): copiar `index.html` como `antes.html` antes de tocar nada y,
+  después, `node trabajo/refactor-motor-combate/herramientas/equivalencia.js . <ruta a antes.html>` (Playwright con Chromium).
+  Juega 234 casos (6 perfiles × campaña, Torre, calabozo, reyes, arena, 3 jefes y un duelo de 3, con y sin aliados) con
+  6 semillas y dice cuáles cambian. Con `MEDIR=medir-duelo.js` compara en cambio % de victorias, rondas, vida y daño de
+  1500 batallas por caso de 1 contra 1. `node .../herramientas/pantalla.js .` juega en pantalla una batalla de cada modo.
+- **Equivalencia a mano** (etapas anteriores):
   1. Copiar `index.html` a una carpeta temporal como `antes.html` **antes** de tocar nada.
   2. Servir ambas: `python trabajo/refactor-motor-combate/herramientas/servidor.py <carpeta del juego> <ruta a antes.html>`
      → juego en `http://127.0.0.1:8765/index.html?pruebas` y la copia en `/antes.html?pruebas`.
@@ -99,15 +126,19 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 - **En pantalla** (solo si el cambio es fuerte, según `CLAUDE.md`): una batalla de cada modo con el autoataque.
 
 ## Mapa del código (todo en `index.html`)
-- `batalla` (objeto global): estado de la batalla en curso. `simulando`: el simulador corre sobre una copia.
+- `batalla` (objeto global): estado de la batalla en curso: `campana`, `reglas`, `grupo` ({ heroes, enemigos, turnoMascota,
+  objetivo, duelo }), `enemigo` (datos del enemigo actual en 1 contra 1; en grupo, el primero), `ganado` y el estado de
+  los jefes mundiales. `simulando`: el simulador corre sobre una copia.
 - `rnd()` / `sembrar(n)`: azar del juego con semilla opcional. `elegirSonido`: azar aparte para sonidos.
-- Inicio: `prepararBatalla(c)` (motor) → `iniciarCampana(c)` (cobra estamina, dibuja: `dibujarGrupo`, `mostrarEnemigo`).
-  Cada modo arma su batalla sin empezarla: `batallaCampana`, `batallaTorre`, `batallaArena`, `batallaMundial`.
-- Motor 1v1: `resolverRonda` → `resolverEstados`, `resolverAtaque`, `decidirAtaqueEnemigo`, `resolverMascota`, `aplicarEstado`.
-- Motor grupo: `armarGrupo`, `resolverRondaGrupo` → `resolverAccionHeroe`, `resolverAccionEnemigo`, `resolverMascotaGrupo`,
-  `resolverTickU`, `aplicarEstadoU`, `nodosVidaU` (bastión/aliento), `morirU`, `cobrarU`.
-- Pantalla: `ronda` / `rondaGrupo` llaman al motor y pasan los eventos a `reproducir(eventos)`; la lista de tipos de
-  evento está comentada encima de `emitir`.
+- Inicio: `prepararBatalla(c)` (motor: `armarGrupo` o `armarDuelo`) → `iniciarCampana(c)` (cobra estamina, dibuja:
+  `dibujarGrupo` o `mostrarEnemigo`). Cada modo arma su batalla sin empezarla: `batallaCampana`, `batallaTorre`,
+  `batallaArena`, `batallaMundial`.
+- Motor (bloque "Motor del combate (todos los modos)"): unidades (`unidadJugador`, `unidadMonstruo`, `unidadRey`),
+  `resolverRonda` → `resolverAccionJugador` (tú, aliados y reyes), `resolverAccionEnemigo` (monstruos, jefes, rival de
+  arena), `resolverMascota`; comunes: `resolverTick`, `aplicarEstado`, `nodosVida` (bastión/aliento), `aguanteSet4`,
+  `contraatacar`, `morir`, `cobrar`. Accesos: `heroeYo()`, `enemigoDuelo()`.
+- Pantalla: `ronda` llama al motor y pasa los eventos a `reproducir(eventos)`, que dibuja cada evento en la escena
+  1 contra 1 (`u.duelo`, `u.el` = su casilla) o en el rombo; la lista de tipos de evento está encima de `emitir`.
 - Pruebas: `aislado(fn)`, `jugarHastaFin(c)`, `simular(c, opciones)`, `ESCENARIOS`, `correrEscenarios`, `jugadorPrueba`,
   `batallaPrueba`. Bot: `botEmpezar('repetir' | 'jugar')`.
 
@@ -122,9 +153,12 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 - "Juego abierto en otra pestaña" aparece si se recarga rápido; mientras está, no se guarda nada (`pestanaBloqueada`).
 - Los aliados bot en campaña y Torre solo existen en modo pruebas (`MODO_PRUEBAS`); en el juego publicado se juega solo.
 - `rangoClase` es `const` (no se puede reemplazar desde la consola); `aplicarEstado` y `decidirAtaqueEnemigo` sí.
+- En 1 contra 1 las dos unidades están en la casilla `frente` (así el orden y los objetivos funcionan como en grupo).
 - Reglas del proyecto en `CLAUDE.md`: web y Android por igual, sin `alert/confirm/prompt`, textos cortos, y el navegador
   solo para cambios fuertes.
 
 ## Bitácora
+- 2026-10-27 · Claude · Etapa 2b (motor de grupo con eventos), etapa 3 (simulador, azar con semilla, escenarios), ×0,5 a
+  los datos, bastión y aliento en grupo, y este sistema `trabajo/`. El usuario lo commiteó como `dd14378` ("refactor pt 2").
 - 2026-10-27 · Claude · Bot de pruebas, etapa 1 (estado en `batalla`), bloqueo de huida y etapa 2a (motor 1v1 con
   eventos). El usuario lo commiteó como `ec10c87` ("migracion pt 1").
