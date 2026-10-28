@@ -15,7 +15,7 @@ function comodin() {
   return p;
 }
 
-module.exports = function cargar({ archivos = ['js/juego.js'], pruebas = true } = {}) {
+module.exports = function cargar({ archivos = ['js/logica.js', 'js/pantalla.js'], pruebas = true } = {}) {
   const raiz = path.join(__dirname, '..'), guardado = {};
   const ventana = {
     console, Math, Date, JSON, Promise, performance, structuredClone, Intl, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
