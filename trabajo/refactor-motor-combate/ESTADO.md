@@ -71,10 +71,9 @@ día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 sem
 | Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-3. Simulador de progresión para saber **cuánto tarda terminar el juego** (oro, XP y equipo por día con 150 de estamina).
-   El usuario lo pidió el 2026-10-27; hoy solo hay aproximaciones (ver **Mediciones**).
-4. Simulador: falta Calabozo y Torre de reyes (necesitan sala; se podrían armar con aliados bot), y opción de jefe
-   mundial "desde cero" (hoy parte de la vida que le queda ese día).
+1. Decidir si se frena la progresión (ver **Próximo paso**); las palancas ya están (`XP_BARRIDO`, `CURVA_XP`, `CALABOZO_SOLO`).
+2. Simulador de progresión: aún no pule runas ni usa la bendición al encantar; la opción de jefe mundial "desde cero"
+   (hoy parte de la vida que le queda ese día).
 
 ## Reglas por tipo de enemigo
 Desde el 2026-10-28 no hay reglas distintas por modo (ver **Medición de `REGLAS`** y **Decisiones**).
