@@ -2,7 +2,7 @@
   const CLAVE = 'batalla.partida.v3';   // v3: objetos con líneas, estrellas y encantamiento
   const ORO_INICIAL = MODO_PRUEBAS ? 10000 : 3000;   // da para abrir los primeros cofres y pasar el bache de 1-4
   const ESTAMINA_MAX = 150, ESTAMINA_CAMPANA = 10;   // se recarga entera cada día
-  const MAT_INICIAL = MODO_PRUEBAS ? { piedra: 300, polvo: 100, almas: 50 } : { piedra: 20, polvo: 5, almas: 0 };
+  const MAT_INICIAL = MODO_PRUEBAS ? { piedra: 300, polvo: 100, almas: 50, esencia: 50 } : { piedra: 20, polvo: 5, almas: 0, esencia: 0 };
   let jugador, titulosListos = false;   // titulosListos: hasta que se definan los títulos, guardar no los revisa
   function partidaNueva() {
     const basicos = ['casco_hierro', 'arm_hierro', 'esp_acero', 'capa_roja'].map(id => crearObjeto(id, true));
@@ -39,7 +39,7 @@
     if (jugador.diaEstamina !== hoy()) { jugador.estamina = ESTAMINA_MAX; jugador.diaEstamina = hoy(); guardar(); }
   }
   cargar();
-  jugador.mat.almas ||= 0;   // partidas anteriores al Polvo de almas
+  jugador.mat.almas ||= 0; jugador.mat.esencia ||= 0;   // partidas anteriores al Polvo de almas y a la Esencia
   revisarEstamina();
   const objeto = uid => jugador.objetos.find(o => o.uid === uid);
 

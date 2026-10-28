@@ -62,12 +62,13 @@
     if (e >= 4) o.sinBuena = 0;
     return e;
   }
-  const MATERIALES = { piedra: '🔷 Piedra de encantamiento', polvo: '✨ Polvo de refinamiento', almas: '💠 Polvo de almas' };
+  const MATERIALES = { piedra: '🔷 Piedra de encantamiento', polvo: '✨ Polvo de refinamiento', almas: '💠 Polvo de almas', esencia: '🌟 Esencia' };
   // Qué es cada material, para qué sirve y dónde conseguirlo (se ve al tocar su icono en la barra o en el inventario)
   const INFO_MATERIALES = {
     piedra: { uso: 'Encantar equipo.', fuente: 'Campaña, Calabozo, Torre, misiones y login.' },
     polvo:  { uso: 'Refinar líneas de equipo, mejorar runas.', fuente: 'Arena, botín de campaña, Torre, jefes mundiales, misiones y login.' },
     almas:  { uso: 'Encantar desde +10 y bendecir.', fuente: 'Torre, desguace, misiones, Torre de reyes, login y piedras convertidas.' },
+    esencia: { uso: 'Subir el aura.', fuente: 'Etapas 2 y 3 de la campaña, calabozos 5-8 y la Torre desde el piso 100.' },
   };
   const infoMaterial = k => ui.mensaje(`${MATERIALES[k]}
 

@@ -245,6 +245,7 @@
     jugador.estamina -= coste; if (coste) contarMision('estamina', coste); guardar(); pintarHud();
     prepararBatalla(c);
     if (!c.grupo) heroeYo().el = slots[0];   // 1 contra 1: cada unidad se dibuja en su lado de la escena
+    pintarAura(slots[0].querySelector('.sombra'), c.grupo ? 0 : nivelAura());
     slots[1].classList.remove('escudado', 'tajando', 'furia'); prepararMascota();
     // por si se salió a mitad de un ataque: ambos vuelven a su sitio
     slots.forEach(s => { s.querySelector('.pj').style.transform = ''; s.classList.remove('golpeado'); });

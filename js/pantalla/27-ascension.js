@@ -54,6 +54,7 @@
       if (u.yo) u.el.classList.add('yo');
       const capas = montarCapas(u.el.querySelector('.frames')); conPerfil(u.perfil, () => pintarVista(capas));
       u.pj = personaje(u.el, 296); pintarVida(u.el, u.vida, u.vidaMax);
+      pintarAura(u.el.querySelector('.sombra'), nivelAura(u.perfil));
     }
     const yo = heroes.find(h => h.yo), m = mascotaActual();
     if (m) { const a = document.createElement('div'); a.className = 'acompana'; a.innerHTML = dibujoMascota(m, .4); yo.el.appendChild(a); yo.mascotaEl = a; }

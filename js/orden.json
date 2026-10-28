@@ -42,7 +42,8 @@
   "js/logica/40-expediciones.js",
   "js/logica/41-ascension-2.js",
   "js/logica/42-campamento.js",
-  "js/logica/43-lista.js",
+  "js/logica/44-aura.js",
+  "js/logica/99-lista.js",
   "js/pantalla/01-inicio.js",
   "js/pantalla/02-navegacion-entre-pantallas.js",
   "js/pantalla/03-encantamiento-y-refinamiento.js",
@@ -70,7 +71,8 @@
   "js/pantalla/25-misiones-diarias-semanales-y.js",
   "js/pantalla/26-expediciones.js",
   "js/pantalla/27-ascension.js",
-  "js/pantalla/28-campamento.js"
+  "js/pantalla/28-campamento.js",
+  "js/pantalla/29-aura.js"
  ],
  "pruebas": [
   "js/pruebas/1-bot.js",

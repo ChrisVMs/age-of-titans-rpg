@@ -17,7 +17,7 @@
     if (m) sumar(Object.fromEntries(Object.entries(m.bono).map(([a, v]) => [a, valorNivel(v, nivelMascota(m))])));
     const k = skinActual();
     if (k) sumar({ [k.base[0]]: bonoSkinBase(k) });
-    for (const fuente of [statsArbol(), statsRunas(), statsMaestria(), statsColeccion(), statsAscension()]) sumar(fuente);
+    for (const fuente of [statsArbol(), statsRunas(), statsMaestria(), statsColeccion(), statsAscension(), statsAura()]) sumar(fuente);
     const ti = tituloActual();
     if (ti) sumar(ti.bono);
     for (const a in t) t[a] = Math.round(t[a] * (1 + pct[a] / 100));

@@ -42,12 +42,13 @@
     guardar(); pintarInventario();
   });
   function pintarInventario() {
-    pintarPerfil();
+    pintarPerfil(); pintarAura(document.querySelector('.vitrina'), nivelAura());
     document.querySelectorAll('.inv-tabs button').forEach(b => b.classList.toggle('on', b.dataset.invtab === invTab));
-    $('tabObjetos').hidden = invTab !== 'objetos'; $('tabMascota').hidden = invTab !== 'mascota'; $('tabSkins').hidden = invTab !== 'skins'; $('tabTitulos').hidden = invTab !== 'titulos';
+    $('tabObjetos').hidden = invTab !== 'objetos'; $('tabMascota').hidden = invTab !== 'mascota'; $('tabSkins').hidden = invTab !== 'skins'; $('tabTitulos').hidden = invTab !== 'titulos'; $('tabAura').hidden = invTab !== 'aura';
     if (invTab === 'titulos') { pintarTabTitulos(); if (jugador.tituloNuevo) { jugador.tituloNuevo = false; guardar(); } }
     if (invTab === 'mascota') pintarTabMascota();
     if (invTab === 'skins') pintarTabSkins();
+    if (invTab === 'aura') pintarTabAura();
     const st = estadisticas();
     $('stats').innerHTML = `<div class="poder">⚔ Poder<b>${poder(st).toLocaleString('es')}</b></div>`
       + Object.entries(ATRIBUTOS).map(([a, n]) => `<div>${n}<b>${st[a]}</b></div>`).join('')

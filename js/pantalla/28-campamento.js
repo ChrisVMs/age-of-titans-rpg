@@ -4,6 +4,7 @@
       `<button data-ir="${o.ir}"><span>${o.icono} ${o.txt}</span><span class="barra-obj"><i style="width:${Math.round(o.pct * 100)}%"></i></span></button>`).join('');
   }
   function pintarCampamento() {
+    pintarAura(document.querySelector('.camp-guerrero'), nivelAura());
     const pct = jugador.xp / xpParaSubir(jugador.nivel) * 100, c = CLASES[jugador.clase], m = mascotaActual(), a = avisosCampamento();
     $('campAvatar').innerHTML = `<span class="cara">${c.icono}<b>${jugador.nivel}</b></span>
       <span><span class="poder">⚔ ${poder().toLocaleString('es')}</span><span class="xp"><i style="width:${pct}%"></i></span></span>`;

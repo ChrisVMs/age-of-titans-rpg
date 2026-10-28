@@ -14,6 +14,14 @@
     return capaDe;
   }
   ui.aplicarEquipo = () => aplicarEquipo();
+  // Aura de nivel n bajo el personaje de cont (sin aura con nivel 0)
+  function pintarAura(cont, n) {
+    if (!cont) return;
+    let a = cont.querySelector(':scope > .aura');
+    if (!n) { if (a) a.remove(); return; }
+    if (!a) { a = document.createElement('div'); a.className = 'aura'; cont.prepend(a); }
+    a.style.setProperty('--aura', n); a.classList.toggle('late', n >= 5 && n < AURA_MAX); a.classList.toggle('max', n >= AURA_MAX);
+  }
   function aplicarEquipo() {
     for (const capaDe of vistasGuerrero) pintarVista(capaDe);
     pintarInventario();
