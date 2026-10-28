@@ -3636,18 +3636,10 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   const heroeYo = () => batalla.grupo.heroes.find(h => h.yo);
   const enemigoDuelo = () => batalla.grupo.enemigos[0];   // 1 contra 1: el enemigo que está luchando
 
-  // Reglas que todavía difieren entre el 1 contra 1 (duelo) y el grupo. Se igualan una a una cuando lo decida el usuario
-  // (ver trabajo/refactor-motor-combate/ESTADO.md). esperas: ritmo de la animación de cada escena (ms).
-  //   contraDefensa: el contraataque de tu skin descuenta la armadura del enemigo (y el modo infernal); en grupo, ×0,6 sin más
-  //   regenAntes: la Regeneración del enemigo cura al empezar su turno, antes de sus estados (y aunque pierda el turno)
-  //   espinas: el modificador Espinas devuelve daño (en grupo no hace nada, también en los pisos de la Torre que lo tienen)
-  //   gastaHabControlado: si pierdes el turno (congelado, aturdido), la habilidad elegida se gasta igual
-  //   habTrasEsquiva: si el rival esquiva tu habilidad, su aturdimiento o su estado se aplican igual
+  // Lo único que cambia entre el 1 contra 1 (duelo) y el grupo: el ritmo de la animación de cada escena (ms)
   const REGLAS = {
-    duelo: { duelo: true, contraDefensa: true, regenAntes: true, espinas: true, gastaHabControlado: false, habTrasEsquiva: true,
-             esperas: { estados: 600, control: 700, esquiva: 700, contra: 600, turnoEnemigo: 600, mascotaIda: 220, mascotaVuelta: 450, curaMascota: 600 } },
-    grupo: { duelo: false, contraDefensa: false, regenAntes: false, espinas: false, gastaHabControlado: true, habTrasEsquiva: false,
-             esperas: { estados: 450, control: 500, esquiva: 250, contra: 300, turnoEnemigo: 250, mascotaIda: 0, mascotaVuelta: 400, curaMascota: 400 } },
+    duelo: { duelo: true, esperas: { estados: 600, control: 700, esquiva: 700, contra: 600, turnoEnemigo: 600, mascotaIda: 220, mascotaVuelta: 450, curaMascota: 600 } },
+    grupo: { duelo: false, esperas: { estados: 450, control: 500, esquiva: 250, contra: 300, turnoEnemigo: 250, mascotaIda: 0, mascotaVuelta: 400, curaMascota: 400 } },
   };
   const reglas = () => batalla.reglas || REGLAS.grupo;
 
@@ -3719,7 +3711,6 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   function resolverTick(u) {
     const R = reglas(); let total = 0, iconos = '', control = null;
     if (u.inmune > 0) u.inmune--;
-    if (R.regenAntes) regenerar(u);
     for (const [id, e] of Object.entries(u.estados)) {
       if (ESTADOS[id].control) control = ESTADOS[id]; else { total += e.dano * e.pilas; iconos += ESTADOS[id].icono; }
       if (--e.turnos <= 0) delete u.estados[id];
@@ -3782,7 +3773,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   function resolverAccionJugador(u, hab, rivales) {
     const R = reglas(), pierde = resolverTick(u);
     if (u.yo) {   // cada turno carga las demás habilidades
-      for (const x of u.habs) u.carga[x.id] = x === hab && (!pierde || R.gastaHabControlado) ? 0 : Math.min(x.turnos, u.carga[x.id] + 1);
+      for (const x of u.habs) u.carga[x.id] = x === hab ? 0 : Math.min(x.turnos, u.carga[x.id] + 1);
       emitir('carga');
     } else hab = habAuto(u);
     if (pierde || !vivos(rivales).length) return;
@@ -3792,7 +3783,6 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     emitir('animHeroe', u, t, hab);
     if (t.conEfectos && rnd() < t.ef('esquiva')) {
       verFx(t, 'num-cura', '💨 Esquiva'); emitir('espera', R.esperas.esquiva); emitir('volver', u);
-      if (R.habTrasEsquiva) efectosHab(u, t, hab);
       return;
     }
     // daño: bruto → × habilidad, jefes y remate → × crítico → × defensa del objetivo → × su reducción → fases de jefe
@@ -3810,7 +3800,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     dano = Math.min(t.vida, aguanteSet4(t, dano));
     t.vida -= dano; if (!t.heroe) batalla.danoHecho += dano; verVida(t);
     nodosVida(t);
-    if (R.espinas && t.e && t.e.espinas && dano > 0 && u.vida > 1) {   // modificador Espinas: devuelve parte del daño
+    if (t.e && t.e.espinas && dano > 0 && u.vida > 1) {   // modificador Espinas: devuelve parte del daño
       const r = Math.max(1, Math.round(dano * t.e.espinas)); u.vida = Math.max(1, u.vida - r); verVida(u); verFx(u, 'dano', `🌵 -${r}`, 300);
     }
     const robo = Math.round(dano * u.ef('robo')); if (robo > 0 && u.vida < u.vidaMax) curar(u, Math.min(robo, u.vidaMax - u.vida), '💀 ', 300);
@@ -3905,7 +3895,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   function resolverAccionEnemigo(u) {
     const R = reglas();
     if (resolverTick(u)) return;
-    if (!R.regenAntes) regenerar(u);
+    regenerar(u);
     if (!vivos(batalla.grupo.heroes).length) return;
     const ataque = decidirAtaqueEnemigo(u), t = objetivoPorPosicion(batalla.grupo.heroes);
     emitir('animEnemigo', u, t, ataque);
@@ -3930,9 +3920,7 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     emitir('espera', 250); emitir('volver', u);
     if (t.vida <= 0) { morir(t); return; }
     if (rnd() < t.ef('contra')) {   // contraataque de tu skin
-      const c = R.contraDefensa ? danoGuerrero(t.st) * .6 * factorDefensa({ armadura: armaduraEfectiva(e.armadura || 0, t.ef('penetracion')), defensa: e.defensa || 0 }) / (batalla.infernal ? INFERNAL.defensa : 1)
-        : danoGuerrero(t.st) * .6;
-      contraatacar(t, u, c);
+      contraatacar(t, u, danoGuerrero(t.st) * .6);
     }
   }
   // Mascota: cada N turnos muerde a un enemigo al azar (daño = % de tu ataque) o cura al héroe con menos vida (% de su vida máxima)
@@ -5241,6 +5229,14 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       simular(batallaPrueba({ dano: [5, 9], vida: 300 }), { veces: 20 });
       return JSON.stringify(jugador) === antes && localStorage.getItem(CLAVE) === guardado && sigUid === uid || 'la partida o lo guardado cambió';
     }, { libre: true }],
+    ['Espinas devuelve daño también en grupo', () => {
+      jugador = jugadorPrueba(30);
+      const c = batallaPrueba({ dano: [0, 0], grupo: true }); c.enemigos[0].espinas = .1;
+      prepararBatalla(c);
+      const yo = heroeYo(), e = batalla.grupo.enemigos[0]; batalla.grupo.objetivo = e;
+      resolverRonda(null);
+      return yo.vidaMax - yo.vida >= 2 || `daño recibido: ${yo.vidaMax - yo.vida} (el muñeco pega 1; las espinas, al menos 1 más)`;
+    }],
     ['Último bastión también en grupo', () => {
       jugador = jugadorPrueba(30, { bastion: 1 });
       prepararBatalla(batallaPrueba({ dano: [1e7, 1e7], grupo: true }));

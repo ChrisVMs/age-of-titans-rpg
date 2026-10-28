@@ -9,40 +9,21 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Decidir con el usuario qué reglas del 1 contra 1 y del grupo se igualan** (etapa 4 terminada, commit `a09c375`).
-- Las diferencias que quedan son opciones de `REGLAS` (ver **Diferencias de reglas**). Para cada una: medir con el
-  simulador cómo cambia el balance, enseñárselo al usuario y que él decida. Cuando todas se igualen, `REGLAS` solo
-  guardará el ritmo de las animaciones (`esperas`).
-- Medido (ver **Medición de `REGLAS`**): solo Espinas cambia mucho el balance; las demás, casi nada.
-- Después, lo que sigue en **Pendiente** (CHANGELOG, simulador de progresión...).
+**Pendiente 2-5** (ver **Pendiente**): el refactor en sí está terminado (motor único, sin reglas distintas por modo).
+Recomendado: reequilibrar la Torre alta con el simulador, porque ahora Espinas funciona en ella (ver **Medición de `REGLAS`**).
 
 ## Última sesión
-**2026-10-27 · Claude** (después del commit `dd14378` del usuario)
-- Etapa 4 en `index.html`: un solo motor para todos los modos (el 1 contra 1 es un grupo de 1 contra 1).
-  - Bloque "Motor del combate (todos los modos)": `REGLAS`, `unidadJugador`, `unidadMonstruo`, `armarDuelo`,
-    `siguienteEnemigo`, `aplicarEstado(u, ...)`, `resolverTick`, `resolverAccionJugador`, `resolverAccionEnemigo`,
-    `decidirAtaqueEnemigo(u)`, `especialSinGolpe`, `golpeEspecial`, `resolverMascota`, `morir`, `cobrar`, `resolverRonda`.
-  - Fuera: `resolverRondaGrupo`, `rondaGrupo`, `resolverAtaque`, `resolverEstados`, `aplicarEstadoU`, `resolverTickU`,
-    `resolverMascotaGrupo`, `curaU` (ahora `curar`), `morirU`, `cobrarU`, `nodosVidaU` (ahora `nodosVida`), `efRival`,
-    `factorPenetracion`, `pintarEstados`, `sacarEnemigo`, `objetivoJugador` (no se usaba).
-  - Fuera también el estado propio del 1 contra 1: `batalla.vidaG`, `vidaMaxG`, `vidaE`, `estados`, `inmuneControl`,
-    `turnoRival`, `turnoMascota`, `bastionUsado`, `alientoUsado`. Ahora todo vive en las unidades (`heroeYo()`,
-    `enemigoDuelo()`); el estado de los jefes mundiales (`infernal`, `turnoBola`, `escudoRestante`...) sigue en `batalla`.
-  - `ronda()` ya no bifurca; `reproducir` dibuja los mismos eventos en la escena 1 contra 1 o en el rombo (`u.duelo`);
-    `dibujarGolpe` nuevo. `jugarHastaFin`, `simular` y los escenarios usan solo `resolverRonda`.
-  - Escenario "El Minotauro entra en furia": un comentario se tragaba el resto de la línea (no ponía la vida del héroe);
-    arreglado.
-  - Dos arreglos de reglas (ver **Decisiones**): golpe final contra el escudo de Asmodeo y el set 4 del Minotauro.
-- Otros archivos: herramientas nuevas en `herramientas/` (`equivalencia.js`, `medir-semilla.js`, `medir-duelo.js`,
-  `pantalla.js`); este `ESTADO.md` y el índice.
-- Commit: `a09c375` ("refactor pt 3: motor único para todos los modos"), subido a `qa`.
-- Verificación: grupo (campaña, Torre, calabozo, reyes; 144 casos × 6 semillas) idéntico con semilla; 1 contra 1
-  (arena, 3 jefes, duelo; 80 casos × 1500 batallas) con el mismo % de victorias (media −0,02 pp, máx 2,7 pp, ruido);
-  13/13 escenarios (nuevo: "Un golpe mortal remata a Asmodeo aunque tenga el escudo"); en pantalla, una batalla de cada
-  modo con autoataque hasta el resultado, sin errores.
-- Quedó a medias: nada.
+**2026-10-28 · Claude**
+- Medidas las 5 opciones de `REGLAS` y aplicada la decisión del usuario: Espinas funciona en todos los modos; contraataque
+  de la skin (×0,6 sin armadura), Regeneración (después de los estados), habilidad gastada aunque pierdas el turno y sin
+  efectos de habilidad tras una esquiva: como en grupo. `REGLAS` ya solo guarda el ritmo de las animaciones.
+- Escenario nuevo: "Espinas devuelve daño también en grupo" (comprobado que falla si Espinas no funciona).
+- Verificación: 14/14 escenarios; una batalla de cada modo en pantalla sin errores.
+- Commit: este cambio y la medición, en `qa` (ver `git log`).
 
 ## Decisiones
+- 2026-10-28 · Espinas funciona en todos los modos ("que funcione en todo": el texto del piso dice la verdad; la
+  Torre alta se endurece y se reequilibra aparte). Las otras 4 reglas, como en grupo ("igualar como en grupo").
 - 2026-10-27 · Trabajar en la rama `qa`; los commits los hace el usuario.
 - 2026-10-27 · Migración por etapas: 1 estado en un objeto · 2 motor que emite eventos · 3 simulador · 4 motor único.
 - 2026-10-27 · Durante una ronda (tu ataque y la respuesta) no se puede huir: `marcarRonda()` desactiva `#huir` y `#btnHuir`.
@@ -83,7 +64,7 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 | Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-1. Igualar (o no) las reglas de `REGLAS`, ver **Próximo paso**.
+1. Reequilibrar la Torre alta: con Espinas activo, la Torre 60 baja de ~85 % a ~20 % de victorias para arquero y mago.
 2. Entrada en `CHANGELOG.md` con lo de esta rama (el usuario la pidió como opcional; la 0.2.1 aún dice "×0,5 en grupo").
 3. Simulador de progresión para saber **cuánto tarda terminar el juego** (oro, XP y equipo por día con 150 de estamina).
    El usuario lo pidió el 2026-10-27; hoy solo hay aproximaciones (ver **Mediciones**).
@@ -92,16 +73,8 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 5. La generación de rivales de arena dio rivales distintos con la misma semilla antes de existir `rnd`; revisar si con
    `sembrar()` ya es determinista.
 
-## Diferencias de reglas entre 1 contra 1 y grupo
-Opciones de `REGLAS` (`duelo` / `grupo`) en `index.html`. Cada una cambia el balance: se igualan cuando lo decida el usuario.
-| Opción | 1 contra 1 | Grupo |
-|---|---|---|
-| `contraDefensa`: contraataque de tu skin | descuenta la armadura del enemigo y el modo infernal | `daño × 0,6` sin armadura |
-| `regenAntes`: Regeneración del enemigo | al empezar su turno, antes de sus estados (aunque pierda el turno) | al actuar, después de sus estados |
-| `espinas`: modificador Espinas | devuelve el 10 % del daño | no hace nada (**ojo: los pisos de la Torre con Espinas lo muestran y no funciona**) |
-| `gastaHabControlado`: pierdes el turno con una habilidad elegida | no se gasta | se gasta |
-| `habTrasEsquiva`: el rival esquiva tu habilidad | su aturdimiento y su estado se aplican igual (parece un error) | no se aplican |
-
+## Reglas por tipo de enemigo
+Desde el 2026-10-28 no hay reglas distintas por modo (ver **Medición de `REGLAS`** y **Decisiones**).
 Ya no son diferencias de modo, sino del tipo de enemigo (valen en los dos): jefes mundiales inmunes al control y sus
 especiales (`decidirAtaqueEnemigo`, `especialSinGolpe`, `golpeEspecial`); jefes, rivales y reyes con inmunidad temporal
 al control; el rival de la arena con Estocada, críticos, robo y contraataque propios (`e.rival`); los reyes, como
@@ -171,6 +144,7 @@ Script: `herramientas/reglas.js` (se evalúa en el juego con `correr.js`).
   solo para cambios fuertes.
 
 ## Bitácora
+- 2026-10-28 · Claude · Etapa 4 (motor único), commits `a09c375`, `585bb82`; medición de `REGLAS` `d35ed46`.
 - 2026-10-27 · Claude · Etapa 2b (motor de grupo con eventos), etapa 3 (simulador, azar con semilla, escenarios), ×0,5 a
   los datos, bastión y aliento en grupo, y este sistema `trabajo/`. El usuario lo commiteó como `dd14378` ("refactor pt 2").
 - 2026-10-27 · Claude · Bot de pruebas, etapa 1 (estado en `batalla`), bloqueo de huida y etapa 2a (motor 1v1 con
