@@ -9,20 +9,21 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Decidir con el usuario si se frena la progresión** (ver **Mediciones** → Progresión): con el simulador de progresión,
-una partida nueva llega a Nv 80 en ~48 días y termina la campaña en Infierno el día 39, sobre todo por el barrido.
-Si quiere frenarla, medir cada propuesta con `simularProgresion` antes y después.
+**Decidir con el usuario si se frena la progresión** (ver **Progresión**): con todo lo que hace un jugador, una partida
+nueva llega a Nv 80 en 29-35 días y vence los 3 jefes mundiales, los reyes en Infierno y casi todos los calabozos antes del
+día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 semillas) antes y después.
 
 ## Última sesión
 **2026-10-28 · Claude**
-- Simulador de progresión: `simularProgresion({ dias, perfil, semilla, expediciones })` y botón "📈 Simular progresión"
-  (60 días) en el menú 🧪. Un jugador gratuito que cada día recoge el login y 2 expediciones de 8 h, juega como el bot
-  (campaña, Torre, arena, jefes, barrido), cobra misiones, abre cofres, se equipa lo mejor, desguaza el resto, reparte el
-  árbol y gasta el oro en lo que más poder da (`simMejorar`: encantar y mascotas). Mide XP y oro por fuente (`fuentes`).
-- Para que use las mismas acciones que el jugador, salieron de los botones a funciones: `encantar`, `comprarMascota`,
-  `mejorarMascota`, `reclamarLogin`, `reclamarMision` (la interfaz las llama igual).
-- Verificación: la partida real no cambia (comparada antes y después), 14/14 escenarios, sin errores.
-- Commit en `qa` (ver `git log`).
+- Simulador de progresión completo: además de lo anterior, crea y sube runas (y las fusiona), compra y sube skins, refina
+  las líneas de menos de ★4 con el polvo que sobra, usa las reliquias que consigue de los jefes (elección automática del
+  juego) y juega calabozo (el siguiente sin superar) y Torre de reyes (la dificultad sin vencer esta semana) en grupo de
+  `grupo` jugadores (por defecto 3; los aliados son copias del simulado). Hitos nuevos: `jefes`, `calabozo`, `reyes`.
+  Organiza el equipo y gasta cada 5 batallas (antes, antes de cada una: 3 veces más lento).
+- Funciones nuevas que también usa la interfaz: `crearRuna`, `mejorarRuna`, `fusionarRuna`, `comprarSkin`, `mejorarSkin`,
+  `refinar`, `pulirLinea`, `batallaCalabozo`, `batallaReyes`.
+- Botón "📈 Simular progresión": 40 días (~45 s) y muestra también jefes, calabozos y reyes.
+- Verificación: la partida real no cambia, 14/14 escenarios, sin errores. Commit en `qa` (ver `git log`).
 
 ## Decisiones
 - 2026-10-28 · Espinas al 5 % solo en la Torre ("5 % solo en la Torre"): al 10 % los pisos de jefe eran un muro.
@@ -124,13 +125,23 @@ jugadores (`u.perfil`). La mascota muerde a un enemigo al azar (en 1 contra 1 so
 - Frontera actual (último nivel con ≥50 % en Normal/Difícil/Pesadilla/Infierno · piso de Torre): Nv5 4/1/0/0 · 10,
   Nv10 7/3/2/0 · 25, Nv20 9/7/4/2 · 30, Nv30 10/9/7/3 · 30, Nv40 10/9/9/5 · 50, Kaito Nv57 10/10/10/9 · 60.
 
-## Progresión (2026-10-28, `simularProgresion`, partida nueva guerrero, semilla 1)
-- Día en que llega: Nv 10/20: 3 · Nv 30: 6 · Nv 40: 10 · Nv 50: 16 · Nv 60: 23 · Nv 70: 36 · **Nv 80: 48**.
-- Campaña 1-10: Normal 5 · Difícil 6 · Pesadilla 13 · **Infierno 39**. Torre: piso 50 el día 4, 70 el 14, 80 el 48; se
-  estanca en ~89.
-- XP de 20 días por fuente: barrido 665 k, Torre 91 k, campaña 77 k, jefes 28 k, arena 6 k. **El barrido del nivel más alto
-  superado da ~2 900 XP sin pelear** y domina. La Torre no gasta estamina: el día 3 sube 39 pisos de golpe.
-- Supuestos: juega todo lo que puede cada día y manda 2 expediciones de 8 h; no usa runas, reliquias, skins ni refinar.
+## Progresión (2026-10-28, `simularProgresion`, partida nueva guerrero, 45 días, semillas 1-3)
+Con todo lo que hace un jugador (ver **Última sesión**); calabozo y reyes en grupo de 3 de su mismo nivel.
+| Hito | Día (semillas 1 / 2 / 3) | Solo (semilla 1) |
+|---|---|---|
+| Nv 30 / 50 / 70 / 80 | 4-6 / 10-12 / 20-25 / **29-35** | 4 / 10 / 19 / 29 |
+| Campaña 1-10 Infierno | 12 / 14 / 20 | 10 |
+| Torre 60 / 80 | 5-7 / 15-23 | 5 / 11 |
+| Jefes: Asmodeo / Cerbero / Minotauro | 10-16 / 11-21 / 17-38 | 10 / 13 / 18 |
+| Reyes Normal / Infierno | 5-7 / 7-15 | 8 / 30 |
+| Calabozo 3 Pesadilla | 14 / 27 / 36 | 24 |
+| Calabozo 4 | solo la semilla 1 (Pesadilla el día 40) | no |
+- Día 45: Nv 80, poder 44-67 k, Torre 88-99.
+- Ir solo al calabozo apenas cambia: sin aliados los enemigos no tienen el +70 % de vida por aliado. Los reyes sí piden
+  grupo (Infierno: día 30 solo frente a 7-15 en grupo).
+- XP (20 días, versión anterior del simulador): el barrido domina (~665 k frente a 91 k de la Torre y 77 k de la campaña).
+- Supuestos: juega todo lo que puede cada día; 2 expediciones de 8 h; aliados = copias suyas; no pule runas ni usa la
+  bendición; la vida de los jefes mundiales es solo suya (no la comparte con otros jugadores).
 
 ## Medición de `REGLAS` (2026-10-28, 6 bots Nv 44-60, solos, 800 batallas por caso con las mismas semillas)
 Cuánto cambia el % de victorias al pasar cada opción al valor del otro modo. 1 contra 1: arena (rival fuerte) y los 3 jefes

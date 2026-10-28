@@ -7,7 +7,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 
 | Tema | Estado | Próximo paso | Última sesión |
 |---|---|---|---|
-| [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Decidir si se frena la progresión (Nv 80 en ~48 días, por el barrido) | 2026-10-28 · Claude |
+| [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Decidir si se frena la progresión (Nv 80 en 29-35 días; jefes, reyes y calabozos antes del día 40) | 2026-10-28 · Claude |
 
 ### Estados
 | Estado | Significa | Qué hacer al retomarlo |
