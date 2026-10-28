@@ -1632,7 +1632,12 @@ ${nuevos.join(' · ')}`), 1200);
   const valorSkin = (k, n = estrellasSkin(k.id)) => Math.round(k.valor * (.5 + .1 * n) * 10) / 10;
   const efectoSkin = esp => { const k = skinActual(); return k && k.esp === esp ? valorSkin(k) / 100 : 0; };
   // Efecto total (fracción): base + skin + árbol + líneas secundarias del equipo, con tope
-  function secEquipo() {
+  // Mientras dura un cálculo de poder, lo que no cambia se calcula una vez (poder() pide unos 15 efectos y cada uno volvía a
+  // recorrer el equipo y las colecciones): memo guarda esos resultados y se vacía al terminar.
+  let memo = null;
+  const memoizar = (k, f) => !memo ? f() : k in memo ? memo[k] : (memo[k] = f());
+  const secEquipo = () => memoizar('secEquipo', secEquipoSinMemo);
+  function secEquipoSinMemo() {
     const t = {};
     for (const uid of Object.values(jugador.equipado)) for (const [a, v] of Object.entries(valores(objeto(uid)))) if (a in SECUNDARIOS) t[a] = (t[a] || 0) + v;
     return t;
@@ -2193,7 +2198,8 @@ ${nuevos.join(' · ')}`), 1200);
   }
   function efectoColeccion(esp) {
     if (!campListo) return 0;
-    return COLECCIONES.reduce((s, c) => { const [ok, tot] = progresoColeccion(c); return s + (ok >= tot && c.completa[esp] ? c.completa[esp] / 100 : 0); }, 0);
+    const prog = memoizar('colecciones', () => COLECCIONES.map(progresoColeccion));
+    return COLECCIONES.reduce((s, c, i) => { const [ok, tot] = prog[i]; return s + (ok >= tot && c.completa[esp] ? c.completa[esp] / 100 : 0); }, 0);
   }
   function pintarColeccion() {
     $('coleccion').innerHTML = `<small class="nota">Cada entrada conseguida te da un bono permanente; completar una colección da un bono extra.</small>` +
@@ -2280,7 +2286,8 @@ ${nuevos.join(' · ')}`), 1200);
     minotauro: { nombre: 'Fuerza del laberinto', 2: { reduccion: .05 }, 3: { penetracion: .12, resistencia: .1 },
                  especial: 'Un golpe que te quite más del 15 % de tu vida máxima se reduce un 35 %' },
   };
-  function piezasConjunto() {
+  function piezasConjunto() { return memoizar('conjuntos', piezasConjuntoSinMemo); }
+  function piezasConjuntoSinMemo() {
     const n = {};
     for (const uid of Object.values(jugador.equipado)) { const j = modelo[objeto(uid).modelo].jefe; if (j) n[j] = (n[j] || 0) + 1; }
     return n;
@@ -2325,7 +2332,11 @@ ${nuevos.join(' · ')}`), 1200);
                         critico: .5, remate: .5, robo: .6, resistencia: .3, esquiva: 1, danoCritico: .1, penetracion: .3, fortuna: 0 };
   const textoEfecto = a => a === 'danoCritico' ? `${Math.round((DANO_CRITICO_BASE + efecto(a)) * 100)}%`
     : `${Math.round(efecto(a) * 1000) / 10}%${TOPE_SEC[a] && efecto(a) >= TOPE_SEC[a] ? ' (máx)' : ''}`;
-  function poder(st = estadisticas()) {
+  function poder(st) {
+    const anidado = !!memo; memo ||= {};
+    try { st ||= estadisticas(); return poderSinMemo(st); } finally { if (!anidado) memo = null; }
+  }
+  function poderSinMemo(st) {
     let p = Object.entries(PESO_PODER).reduce((s, [a, w]) => s + st[a] * w, 0);
     p *= 1 + Object.entries(PESO_EFECTO).reduce((s, [esp, w]) => s + efecto(esp) * w, 0) + poderArbol()
       + Object.keys(CONJUNTOS).filter(set4).length * .04;   // un set de 4 piezas cambia el combate: +4 % de poder cada uno
@@ -5155,14 +5166,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     });
   }
   // ---------------- Simulador de progresión (pruebas) ----------------
-  // Un jugador gratuito juega días seguidos sin pantalla, con las decisiones del bot: cada día recoge el login y las
-  // expediciones, gasta la estamina, sube la Torre, usa las entradas de arena y jefes, cobra las misiones, abre cofres, se
-  // equipa lo mejor (y desguaza el resto), reparte el árbol y gasta el oro en lo que más poder le da (simMejorar). Las batallas se resuelven
-  // con el motor (autoataque). Devuelve el día en que llega a cada hito. Corre sobre una copia de la partida (aislado).
-  //   perfil: partida de la que parte (por defecto, una nueva) · dias · semilla: azar reproducible · expediciones: de 8 h al día
-  // Gasta como un jugador que mira su poder: repite la mejora que más poder da por oro mientras alguna sume: encantar una
-  // pieza puesta (cuenta su probabilidad de éxito), comprar o subir una mascota o una skin, subir una runa puesta o crear una
-  // runa si hay ranura libre (cuenta la ganancia media de los tipos). Luego lleva la mejor mascota, skin y runas.
+  // simMejor, simRunas, simMejorar, simRefinar y simCobrar: las decisiones del jugador simulado (simularProgresion, abajo).
+  // No llaman a aplicarEquipo(): solo repinta la pantalla, y repintar en cada prueba hacía el simulador varias veces más lento.
   function simMejor(lista, poner) {   // pone la opción de lista que más poder da
     let mejor = null, p0 = -1;
     for (const x of lista) { poner(x); const p = poder(); if (p > p0) { p0 = p; mejor = x; } }
@@ -5174,46 +5179,51 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     for (let otra = true; otra;) { otra = false; for (const r of jugador.runas) if (!jugador.runasPuestas.includes(r.uid) && fusionarRuna(r)) { otra = true; break; } }
     for (let i = 0; i < RANURAS_RUNA; i++) {
       const libres = jugador.runas.filter(r => !jugador.runasPuestas.includes(r.uid) || jugador.runasPuestas[i] === r.uid);
-      simMejor([null, ...libres], r => { jugador.runasPuestas[i] = r ? r.uid : null; aplicarEquipo(); });
+      simMejor([null, ...libres], r => { jugador.runasPuestas[i] = r ? r.uid : null; });
     }
   }
-  function simMejorar() {   // hasta 60 mejoras por llamada (se llama cada pocas batallas)
+  // Greedy perezoso: cada mejora posible (encantar una pieza puesta, comprar o subir una mascota o una skin, subir una runa
+  // puesta, crear una runa si hay ranura libre) se valora en poder por oro; se toma la de más valor recalculándola, y si
+  // sigue siendo la mejor se compra. Solo se recalcula la de arriba: decide como el greedy completo con muchos menos cálculos.
+  // El encantamiento cuenta su probabilidad; la runa nueva, la ganancia media de los tipos.
+  function simMejorar() {
     const ponerMascota = () => simMejor(MASCOTAS.filter(m => nivelMascota(m) > 0).map(m => m.id), id => { jugador.mascota = id; });
-    const ponerSkin = () => simMejor([null, ...SKINS.filter(k => estrellasSkin(k.id) > 0).map(k => k.id)], id => { jugador.skin = id; aplicarEquipo(); });
-    for (let i = 0; i < 60; i++) {
-      const base = poder(); let mejor = null;
-      const valorar = (oro, prob, probar, hacer) => { const g = probar() * prob; if (g > 0 && (!mejor || g / oro > mejor.v)) mejor = { v: g / oro, hacer }; };
-      for (const uid of Object.values(jugador.equipado)) {
-        const o = objeto(uid), c = costeEncantar(o); if (o.enc >= encMax(o) || !tieneCoste(c)) continue;
-        valorar(c.oro, c.prob / 100, () => { o.enc++; const g = poder() - base; o.enc--; return g; }, () => encantar(o));
-      }
-      if (desbloqueado('mascota')) for (const m of MASCOTAS) {
-        const n = nivelMascota(m), oro = n ? costeMejora(m, n) : m.precio, puesta = jugador.mascota;
-        if ((n && n >= MASCOTA_MAX) || jugador.oro < oro) continue;
-        valorar(oro, 1, () => { jugador.mascotas[m.id] = n + 1; jugador.mascota = m.id; const g = poder() - base; if (n) jugador.mascotas[m.id] = n; else delete jugador.mascotas[m.id]; jugador.mascota = puesta; return g; },
-          () => { if (n) mejorarMascota(m); else comprarMascota(m); ponerMascota(); });
-      }
-      if (desbloqueado('skins')) for (const k of SKINS) {
-        const n = estrellasSkin(k.id), oro = n ? COSTE_ESTRELLA(n) : PRECIO_SKIN, puesta = jugador.skin;
-        if (n >= 5 || jugador.oro < oro) continue;
-        valorar(oro, 1, () => { (jugador.skinsPropias ||= {})[k.id] = n + 1; jugador.skin = k.id; aplicarEquipo(); const g = poder() - base;
-          if (n) jugador.skinsPropias[k.id] = n; else delete jugador.skinsPropias[k.id]; jugador.skin = puesta; aplicarEquipo(); return g; },
-          () => { if (n) mejorarSkin(k); else comprarSkin(k); ponerSkin(); });
-      }
-      if (desbloqueado('pRunas')) {
-        for (const r of (jugador.runas || []).filter(r => (jugador.runasPuestas || []).includes(r.uid))) {
-          const c = costeMejoraRuna(r.nivel); if (r.nivel >= RUNA_MAX || !tieneCoste(c)) continue;
-          valorar(c.oro, 1, () => { r.nivel++; aplicarEquipo(); const g = poder() - base; r.nivel--; aplicarEquipo(); return g; }, () => mejorarRuna(r));
-        }
-        const puestas = (jugador.runasPuestas ||= Array(RANURAS_RUNA).fill(null)), hueco = puestas.indexOf(null);
-        if (hueco >= 0 && tieneCoste(COSTE_RUNA)) {   // runa nueva: ganancia media de los tipos posibles
-          const tipos = Object.keys(RUNAS), g = tipos.reduce((t, tipo) => { const r = { uid: -1, tipo, nivel: 1 }; jugador.runas.push(r); puestas[hueco] = -1; aplicarEquipo();
-            const x = poder() - base; jugador.runas.pop(); puestas[hueco] = null; aplicarEquipo(); return t + x; }, 0) / tipos.length;
-          valorar(COSTE_RUNA.oro, 1, () => g, () => { crearRuna(); simRunas(); });
-        }
-      }
-      if (!mejor) break;
-      mejor.hacer(); aplicarEquipo();
+    const ponerSkin = () => simMejor([null, ...SKINS.filter(k => estrellasSkin(k.id) > 0).map(k => k.id)], id => { jugador.skin = id; });
+    const prueba = (cambiar, deshacer) => { const base = poder(); cambiar(); const g = poder() - base; deshacer(); return g; };
+    const cands = [];   // { valor(): poder por oro (0 si no se puede), hacer(): true si compró }
+    for (const uid of Object.values(jugador.equipado)) { const o = objeto(uid);
+      cands.push({ valor: () => { const c = costeEncantar(o); return o.enc >= encMax(o) || !tieneCoste(c) ? 0 : prueba(() => o.enc++, () => o.enc--) * c.prob / 100 / c.oro; },
+                   hacer: () => tieneCoste(costeEncantar(o)) && o.enc < encMax(o) && !!encantar(o) }); }
+    if (desbloqueado('mascota')) for (const m of MASCOTAS) cands.push({
+      valor: () => { const n = nivelMascota(m), oro = n ? costeMejora(m, n) : m.precio, puesta = jugador.mascota;
+        if ((n && n >= MASCOTA_MAX) || jugador.oro < oro) return 0;
+        return prueba(() => { jugador.mascotas[m.id] = n + 1; jugador.mascota = m.id; }, () => { if (n) jugador.mascotas[m.id] = n; else delete jugador.mascotas[m.id]; jugador.mascota = puesta; }) / oro; },
+      hacer: () => { const ok = nivelMascota(m) ? mejorarMascota(m) : comprarMascota(m); if (ok) ponerMascota(); return ok; } });
+    if (desbloqueado('skins')) for (const k of SKINS) cands.push({
+      valor: () => { const n = estrellasSkin(k.id), oro = n ? COSTE_ESTRELLA(n) : PRECIO_SKIN, puesta = jugador.skin;
+        if (n >= 5 || jugador.oro < oro) return 0;
+        return prueba(() => { (jugador.skinsPropias ||= {})[k.id] = n + 1; jugador.skin = k.id; }, () => { if (n) jugador.skinsPropias[k.id] = n; else delete jugador.skinsPropias[k.id]; jugador.skin = puesta; }) / oro; },
+      hacer: () => { const ok = estrellasSkin(k.id) ? mejorarSkin(k) : comprarSkin(k); if (ok) ponerSkin(); return ok; } });
+    if (desbloqueado('pRunas')) {
+      const puestas = (jugador.runasPuestas ||= Array(RANURAS_RUNA).fill(null));
+      for (let i = 0; i < RANURAS_RUNA; i++) cands.push({   // la runa de la ranura i: subirla, o crear una si está vacía
+        valor: () => { const r = (jugador.runas || []).find(x => x.uid === puestas[i]);
+          if (r) { const c = costeMejoraRuna(r.nivel); return r.nivel >= RUNA_MAX || !tieneCoste(c) ? 0 : prueba(() => r.nivel++, () => r.nivel--) / c.oro; }
+          if (!tieneCoste(COSTE_RUNA)) return 0;
+          const tipos = Object.keys(RUNAS);
+          return tipos.reduce((t, tipo) => t + prueba(() => { jugador.runas.push({ uid: -1, tipo, nivel: 1 }); puestas[i] = -1; }, () => { jugador.runas.pop(); puestas[i] = null; }), 0) / tipos.length / COSTE_RUNA.oro; },
+        hacer: () => { const r = (jugador.runas || []).find(x => x.uid === puestas[i]);
+          if (r) return mejorarRuna(r);
+          if (!tieneCoste(COSTE_RUNA)) return false; crearRuna(); simRunas(); return true; } });
+    }
+    let lista = cands.map(c => ({ c, v: c.valor() })).filter(x => x.v > 0);
+    for (let i = 0; i < 400 && lista.length; i++) {
+      lista.sort((a, b) => b.v - a.v);
+      const x = lista[0]; x.v = x.c.valor();
+      if (x.v <= 0) { lista.shift(); continue; }
+      if (lista[1] && x.v < lista[1].v) continue;   // ya no es la mejor: vuelve a su sitio con su valor nuevo
+      if (!x.c.hacer()) { lista.shift(); continue; }
+      x.v = x.c.valor(); if (x.v <= 0) lista.shift();
     }
   }
   // Refinar con el polvo que sobra (deja 20 para las runas): sortea la peor línea (menos de ★4) de cada pieza puesta y se
@@ -5224,8 +5234,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       const o = Object.values(jugador.equipado).map(objeto).find((x, j) => j >= i % 4 && x.lineas.some(l => l.e < 4)) || Object.values(jugador.equipado).map(objeto).find(x => x.lineas.some(l => l.e < 4));
       if (!o) return;
       const linea = o.lineas.reduce((m, l, j) => l.e < o.lineas[m].e ? j : m, 0), vieja = o.lineas[linea], base = poder();
-      const nueva = refinar(o); o.lineas[linea] = nueva; aplicarEquipo();
-      if (poder() <= base) { o.lineas[linea] = vieja; aplicarEquipo(); }
+      const nueva = refinar(o); o.lineas[linea] = nueva;
+      if (poder() <= base) o.lineas[linea] = vieja;
     }
   }
   function simCobrar() {   // misiones y bonus hechos
@@ -5349,21 +5359,21 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
       $('sim' + b.dataset.sim).textContent = `${r.pctVictoria} % victorias · ${r.rondasMedia} rondas · ${r.vidaMedia} % de vida${r.sinTerminar ? ` · ${r.sinTerminar} sin terminar` : ''}`;
     };
   };
-  $('progPrueba').onclick = () => {   // tarda ~45 s: primero se muestra el aviso y luego se simula
+  $('progPrueba').onclick = () => {   // tarda unos segundos: primero se muestra el aviso y luego se simula
     if (!MODO_PRUEBAS) return;
-    abrirModal('comun', '<h2>Simulando 40 días…</h2><small>Tarda cerca de un minuto.</small>');
+    abrirModal('comun', '<h2>Simulando 90 días…</h2>');
     setTimeout(() => {
-      const r = simularProgresion({ dias: 40 }); pintarHud(); pintarCampamento();   // al simular se pintó la partida simulada
+      const r = simularProgresion({ dias: 90 }); pintarHud(); pintarCampamento();   // al simular se pintó la partida simulada
       if (!r) return cerrarModal();
       const H = r.hitos, ult = CAMPANAS.at(-1).id, fila = (t, l) => `<p><b>${t}</b><br>${l.join(' · ') || '—'}</p>`;
-      abrirModal('comun', `<h2>Partida nueva: 40 días</h2><small>Juega todo lo que puede cada día, como el bot; calabozo y reyes en grupo de 3 de su nivel.</small>
+      abrirModal('comun', `<h2>Partida nueva: 90 días</h2><small>Juega todo lo que puede cada día, como el bot; calabozo y reyes en grupo de 3 de su nivel.</small>
         ${fila('Nivel (día)', [10, 20, 30, 40, 50, 60, 70, 80].filter(n => H.nivel[n]).map(n => `Nv ${n}: ${H.nivel[n]}`))}
         ${fila(`Campaña ${ult} (día)`, ORDEN_DIF.filter(d => H.campana[`${ult} ${d}`]).map(d => `${DIFICULTADES[d]}: ${H.campana[`${ult} ${d}`]}`))}
         ${fila('Torre (día)', Object.entries(H.torre).map(([p, d]) => `${p}: ${d}`))}
         ${fila('Jefes mundiales vencidos (día)', Object.entries(H.jefes).map(([id, d]) => `${NOMBRE_JEFE[id]}: ${d}`))}
         ${fila('Calabozos (día)', CALABOZOS.map(c => { const l = ORDEN_DIF.filter(d => H.calabozo[`${c.id} ${d}`]); return l.length ? `${c.icono} ${DIFICULTADES[l.at(-1)]}: ${H.calabozo[`${c.id} ${l.at(-1)}`]}` : ''; }).filter(Boolean))}
         ${fila('Torre de reyes (día)', Object.entries(H.reyes).map(([d, n]) => `${DIF_REYES[d].nombre}: ${n}`))}
-        ${fila('Día 40', [`Nv ${r.final.nivel}`, `⚔ ${r.final.poder.toLocaleString('es')}`, `piso ${r.final.torre}`])}
+        ${fila('Día 90', [`Nv ${r.final.nivel}`, `⚔ ${r.final.poder.toLocaleString('es')}`, `piso ${r.final.torre}`])}
         <div class="fila"><button data-acc="cerrar">Cerrar</button></div>`);
       $('detCaja').onclick = e => { if (e.target.closest('[data-acc="cerrar"]')) cerrarModal(); };
     }, 50);

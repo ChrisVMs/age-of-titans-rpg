@@ -15,15 +15,17 @@ día 40. Si quiere frenarla, medir cada propuesta con `simularProgresion` (3 sem
 
 ## Última sesión
 **2026-10-28 · Claude**
-- Simulador de progresión completo: además de lo anterior, crea y sube runas (y las fusiona), compra y sube skins, refina
-  las líneas de menos de ★4 con el polvo que sobra, usa las reliquias que consigue de los jefes (elección automática del
-  juego) y juega calabozo (el siguiente sin superar) y Torre de reyes (la dificultad sin vencer esta semana) en grupo de
-  `grupo` jugadores (por defecto 3; los aliados son copias del simulado). Hitos nuevos: `jefes`, `calabozo`, `reyes`.
-  Organiza el equipo y gasta cada 5 batallas (antes, antes de cada una: 3 veces más lento).
-- Funciones nuevas que también usa la interfaz: `crearRuna`, `mejorarRuna`, `fusionarRuna`, `comprarSkin`, `mejorarSkin`,
-  `refinar`, `pulirLinea`, `batallaCalabozo`, `batallaReyes`.
-- Botón "📈 Simular progresión": 40 días (~45 s) y muestra también jefes, calabozos y reyes.
-- Verificación: la partida real no cambia, 14/14 escenarios, sin errores. Commit en `qa` (ver `git log`).
+- Simulador de progresión 5 veces más rápido (40 días: de ~65 s a ~13 s), con las mismas decisiones. Causas raíz:
+  - `aplicarEquipo()` solo repinta la pantalla y el simulador lo llamaba en cada prueba de mejora: quitado del simulador.
+  - `poder()` pide ~15 efectos y cada uno recorría otra vez el equipo, las colecciones y los conjuntos: `memo`/`memoizar`
+    guarda esos cálculos mientras dura un `poder()` (mismo resultado exacto, la mitad de tiempo).
+  - `simMejorar` revaloraba las ~45 mejoras tras cada compra: ahora greedy perezoso (solo recalcula la de arriba).
+- `herramientas/paralelo.js`: corre simulaciones en paralelo, cada una en una página nueva (la de varias horas en una
+  sola página acabó colgando el navegador por memoria).
+- Palancas ajustables para frenar la progresión (sin cambiar aún su valor): `XP_BARRIDO`, `CURVA_XP`, `CALABOZO_SOLO`;
+  y `simularProgresion({ estaminaExtra })` para medir recargas de estamina (anuncios, diamantes).
+- Botón "📈 Simular progresión": 90 días.
+- Verificación: mismo poder y efectos exactos que antes en los 6 bots; mismos hitos que el greedy completo; 14/14 escenarios.
 
 ## Decisiones
 - 2026-10-28 · Espinas al 5 % solo en la Torre ("5 % solo en la Torre"): al 10 % los pisos de jefe eran un muro.
