@@ -13,6 +13,7 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 - Las diferencias que quedan son opciones de `REGLAS` (ver **Diferencias de reglas**). Para cada una: medir con el
   simulador cómo cambia el balance, enseñárselo al usuario y que él decida. Cuando todas se igualen, `REGLAS` solo
   guardará el ritmo de las animaciones (`esperas`).
+- Medido (ver **Medición de `REGLAS`**): solo Espinas cambia mucho el balance; las demás, casi nada.
 - Después, lo que sigue en **Pendiente** (CHANGELOG, simulador de progresión...).
 
 ## Última sesión
@@ -147,6 +148,18 @@ jugadores (`u.perfil`). La mascota muerde a un enemigo al azar (en 1 contra 1 so
 - Quitar el ×0,5 sin compensar habría pedido ~30-60 % más de poder para cada dificultad (por eso se pasó a los datos).
 - Frontera actual (último nivel con ≥50 % en Normal/Difícil/Pesadilla/Infierno · piso de Torre): Nv5 4/1/0/0 · 10,
   Nv10 7/3/2/0 · 25, Nv20 9/7/4/2 · 30, Nv30 10/9/7/3 · 30, Nv40 10/9/9/5 · 50, Kaito Nv57 10/10/10/9 · 60.
+
+## Medición de `REGLAS` (2026-10-28, 6 bots Nv 44-60, solos, 800 batallas por caso con las mismas semillas)
+Cuánto cambia el % de victorias al pasar cada opción al valor del otro modo. 1 contra 1: arena (rival fuerte) y los 3 jefes
+al 45 % de vida. Grupo: campaña Pesadilla/Infierno alta y Torre 40, 50 y 60.
+| Opción | 1 contra 1 como grupo | Grupo como 1 contra 1 |
+|---|---|---|
+| `contraDefensa` | 33,6 → 33,9 % (Morgana arena 95 → 98) | sin cambio |
+| `regenAntes` | sin cambio | sin cambio |
+| `espinas` | 33,6 → 39,2 % (Asmodeo: Lyra 64 → 100, Morgana 8 → 100) | 78,8 → 73,9 % (Torre 60: Sigrid 82 → 20, Elric 88 → 15) |
+| `gastaHabControlado` | sin cambio | 78,8 → 79,3 % (Torre 60: +6 % arquero y mago) |
+| `habTrasEsquiva` | sin cambio | sin cambio |
+Script: `herramientas/reglas.js` (se evalúa en el juego con `correr.js`).
 
 ## Cuidado con
 - La página **guarda la partida al salir**: restaurar `localStorage` y luego navegar puede pisar lo restaurado.
