@@ -9,6 +9,9 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 
 ## Sin publicar (rama `qa`)
 
+### 🧪 Modo pruebas
+- En la web y en la app: 7 toques en la versión del Campamento lo activan o lo quitan (con su propia partida, aparte de la real).
+
 ### ⚔️ Combate
 - Un solo motor de combate para todos los modos: la arena y los jefes mundiales siguen las mismas reglas que la campaña, la Torre y el calabozo.
 - El daño enemigo en grupo ya no se divide entre 2 al pegar: los monstruos de grupo tienen directamente la mitad de daño (mismo resultado, números limpios).

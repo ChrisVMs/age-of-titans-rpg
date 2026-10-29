@@ -8,10 +8,12 @@
   // La lógica avisa a la pantalla a través de `ui`: sin pantalla (Node, el simulador) son funciones vacías y js/pantalla
   // pone las de verdad (cada archivo registra las suyas). Así las reglas no dependen de la página.
   const ui = { avisar() {}, mensaje() {}, pintarHud() {}, pintarCampanas() {}, aplicarEquipo() {}, repintarSala() {}, enBatalla: () => false };
-  // Modo pruebas: solo en el equipo de desarrollo. Abriendo el archivo directamente (file://), o en un servidor local
-  // en 127.0.0.1 con ?pruebas. En la web desplegada (https://dominio) y en la app Android (https://localhost) nunca se
-  // activa, aunque alguien añada ?pruebas a la URL: no hay botones de prueba y la partida empieza con valores reales.
-  const MODO_PRUEBAS = location.protocol === 'file:' || (location.hostname === '127.0.0.1' && new URLSearchParams(location.search).has('pruebas'));
+  // Modo pruebas: abriendo el archivo directamente (file://), en un servidor local en 127.0.0.1 con ?pruebas, o en la web
+  // y la app Android tocando 7 veces la versión del Campamento (PRUEBAS_GESTO; otras 7 lo quitan). ?pruebas en la URL
+  // desplegada no hace nada. Activado con el gesto usa otra partida (CLAVE), así no toca la real.
+  const PRUEBAS_GESTO = 'batalla.modoPruebas';
+  let pruebasGesto = false; try { pruebasGesto = localStorage.getItem(PRUEBAS_GESTO) === '1'; } catch {}
+  const MODO_PRUEBAS = location.protocol === 'file:' || (location.hostname === '127.0.0.1' && new URLSearchParams(location.search).has('pruebas')) || pruebasGesto;
   // Pantallas grandes en horizontal (escritorio, tablet): el juego se dibuja a ALTO_DISENO px de alto, como en un móvil
   // en horizontal, y se amplía entero para llenar la ventana; así se ve igual que en el móvil pero grande, no diminuto.
   const ALTO_DISENO = 412;

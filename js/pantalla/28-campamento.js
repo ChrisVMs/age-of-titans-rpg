@@ -49,4 +49,13 @@
   $('campIconos').addEventListener('scroll', paginarAccesos);
   addEventListener('resize', paginarAccesos); paginarAccesos();
   campListo = true; pintarCampamento();
-  $('campVersion').textContent = `v${VERSION_JUEGO}${MODO_PRUEBAS ? ' · pruebas' : ''}`; $('pruebasVersion').textContent = `v${VERSION_JUEGO}`;
+  $('campVersion').textContent = `v${VERSION_JUEGO}${MODO_PRUEBAS ? ' · pruebas' : ''}`;
+  let toquesVersion = 0, tVersion = 0;   // 7 toques seguidos en la versión: activa o quita el modo pruebas
+  $('campVersion').onclick = async () => {
+    toquesVersion = Date.now() - tVersion < 1500 ? toquesVersion + 1 : 1; tVersion = Date.now();
+    if (toquesVersion < 7) return;
+    toquesVersion = 0;
+    if (!await confirmar(pruebasGesto ? '¿Salir del modo pruebas?' : '¿Activar el modo pruebas? Usa una partida aparte.')) return;
+    try { pruebasGesto ? localStorage.removeItem(PRUEBAS_GESTO) : localStorage.setItem(PRUEBAS_GESTO, '1'); } catch {}
+    location.reload();
+  }; $('pruebasVersion').textContent = `v${VERSION_JUEGO}`;
