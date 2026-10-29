@@ -13,6 +13,11 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### 🔥 Estados y curas
+- Quemaduras, venenos y sangrados de los monstruos hacen daño fijo según el contenido (~2,5 % de la vida esperada): al hacerte más fuerte, duelen menos. Jefes: como mucho el 2,5 % de tu vida.
+- El mismo estado no se acumula en ti ni en los jefes: reinicia su duración.
+- Las mascotas tienen su propia fuerza (un % de tus estadísticas según calidad y nivel); su golpe y su cura son su ataque × un multiplicador. Segundo aliento y el set de Asmodeo curan según tu ataque y tu daño, no un % de la vida.
+
 ### 📈 Ritmo
 - El nivel 80 vuelve a costar ~3,5-4 meses (el barrido de las etapas altas daba demasiada experiencia).
 

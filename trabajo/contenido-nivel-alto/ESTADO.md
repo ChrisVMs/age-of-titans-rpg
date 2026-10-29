@@ -25,6 +25,19 @@ calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, 
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-10-29 · Claude (estados, curas y mascotas; pedido del usuario)**
+- Estados de los monstruos (`28-efectos-de-estado.js`): daño FIJO = % (tope `TOPE_PCT_ESTADO` 2,5 %) de `vidaEsperada(nEq)`
+  (vida medida el día en que se supera ese contenido; `nEq` lo guarda `crearDificultad` con la dificultad). Antes: % de la
+  vida máxima del héroe, que nunca bajaba al subir de poder. Jefes mundiales, rivales y Ecos: % de tu vida, con el tope.
+- Al héroe y a los jefes, el mismo estado reinicia su duración (no se apila; `sinPilas`); distintos sí conviven.
+- Curas: mascota = su ataque × `accion.mult`; Segundo aliento = tu ataque × `ALIENTO_MULT` por rango; set 4 de Asmodeo =
+  `SET4_CURA` del daño del golpe. Antes, % de la vida máxima.
+- Mascotas: fuerza = % de tus estadísticas por calidad y nivel (`STAT_MASCOTA`, `pctStatsMascota`, `ataqueMascota`); golpe,
+  cura y estados = su ataque × mult. Los mult se calcularon para igualar el nivel 1 de antes; a nivel 10, el doble (como antes).
+- Efecto: el juego es más fácil en lo alto (Etapa 3 Infierno ahora cae en los días 60-105; Torre ~146-149). XP recalibrada
+  (`CURVA_XP` 1,094, `XP_BARRIDO` .18): Nv 80 en los días 97-130 (5 semillas, mediana 108).
+- Verificación: 26/26 sistemas (2 de estados), 14/14 escenarios, igual con pantalla y sin ella.
+
 **2026-10-29 · Claude (calibración global)**
 - Causa del Nv 80 temprano: el barrido de las etapas altas (~10 M de XP en 60 días de los 13,5 M necesarios).
 - `XP_BARRIDO` .5 → .2 y `CURVA_XP` 1,07 → 1,091 (barridos: 1,08-1,1 con 3 semillas; muy sensible: 1,092 → 118-134).

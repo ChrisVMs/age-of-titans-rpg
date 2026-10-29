@@ -46,8 +46,9 @@
   // Nivel y experiencia
   // Curva: rápida hasta el 30 (desbloqueos y primera semana); desde ahí ×CURVA_XP por nivel para que el nivel siga siendo un
   // objetivo durante meses. Con 1,07 bastaba antes de las etapas 2-3 (2026-10-28); con ellas el Nv 80 llegaba hacia el día
-  // 40. Con 1,091 y XP_BARRIDO .2, simulado con anuncios (300 de estamina al día): Nv 80 entre los días 100 y 125 (2026-10-29).
-  let CURVA_XP = 1.091;   // crecimiento por nivel desde el 30 (let: el simulador de progresión prueba otros valores)
+  // 40. Con 1,091 y XP_BARRIDO .2: días 100-125. Con los estados de daño fijo (más fácil) y 1,094 / .18, 5 semillas: días
+  // 97-130, mediana 108 (2026-10-29).
+  let CURVA_XP = 1.094;   // crecimiento por nivel desde el 30 (let: el simulador de progresión prueba otros valores)
   const xpParaSubir = n => Math.round(60 * Math.pow(n, 1.5) * (n > 30 ? CURVA_XP ** (n - 30) : 1));
   const NIVEL_MAX = 80;   // al llegar, la experiencia deja de acumularse
   jugador.nivel = Math.min(jugador.nivel, NIVEL_MAX);

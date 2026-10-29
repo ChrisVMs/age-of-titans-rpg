@@ -143,6 +143,19 @@ const PRUEBAS = {
     const altos = TIPOS_TORRE_ALTA.map(t => TIPOS_ENEMIGO[t].nombre);
     [!altos.some(x => nombres(99).includes(x)), altos.some(x => nombres(101).includes(x)) || altos.some(x => nombres(102).includes(x)),
      pisoTorre(120).enemigos[0].nombre === TIPOS_ENEMIGO.senor.nombre]`,
+  'Estados: los monstruos hacen daño fijo (no % de tu vida), con tope': `
+    const c = CAMPANAS.find(x => x.id === '1-5'), e = c.dificultades.dificil.enemigos.find(x => (x.aplica || []).some(a => a.pct));
+    const a = e.aplica.find(x => x.pct); prepararBatalla(batallaCampana(c, 'dificil')); const yo = heroeYo();
+    const d1 = danoEstadoMonstruo(e, a, yo); yo.vidaMax *= 10; const d2 = danoEstadoMonstruo(e, a, yo);
+    const jefe = danoEstadoMonstruo({}, { pct: .05 }, { vidaMax: 1000 });
+    [d1 === d2, d1 === Math.max(1, Math.round(vidaEsperada(e.nEq) * Math.min(a.pct, TOPE_PCT_ESTADO))), jefe === 25]`,
+  'Estados: al héroe y a los jefes el mismo estado reinicia su duración (no se acumula)': `
+    prepararBatalla(batallaCampana(CAMPANAS[0], 'normal')); const yo = heroeYo(), mob = batalla.grupo.enemigos[0];
+    aplicarEstado(yo, 'veneno', 3, 10); yo.estados.veneno.turnos = 1; aplicarEstado(yo, 'veneno', 3, 10);
+    aplicarEstado(yo, 'quemadura', 2, 5);
+    mob.e.jefe = false; aplicarEstado(mob, 'veneno', 3, 10); aplicarEstado(mob, 'veneno', 3, 10);
+    const jefe = { heroe: false, e: { jefe: true }, estados: {}, conEfectos: false }; aplicarEstado(jefe, 'veneno', 3, 10); aplicarEstado(jefe, 'veneno', 3, 10);
+    [yo.estados.veneno.pilas === 1, yo.estados.veneno.turnos === 3, !!yo.estados.quemadura, mob.estados.veneno.pilas === 2, jefe.estados.veneno.pilas === 1]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

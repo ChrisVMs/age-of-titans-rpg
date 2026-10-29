@@ -4,9 +4,9 @@
   const ORDEN_RAREZA = Object.keys(RAREZAS);
   let invTab = 'objetos';
   function textoAccionMascota(m, n) {
-    const p = valorNivel(m.accion.pct, n), a = m.accion.aplica;
+    const p = Math.round(pctStatsMascota(m, n) * 10) / 10, a = m.accion.aplica;
     const extra = a ? ` · ${Math.round(a.prob * 100)}% de ${ESTADOS[a.estado].nombre.toLowerCase()} ${ESTADOS[a.estado].icono}` : '';
-    return m.accion.tipo === 'golpe' ? `${m.desc}: ${p}% de tu ataque cada ${m.accion.turnos} turnos${extra}` : `${m.desc}: ${p}% de tu vida cada ${m.accion.turnos} turnos`;
+    return `Fuerza: ${p}% de tus estadísticas · ${m.desc}: ${m.accion.tipo === 'golpe' ? 'golpe' : 'cura'} de ${m.accion.mult}× su ataque cada ${m.accion.turnos} turnos${extra}`;
   }
   // Nombre del jugador: se ve en el campamento, la batalla, las salas y el ranking; se edita desde el perfil (Héroe).
   // 3-14 caracteres; no puede coincidir con un jugador del ranking (los bots).

@@ -123,6 +123,7 @@
     const enemigos = tipos.map(t => {
       const T = TIPOS_ENEMIGO[t], vida = Math.round(vidaBase * T.vida * m.vida);
       return { nombre: T.nombre, jefe: T.jefe, avance: T.avance, filtro: T.filtro, vida, armadura: (T.armadura || 0) + m.armadura,
+        nEq: n + Math.log(m.vida * m.dano) / (2 * Math.log(1.23)),   // nivel de contenido (con la dificultad): fija el daño de sus estados
         dano: [Math.round(3 * danoBase * T.dano * m.dano), Math.round(5 * danoBase * T.dano * m.dano)],
         oro: Math.round(vidaBase * T.vida * .4 * m.oro), xp: Math.round(vida * .33),
         aplica: (T.aplica || []).map(a => ({ ...a, prob: Math.min(.6, a.prob * m.estados) })) };
@@ -161,7 +162,7 @@
   // Auto (barrido): en un nivel ya superado en esa dificultad, cobra sus recompensas sin pelear gastando la misma estamina
   // (la experiencia, a la mitad: XP_BARRIDO).
   // Da lo mismo que ganar la batalla: premio, oro/XP y botín de cada enemigo (con eventos y efectos), misiones y maestría.
-  let XP_BARRIDO = .2;   // parte de la XP de la batalla que da el barrido (let: lo ajusta el simulador). Con .5, el barrido de las
+  let XP_BARRIDO = .18;   // parte de la XP de la batalla que da el barrido (let: lo ajusta el simulador). Con .5, el barrido de las
   // etapas altas daba ~10 M de XP en 60 días y el Nv 80 llegaba hacia el día 40
   let ESENCIA_BARRIDO = .04;   // y de la Esencia (los decimales se guardan para el siguiente): con la entera se llenaban el aura y el despertar en un mes
   function barrido(c, d) {

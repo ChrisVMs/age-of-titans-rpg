@@ -20,4 +20,5 @@
   const set4 = j => (piezasConjunto()[j] || 0) >= 4;
   const efectoConjuntos = esp => Object.entries(piezasConjunto()).reduce((s, [j, n]) => s + (n >= 2 ? CONJUNTOS[j][2][esp] || 0 : 0) + (n >= 3 ? CONJUNTOS[j][3][esp] || 0 : 0), 0);
   const textoNivelSet = ef => textoBonos({}, Object.fromEntries(Object.entries(ef).map(([a, v]) => [a, Math.round(v * 100)])));
-  const SET4_GOLPE = .15, SET4_REDUCE = .35, SET4_CURA = .06;
+  const SET4_GOLPE = .15, SET4_REDUCE = .35, SET4_CURA = .12;   // SET4_CURA: del daño del golpe con habilidad (antes 6 % de la vida máxima)
+  const ALIENTO_MULT = .5;   // Segundo aliento: cura tu ataque × esto por rango (antes 10 % de la vida máxima)

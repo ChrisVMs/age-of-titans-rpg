@@ -9,3 +9,12 @@
     congelacion:  { icono: '❄️', nombre: 'Congelación', control: true },
     aturdimiento: { icono: '💫', nombre: 'Aturdimiento', control: true },
   };
+  // Daño de los estados que ponen los monstruos: FIJO, un % (TOPE_PCT_ESTADO como mucho) de la vida que se espera que tenga
+  // el jugador en ese contenido (vidaEsperada, medida con el simulador). Así, al subir de poder, duelen menos. Sin nivel de
+  // contenido (jefes mundiales, rivales de arena y Ecos) es un % de tu vida máxima, con el mismo tope.
+  // Al héroe y a los jefes el mismo estado no se acumula: reinicia su duración (estados distintos sí conviven). Antes el
+  // veneno se apilaba ×5 (12-15 % de la vida por turno).
+  const TOPE_PCT_ESTADO = .025;
+  const vidaEsperada = n => 153 * 1.117 ** (n - 1);   // vida el día en que se supera ese contenido (simulador, 3 semillas): ~1 k en n 18, ~2,4 k en n 26
+  const sinPilas = u => u.heroe || !!(u.e && (u.e.jefe || u.e.rey || u.e.cerbero || u.e.asmodeo || u.e.minotauro));
+  const danoEstadoMonstruo = (e, a, objetivo) => Math.max(1, Math.round((e.nEq ? vidaEsperada(e.nEq) : objetivo.vidaMax) * Math.min(a.pct || 0, TOPE_PCT_ESTADO)));

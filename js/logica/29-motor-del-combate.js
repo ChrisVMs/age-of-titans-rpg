@@ -77,7 +77,8 @@
       if (e.jefe || e.rival || e.rey) { if (u.inmune > 0) { verFx(u, 'num-cura', '🛡 Inmune', 250, -30); return; } u.inmune = turnos + 2; }
     }
     const e = u.estados[id];
-    if (e && def.acumula) { e.pilas = Math.min(def.acumula, e.pilas + 1); e.turnos = Math.max(e.turnos, turnos); e.dano = Math.max(e.dano, dano); }
+    if (e && sinPilas(u)) { e.turnos = turnos; e.dano = Math.max(e.dano, dano); }   // héroe y jefes: el mismo estado solo se reinicia
+    else if (e && def.acumula) { e.pilas = Math.min(def.acumula, e.pilas + 1); e.turnos = Math.max(e.turnos, turnos); e.dano = Math.max(e.dano, dano); }
     else u.estados[id] = { turnos, dano, pilas: 1 };
     verFx(u, 'dano', `${def.icono} ${def.nombre}`, 250, -30); verEstados(u);
   }
@@ -137,7 +138,7 @@
       t.bastionUsado = true; t.vida = 1; verVida(t); verFx(t, 'num-cura', '🏰 Último bastión', 400, -30);
     }
     if (t.vida > 0 && t.vida < t.vidaMax * .3 && r('aliento') && !t.alientoUsado) {
-      t.alientoUsado = true; curar(t, Math.min(t.vidaMax - t.vida, Math.round(t.vidaMax * .1 * r('aliento'))), '🌬️ ', 500);
+      t.alientoUsado = true; curar(t, Math.min(t.vidaMax - t.vida, Math.round(t.st.ataque * ALIENTO_MULT * r('aliento'))), '🌬️ ', 500);   // tu ataque × ALIENTO_MULT por rango
     }
   }
   // Efectos de la habilidad sobre el objetivo: aturdimiento y su estado (quemadura, congelación, sangrado...)
@@ -181,7 +182,7 @@
       const r = Math.max(1, Math.round(dano * t.e.espinas)); u.vida = Math.max(1, u.vida - r); verVida(u); verFx(u, 'dano', `🌵 -${r}`, 300);
     }
     const robo = Math.round(dano * u.ef('robo')); if (robo > 0 && u.vida < u.vidaMax) curar(u, Math.min(robo, u.vidaMax - u.vida), '💀 ', 300);
-    if (hab && u.s4('asmodeo') && u.vida < u.vidaMax) curar(u, Math.min(u.vidaMax - u.vida, Math.round(u.vidaMax * SET4_CURA)), '🔯 ', 300);   // set 4 de Asmodeo
+    if (hab && u.s4('asmodeo') && u.vida < u.vidaMax) curar(u, Math.min(u.vidaMax - u.vida, Math.round(dano * SET4_CURA)), '🔯 ', 300);   // set 4 de Asmodeo: parte del daño del golpe
     if (t.vida > 0) {
       for (const g of u.golpes) if (rnd() < g.prob) aplicarEstado(t, g.estado, g.turnos, Math.max(1, Math.round(u.st.ataque * g.pct)));
       if (critico && u.s4('cerbero')) aplicarEstado(t, 'quemadura', 2, Math.max(1, Math.round(u.st.ataque * .3)));   // set 4 de Cerbero
@@ -292,7 +293,7 @@
     const roboR = Math.min(Math.round(dano * u.ef('robo')), u.vidaMax - u.vida);   // robo de vida del rival
     if (roboR > 0) curar(u, roboR, '💀 ', 300);
     nodosVida(t);
-    if (t.vida > 0) for (const a of e.aplica || []) if (rnd() < a.prob) aplicarEstado(t, a.estado, a.turnos, Math.max(1, Math.round(t.vidaMax * (a.pct || 0))));
+    if (t.vida > 0) for (const a of e.aplica || []) if (rnd() < a.prob) aplicarEstado(t, a.estado, a.turnos, danoEstadoMonstruo(e, a, t));
     emitir('golpe', u, t, null, critico, dano, t.duelo ? tipoJefe() : null);
     emitir('espera', 250); emitir('volver', u);
     if (t.vida <= 0) { morir(t); return; }
@@ -303,19 +304,19 @@
   function resolverMascota() {
     const R = reglas(), m = mascotaActual(), yo = heroeYo(); if (!m || !yo || yo.vida <= 0) return;
     if (++batalla.grupo.turnoMascota < m.accion.turnos) return; batalla.grupo.turnoMascota = 0;
-    const pct = valorNivel(m.accion.pct, nivelMascota(m)) * multDespertar('mascota', m.id) / 100;
+    const atk = ataqueMascota(m, batalla.st.ataque);   // su ataque: un % del tuyo (calidad y nivel)
     if (pasivaDespertar('mascota', m.id) && rnd() < PASIVA_MASCOTA) batalla.grupo.turnoMascota = m.accion.turnos - 1;   // despertada: repite al turno siguiente
     if (m.accion.tipo === 'cura') {
       const t = vivos(batalla.grupo.heroes).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
-      curar(t, Math.min(t.vidaMax - t.vida, Math.round(t.vidaMax * pct * (1 + efecto('curacion')))), '🐾 '); emitir('espera', R.esperas.curaMascota); return;
+      curar(t, Math.min(t.vidaMax - t.vida, Math.round(atk * m.accion.mult * (1 + efecto('curacion')))), '🐾 '); emitir('espera', R.esperas.curaMascota); return;
     }
     const t = objetivoAlAzar(batalla.grupo.enemigos); if (!t) return;
     emitir('mascota', yo, true); emitir('espera', R.esperas.mascotaIda);
     const dt = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };
     const def = factorDefensa({ armadura: armaduraEfectiva(dt.armadura, efecto('penetracion')), defensa: dt.defensa }) * (1 - t.ef('reduccion'));
-    const d = Math.max(1, Math.min(t.vida, Math.round(batalla.st.ataque * pct * def * (batalla.infernal ? 1 / INFERNAL.defensa : 1))));
+    const d = Math.max(1, Math.min(t.vida, Math.round(atk * m.accion.mult * def * (batalla.infernal ? 1 / INFERNAL.defensa : 1))));
     t.vida -= d; batalla.danoHecho += d; verVida(t); verFx(t, 'dano', `🐾 -${d}`);
-    const ap = m.accion.aplica; if (ap && t.vida > 0 && rnd() < ap.prob) aplicarEstado(t, ap.estado, ap.turnos, Math.max(1, Math.round(batalla.st.ataque * (ap.pct || 0))));
+    const ap = m.accion.aplica; if (ap && t.vida > 0 && rnd() < ap.prob) aplicarEstado(t, ap.estado, ap.turnos, Math.max(1, Math.round(atk * (ap.mult || 0))));
     emitir('mascota', yo, false); emitir('espera', R.esperas.mascotaVuelta);
     if (t.vida <= 0) morir(t);
   }
