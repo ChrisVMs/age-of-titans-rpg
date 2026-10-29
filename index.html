@@ -255,7 +255,7 @@
   .esc-lista { display:grid; grid-template-columns:auto 1fr; gap:4px 8px; margin:10px 0; text-align:left; font-size:12px; }
   .esc-lista small { color:#aaa; }
   .sim-lista button { margin:0; min-height:36px; padding:4px 10px; font-size:13px; }
-  #botParar { position:fixed; left:8px; bottom:8px; z-index:1500; min-height:36px; padding:4px 12px; font-size:13px; color:#8adf3c; background:#000c; border-color:#8adf3c; }
+  #botParar { position:fixed; left:50%; top:6px; transform:translateX(-50%); z-index:1500; min-height:36px; padding:4px 12px; font-size:13px; color:#8adf3c; background:#000c; border-color:#8adf3c; }
   /* Móvil en horizontal (poca altura): todo más compacto; los accesos laterales en 2 columnas a la derecha
      y el héroe desplazado a la izquierda para que no se tapen */
   @container (orientation:landscape) and (max-height:520px) {
@@ -937,8 +937,9 @@
       <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
       <button id="cerrarPruebas">Cerrar</button>
     </div></div>
-    <button class="prueba" id="botParar" hidden>🤖 Parar bot</button>
   </div>
+  <!-- fuera de las pantallas: se ve también en batalla (antes estaba dentro del Campamento y desaparecía) -->
+  <button class="prueba" id="botParar" hidden>🤖 Parar bot</button>
 
   <!-- Inventario -->
   <div class="pantalla" id="pInventario">

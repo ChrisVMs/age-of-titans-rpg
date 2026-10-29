@@ -108,3 +108,8 @@
   $('botRepetir').onclick = () => botEmpezar('repetir');
   $('botJugar').onclick = () => botEmpezar('jugar');
   $('botParar').onclick = botParar;
+  // si el jugador sale de una batalla a mano (huir, abandonar o salir del resultado), el bot se para: sus propios clics
+  // no son de una persona (isTrusted false) y no cuentan
+  document.addEventListener('click', e => {
+    if (botModo && e.isTrusted && e.target.closest('#btnHuir, #huir, #resSalir, [data-acc="salir"], .volver')) botParar();
+  }, true);
