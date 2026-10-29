@@ -1,6 +1,6 @@
 # Contenido de nivel alto
 
-**Estado:** en curso · **Rama:** `qa` · **Actualizado:** 2026-10-29
+**Estado:** pausado (espera: arte de las etapas 2-3, Ancestral y calabozos 5-8) · **Rama:** `qa` · **Actualizado:** 2026-10-29
 
 ## Objetivo
 Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga retos y progreso. Hoy el poder del jugador se

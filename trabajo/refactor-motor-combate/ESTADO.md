@@ -1,6 +1,6 @@
 # Refactor del motor de combate
 
-**Estado:** en curso · **Rama:** `qa` · **Actualizado:** 2026-10-27
+**Estado:** finalizado · **Rama:** `qa` · **Actualizado:** 2026-10-29
 
 ## Objetivo
 Hacer el combate escalable y mantenible: separar las reglas (motor) de la pantalla (animaciones), tener un solo motor
@@ -9,9 +9,7 @@ el contenido nuevo (jefes, habilidades) se agrega una vez, y las reglas se verif
 consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 
 ## Próximo paso
-**Contenido para el tramo largo** (decisión del usuario, cuando quiera): con la progresión frenada, el nivel 80 llega en
-3,5-4 meses, pero los jefes mundiales, los reyes, la Torre alta y la campaña en Infierno se superan mucho antes (ver
-**Progresión**). Hacen falta retos de nivel alto (más campaña, calabozos más altos) para acompañar ese tramo.
+**Nada pendiente.** El contenido para el tramo largo se hizo en `contenido-nivel-alto` y `retencion` (2026-10-29).
 
 ## Última sesión
 **2026-10-28 · Claude**
@@ -73,9 +71,8 @@ consecuencia, no el objetivo (lo aclaró el usuario el 2026-10-27).
 | Etapa 4: motor único (`resolverRonda` para todos los modos, `REGLAS`) | `a09c375` | grupo idéntico con semilla; 1 contra 1 igual en estadística; escenarios; pantalla |
 
 ## Pendiente
-1. Contenido de nivel alto para el tramo largo (ver **Próximo paso**).
-2. Simulador de progresión: aún no pule runas ni usa la bendición al encantar; la opción de jefe mundial "desde cero"
-   (hoy parte de la vida que le queda ese día).
+- Descartado aquí (mejoras menores del simulador, sin tema propio): pulir runas, bendición al encantar, gastar cristales
+  en recargas, jefe mundial "desde cero".
 
 ## Reglas por tipo de enemigo
 Desde el 2026-10-28 no hay reglas distintas por modo (ver **Medición de `REGLAS`** y **Decisiones**).
