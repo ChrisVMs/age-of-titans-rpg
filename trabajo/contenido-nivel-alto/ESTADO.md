@@ -7,7 +7,7 @@ Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga re
 estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre alta caen mucho antes del nivel 80.
 
 ## Próximo paso
-**Paso 4: Calabozos 5-8** (premio: Esencia y Ancestral; dificultad pensada para el poder de los días ~30-110).
+**Paso 5: Torre, hitos desde el piso 100** (Esencia y Ancestral). Hoy el simulador llega al piso 95-99 hacia el día 150.
 
 ## Plan
 1. ✅ Aura: 10 niveles, +2 % a todo por nivel, con Esencia y oro; se ve bajo el personaje (tenue → late desde el 5 →
@@ -15,7 +15,7 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
 2. ✅ Rareza Ancestral: equipo por encima de mítico, solo del contenido alto.
 3. ✅ Etapa 2 «Las ruinas del reino caído» (esqueletos, caballeros espectrales, gárgolas; jefe: Rey Liche) y Etapa 3
    «El Abismo» (diablillos, demonios de fuego, súcubos; jefe: Señor del Abismo). 10 niveles cada una.
-4. Calabozos 5-8.
+4. ✅ Calabozos 5-8.
 5. Torre: hitos desde el piso 100 (Esencia y Ancestral).
 6. Calibrar todo con `node pruebas/progresion.js`: Etapa 2 para los días ~15-45 (poder 35-50 k), Etapa 3 para ~45-110;
    el aura y lo Ancestral deben seguir subiendo el poder hasta el nivel 80. Repartir la Esencia en consecuencia.
@@ -23,7 +23,16 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
-**2026-10-29 · Claude**
+**2026-10-29 · Claude (calabozos)**
+- Calabozos 5-8 (Catacumbas del rey, Trono del Liche, Fosa de los demonios, Corazón del Abismo) con los enemigos de las
+  etapas 2-3 y `MOD_DIF_ALTO`. Solo en modo pruebas hasta tener arte (`arte: false`). Dan Esencia (`ESENCIA_CALABOZO`)
+  y los 7-8 pueden dar Ancestral en Pesadilla/Infierno (`PROB_ANCESTRAL_CAL`).
+- Simulador: en el calabozo intenta antes la dificultad más baja sin superar (antes se atascaba en el 3 Infierno y no
+  abría el 4 hasta el día ~77). `progresion.js` muestra los días de los calabozos 5-8.
+- Medición (3 semillas, grupo de 3, 300 de estamina): Normal días 5-51, Difícil 40-103, Pesadilla 59-150; Infierno no.
+- Verificación: 14/14 escenarios, igual con pantalla y sin ella.
+
+**2026-10-29 · Claude (etapas)**
 - Etapas 2 y 3 (10 niveles cada una, 10 enemigos nuevos con sprite provisional). Con `arte: false` solo se juegan en modo
   pruebas (`etapaDisponible`); en el juego publicado salen "Próximamente".
 - Escalado: `ESCALA_ETAPA` (n equivalente de la Etapa 1: Etapa 2 desde 15 en pasos de 0,55; Etapa 3 desde 19 en pasos de 0,4).
@@ -48,7 +57,8 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
 - Equipo Ancestral: casco, armadura, espada y capa "de los Antiguos" (capas del guerrero como las demás piezas; hoy
   usan las de otra pieza con un filtro turquesa, `METAL.ancestral` y `TELA.ancestral`).
 - Etapas 2-3: esqueleto, caballero, gárgola, diablillo, demonio y súcubo; jefes Campeón, Liche, Verdugo y Señor del Abismo.
-- (se completa en los pasos 4-5)
+- Calabozos 5-8: fondos/iconos propios (hoy emoji).
+- (se completa en el paso 5)
 
 ## Cómo verificar
 - `node pruebas/equivalencia.js <otra versión>`: mismas batallas que antes (234 casos).

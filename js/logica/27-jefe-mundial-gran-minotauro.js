@@ -113,7 +113,8 @@
     if (batalla.campana.calabozo && gano && !batalla.campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
       extraRes += calabozoSuperado(batalla.campana.cal);
       if (difAbierta(batalla.campana.cal, batalla.campana.calabozo)) jugador.calabozosDif[`${batalla.campana.cal}:${batalla.campana.calabozo}`] = true;
-      const o = objetoAzar(OBJETO_CALABOZO[batalla.campana.calabozo], efecto('fortuna') / 3); jugador.objetos.push(o);
+      const cal = calabozo(batalla.campana.cal), anc = cal.alto === 2 && rnd() < PROB_ANCESTRAL_CAL[batalla.campana.calabozo];
+      const o = anc ? objetoAncestral() : objetoAzar(OBJETO_CALABOZO[batalla.campana.calabozo], efecto('fortuna') / 3); jugador.objetos.push(o);
       obtenidos.push(o);
     }
     if (batalla.campana.reyes && gano) extraRes += reyVencido(batalla.campana.reyes);

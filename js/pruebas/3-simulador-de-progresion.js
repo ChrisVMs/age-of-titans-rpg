@@ -142,7 +142,7 @@
             }
             if (!c && desbloqueado('pCalabozo') && revisarCalabozo().entradas > 0) {   // el siguiente sin superar; si no, el mejor superado
               const abiertos = CALABOZOS.filter(x => calabozoAbierto(x.id)).flatMap(x => ORDEN_DIF.filter(df => difAbierta(x.id, df)).map(df => [x.id, df]));
-              const [id, df] = abiertos.find(([id, df]) => !jugador.calabozosDif[`${id}:${df}`] && pocos(`cal${id}:${df}`)) || abiertos.filter(([id, df]) => jugador.calabozosDif[`${id}:${df}`]).at(-1) || [];
+              const [id, df] = [...abiertos].sort((a, b) => ORDEN_DIF.indexOf(a[1]) - ORDEN_DIF.indexOf(b[1])).find(([id, df]) => !jugador.calabozosDif[`${id}:${df}`] && pocos(`cal${id}:${df}`)) || abiertos.filter(([id, df]) => jugador.calabozosDif[`${id}:${df}`]).at(-1) || [];
               if (id) { revisarCalabozo().entradas--; k = `cal${id}:${df}`; c = batallaCalabozo(df, ['x'], null, id); }
             }
             if (!c && desbloqueado('pReyes') && revisarReyes().entradas > 0) {
