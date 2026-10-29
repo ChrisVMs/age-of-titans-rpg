@@ -100,8 +100,9 @@
   //   estaminaExtra: recargas al día además de la gratis (anuncios, diamantes) · alDia(d): aviso al terminar cada día (progreso)
   //   Devuelve también la partida simulada (jugador), para poder seguir jugándola.
   function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null } = {}) {
-    const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()];
-    window.setTimeout = () => 0;   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
+    const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()], relojReal = Date.now, ahora0 = Date.now();
+    window.setTimeout = () => 0;
+    Date.now = () => ahora0;   // reloj quieto: lo que depende de la hora (ruinas) no cambia según lo rápido que simule   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
     try {
       return aislado(() => {
         sembrar(semilla);
@@ -200,7 +201,7 @@
         jugador.sigUid = sigUid;   // la partida simulada, lista para guardarse como la tuya
         return { hitos, dia, fuentes, final: dia.at(-1), jugador: structuredClone(jugador) };
       });
-    } finally { window.setTimeout = temporizador; offsetDias = offset0; cacheBots.splice(botsAntes.length); }
+    } finally { window.setTimeout = temporizador; Date.now = relojReal; offsetDias = offset0; cacheBots.splice(botsAntes.length); }
   }
   function opcionesSimulacion() {   // batallas que se pueden simular desde el menú de pruebas
     const sig = CAMPANAS.find(c => !superada(c.id, 'normal')) || CAMPANAS.at(-1);

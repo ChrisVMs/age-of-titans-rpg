@@ -21,7 +21,7 @@
     { id: 'veterano', nombre: 'Cazador veterano', desc: `Cada enemigo derrotado ${100} veces`, porEntrada: { ataque: .2 }, completa: {},
       entradas: () => enemigosColeccion().map(n => ({ nombre: n, icono: '🎯', ok: ((jugador.bestiario || {})[n] || 0) >= 100, extra: `${Math.min(100, (jugador.bestiario || {})[n] || 0)}/100` })) },
   ];
-  const enemigosEtapa = e => !logicaLista ? [] : [...new Set(CAMPANAS.filter(c => c.etapa === e).flatMap(c => Object.values(c.dificultades).flatMap(d => d.enemigos.map(x => x.nombre))))];
+  const enemigosEtapa = e => !logicaLista ? [] : cacheEnemigos['etapa' + e] ||= [...new Set(CAMPANAS.filter(c => c.etapa === e).flatMap(c => Object.values(c.dificultades).flatMap(d => d.enemigos.map(x => x.nombre))))];
   // Hitos: al 25/50/75/100 % de cada colección, un premio (una vez). El 100 % da además el marco de esa colección.
   const HITOS_COLECCION = [{ pct: 25, premio: { cristales: 3 } }, { pct: 50, premio: { cristales: 5, fichas: 20 } }, { pct: 75, premio: { cristales: 8, fichas: 40 } }, { pct: 100, premio: { cristales: 10 } }];
   // Marcos de perfil (CSS .marco-<id>): uno por colección completa
@@ -45,8 +45,14 @@
   // las piezas de set cuentan aunque luego las desguaces
   function anotarPiezas() { for (const o of jugador.objetos || []) if (modelo[o.modelo]?.jefe) ((jugador.codice ||= {}).piezas ||= {})[o.modelo] = true; }
   // todos los enemigos distintos de las campañas + los jefes mundiales (se definen en archivos posteriores: solo con la lógica cargada)
+  // Las listas de enemigos solo cambian al rehacer la campaña (armarCampanas las borra): se calculan una vez. Sin esto, cada
+  // cálculo de poder recorría todos los niveles y dificultades (más de la mitad del tiempo del simulador).
+  let cacheEnemigos = {};
   function enemigosColeccion() {
     if (!logicaLista) return Object.keys(jugador.bestiario || {});
+    return cacheEnemigos.todos ||= enemigosColeccionSinCache();
+  }
+  function enemigosColeccionSinCache() {
     const n = new Set();
     for (const c of CAMPANAS) for (const d of Object.values(c.dificultades || {})) for (const e of d.enemigos || []) n.add(e.nombre);
     for (const m of Object.values(MUNDIALES)) n.add(m.enemigo.nombre);

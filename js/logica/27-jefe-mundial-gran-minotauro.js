@@ -74,7 +74,7 @@
 
   // Motor: deja `batalla` lista para empezar la batalla c, sin dibujar nada ni gastar estamina
   function prepararBatalla(c) {
-    batalla.id = (batalla.id || 0) + 1;   // identifica la batalla: lo que quede por dibujar de otra anterior se descarta
+    batalla.id = (batalla.id || 0) + 1; secEquipoBatalla = new WeakMap();   // identifica la batalla: lo que quede por dibujar de otra anterior se descarta
     batalla.danoHecho = 0; batalla.especialCerbero = null; batalla.turnoBola = 0; batalla.turnoLanza = 0; batalla.turnoOnda = 0; batalla.turnoCura = 0; batalla.turnoEscudo = 0; batalla.escudoRestante = 0; batalla.turnoFuria = FURIA.turnos - 1; batalla.furiaRestante = 0; batalla.especialMinotauro = null; batalla.turnoTajo = 0; batalla.especialAsmodeo = null;
     c.grupo = !!(c.idCampana || c.torre || c.reyes || c.calabozo || c.grieta);   // campaña, Torre y Torre de reyes: batalla por grupos en rombo
     batalla.campana = c; batalla.reglas = c.grupo ? REGLAS.grupo : REGLAS.duelo;
@@ -87,7 +87,7 @@
   // Fin de la batalla: cobra lo ganado (botín de los enemigos, premio, recompensas propias de cada modo), marca lo superado
   // y cuenta misiones. Devuelve lo que la pantalla enseña: { extra (html de cada modo), sinBotin, danoHecho }.
   function cobrarResultado(gano) {
-    obtenidos = [];
+    obtenidos = []; secEquipoBatalla = null;
     batalla.terminada = true;
     // las recompensas se cobran al terminar (victoria o derrota); abandonando no se cobra nada.
     // Torre: no cuesta estamina, así que el botín de los enemigos solo se cobra si superas el piso (si no, perder a

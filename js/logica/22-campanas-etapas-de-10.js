@@ -134,7 +134,7 @@
   // Lista plana de niveles: { id: '1-3', etapa, nombre, jefe, dificultades }
   // (armarCampanas rehace la lista: el simulador la usa para probar otros ESCALA_ETAPA)
   const CAMPANAS = [];
-  function armarCampanas() { CAMPANAS.splice(0, Infinity, ...ETAPAS.filter(etapaDisponible).flatMap(e => e.niveles.map(([nombre, tipos], i) => {
+  function armarCampanas() { cacheEnemigos = {}; CAMPANAS.splice(0, Infinity, ...ETAPAS.filter(etapaDisponible).flatMap(e => e.niveles.map(([nombre, tipos], i) => {
     const E = ESCALA_ETAPA[e.id], n = E.desde + i * E.paso;   // n equivalente de la Etapa 1 (decimal en las etapas altas)
     const dificultades = Object.fromEntries(ORDEN_DIF.map(d => [d, crearDificultad(n, d, tipos, e.id > 1 ? MOD_DIF_ALTO : MOD_DIF)]));
     if (ESENCIA_ETAPA[e.id]) for (const d of ORDEN_DIF) dificultades[d].premio.esencia = Math.round(ESENCIA_ETAPA[e.id] * MOD_DIF[d].premio);

@@ -30,7 +30,13 @@
   // recorrer el equipo y las colecciones): memo guarda esos resultados y se vacía al terminar.
   let memo = null;
   const memoizar = (k, f) => !memo ? f() : k in memo ? memo[k] : (memo[k] = f());
-  const secEquipo = () => memoizar('secEquipo', secEquipoSinMemo);
+  // En batalla el equipo no cambia: secEquipoBatalla (lo crea prepararBatalla y lo borra cobrarResultado) lo guarda por
+  // jugador (tú y cada aliado). Mismo resultado, mucho menos trabajo: se pide en cada golpe.
+  let secEquipoBatalla = null;
+  const secEquipo = () => memoizar('secEquipo', () => {
+    if (!secEquipoBatalla) return secEquipoSinMemo();
+    let t = secEquipoBatalla.get(jugador); if (!t) secEquipoBatalla.set(jugador, t = secEquipoSinMemo()); return t;
+  });
   function secEquipoSinMemo() {
     const t = {};
     for (const uid of Object.values(jugador.equipado)) for (const [a, v] of Object.entries(valores(objeto(uid)))) if (a in SECUNDARIOS) t[a] = (t[a] || 0) + v;

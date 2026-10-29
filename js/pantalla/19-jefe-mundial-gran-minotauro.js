@@ -269,6 +269,7 @@
   }
 
   function salirBatalla(destino) {
+    secEquipoBatalla = null;   // sin esto, al abandonar quedaba el equipo de la batalla guardado
     if (batalla.campana && batalla.campana.mundial) {
       const e = estadoMundial(batalla.campana.mundial);
       if (!batalla.terminada) { e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; }   // abandono: el daño cuenta para el ranking
