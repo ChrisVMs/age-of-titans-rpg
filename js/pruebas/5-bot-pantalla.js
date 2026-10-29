@@ -55,12 +55,27 @@
     }
     botParar();
   }
+  // Fin de lo que hay para jugar: anuncios, luego la recarga con cristales y, si ya no queda nada, gasta como el
+  // simulador (mejoras, runas, refinado) y pasa al día siguiente. Devuelve el texto del aviso.
+  function botRecargarOPasarDia() {
+    simCobrar();
+    if (cobrarAnuncio()) return `Bot: anuncio +${ESTAMINA_ANUNCIO} ⚡`;
+    if (recargarConCristales()) return `Bot: 💎 ${RECARGA_CRISTALES.coste} → +${RECARGA_CRISTALES.estamina} ⚡`;
+    desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));
+    simMejorar(); simRunas(); simRefinar();
+    offsetDias++; try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}
+    revisarEstamina(); revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); revisarRecargas(); entradasJefe();
+    if (loginDisponible()) reclamarLogin();
+    for (const k in botFallos) delete botFallos[k];
+    $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
+    return `Bot: día ${offsetDias + 1}`;
+  }
   async function botJugar() {
     if (pantallaActual === 'pBatalla' && $('resultado').classList.contains('visible')) $('resSalir').click();
     while (botModo === 'jugar') {
       botCerrarMensajes(); botPreparar();
       const acc = botSiguiente();
-      if (!acc) { avisar('Bot: nada más que jugar hoy'); break; }
+      if (!acc) { avisar(botRecargarOPasarDia()); guardar(); pintarHud(); await esperar(800); continue; }
       if (acc.barrido) { barrido(...acc.barrido); await esperar(400); continue; }
       ponerVelocidad(VELOCIDADES.at(-1)); acc.iniciar(); await esperar(100);
       const gano = await botBatalla();

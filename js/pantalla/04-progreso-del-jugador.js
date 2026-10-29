@@ -22,7 +22,7 @@
   function pintarHud() {
     const pct = jugador.nivel >= NIVEL_MAX ? 100 : jugador.xp / xpParaSubir(jugador.nivel) * 100;
     document.querySelectorAll('.hud').forEach(h => h.innerHTML =
-      `<span>Nv ${jugador.nivel}${jugador.nivel >= NIVEL_MAX ? ' MAX' : ''}</span><span class="xp" title="${jugador.xp}/${xpParaSubir(jugador.nivel)} XP"><i style="width:${pct}%"></i></span><span class="oro">● ${jugador.oro}</span><span class="estamina" title="Estamina: se recarga cada día">⚡ ${jugador.estamina}/${ESTAMINA_MAX}</span>`
+      `<span>Nv ${jugador.nivel}${jugador.nivel >= NIVEL_MAX ? ' MAX' : ''}</span><span class="xp" title="${jugador.xp}/${xpParaSubir(jugador.nivel)} XP"><i style="width:${pct}%"></i></span><span class="oro">● ${jugador.oro}</span><span class="cristales">💎 ${jugador.cristales || 0}</span><span class="estamina" title="Estamina: toca para recargar">⚡ ${jugador.estamina}/${ESTAMINA_MAX} ＋</span>`
       + (h.closest('#pHerreria') || h.closest('#pRunas') ? (h.closest('#pRunas') ? ['polvo'] : ['piedra', 'polvo', 'almas']).map(k => `<span class="mat-hud" data-material="${k}">${MATERIALES[k].split(' ')[0]} ${(jugador.mat[k] || 0).toLocaleString('es')}</span>`).join('') : ''));   // en la herrería, también sus materiales
     if (campListo) pintarCampamento();
   }

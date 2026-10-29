@@ -13,7 +13,12 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### ⚡ Estamina y cristales
+- Tocar la estamina abre las recargas: 3 anuncios al día (+50 cada uno) y una recarga de +150 por 50 💎.
+- Cristales 💎: en los cofres de misiones y la primera vez que completas un capítulo en cada dificultad.
+
 ### 🧪 Modo pruebas
+- 🤖 Bot: jugar solo: al acabarse la estamina ve los anuncios, recarga con cristales y pasa al día siguiente, hasta que lo pares.
 - En la web y en la app: 7 toques en la versión del Campamento lo activan o lo quitan (con su propia partida, aparte de la real).
 
 ### ⚔️ Combate

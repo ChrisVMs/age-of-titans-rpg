@@ -1,9 +1,10 @@
   // ---------------- Utilidades de recompensa y calendario ----------------
-  const ICONO_PREMIO = { oro: '●', xp: 'XP', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡' };
+  const ICONO_PREMIO = { oro: '●', xp: 'XP', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡', esencia: '🌟', cristales: '💎' };
   const textoPremio = pr => Object.entries(pr).filter(([, v]) => v).map(([k, v]) => `${ICONO_PREMIO[k]} ${Math.round(v).toLocaleString('es')}`).join(' · ');
   function darPremio(pr) {
     for (const [k, v] of Object.entries(pr)) {
       if (k === 'oro') jugador.oro += Math.round(v);
+      else if (k === 'cristales') jugador.cristales = (jugador.cristales || 0) + Math.round(v);
       else if (k === 'estamina') jugador.estamina = Math.min(ESTAMINA_MAX * 2, jugador.estamina + v);   // puede pasar del máximo (hasta el doble)
       else jugador.mat[k] = (jugador.mat[k] || 0) + Math.round(v);
     }

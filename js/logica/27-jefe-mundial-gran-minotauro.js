@@ -132,6 +132,8 @@
       }
       if (!jugador.superadas[clave]) {
         jugador.superadas[clave] = true; guardar();
+        const cap = premioCapitulo(batalla.campana.idCampana, batalla.campana.dif);
+        if (cap) extraRes += `<br>📖 Capítulo completo en ${DIFICULTADES[batalla.campana.dif]}: ${textoPremio(cap)}`;
         const nx = CAMPANAS[CAMPANAS.findIndex(x => x.id === batalla.campana.idCampana) + 1];
         if (batalla.campana.dif === 'normal' && nx) setTimeout(() => ui.avisar(`${nx.id} desbloqueado`), 600);
         if (sig) setTimeout(() => ui.avisar(`${batalla.campana.idCampana} ${DIFICULTADES[sig]} desbloqueado`), batalla.campana.dif === 'normal' && nx ? 2200 : 600);

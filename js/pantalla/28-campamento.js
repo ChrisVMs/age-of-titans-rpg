@@ -8,7 +8,7 @@
     const pct = jugador.xp / xpParaSubir(jugador.nivel) * 100, c = CLASES[jugador.clase], m = mascotaActual(), a = avisosCampamento();
     $('campAvatar').innerHTML = `<span class="cara">${c.icono}<b>${jugador.nivel}</b></span>
       <span><span class="poder">⚔ ${poder().toLocaleString('es')}</span><span class="xp"><i style="width:${pct}%"></i></span></span>`;
-    $('campRecursos').innerHTML = `<span class="recurso oro">● ${jugador.oro.toLocaleString('es')}</span><span class="recurso estamina">⚡ ${jugador.estamina}/${ESTAMINA_MAX}</span>`;
+    $('campRecursos').innerHTML = `<span class="recurso oro">● ${jugador.oro.toLocaleString('es')}</span><span class="recurso cristales">💎 ${jugador.cristales || 0}</span><span class="recurso estamina">⚡ ${jugador.estamina}/${ESTAMINA_MAX} ＋</span>`;
     $('campNombre').innerHTML = `${etiquetaTitulo(tituloActual())}${jugador.nombre} · ${c.nombre} Nv ${jugador.nivel}`;
     $('campMascota').innerHTML = m ? dibujoMascota(m, .3) : '';
     pintarObjetivos();

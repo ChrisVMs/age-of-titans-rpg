@@ -21,8 +21,8 @@
   // Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana). Una sesión corta ya cobra el
   // primero; el último pide hacer casi todo. Ids 'cofre0'.. en las cobradas (R).
   const BONUS_MISIONES = {
-    diaria:  [{ meta: 2, premio: { oro: 1500 } }, { meta: 4, premio: { almas: 3, estamina: 20 } }, { meta: 6, premio: { almas: 5, estamina: 30, polvo: 5 } }],
-    semanal: [{ meta: 3, premio: { piedra: 60, oro: 8000 } }, { meta: 5, premio: { almas: 30, oro: 15000 } }],
+    diaria:  [{ meta: 2, premio: { oro: 1500 } }, { meta: 4, premio: { almas: 3, estamina: 20 } }, { meta: 6, premio: { almas: 5, estamina: 30, polvo: 5, cristales: 5 } }],
+    semanal: [{ meta: 3, premio: { piedra: 60, oro: 8000, cristales: 10 } }, { meta: 5, premio: { almas: 30, oro: 15000, cristales: 20 } }],
   };
   const misionesHechas = R => Object.keys(R).filter(k => !k.startsWith('cofre') && k !== 'bonus').length;
   // login: ciclo de 7 días; cada semana completa sube las recompensas un 25 % (hasta ×3)

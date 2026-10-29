@@ -19,6 +19,17 @@ fichas contra los bots, con premio por puesto (pedir visto bueno al usuario).
 4. Gremios (necesita servidor real): tecnología de gremio, jefe de gremio. Queda para cuando exista el servidor.
 
 ## Última sesión
+**2026-10-29 · Claude (recargas, cristales y bot)**
+- `js/logica/46-recargas-y-cristales.js`: `ANUNCIOS_DIA` × `ESTAMINA_ANUNCIO`, `RECARGA_CRISTALES` (1 al día),
+  `cobrarAnuncio`, `recargarConCristales`, `premioCapitulo` (cristales la 1.ª vez que se completa una etapa en cada
+  dificultad, `CRISTALES_CAPITULO`). Cristales también en los cofres de misiones. `darPremio` y `textoPremio` los conocen.
+- `js/pantalla/30-recargas.js`: tocar ⚡ (HUD o Campamento) abre las recargas. `ui.verAnuncio` da el anuncio por visto:
+  **la app Android debe cambiarlo por el anuncio real (SDK).**
+- Bot "🤖 Bot: jugar solo": sin nada que jugar → anuncios → cristales → gasta como el simulador y pasa al día siguiente,
+  hasta que se pare (`botRecargarOPasarDia`).
+- Pendiente: el simulador sigue usando `estaminaExtra` fijo; no gasta cristales.
+- Verificación: 7/7 sistemas, 14/14 escenarios, igual con pantalla y sin ella; en navegador, recargas y cambio de día.
+
 **2026-10-29 · Claude (evento semanal)**
 - `js/logica/45-evento-semanal.js`: `TEMAS_SEMANA` (datos: evento de misión que cuenta, fichas por unidad, título
   exclusivo), `TIENDA_EVENTO`, `TOPE_FICHAS_SEMANA`, `temaSemana`, `sumarFichas` (desde `contarMision`), `comprarEvento`.

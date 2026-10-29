@@ -19,6 +19,22 @@ const PRUEBAS = {
     const tope = comprarEvento(it.id) === null, tit = !!comprarEvento('titulo'), otra = comprarEvento('titulo') === null;
     E.semana = 'otra'; const nueva = !!comprarEvento(it.id);
     [tope, tit, otra, jugador.titulos[idTituloTema(temaSemana())] === true, nueva]`,
+  'Recargas: 3 anuncios y 1 de cristales al día': `
+    jugador.estamina = 0; jugador.cristales = 120;
+    const a = [cobrarAnuncio(), cobrarAnuncio(), cobrarAnuncio(), cobrarAnuncio()];
+    const c = [recargarConCristales(), recargarConCristales()];
+    const est = jugador.estamina; revisarRecargas().dia = 'ayer';
+    [a.join() === 'true,true,true,false', c.join() === 'true,false', est === 3 * ESTAMINA_ANUNCIO + RECARGA_CRISTALES.estamina,
+     jugador.cristales === 120 - RECARGA_CRISTALES.coste, anunciosQuedan() === ANUNCIOS_DIA]`,
+  'Recargas: sin cristales no hay recarga': `
+    jugador.cristales = RECARGA_CRISTALES.coste - 1; [recargarConCristales() === false]`,
+  'Cristales: capítulo completo una vez por dificultad': `
+    jugador.superadas ||= {}; const c0 = jugador.cristales, et1 = CAMPANAS.filter(c => c.id.startsWith('1-'));
+    for (const c of et1.slice(0, 9)) jugador.superadas[c.id + ':normal'] = true;
+    const antes = premioCapitulo('1-9', 'normal');
+    jugador.superadas['1-10:normal'] = true;
+    const r = premioCapitulo('1-10', 'normal'), otra = premioCapitulo('1-10', 'normal');
+    [antes === null, r.cristales === CRISTALES_CAPITULO.normal, otra === null, jugador.cristales === c0 + CRISTALES_CAPITULO.normal, premioCapitulo('1-10', 'dificil') === null]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

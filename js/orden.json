@@ -44,6 +44,7 @@
   "js/logica/42-campamento.js",
   "js/logica/44-aura.js",
   "js/logica/45-evento-semanal.js",
+  "js/logica/46-recargas-y-cristales.js",
   "js/logica/99-lista.js",
   "js/pantalla/01-inicio.js",
   "js/pantalla/02-navegacion-entre-pantallas.js",
@@ -73,7 +74,8 @@
   "js/pantalla/26-expediciones.js",
   "js/pantalla/27-ascension.js",
   "js/pantalla/28-campamento.js",
-  "js/pantalla/29-aura.js"
+  "js/pantalla/29-aura.js",
+  "js/pantalla/30-recargas.js"
  ],
  "pruebas": [
   "js/pruebas/1-bot.js",
