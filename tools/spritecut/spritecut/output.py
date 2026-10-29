@@ -29,19 +29,18 @@ def frame_name(prefix, anim, i):
 
 def contact_sheet(result, scale=4, gap=8):
     """Cada frame final ampliado ×scale sobre tablero, con caja (verde) y línea base (roja)."""
-    info, pal = result["info"], result["palette"]
-    W, H = info["canvas"]
-    ax, ay = info["anchor_px"]
+    pal = result["palette"]
     anims = result["animations"]
-    cols = max((len(a["canvases"]) for a in anims), default=1)
-    cw, chh = W * scale, H * scale
     label_h = 14
-    sheet_w = gap + cols * (cw + gap)
-    sheet_h = gap + len(anims) * (chh + gap + label_h)
+    sheet_w = max((gap + len(a["canvases"]) * (a["canvas"][0] * scale + gap) for a in anims), default=200)
+    sheet_h = gap + sum(a["canvas"][1] * scale + gap + label_h for a in anims)
     img = Image.new("RGBA", (max(sheet_w, 200), max(sheet_h, 40)), (40, 40, 48, 255))
     dr = ImageDraw.Draw(img)
-    for r, a in enumerate(anims):
-        y = gap + r * (chh + gap + label_h)
+    y = gap
+    for a in anims:
+        W, H = a["canvas"]
+        ax, ay = a["anchor_px"]
+        cw, chh = W * scale, H * scale
         dr.text((gap, y), f"{a['name']} ({len(a['canvases'])}"
                 + (f"/{a['expected']})" if a["expected"] else ")"), fill=(255, 255, 255, 255))
         y += label_h
@@ -60,6 +59,7 @@ def contact_sheet(result, scale=4, gap=8):
             dr.line([x + ax * scale, y + ay * scale - 4, x + ax * scale, y + ay * scale + 2],
                     fill=(255, 0, 0, 255))
             dr.text((x + 2, y + 2), str(c), fill=(255, 255, 0, 255))
+        y += chh + gap
     return img
 
 
@@ -91,16 +91,20 @@ def detection_overlay(result):
 
 
 def build_atlas(result, prefix):
-    W, H = result["info"]["canvas"]
-    flat = [(a["name"], i, cv) for a in result["animations"] for i, cv in enumerate(a["canvases"])]
-    cols = max(1, int(np.ceil(np.sqrt(len(flat)))))
-    rows = int(np.ceil(len(flat) / cols)) if flat else 1
-    atlas = np.zeros((rows * H, cols * W, 4), np.uint8)
-    rects = {}
-    for k, (name, i, cv) in enumerate(flat):
-        x, y = (k % cols) * W, (k // cols) * H
-        atlas[y:y + H, x:x + W] = to_rgba(cv, result["palette"])
-        rects[frame_name(prefix, name, i)[:-4]] = [x, y, W, H]
+    """Atlas por estanterías: una fila por animación."""
+    anims = result["animations"]
+    W = max((sum(cv.shape[1] for cv in a["canvases"]) for a in anims), default=1)
+    H = sum(a["canvas"][1] for a in anims) or 1
+    atlas = np.zeros((H, W, 4), np.uint8)
+    rects, y = {}, 0
+    for a in anims:
+        x = 0
+        for i, cv in enumerate(a["canvases"]):
+            h, w = cv.shape
+            atlas[y:y + h, x:x + w] = to_rgba(cv, result["palette"])
+            rects[frame_name(prefix, a["name"], i)[:-4]] = [x, y, w, h]
+            x += w
+        y += a["canvas"][1]
     return atlas, rects
 
 
@@ -139,7 +143,8 @@ def write_all(result, out_dir, prefix, atlas=True, debug=True):
             names.append(n)
         files += names
         info["animations"].append({"name": a["name"], "row": a["row"], "frames": len(names),
-                                   "expected": a["expected"], "files": names})
+                                   "expected": a["expected"], "canvas": a["canvas"],
+                                   "anchor_px": a["anchor_px"], "files": names})
     meta = {k: v for k, v in info.items() if k != "options"}
     meta["options"] = info["options"]
     if atlas and files:

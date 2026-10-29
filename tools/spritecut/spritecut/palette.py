@@ -46,3 +46,25 @@ def merge_close(pal, sample, thr):
         w[i] = tot
         pal, w = np.delete(pal, j, 0), np.delete(w, j)
     return np.clip(np.rint(pal), 0, 255).astype(np.uint8)
+
+
+def spill_colors(palette, bg, resid_max=32.0, t_range=(0.2, 0.95)):
+    """Índices de paleta que son mezcla de otro color de la paleta con el fondo."""
+    if bg is None:
+        return np.zeros(len(palette), bool)
+    P = palette.astype(np.float64)
+    b = np.asarray(bg, np.float64)
+    out = np.zeros(len(P), bool)
+    for i, c in enumerate(P):
+        for j, a in enumerate(P):
+            if i == j:
+                continue
+            v = b - a
+            vv = (v * v).sum()
+            if vv < 60 ** 2:
+                continue
+            t = ((c - a) * v).sum() / vv
+            if t_range[0] <= t <= t_range[1] and np.sqrt(((c - (a + t * v)) ** 2).sum()) <= resid_max:
+                out[i] = True
+                break
+    return out

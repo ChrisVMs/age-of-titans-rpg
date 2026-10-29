@@ -27,6 +27,7 @@ def build_parser():
     p.add_argument("--pad", type=int, default=0, help="margen transparente alrededor del canvas")
     p.add_argument("--background", default="", help="forzar color de fondo, ej. #FF00FF")
     p.add_argument("--no-grid", action="store_true", help="ignorar la grilla del JSON")
+    p.add_argument("--no-despill", action="store_true", help="no corregir bordes teñidos de fondo")
     p.add_argument("--name", default="", help="prefijo de archivos (default: 'name' del JSON o nombre del archivo)")
     p.add_argument("--no-atlas", action="store_true")
     p.add_argument("--no-debug", action="store_true", help="no generar hoja de contactos ni overlay")
@@ -41,7 +42,8 @@ def main(argv=None):
         print("no hay imágenes", file=sys.stderr)
         return 2
     opt = Options(a.tolerance, a.halo_tolerance, a.hole_min_area, a.min_area, a.colors, a.pixel_size,
-                  a.max_pixel_size, a.anchor, a.pad, a.background, not a.no_grid)
+                  a.max_pixel_size, a.anchor, a.pad, a.background, not a.no_grid,
+                  not a.no_despill)
     problems = 0
     for f in files:
         prefix = a.name if (a.name and len(files) == 1) else (load_hypothesis(f).get("name") or f.stem)

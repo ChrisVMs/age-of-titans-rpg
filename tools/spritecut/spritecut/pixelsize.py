@@ -73,3 +73,66 @@ def downscale_mode(idx, s):
     np.add.at(counts, (rows[ok], vals[ok]), 1)
     mode = counts.argmax(1).reshape(h, w)
     return np.where(opaque * 2 > s * s, mode, -1)
+
+
+def _edge_profile(rgb, alpha, axis):
+    """Peso de transición en cada borde de píxel a lo largo de axis (coordenada de borde x+1)."""
+    a = rgb.astype(np.int32)
+    if axis == 1:
+        d = np.abs(a[:, 1:] - a[:, :-1]).sum(-1) * (alpha[:, 1:] & alpha[:, :-1])
+        return d.sum(0).astype(np.float64)
+    d = np.abs(a[1:] - a[:-1]).sum(-1) * (alpha[1:] & alpha[:-1])
+    return d.sum(1).astype(np.float64)
+
+
+def _spectrum(prof, pitches):
+    pos = np.arange(1, len(prof) + 1, dtype=np.float64)
+    w = prof - prof.mean()
+    z = np.exp(-2j * np.pi * pos[None, :] / pitches[:, None]) @ w
+    return z, np.abs(z) / max(np.abs(w).sum(), 1e-9)
+
+
+def detect_pitch(rgb, alpha, max_size=32, step=0.005, rel=0.6):
+    """Paso fraccionario de la rejilla (imágenes reescaladas por la IA a tamaño no entero),
+    mismo paso en X e Y. Devuelve {"pitch", "phase": (fx, fy), "strength"}."""
+    pitches = np.arange(1.5, max_size, step)
+    zx, mx = _spectrum(_edge_profile(rgb, alpha, 1), pitches)
+    zy, my = _spectrum(_edge_profile(rgb, alpha, 0), pitches)
+    mag = (mx + my) / 2
+    # el paso más grande con magnitud cercana a la máxima (los armónicos son pasos menores)
+    i = int(np.nonzero(mag >= rel * mag.max())[0][-1])
+    j0, j1 = max(0, i - 40), min(len(mag), i + 40)
+    i = j0 + int(mag[j0:j1].argmax())
+    p = float(pitches[i])
+    fx = float((-np.angle(zx[i]) / (2 * np.pi) * p) % p)
+    fy = float((-np.angle(zy[i]) / (2 * np.pi) * p) % p)
+    return {"pitch": round(p, 3), "phase": (round(fx, 3), round(fy, 3)), "strength": round(float(mag[i]), 3)}
+
+
+def downscale_mode_frac(idx, x0, y0, pitch, phase, core=0.2):
+    """Reduce un recorte (idx con -1 transparente, origen x0,y0 en la hoja) sobre una
+    rejilla de paso fraccionario. Cada celda usa solo su núcleo (descarta core·paso en
+    cada borde, donde la IA difumina) y toma moda; opaca si la mayoría del núcleo lo es."""
+    H, W = idx.shape
+    out = []
+    maps = []
+    for n, org, p, f in ((W, x0, pitch, phase[0]), (H, y0, pitch, phase[1])):
+        c = np.arange(n) + org + 0.5                     # centro del píxel en la hoja
+        cell = np.floor((c - f) / p).astype(int)
+        frac = ((c - f) / p) % 1.0
+        inside = (frac >= core) & (frac <= 1 - core)
+        maps.append((cell - cell.min(), inside))
+    (cx, ix), (cy, iy) = maps
+    w, h = cx.max() + 1, cy.max() + 1
+    use = iy[:, None] & ix[None, :]
+    CY, CX = np.broadcast_to(cy[:, None], idx.shape), np.broadcast_to(cx[None, :], idx.shape)
+    cid = (CY * w + CX)[use]
+    v = idx[use]
+    k = int(max(idx.max(), 0)) + 1
+    total = np.bincount(cid, minlength=h * w)
+    opq = np.bincount(cid[v >= 0], minlength=h * w)
+    counts = np.zeros((h * w, k), np.int32)
+    np.add.at(counts, (cid[v >= 0], v[v >= 0]), 1)
+    mode = counts.argmax(1)
+    res = np.where((opq * 2 > total) & (total > 0), mode, -1)
+    return res.reshape(h, w)

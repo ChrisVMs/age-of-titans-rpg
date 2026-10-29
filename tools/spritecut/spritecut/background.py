@@ -123,3 +123,28 @@ def remove_background(rgb, alpha, bg, tol=30.0, hole_min_area=16, halo_tol=90.0,
         stats["halo_removed"] += int(halo.sum())
         alpha &= ~halo
     return alpha, stats
+
+
+def despill(rgb, alpha, bg, depth=3, resid_max=40.0, t_min=0.15):
+    """Contaminación de fondo en la franja de borde (JPG difumina el magenta 1-3 px hacia
+    dentro). Cada píxel de la franja se compara con el color interior más cercano: si es
+    mezcla interior+fondo, recupera el color interior (o se borra si es más fondo que color).
+    Devuelve (rgb, alpha, n_corregidos, n_borrados)."""
+    if bg is None or not alpha.any():
+        return rgb, alpha, 0, 0
+    interior = ndimage.binary_erosion(alpha, EIGHT, iterations=depth, border_value=0)
+    if not interior.any():
+        return rgb, alpha, 0, 0
+    band = alpha & ~interior
+    _, (iy, ix) = ndimage.distance_transform_edt(~interior, return_indices=True)
+    inner = rgb[iy, ix].astype(np.float64)
+    v = np.asarray(bg, np.float64) - inner
+    vv = (v * v).sum(-1)
+    t = np.clip(((rgb - inner) * v).sum(-1) / np.maximum(vv, 1e-9), 0, 1)
+    resid = np.sqrt(((rgb - (inner + t[..., None] * v)) ** 2).sum(-1))
+    spill = band & (t >= t_min) & (resid <= resid_max) & (vv > 60 ** 2)
+    kill = spill & (t >= 0.5)
+    fix = spill & ~kill
+    rgb = rgb.copy()
+    rgb[fix] = rgb[iy, ix][fix]
+    return rgb, alpha & ~kill, int(fix.sum()), int(kill.sum())

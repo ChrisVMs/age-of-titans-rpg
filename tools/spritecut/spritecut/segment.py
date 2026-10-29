@@ -121,9 +121,11 @@ def by_rows(lab, comps, shape, expected_per_row=None):
     """Sin grilla: agrupa en filas por solape vertical, fusiona piezas que se solapan en X
     dentro de la fila y corta componentes demasiado anchos (frames pegados)."""
     warnings = []
-    items = sorted(comps, key=lambda c: (c["bbox"][1] + c["bbox"][3]) / 2)
+    big = max((c["area"] for c in comps), default=0)
+    major = [c for c in comps if c["area"] >= 0.1 * big]
+    minor = [c for c in comps if c["area"] < 0.1 * big]
     rows = []
-    for c in items:
+    for c in sorted(major, key=lambda c: (c["bbox"][1] + c["bbox"][3]) / 2):
         y0, y1 = c["bbox"][1], c["bbox"][3]
         for r in rows:
             ov = min(y1, r["y1"]) - max(y0, r["y0"])
@@ -133,6 +135,11 @@ def by_rows(lab, comps, shape, expected_per_row=None):
                 break
         else:
             rows.append({"y0": y0, "y1": y1, "items": [c]})
+    # piezas pequeñas (chispas, partículas): a la fila más cercana, sin crear filas
+    for c in minor:
+        cy = (c["bbox"][1] + c["bbox"][3]) / 2
+        if rows:
+            min(rows, key=lambda r: 0 if r["y0"] <= cy <= r["y1"] else min(abs(cy - r["y0"]), abs(cy - r["y1"])))["items"].append(c)
     rows.sort(key=lambda r: r["y0"])
     frames = []
     for ri, r in enumerate(rows):
@@ -140,7 +147,7 @@ def by_rows(lab, comps, shape, expected_per_row=None):
         for c in sorted(r["items"], key=lambda c: c["bbox"][0]):
             m = lab == c["label"]
             x0, x1 = c["bbox"][0], c["bbox"][2]
-            if groups and x0 < groups[-1]["x1"] and c["area"] < groups[-1]["area"]:
+            if groups and ((x0 < groups[-1]["x1"] and c["area"] < groups[-1]["area"]) or c["area"] < 0.1 * big):
                 groups[-1]["mask"] |= m
                 groups[-1]["x1"] = max(groups[-1]["x1"], x1)
                 groups[-1]["area"] += c["area"]

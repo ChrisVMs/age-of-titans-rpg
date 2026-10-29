@@ -139,3 +139,16 @@ def test_palette_limit_no_dither():
     img = px.reshape(50, 100, 3)
     idx = palette.nearest_index(img, pal)
     assert idx.max() < len(pal)
+
+
+def test_cols_and_separate_canvas(tmp_path):
+    p = synth.write_good(tmp_path)
+    hyp = dict(synth.HYP, animations=[{"row": 0, "name": "walk", "frames": 4},
+                                      {"row": 1, "name": "attack", "cols": [0, 1, 2]},
+                                      {"row": 1, "name": "fx", "cols": [3], "separate": True}])
+    (tmp_path / "knight.json").write_text(json.dumps(hyp))
+    res = process(p)
+    by = {a["name"]: a for a in res["animations"]}
+    assert len(by["attack"]["canvases"]) == 3 and len(by["fx"]["canvases"]) == 1
+    assert by["walk"]["canvas"] == by["attack"]["canvas"]
+    assert res["info"]["warnings"] == []

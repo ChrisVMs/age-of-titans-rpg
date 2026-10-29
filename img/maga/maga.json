@@ -1,0 +1,393 @@
+{
+  "source": "maga.jpg",
+  "sheet_size": [
+    1152,
+    928
+  ],
+  "hypothesis": {
+    "name": "maga",
+    "background": "#FF00FF",
+    "grid": {
+      "cols": 5,
+      "rows": 4
+    },
+    "anchor": "feet",
+    "animations": [
+      {
+        "row": 0,
+        "name": "idle",
+        "frames": 5
+      },
+      {
+        "row": 1,
+        "name": "walk",
+        "frames": 5
+      },
+      {
+        "row": 2,
+        "name": "idle2",
+        "frames": 5
+      },
+      {
+        "row": 3,
+        "name": "cast",
+        "cols": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "row": 3,
+        "name": "proyectil",
+        "cols": [
+          4
+        ],
+        "separate": true
+      }
+    ]
+  },
+  "background": {
+    "color": "#FF00FF",
+    "bg_removed": 672805,
+    "holes_removed": 9390,
+    "halo_removed": 36010,
+    "despill_fixed": 17106,
+    "despill_removed": 4550,
+    "edge_spill_removed": 799
+  },
+  "components": 25,
+  "discarded": [
+    {
+      "label": 23,
+      "area": 6,
+      "bbox": [
+        877,
+        744,
+        880,
+        747
+      ]
+    },
+    {
+      "label": 24,
+      "area": 2,
+      "bbox": [
+        861,
+        843,
+        863,
+        844
+      ]
+    },
+    {
+      "label": 26,
+      "area": 2,
+      "bbox": [
+        900,
+        845,
+        901,
+        847
+      ]
+    }
+  ],
+  "segmentation": "grid",
+  "pixel_size": {
+    "detected": 3.625,
+    "expected": null,
+    "used": 3.625,
+    "confidence": 0.289,
+    "phase": [
+      3.267,
+      0.118
+    ]
+  },
+  "frames_detected": 20,
+  "frames_expected": 20,
+  "anchor": "feet",
+  "canvas": [
+    69,
+    61
+  ],
+  "anchor_px": [
+    32,
+    61
+  ],
+  "palette": [
+    "#170B2A",
+    "#230B1B",
+    "#241336",
+    "#3D0544",
+    "#381F2B",
+    "#312148",
+    "#60066A",
+    "#4A313F",
+    "#35365D",
+    "#512B63",
+    "#60444A",
+    "#564865",
+    "#424F7E",
+    "#6F3980",
+    "#785A61",
+    "#6F5893",
+    "#AF34B1",
+    "#4071B5",
+    "#B637DF",
+    "#CB5A38",
+    "#947376",
+    "#896ADD",
+    "#678CD4",
+    "#AE8B89",
+    "#D59A8D",
+    "#F39C41",
+    "#7CBBED",
+    "#C2A3BA",
+    "#90ECFA",
+    "#FBDC64",
+    "#FCF2A3",
+    "#EAEFF5"
+  ],
+  "warnings": [
+    "tamaño de píxel no entero: 3.625 px (hoja reescalada por la IA); se reduce sobre rejilla fraccionaria"
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "row": 0,
+      "frames": 5,
+      "expected": 5,
+      "canvas": [
+        69,
+        61
+      ],
+      "anchor_px": [
+        32,
+        61
+      ],
+      "files": [
+        "maga_idle_00.png",
+        "maga_idle_01.png",
+        "maga_idle_02.png",
+        "maga_idle_03.png",
+        "maga_idle_04.png"
+      ]
+    },
+    {
+      "name": "walk",
+      "row": 1,
+      "frames": 5,
+      "expected": 5,
+      "canvas": [
+        69,
+        61
+      ],
+      "anchor_px": [
+        32,
+        61
+      ],
+      "files": [
+        "maga_walk_00.png",
+        "maga_walk_01.png",
+        "maga_walk_02.png",
+        "maga_walk_03.png",
+        "maga_walk_04.png"
+      ]
+    },
+    {
+      "name": "idle2",
+      "row": 2,
+      "frames": 5,
+      "expected": 5,
+      "canvas": [
+        69,
+        61
+      ],
+      "anchor_px": [
+        32,
+        61
+      ],
+      "files": [
+        "maga_idle2_00.png",
+        "maga_idle2_01.png",
+        "maga_idle2_02.png",
+        "maga_idle2_03.png",
+        "maga_idle2_04.png"
+      ]
+    },
+    {
+      "name": "cast",
+      "row": 3,
+      "frames": 4,
+      "expected": 4,
+      "canvas": [
+        69,
+        61
+      ],
+      "anchor_px": [
+        32,
+        61
+      ],
+      "files": [
+        "maga_cast_00.png",
+        "maga_cast_01.png",
+        "maga_cast_02.png",
+        "maga_cast_03.png"
+      ]
+    },
+    {
+      "name": "proyectil",
+      "row": 3,
+      "frames": 1,
+      "expected": 1,
+      "canvas": [
+        61,
+        46
+      ],
+      "anchor_px": [
+        24,
+        46
+      ],
+      "files": [
+        "maga_proyectil_00.png"
+      ]
+    }
+  ],
+  "options": {
+    "tolerance": 30.0,
+    "halo_tolerance": 90.0,
+    "hole_min_area": 16,
+    "min_area": 8,
+    "colors": 32,
+    "pixel_size": 0,
+    "max_pixel_size": 32,
+    "anchor": "",
+    "pad": 0,
+    "background": "",
+    "use_grid": true,
+    "despill": true
+  },
+  "atlas": {
+    "file": "maga_atlas.png",
+    "frames": {
+      "maga_idle_00": [
+        0,
+        0,
+        69,
+        61
+      ],
+      "maga_idle_01": [
+        69,
+        0,
+        69,
+        61
+      ],
+      "maga_idle_02": [
+        138,
+        0,
+        69,
+        61
+      ],
+      "maga_idle_03": [
+        207,
+        0,
+        69,
+        61
+      ],
+      "maga_idle_04": [
+        276,
+        0,
+        69,
+        61
+      ],
+      "maga_walk_00": [
+        0,
+        61,
+        69,
+        61
+      ],
+      "maga_walk_01": [
+        69,
+        61,
+        69,
+        61
+      ],
+      "maga_walk_02": [
+        138,
+        61,
+        69,
+        61
+      ],
+      "maga_walk_03": [
+        207,
+        61,
+        69,
+        61
+      ],
+      "maga_walk_04": [
+        276,
+        61,
+        69,
+        61
+      ],
+      "maga_idle2_00": [
+        0,
+        122,
+        69,
+        61
+      ],
+      "maga_idle2_01": [
+        69,
+        122,
+        69,
+        61
+      ],
+      "maga_idle2_02": [
+        138,
+        122,
+        69,
+        61
+      ],
+      "maga_idle2_03": [
+        207,
+        122,
+        69,
+        61
+      ],
+      "maga_idle2_04": [
+        276,
+        122,
+        69,
+        61
+      ],
+      "maga_cast_00": [
+        0,
+        183,
+        69,
+        61
+      ],
+      "maga_cast_01": [
+        69,
+        183,
+        69,
+        61
+      ],
+      "maga_cast_02": [
+        138,
+        183,
+        69,
+        61
+      ],
+      "maga_cast_03": [
+        207,
+        183,
+        69,
+        61
+      ],
+      "maga_proyectil_00": [
+        0,
+        244,
+        61,
+        46
+      ]
+    }
+  }
+}

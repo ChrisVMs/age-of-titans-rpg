@@ -33,6 +33,14 @@ Si existe `knight.json` junto a `knight.png` se usa como **hipótesis** (se veri
 }
 ```
 
+Opciones por animación en el JSON: `"cols": [0,1,2]` toma solo esas columnas de la fila y
+`"separate": true` le da canvas propio (proyectiles y efectos, para no inflar el del personaje).
+Ejemplo real: `hojas/maga.json`.
+
+```bash
+python -m spritecut hojas/maga.jpg -o out --colors 32 --min-area 8
+```
+
 ### Salida (`out/knight/`)
 
 | Archivo | Contenido |
@@ -48,9 +56,9 @@ El código de salida es 1 si alguna hoja tuvo avisos: revisar el reporte y las h
 
 ## Pipeline
 
-1. **Fondo** (`background.py`): flood fill desde los bordes con distancia RGB ≤ `--tolerance`. Un segundo pase compara contra un modelo local del fondo (para gradientes y ruido). Quita bolsas de fondo encerradas ≥ `--hole-min-area`. Halos: píxeles de borde que son mezcla fondo+color interior, o a distancia ≤ `--halo-tolerance` del fondo. Alfa siempre binario.
+1. **Fondo** (`background.py`): flood fill desde los bordes con distancia RGB ≤ `--tolerance`. Un segundo pase compara contra un modelo local del fondo (para gradientes y ruido). Quita bolsas de fondo encerradas ≥ `--hole-min-area`. Halos: píxeles de borde que son mezcla fondo+color interior, o a distancia ≤ `--halo-tolerance` del fondo. Despill: en la franja de borde, los píxeles que son mezcla del color interior con el fondo recuperan el color interior (JPG mete magenta 1–3 px hacia dentro); tras reducir, se quitan del contorno los colores que son mezcla de otro color con el fondo (`--no-despill` lo desactiva). Alfa siempre binario.
 2. **Frames** (`segment.py`): componentes 8-conexos; los menores de `--min-area` se descartan. Con grilla, cada componente va a su celda; si ocupa varias (frames pegados) se separa erosionando hasta obtener núcleos y repartiendo cada píxel al más cercano. Sin grilla: filas por solape vertical, columnas por X, y los bloques demasiado anchos se separan igual.
-3. **Tamaño de píxel** (`pixelsize.py`): mide en qué rejilla caen las transiciones de color/alfa; elige el mayor tamaño con puntuación cercana a la máxima (los divisores puntúan igual, los múltiplos no). La fase se recalcula por frame. Reducción por **moda** de cada bloque.
+3. **Tamaño de píxel** (`pixelsize.py`): mide en qué rejilla caen las transiciones de color/alfa; elige el mayor tamaño con puntuación cercana a la máxima (los divisores puntúan igual, los múltiplos no). La fase se recalcula por frame. Reducción por **moda** de cada bloque. Si no hay rejilla entera (Gemini suele reescalar, p. ej. 3,625 px), se mide el paso fraccionario con el espectro de Fourier de las transiciones y se toma la moda del núcleo de cada celda.
 4. **Paleta** (`palette.py`): k-means (k = `--colors`) sobre los píxeles opacos de toda la hoja, fusión de colores casi iguales, asignación al más cercano sin dithering. Se queda solo con los colores usados.
 5. **Alineación** (`align.py`): canvas común para toda la hoja. Anclajes: `bottom-center` (centro de la caja), `feet` (centro de los pies; evita saltos cuando un arma alarga la caja), `center`, `bottom-left`, `top-left`.
 
