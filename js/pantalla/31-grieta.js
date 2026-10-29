@@ -4,7 +4,7 @@
     const bends = G.bend.map(id => BENDICIONES.find(b => b.id === id)).map(b => `<span title="${b.desc}">${b.icono} ${b.nombre}</span>`).join('');
     let cuerpo;
     if (G.ofertas) cuerpo = `<h3>Elige una bendición</h3>` + G.ofertas.map(id => BENDICIONES.find(b => b.id === id)).map(b =>
-      `<button class="bendicion" data-bend="${b.id}"><b>${b.icono} ${b.nombre}</b><small>${b.desc}</small></button>`).join('');
+      `<button class="bendicion-grieta" data-bend="${b.id}"><b>${b.icono} ${b.nombre}</b><small>${b.desc}</small></button>`).join('');
     else if (G.piso >= GRIETA_PISOS && !G.activa) cuerpo = `<h3>🌀 ¡Grieta completada!</h3><small>Vuelve el lunes.</small>`;
     else if (!G.activa && !G.intentos) cuerpo = `<h3>Sin intentos</h3><small>Vuelve el lunes.</small>`;
     else {

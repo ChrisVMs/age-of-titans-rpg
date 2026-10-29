@@ -29,6 +29,7 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Reconstruye 6 edificios: producen oro y materiales aunque no juegues (hasta llenar el almacén) y dan un bono pequeño.
 
 ### ✨ Despertar (desde el nivel 50)
+- Arreglado: con una skin en D5 el guerrero desaparecía en batalla (choque de nombres de estilo con la estela de la espada).
 - Mascotas, reliquias y skins al máximo se despiertan con Esencia: 5 niveles (+10 % del bono cada uno), pasiva en D3 y brillo en D5.
 - La Esencia del barrido y de los calabozos baja: el aura y el despertar duran meses.
 

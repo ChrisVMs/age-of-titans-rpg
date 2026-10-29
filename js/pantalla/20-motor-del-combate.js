@@ -8,5 +8,5 @@
   function prepararMascota() {   // despertar D5: la mascota brilla y el guerrero deja estela con su skin
     const m = mascotaActual(), k = skinActual(); $('acompana').innerHTML = m ? dibujoMascota(m, .5) : '';
     $('acompana').classList.toggle('despierta', !!m && nivelDespertar('mascota', m.id) >= D_VISUAL);
-    marcoGuerrero.classList.toggle('estela', !!k && nivelDespertar('skin', k.id) >= D_VISUAL);
+    marcoGuerrero.classList.toggle('estela-d5', !!k && nivelDespertar('skin', k.id) >= D_VISUAL);
   }
