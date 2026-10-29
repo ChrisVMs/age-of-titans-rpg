@@ -7,6 +7,13 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - `versionName`: la versión del juego.
 - `versionCode`: un número entero que sube en cada entrega a Google Play.
 
+## Sin publicar
+
+### 🔮 Maga
+- La clase Mago pasa a ser **Maga**, con sprite y animaciones propios (antes usaba los del guerrero).
+- Ataca y lanza sus habilidades desde su sitio: prepara el bastón, conjura y suelta una bola de fuego.
+- Frames en `img/maga/`, recortados de `tools/hojas/maga_hd.jpg` con `tools/split_sheet.py`. `tira.png` sigue las 14 poses del guerrero.
+
 ## 0.2.1 — 2026-10-25
 
 ### 📱 Pantalla vertical y horizontal

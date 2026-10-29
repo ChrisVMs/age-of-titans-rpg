@@ -88,6 +88,8 @@
   .unidad.muerto { opacity:0; pointer-events:none; }
   .unidad .acompana { left:-40px; bottom:20px; font-size:40px; }
   .unidad .tag-pos { position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); font-size:11px; color:#fff9; }
+  .bola-maga { width:110px; display:block; margin:-30px 0 0 -40px; }
+  .bola-maga.izq { transform:scaleX(-1); }
   .proyectil { position:absolute; z-index:6; font-size:34px; pointer-events:none; transition:left calc(.3s / var(--vel, 1)) linear, top calc(.3s / var(--vel, 1)) linear; }
   .fx-grupo { position:absolute; z-index:7; pointer-events:none; font:bold 30px monospace; white-space:nowrap; }
   /* pantalla de formación: rombo (retaguardia | arriba/abajo | frente) */
@@ -1644,12 +1646,12 @@ ${nuevos.join(' · ')}`), 1200);
   //   cargaInicial: las habilidades empiezan la batalla cargadas
   // Clases: cada una cambia los atributos base (mod, en %), da un efecto propio (ef) y tiene sus habilidades y su árbol.
   // Se puede cambiar de clase gratis fuera de batalla; los puntos del árbol y la maestría son de cada clase.
-  // Arquero y Mago usan por ahora el sprite del guerrero (sprites propios pendientes).
+  // El Arquero usa por ahora el sprite del guerrero; la Maga tiene el suyo (img/maga/tira.png, mismas 14 poses).
   const CLASES = {
     guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: {}, ef: {} },
     arquero:  { nombre: 'Arquero',  icono: '🏹', desc: 'Daño alto y críticos; menos vida y defensa. Hace sangrar y envenena.',
                 mod: { ataque: 10, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 } },
-    mago:     { nombre: 'Mago',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
+    mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
                 mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 } },
   };
   const ARBOL = {
@@ -2275,6 +2277,7 @@ ${nuevos.join(' · ')}`), 1200);
   // ---------------- Vista del guerrero ----------------
   // El guerrero aparece en la vitrina del inventario y en la batalla: ambos usan las mismas capas
   const vistasGuerrero = [];
+  const TIRA_MAGA = `img/maga/tira.png?v=${VERSION_IMG}`, IMG_BOLA = `img/maga/proyectil.png?v=${VERSION_IMG}`;
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }
   // capas del guerrero en un contenedor (sin registrarlas: las vistas de aliados se pintan con su propio perfil)
   function montarCapas(cont) {
@@ -2301,14 +2304,16 @@ ${nuevos.join(' · ')}`), 1200);
       const m = modelo[objeto(jugador.equipado[r]).modelo];
       capaDe[r].style.backgroundImage = `url(${m.tira || RANURAS[r].tira})`; capaDe[r].style.filter = m.color;
     }
-    const k = skinActual();
+    // la Maga tiene sprite propio: se dibuja como una skin animada (las skins son del guerrero)
+    const maga = jugador.clase === 'mago';
+    const k = maga ? { tira: TIRA_MAGA } : skinActual();
     {
       capaDe._cont.classList.toggle('con-skin', !!k);
       capaDe._cont.classList.toggle('con-skin-anim', !!(k && k.tira));
-      if (k) capaDe._skin.src = k.img;
+      if (k && k.img) capaDe._skin.src = k.img;
       capaDe._skinAnim.style.backgroundImage = k && k.tira ? `url(${k.tira})` : 'none';
       capaDe._skinAnim.style.backgroundSize = '4144px 208px';
-      const brilla = k && estrellasSkin(k.id) >= 5;   // ★5: brillo del color de la skin, como un buff
+      const brilla = k && !maga && estrellasSkin(k.id) >= 5;   // ★5: brillo del color de la skin, como un buff
       capaDe._cont.classList.toggle('brillo-skin', !!brilla);
       capaDe._cont.style.setProperty('--brillo', brilla ? k.color : 'transparent');   // tira de 14 cuadros (sea de 185 o de 370 px), a la escala del guerrero
     }
@@ -3006,18 +3011,18 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
         [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 350, 360],
         [2, 170, , () => marcoGuerrero.classList.remove('carga')], [3, 90, , sonidoEspada], [4, 220, , r => { arco(); r(); }], [5, 120], [6, 200, 0], [7, 150]]) },
   ];
-  // Arquero y Mago: mismas animaciones del guerrero hasta tener sus sprites. aplica: estado que puede dejar el golpe.
+  // Arquero: mismas animaciones del guerrero hasta tener su sprite; la Maga lanza desde su sitio. aplica: estado que puede dejar el golpe.
   const animDe = id => () => HAB_TODAS.find(h => h.id === id).anim();
   HAB_TODAS.push(
     { id: 'disparo', clase: 'arquero', nombre: 'Disparo certero', icono: '🏹', turnos: 3, mult: 2.2, anim: animDe('estocada') },
     { id: 'lluvia', clase: 'arquero', nombre: 'Lluvia de flechas', icono: '🌧️', turnos: 4, mult: 1.6, anim: animDe('tajo'),
       aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
     { id: 'perforante', clase: 'arquero', nombre: 'Flecha perforante', icono: '🗡️', turnos: 5, mult: 3.2, perfora: true, nodo: 'perforante', anim: animDe('aplastante') },
-    { id: 'bola', clase: 'mago', nombre: 'Bola de fuego', icono: '🔥', turnos: 3, mult: 2, anim: animDe('estocada'),
+    { id: 'bola', clase: 'mago', nombre: 'Bola de fuego', icono: '🔥', turnos: 3, mult: 2, anim: () => lanzarMaga(300),
       aplica: { estado: 'quemadura', prob: .5, turnos: 2, pct: .2 } },
-    { id: 'lanza', clase: 'mago', nombre: 'Lanza de hielo', icono: '❄️', turnos: 4, mult: 1.7, anim: animDe('tajo'),
+    { id: 'lanza', clase: 'mago', nombre: 'Lanza de hielo', icono: '❄️', turnos: 4, mult: 1.7, anim: () => lanzarMaga(150),
       aplica: { estado: 'congelacion', prob: .3, turnos: 1 } },
-    { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', anim: animDe('aplastante'),
+    { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', anim: () => lanzarMaga(450),
       aplica: { estado: 'quemadura', prob: .8, turnos: 3, pct: .3 } },
   );
   // Habilidades de la batalla: las de la clase (las de nodo, si están aprendidas), con las mejoras del árbol
@@ -3067,8 +3072,20 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
     if (b.dataset.prueba || carga[h.id] >= h.turnos) ronda(h);
   });
 
+  // Maga: lanza desde su sitio (prepara el bastón, conjura y suelta la bola de fuego)
+  function bolaMaga(alImpacto) {
+    const p = document.createElement('div'); p.className = 'proyectil';
+    p.innerHTML = `<img src="${IMG_BOLA}" alt="" class="bola-maga">`;
+    p.style.left = (slots[0].offsetLeft + 200) + 'px'; p.style.top = (slots[0].offsetTop + 80) + 'px'; arena.appendChild(p);
+    void p.offsetWidth;
+    p.style.left = (slots[1].offsetLeft + 60) + 'px'; p.style.top = (slots[1].offsetTop + 80) + 'px';
+    setTimeout(() => { p.remove(); alImpacto(); }, 300);
+  }
+  const lanzarMaga = (carga = 0) => guerrero.jugar([
+    [1, 150 + carga, , () => carga && marcoGuerrero.classList.add('carga')], [2, 120, , () => marcoGuerrero.classList.remove('carga')],
+    [3, 110, , sonidoLlamas], [4, 220, , bolaMaga], [5, 200], [6, 130], [7, 120]]);
   const ataques = [
-    () => guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
+    () => jugador.clase === 'mago' ? lanzarMaga() : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
     () => enemigo.cerbero ? ataqueCerbero() : enemigo.asmodeo ? ataqueAsmodeo() : enemigo.minotauro ? ataqueMinotauro() : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
       [1, 220], [2, 260, enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),
@@ -4686,7 +4703,8 @@ Fuente: ${INFO_MATERIALES[mat].fuente}`) : avisar(`Te falta: ${faltaCoste(c)}`);
   }
   async function volver(u) { u.el.style.transform = ''; await wait(220); u.el.style.zIndex = 2 + Math.round(u.y / 50); }
   async function proyectil(u, t, icono) {
-    const p = document.createElement('div'); p.className = 'proyectil'; p.textContent = icono;
+    const p = document.createElement('div'); p.className = 'proyectil';
+    if (u.clase === 'mago') p.innerHTML = `<img src="${IMG_BOLA}" alt="" class="bola-maga${u.lado === 0 ? '' : ' izq'}">`; else p.textContent = icono;
     p.style.left = (u.x + (u.lado === 0 ? 180 : 40)) + 'px'; p.style.top = (u.y + 80) + 'px'; arenaG.appendChild(p);
     void p.offsetWidth;   // fuerza el layout para que la transición arranque (rAF no corre con la pestaña oculta)
     p.style.left = (t.x + 80) + 'px'; p.style.top = (t.y + 80) + 'px'; await wait(300); p.remove();
