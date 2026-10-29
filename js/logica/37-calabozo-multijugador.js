@@ -25,15 +25,17 @@
   // Dificultades: Normal abierta; cada una se desbloquea al superar la anterior en ese calabozo
   jugador.calabozosDif ||= {};
   const difAbierta = (id, d) => d === 'normal' || !!jugador.calabozosDif[`${id}:${ORDEN_DIF[ORDEN_DIF.indexOf(d) - 1]}`];
+  let CALABOZO_ALTO_EXTRA = .5;    // niveles de más para los calabozos 5-8 (let: lo ajusta el simulador)
   const modsCalabozo = c => c.alto ? MOD_DIF_ALTO : MOD_DIF;
-  const premioCalabozo = (id, dif) => { const c = calabozo(id), p = Object.fromEntries(Object.entries(crearDificultad(c.n, dif, [], modsCalabozo(c)).premio).map(([k, v]) => [k, Math.round(v * 1.5)]));
+  const nCalabozo = c => c.n + (c.alto ? CALABOZO_ALTO_EXTRA : 0);
+  const premioCalabozo = (id, dif) => { const c = calabozo(id), p = Object.fromEntries(Object.entries(crearDificultad(nCalabozo(c), dif, [], modsCalabozo(c)).premio).map(([k, v]) => [k, Math.round(v * 1.5)]));
     if (c.alto) p.esencia = Math.round(ESENCIA_CALABOZO[c.alto] * MOD_DIF[dif].premio);
     return p; };
   // Sin estamina: 2 intentos al día
   const INTENTOS_CALABOZO = 2;
   function revisarCalabozo() { const C = jugador.calabozoDia ||= {}; if (C.dia !== hoy()) { C.dia = hoy(); C.entradas = INTENTOS_CALABOZO; } return C; }
   function batallaCalabozo(dif, aliados, posiciones, id, ayuda = false) {   // la batalla del calabozo id (sin gastar el intento)
-    const c = calabozo(id), tipos = [0, 1, 2].map(() => elegir(c.tipos)), d = crearDificultad(c.n, dif, [c.jefe, ...tipos], modsCalabozo(c));
+    const c = calabozo(id), tipos = [0, 1, 2].map(() => elegir(c.tipos)), d = crearDificultad(nCalabozo(c), dif, [c.jefe, ...tipos], modsCalabozo(c));
     for (const e of d.enemigos) { e.vida = Math.round(e.vida * MULT_CALABOZO.vida); e.dano = e.dano.map(x => Math.round(x * MULT_CALABOZO.dano)); }
     return { nombre: `${c.icono} ${c.nombre} · ${DIFICULTADES[dif]}`, calabozo: dif, cal: c.id, ayuda, aliados, posiciones, premio: premioCalabozo(c.id, dif), botin: d.botin, enemigos: d.enemigos };
   }

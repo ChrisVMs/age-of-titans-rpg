@@ -17,7 +17,7 @@
   const PREMIO_JEFE_GRIETA = { 5: { almas: 5, polvo: 5 }, 10: { almas: 10, cristales: 5 }, 15: { almas: 20, cristales: 10, esencia: 10 } };
   // dificultad (n equivalente de la campaña): fija en la semana según lo más difícil que hayas superado en la campaña
   // (nPoderCampana; el nivel no sirve: sube aunque el poder se estanque) y sube con cada piso
-  let GRIETA_ESCALA = { base: -2, porPiso: .35 };
+  let GRIETA_ESCALA = { base: -1, porPiso: .35 };   // con -2, tras los estados de daño fijo, siempre se llegaba al 15; ahora 6-13
   const nEqGrieta = () => Math.max(1, nPoderCampana() + GRIETA_ESCALA.base);
   function revisarGrieta() {
     const G = jugador.grieta ||= {};

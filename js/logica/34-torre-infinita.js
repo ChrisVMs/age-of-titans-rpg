@@ -10,7 +10,7 @@
   const contenidoAlto = () => ETAPAS.some(e => e.id > 1 && etapaDisponible(e));
   // dificultad (n equivalente de la campaña): +1 cada 3,5 pisos; desde TORRE_SUAVE.desde, +1 cada TORRE_SUAVE.pisos (el poder
   // del jugador se estanca y la curva de antes hacía de cada 10 pisos el doble de duros)
-  let TORRE_SUAVE = { desde: 90, pisos: 10 };
+  let TORRE_SUAVE = { desde: 90, pisos: 8 };
   const nEqTorre = n => n <= TORRE_SUAVE.desde ? 1 + (n - 1) / 3.5 : 1 + (TORRE_SUAVE.desde - 1) / 3.5 + (n - TORRE_SUAVE.desde) / TORRE_SUAVE.pisos;
   function pisoTorre(n) {
     const rnd = azarSemilla('torre' + n), nEq = nEqTorre(n), jefe = n % 10 === 0, alta = n > TORRE_ALTA && contenidoAlto();

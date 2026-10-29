@@ -3,7 +3,7 @@
   // vengan: si les ganas vuelven más fuertes (+VENGANZA_PASO, hasta VENGANZA_MAX); si te ganan, se les pasa. Cada día uno
   // te reta (pelea gratis, sin entradas de arena) y compiten contigo en un ranking semanal con premio el lunes.
   // Pelean con el motor de la arena (rival construido con tus estadísticas × su fuerza). Añadir un Eco = una entrada.
-  let ECO_BASE = 1.7;   // vida y daño de los Ecos sobre un rival de arena (objetivo: ganar ~50-65 % de los retos)
+  let ECO_BASE = 1.85;   // con 1,7 se ganaba el ~92 % tras los estados de daño fijo; 6 semillas: casi todas 60-75 % (2026-10-29)   // vida y daño de los Ecos sobre un rival de arena (objetivo: ganar ~50-65 % de los retos)
   const VENGANZA_PASO = .05, VENGANZA_MAX = .15, VICTORIAS_TITULO_ECO = 10;
   const ECOS = [
     { id: 'kael', icono: '🗡️', nombre: 'Kael el Veloz', filtro: 'hue-rotate(180deg) saturate(1.4)',

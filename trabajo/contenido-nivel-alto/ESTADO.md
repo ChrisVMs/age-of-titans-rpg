@@ -25,6 +25,17 @@ calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, 
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-10-29 · Claude (recalibrar tras los estados de daño fijo)**
+- Con los estados nuevos todo quedó fácil: Grieta al 15 casi siempre, Ecos ~92 %, calabozos 5-8 Infierno días 41-59.
+- Ajustes: `ECO_BASE` 1,7 → 1,85 · `GRIETA_ESCALA.base` -2 → -1 · `CALABOZO_ALTO_EXTRA` 0 → 0,5 (nuevo: niveles de más para
+  los calabozos 5-8) · `TORRE_SUAVE.pisos` 10 → 8.
+- Cuidado: están acoplados. Los calabozos 5-8 dan casi todo el equipo del tramo alto; si se endurecen, el jugador queda
+  débil en todo (Grieta, Ecos y hasta el Nv 80). Con +2,5 una semilla se atascaba entera.
+- Medición (6 semillas, 150 días): 4 en objetivo (Grieta 6-13 por semana, Ecos 60-75 %, Pesadilla 5-8 días 52-122,
+  Torre 100 días 34-118, Nv 80 días 122-148); una fuerte (todo fácil, Nv 80 día 98) y una débil (mala suerte desde el
+  principio). La varianza entre partidas es grande: es la suerte del equipo.
+- Verificación: 26/26 sistemas, 14/14 escenarios, igual con pantalla y sin ella.
+
 **2026-10-29 · Claude (estados, curas y mascotas; pedido del usuario)**
 - Estados de los monstruos (`28-efectos-de-estado.js`): daño FIJO = % (tope `TOPE_PCT_ESTADO` 2,5 %) de `vidaEsperada(nEq)`
   (vida medida el día en que se supera ese contenido; `nEq` lo guarda `crearDificultad` con la dificultad). Antes: % de la
