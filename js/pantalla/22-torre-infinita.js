@@ -6,7 +6,7 @@
         <small>${p.enemigos.map(e => e.nombre).join(' · ')}</small>
         ${p.mods.length ? `<div class="mods">${p.mods.map(md => { const desc = (md.torre || md).desc; return `<span title="${desc}">${md.icono} ${md.nombre}: ${desc}</span>`; }).join('')}</div>` : ''}
         <small>Recompensa: ${textoPremio({ oro: p.premio.oro, piedra: p.premio.piedra, polvo: p.premio.polvo })} · ${p.premio.xp} XP</small>
-        <small>Próximo hito (piso ${hito}): ${textoPremio(premioHito(hito))} + objeto</small>
+        <small>Próximo hito (piso ${hito}): ${textoPremio(premioHito(hito))} + ${hitoAncestral(hito) ? 'pieza Ancestral' : 'objeto'}</small>
         <button id="subirTorre">Subir al piso ${n}</button></div>`;
     $('subirTorre').onclick = iniciarTorre;
   }

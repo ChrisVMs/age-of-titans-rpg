@@ -131,6 +131,18 @@ const PRUEBAS = {
     const sets = COLECCIONES.find(c => c.id === 'sets'), conPieza = progresoColeccion(sets)[0];
     desguazar([o]); jugador.objetos = jugador.objetos.filter(x => x !== o);
     [antes === 0, progresoColeccion(v)[0] === 1, conPieza === 1, progresoColeccion(sets)[0] === 1]`,
+  'Torre alta: Esencia en los hitos desde el 100 y Ancestral cada 50': `
+    const sinEs = !premioHito(90).esencia, es100 = premioHito(100).esencia === 10, es120 = premioHito(120).esencia === 14;
+    jugador.torre.mejor = 149; const n0 = jugador.objetos.length, e0 = jugador.mat.esencia; pisoSuperado(150);
+    const o = jugador.objetos.at(-1);
+    jugador.torre.mejor = 159; pisoSuperado(160); const o2 = jugador.objetos.at(-1);
+    [sinEs, es100, es120, modelo[o.modelo].rareza === 'ancestral', jugador.mat.esencia - e0 === premioHito(150).esencia + premioHito(160).esencia,
+     modelo[o2.modelo].rareza !== 'ancestral', jugador.objetos.length === n0 + 2]`,
+  'Torre alta: enemigos de las etapas 2-3 desde el 101 (si están disponibles)': `
+    const nombres = n => pisoTorre(n).enemigos.map(e => e.nombre).join();
+    const altos = TIPOS_TORRE_ALTA.map(t => TIPOS_ENEMIGO[t].nombre);
+    [!altos.some(x => nombres(99).includes(x)), altos.some(x => nombres(101).includes(x)) || altos.some(x => nombres(102).includes(x)),
+     pisoTorre(120).enemigos[0].nombre === TIPOS_ENEMIGO.senor.nombre]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

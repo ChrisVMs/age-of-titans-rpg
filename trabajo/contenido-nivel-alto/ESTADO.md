@@ -7,7 +7,9 @@ Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga re
 estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre alta caen mucho antes del nivel 80.
 
 ## Próximo paso
-**Paso 5: Torre, hitos desde el piso 100** (Esencia y Ancestral). Hoy el simulador llega al piso 95-99 hacia el día 150.
+**Paso 6: calibración global.** El Nv 80 llega hacia los días 35-52 con 300 de estamina (objetivo ~110-125): bajar la XP
+(`XP_BARRIDO`, `CURVA_XP`) o la estamina de los anuncios, sin romper los tiempos de etapas, calabozos, Grieta y Torre
+(ver **Mediciones** de cada paso). Medir con `node pruebas/progresion.js` (3 semillas, 150 días).
 
 ## Plan
 1. ✅ Aura: 10 niveles, +2 % a todo por nivel, con Esencia y oro; se ve bajo el personaje (tenue → late desde el 5 →
@@ -16,7 +18,7 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
 3. ✅ Etapa 2 «Las ruinas del reino caído» (esqueletos, caballeros espectrales, gárgolas; jefe: Rey Liche) y Etapa 3
    «El Abismo» (diablillos, demonios de fuego, súcubos; jefe: Señor del Abismo). 10 niveles cada una.
 4. ✅ Calabozos 5-8.
-5. Torre: hitos desde el piso 100 (Esencia y Ancestral).
+5. ✅ Torre: hitos desde el piso 100 (Esencia y Ancestral).
 6. Calibrar todo con `node pruebas/progresion.js`: Etapa 2 para los días ~15-45 (poder 35-50 k), Etapa 3 para ~45-110;
    el aura y lo Ancestral deben seguir subiendo el poder hasta el nivel 80. Repartir la Esencia en consecuencia.
    Que maximizar todo lleve meses (hoy ~día 24): estrellas o "despertar" por sistema con coste empinado (ver `retencion`).
@@ -24,6 +26,16 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-10-29 · Claude (Torre alta)**
+- `js/logica/34-torre-infinita.js`: desde `TORRE_ALTA` (100) los hitos dan Esencia (10 + 1 cada 5 pisos) y cada 50 pisos
+  una pieza Ancestral (`hitoAncestral`); desde el 101, enemigos y jefes de las etapas 2-3 (Rey Liche, Señor del Abismo)
+  si están disponibles (`contenidoAlto`), con la vida y el daño de sus equivalentes de la Torre (traían los de la campaña).
+- El piso 100 era un muro (Bruja con 2 modificadores; el simulador se quedaba en el 99 desde el día ~15 hasta el 150):
+  jefes desde el 100 con 1 modificador y curva más suave desde el 90 (`TORRE_SUAVE`: +1 n cada 10 pisos, antes cada 3,5).
+- Medición (3 semillas, 150 días): piso 100 los días 17-62; final en el piso 119-137 y subiendo.
+- Pisos 1-90: sin cambios.
+- Verificación: 24/24 sistemas (2 de la Torre alta), 14/14 escenarios, igual con pantalla y sin ella.
+
 **2026-10-29 · Claude (calabozos)**
 - Calabozos 5-8 (Catacumbas del rey, Trono del Liche, Fosa de los demonios, Corazón del Abismo) con los enemigos de las
   etapas 2-3 y `MOD_DIF_ALTO`. Solo en modo pruebas hasta tener arte (`arte: false`). Dan Esencia (`ESENCIA_CALABOZO`)
