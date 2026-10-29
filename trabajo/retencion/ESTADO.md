@@ -1,14 +1,14 @@
 # Retención a largo plazo (meses y años)
 
-**Estado:** en curso · **Rama:** `qa` · **Actualizado:** 2026-10-29
+**Estado:** pausado (espera: servidor real para el Pacto y las Invasiones) · **Rama:** `qa` · **Actualizado:** 2026-10-29
 
 ## Objetivo
 Que el jugador tenga algo que hacer hoy, esta semana y a largo plazo, como Wartune: una rutina diaria corta y gratificante,
 un ciclo semanal con premios exclusivos y una progresión que no se termina en semanas.
 
 ## Próximo paso
-**Paso 9: Códice de colección** (sets completos —bestiario por etapa, títulos por rareza— dan bono permanente y marco).
-Proponer el diseño al usuario antes de hacerlo.
+Lo que queda (Pacto de compañeros e Invasiones) necesita servidor real y notificaciones: preguntar al usuario cuando
+exista. Estirar el tramo final sigue en el paso 6 de `contenido-nivel-alto`.
 
 ## Plan
 Referencia Wartune (mismas intenciones, mecánicas propias). Orden acordado: Grieta → Despertar → Campamento → Ecos → Pacto e
@@ -22,13 +22,24 @@ invasiones cuando haya servidor.
 6. ✅ **Despertar**: al máximo, mascota/runa/reliquia se "despierta" (efecto visual + pasiva única) con Esencia.
 7. ✅ **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
 8. ✅ **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
-9. **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
+9. ✅ **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
 10. **Pacto de compañeros** (gremio sin servidor: 3 héroes, tecnologías comunes, jefe semanal). Cuando haya servidor.
 11. **Invasiones** del campamento a horas fijas (oleada con los bots; 30 min). Necesita notificaciones en móvil.
 
 No copiar de Wartune: VIP agresivo / pago para ganar, decenas de monedas, pantallas llenas de puntos rojos.
 
 ## Última sesión
+**2026-10-29 · Claude (Códice)**
+- Ampliada la Colección (`js/logica/14-coleccion.js`), no un sistema aparte: 5 colecciones nuevas (Títulos, Piezas de
+  set, Bestiario Etapa 2 y 3, Cazador veterano: 100 derrotas por enemigo), `HITOS_COLECCION` (25/50/75/100 %: 💎 y 🎟️,
+  una vez; `reclamarHito`, `hitosPendientes`), `MARCOS` de perfil (al 100 %; `marcoActual`, `ponerMarco`), título
+  Exterminador. Las piezas de set se anotan al desguazar (`anotarPiezas`). Las colecciones vacías (etapas sin publicar)
+  no se muestran ni cuentan.
+- Pantalla: hitos en cada colección, selector de marco; marco en el avatar del Campamento y en tu ficha del Ranking (CSS);
+  punto rojo en Colección con hitos por cobrar. `textoPremio` conoce las fichas (🎟️).
+- Simulador cobra los hitos. Medición: ~20 de 36 hitos el día 30, 22-23 el día 150 (lo demás es muy largo).
+- Verificación: 22/22 sistemas (3 del Códice), 14/14 escenarios, igual con pantalla y sin ella; capturas.
+
 **2026-10-29 · Claude (Ecos)**
 - `js/logica/50-ecos.js`: `ECOS` (datos: curva de fuerza, estilo, frases, título), `ECO_BASE` (1,7), venganza
   (`VENGANZA_PASO`/`VENGANZA_MAX`), reto del día sembrado (`revisarEcos`), `batallaEco` (motor de arena, gratis),

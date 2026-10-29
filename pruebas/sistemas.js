@@ -111,6 +111,26 @@ const PRUEBAS = {
     E.rival.kael.gan = VICTORIAS_TITULO_ECO; revisarTitulos(false);
     [primero, jugador.cristales - cr0 === PREMIO_RANKING_ECOS[0].cristales, revisarEvento().fichas - fi0 === PREMIO_RANKING_ECOS[0].fichas, E.puntos === 0,
      jugador.titulos.eco_kael === true]`,
+  'Códice: hitos de colección una sola vez, con premio': `
+    const c = COLECCIONES.find(x => x.id === 'mascotas'), n = MASCOTAS.length; jugador.mascotas = {};
+    const nada = reclamarHito('mascotas', 25) === null;
+    for (const m of MASCOTAS.slice(0, Math.ceil(n / 2))) jugador.mascotas[m.id] = 1;
+    const cr0 = jugador.cristales, fi0 = revisarEvento().fichas;
+    const h25 = !!reclamarHito('mascotas', 25), h50 = !!reclamarHito('mascotas', 50), otra = reclamarHito('mascotas', 25) === null, h75 = reclamarHito('mascotas', 75) === null;
+    [nada, h25, h50, otra, h75, jugador.cristales - cr0 === 8, revisarEvento().fichas - fi0 === 20,
+     hitosPendientes().every(([id, p]) => id !== 'mascotas' || p > 50)]`,
+  'Códice: marco al completar y solo si está ganado': `
+    jugador.mascotas = {}; for (const m of MASCOTAS) jugador.mascotas[m.id] = 1;
+    const sinGanar = ponerMarco('zarpa') === false && ponerMarco('mascotas') === false;
+    for (const p of [25, 50, 75, 100]) reclamarHito('mascotas', p);
+    [sinGanar, ponerMarco('mascotas'), marcoActual() === 'mascotas', ponerMarco('skins') === false, ponerMarco(null) && marcoActual() === null]`,
+  'Códice: cazador veterano a las 100 y piezas de set aunque se desguacen': `
+    const n = enemigosColeccion()[0]; jugador.bestiario = { [n]: 99 };
+    const v = COLECCIONES.find(c => c.id === 'veterano'), antes = progresoColeccion(v)[0]; jugador.bestiario[n] = 100;
+    const m = MODELOS.find(x => x.jefe), o = crearObjeto(m.id); jugador.objetos.push(o);
+    const sets = COLECCIONES.find(c => c.id === 'sets'), conPieza = progresoColeccion(sets)[0];
+    desguazar([o]); jugador.objetos = jugador.objetos.filter(x => x !== o);
+    [antes === 0, progresoColeccion(v)[0] === 1, conPieza === 1, progresoColeccion(sets)[0] === 1]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

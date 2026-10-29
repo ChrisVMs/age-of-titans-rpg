@@ -1,5 +1,5 @@
   // ---------------- Utilidades de recompensa y calendario ----------------
-  const ICONO_PREMIO = { oro: '●', xp: 'XP', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡', esencia: '🌟', cristales: '💎' };
+  const ICONO_PREMIO = { oro: '●', xp: 'XP', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡', esencia: '🌟', cristales: '💎', fichas: '🎟️' };
   const textoPremio = pr => Object.entries(pr).filter(([, v]) => v).map(([k, v]) => `${ICONO_PREMIO[k]} ${Math.round(v).toLocaleString('es')}`).join(' · ');
   function darPremio(pr) {
     for (const [k, v] of Object.entries(pr)) {

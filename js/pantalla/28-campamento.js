@@ -6,6 +6,7 @@
   function pintarCampamento() {
     pintarAura(document.querySelector('.camp-guerrero'), nivelAura());
     const pct = jugador.xp / xpParaSubir(jugador.nivel) * 100, c = CLASES[jugador.clase], m = mascotaActual(), a = avisosCampamento();
+    $('campAvatar').className = 'camp-avatar' + (marcoActual() ? ' marco-' + marcoActual() : '');
     $('campAvatar').innerHTML = `<span class="cara">${c.icono}<b>${jugador.nivel}</b></span>
       <span><span class="poder">⚔ ${poder().toLocaleString('es')}</span><span class="xp"><i style="width:${pct}%"></i></span></span>`;
     $('campRecursos').innerHTML = `<span class="recurso oro">● ${jugador.oro.toLocaleString('es')}</span><span class="recurso cristales">💎 ${jugador.cristales || 0}</span><span class="recurso estamina">⚡ ${jugador.estamina}/${ESTAMINA_MAX} ＋</span>`;
@@ -23,6 +24,7 @@
     $('campMisiones').classList.toggle('con-punto', !!a.misiones);
     $('campReyes').classList.toggle('con-punto', a.reyes);
     $('campRanking').classList.toggle('con-punto', retoPendiente());
+    $('campColeccion').classList.toggle('con-punto', hitosPendientes().length > 0);
     $('campRuinas').classList.toggle('con-punto', desbloqueado('pRuinas') && EDIFICIOS.some(e => nivelEdificio(e.id)) && llenadoRuinas() > .5);
     $('campLogin').classList.toggle('con-punto', loginDisponible());
     const ev = eventoHoy(), man = eventoDia((ahoraJuego().getDay() + 1) % 7);

@@ -39,6 +39,7 @@
   const ALMAS_DESGUACE = { comun: 0, rara: 1, epica: 3, legendaria: 8, mitica: 20, ancestral: 50 };
   const almasDe = o => ALMAS_DESGUACE[modelo[o.modelo].rareza] + Math.floor((o.enc || 0) / 3);
   function desguazar(lista) {
+    anotarPiezas();   // Códice: las piezas de set cuentan aunque se desguacen
     let almas = 0, oro = 0;
     for (const o of lista) { const a = almasDe(o); if (a) almas += a; else oro += RAREZAS[modelo[o.modelo].rareza].venta; }
     const ids = new Set(lista.map(o => o.uid));

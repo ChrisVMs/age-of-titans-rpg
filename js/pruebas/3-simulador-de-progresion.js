@@ -87,6 +87,7 @@
   }
   function simCobrar() {   // misiones y bonus hechos
     for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); BONUS_MISIONES[tipo].forEach((_, i) => reclamarMision(tipo, 'cofre' + i)); }
+    for (const [id, p] of hitosPendientes()) reclamarHito(id, p);   // hitos del Códice
     comprarEvento('titulo'); for (const it of [...TIENDA_EVENTO].reverse()) while (comprarEvento(it.id));   // el título primero; luego lo más caro
   }
   // Un jugador gratuito juega días seguidos sin pantalla, con las decisiones del bot: cada día recoge el login y las
@@ -192,7 +193,7 @@
           for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
           dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
             despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),
-            ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0) });
+            ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0), codice: Object.keys((jugador.codice || {}).hitos || {}).length });
         }
         return { hitos, dia, fuentes, final: dia.at(-1) };
       });

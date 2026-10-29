@@ -55,6 +55,15 @@
   .camp-evento:empty { display:none; }
   .mision { display:flex; align-items:center; gap:10px; background:#2e2a38; border-radius:8px; padding:6px 10px; border-left:4px solid #4a4458; }
   .mision.lista-m { border-left-color:#7fe07f; } .mision.hecha { opacity:.5; }
+  /* Códice: hitos de colección y marcos de perfil */
+  .hitos-col { display:flex; gap:6px; margin-top:6px; } .hitos-col button { flex:1; display:flex; flex-direction:column; padding:4px; font-size:12px; }
+  .hitos-col button small { font-size:10px; } .hitos-col .lista-m { border:2px solid #7fe07f; } .hitos-col .hecha { opacity:.5; }
+  .marcos { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0; } .marcos button { padding:4px 8px; font-size:12px; } .marcos .on { background:#ffd84a; }
+  .marco-bestiario { box-shadow:0 0 0 3px #e8e0c8, 0 0 8px #fff8; } .marco-mascotas { box-shadow:0 0 0 3px #7fe07f, 0 0 8px #7fe07f; }
+  .marco-skins { box-shadow:0 0 0 3px #e05cff, 0 0 10px #5cf; } .marco-reliquias { box-shadow:0 0 0 3px #ff4d2e, 0 0 10px #ff8a2e; }
+  .marco-titulos { box-shadow:0 0 0 3px #ffd84a, 0 0 12px #ffb02e; } .marco-sets { box-shadow:0 0 0 3px #b0b0b8, 0 0 10px #ff8a2e; }
+  .marco-etapa2 { box-shadow:0 0 0 3px #8a8f9a, 0 0 10px #5c6a8a; } .marco-etapa3 { box-shadow:0 0 0 3px #a01818, 0 0 12px #ff2e2e; }
+  .marco-veterano { box-shadow:0 0 0 3px #fff, 0 0 0 5px #a01818, 0 0 14px #ff4d6d; }
   .despierto { color:#ffd84a; font-weight:bold; text-shadow:0 0 6px #ffb02e; }
   /* Despertar D5: mascota con brillo, estela del guerrero y marco dorado de la reliquia */
   #acompana.despierta { filter:drop-shadow(0 0 6px #ffd84a) drop-shadow(0 0 12px #ffb02e); animation:brilloD5 1.6s infinite alternate; }
@@ -818,7 +827,7 @@
     .rejilla { grid-template-columns:repeat(auto-fill, minmax(78px, 1fr)); }
     .rejilla .item { min-height:70px; }
     #coleccion { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); align-content:start; }
-    #coleccion > .nota { grid-column:1 / -1; }
+    #coleccion > .nota, #coleccion > .marcos { grid-column:1 / -1; }
     /* árbol: la descripción a la derecha del árbol en vez de debajo */
     /* árbol a la izquierda con toda la altura; maestría, clase, puntos y descripción en la columna derecha */
     .arbol { display:grid; grid-template-columns:1fr 250px; grid-auto-rows:min-content; align-content:start; column-gap:10px; row-gap:6px; }

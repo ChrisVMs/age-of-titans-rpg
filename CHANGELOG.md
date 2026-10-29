@@ -13,6 +13,9 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### 📚 Códice
+- La Colección suma 5 colecciones (títulos, piezas de set, bestiarios de las etapas 2 y 3, cazador veterano), premios al 25/50/75/100 % y marcos de perfil.
+
 ### 🗡️ Ecos (con la Arena)
 - 4 rivales con nombre que crecen contigo y se vengan. Cada día uno te reta (gratis) y compiten contigo en un ranking semanal con premio.
 
