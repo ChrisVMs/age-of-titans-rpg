@@ -9,7 +9,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 |---|---|---|---|
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | en curso | Progresión frenada (Nv 80 en 3,5-4 meses con anuncios); falta contenido de nivel alto para ese tramo | 2026-10-28 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
-| [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | en curso | Paso 6: calibración global (Nv 80 llega pronto) | 2026-10-29 · Claude |
+| [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | en curso | Paso 7: arte (lista hecha; esperar las piezas) | 2026-10-29 · Claude |
 | [Retención a largo plazo](retencion/ESTADO.md) | pausado | Pacto e Invasiones: esperan servidor real | 2026-10-29 · Claude |
 
 ### Estados

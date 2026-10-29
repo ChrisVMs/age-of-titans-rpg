@@ -7,9 +7,8 @@ Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga re
 estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre alta caen mucho antes del nivel 80.
 
 ## Próximo paso
-**Paso 6: calibración global.** El Nv 80 llega hacia los días 35-52 con 300 de estamina (objetivo ~110-125): bajar la XP
-(`XP_BARRIDO`, `CURVA_XP`) o la estamina de los anuncios, sin romper los tiempos de etapas, calabozos, Grieta y Torre
-(ver **Mediciones** de cada paso). Medir con `node pruebas/progresion.js` (3 semillas, 150 días).
+**Paso 7: arte.** La lista está en **Arte pendiente**; cuando llegue cada pieza, quitar `arte: false` de su etapa o
+calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, nada que programar.
 
 ## Plan
 1. ✅ Aura: 10 niveles, +2 % a todo por nivel, con Esencia y oro; se ve bajo el personaje (tenue → late desde el 5 →
@@ -19,13 +18,22 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
    «El Abismo» (diablillos, demonios de fuego, súcubos; jefe: Señor del Abismo). 10 niveles cada una.
 4. ✅ Calabozos 5-8.
 5. ✅ Torre: hitos desde el piso 100 (Esencia y Ancestral).
-6. Calibrar todo con `node pruebas/progresion.js`: Etapa 2 para los días ~15-45 (poder 35-50 k), Etapa 3 para ~45-110;
+6. ✅ Calibrar todo con `node pruebas/progresion.js`: Etapa 2 para los días ~15-45 (poder 35-50 k), Etapa 3 para ~45-110;
    el aura y lo Ancestral deben seguir subiendo el poder hasta el nivel 80. Repartir la Esencia en consecuencia.
    Que maximizar todo lleve meses (hoy ~día 24): estrellas o "despertar" por sistema con coste empinado (ver `retencion`).
 7. Arte: enemigos y jefes nuevos e iconos Ancestral (lista en **Arte pendiente**). Hasta entonces, lo nuevo se juega solo en
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-10-29 · Claude (calibración global)**
+- Causa del Nv 80 temprano: el barrido de las etapas altas (~10 M de XP en 60 días de los 13,5 M necesarios).
+- `XP_BARRIDO` .5 → .2 y `CURVA_XP` 1,07 → 1,091 (barridos: 1,08-1,1 con 3 semillas; muy sensible: 1,092 → 118-134).
+- Medición final (3 semillas, 150 días, 300 de estamina): Nv 80 días 100-125 · Etapa 2 Normal 3-9, Etapa 3 Normal 20-38 ·
+  calabozos 5-8 Normal 4-48 · Torre 100 días 21-119, final 117-139 · Grieta 5-15 por semana · Ecos 43-80 % · despertar
+  y ruinas al máximo hacia los días 90-120 · aura 10 · Códice 22-23 hitos.
+- Varianza: una semilla con poder alto (74 k el día 30) va sobrada en Grieta y Ecos; es la suerte del equipo.
+- Verificación: 24/24 sistemas, 14/14 escenarios, igual con pantalla y sin ella.
+
 **2026-10-29 · Claude (Torre alta)**
 - `js/logica/34-torre-infinita.js`: desde `TORRE_ALTA` (100) los hitos dan Esencia (10 + 1 cada 5 pisos) y cada 50 pisos
   una pieza Ancestral (`hitoAncestral`); desde el 101, enemigos y jefes de las etapas 2-3 (Rey Liche, Señor del Abismo)
@@ -71,7 +79,11 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
   usan las de otra pieza con un filtro turquesa, `METAL.ancestral` y `TELA.ancestral`).
 - Etapas 2-3: esqueleto, caballero, gárgola, diablillo, demonio y súcubo; jefes Campeón, Liche, Verdugo y Señor del Abismo.
 - Calabozos 5-8: fondos/iconos propios (hoy emoji).
-- (se completa en el paso 5)
+- Torre alta: usa los enemigos de las etapas 2-3 (nada nuevo).
+- Opcional (hoy CSS/emoji, ya jugables en el juego publicado): edificios de las Ruinas en la escena del Campamento (ruina →
+  reconstruido), retratos de los 4 Ecos (hoy el guerrero con un filtro de color), marcos de perfil del Códice, brillo D5.
+- Cómo publicar al llegar el arte: quitar `arte: false` en `ETAPAS` (22-campanas) y `CALABOZOS` (37-calabozo); la Torre
+  alta y lo Ancestral se activan solos (`contenidoAlto`).
 
 ## Cómo verificar
 - `node pruebas/equivalencia.js <otra versión>`: mismas batallas que antes (234 casos).

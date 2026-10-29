@@ -13,6 +13,9 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### 📈 Ritmo
+- El nivel 80 vuelve a costar ~3,5-4 meses (el barrido de las etapas altas daba demasiada experiencia).
+
 ### 🗼 Torre alta
 - Desde el piso 100, los hitos dan Esencia y cada 50 pisos una pieza Ancestral. La Torre es más suave desde el piso 90 (el 100 era un muro).
 

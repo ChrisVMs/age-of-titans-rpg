@@ -161,7 +161,8 @@
   // Auto (barrido): en un nivel ya superado en esa dificultad, cobra sus recompensas sin pelear gastando la misma estamina
   // (la experiencia, a la mitad: XP_BARRIDO).
   // Da lo mismo que ganar la batalla: premio, oro/XP y botín de cada enemigo (con eventos y efectos), misiones y maestría.
-  let XP_BARRIDO = .5;   // parte de la XP de la batalla que da el barrido: la mitad, para que pelear valga más que repetir (let: lo ajusta el simulador)
+  let XP_BARRIDO = .2;   // parte de la XP de la batalla que da el barrido (let: lo ajusta el simulador). Con .5, el barrido de las
+  // etapas altas daba ~10 M de XP en 60 días y el Nv 80 llegaba hacia el día 40
   let ESENCIA_BARRIDO = .04;   // y de la Esencia (los decimales se guardan para el siguiente): con la entera se llenaban el aura y el despertar en un mes
   function barrido(c, d) {
     revisarEstamina();
