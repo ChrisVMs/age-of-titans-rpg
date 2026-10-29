@@ -13,6 +13,10 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### 📱 Batalla en vertical
+- En vertical la batalla en grupo va en diagonal (tu grupo abajo, los enemigos arriba) y sale ~1,7 veces más grande; en los duelos los dos luchan más juntos y se ven más grandes.
+- Los botones de huir, velocidad, sonido y auto van en 2×2 y la barra superior ya no se corta.
+
 ### 🔥 Estados y curas
 - Quemaduras, venenos y sangrados de los monstruos hacen daño fijo según el contenido (~2,5 % de la vida esperada): al hacerte más fuerte, duelen menos. Jefes: como mucho el 2,5 % de tu vida.
 - El mismo estado no se acumula en ti ni en los jefes: reinicia su duración.

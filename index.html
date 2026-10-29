@@ -31,6 +31,12 @@
 
   /* HUD: nivel, experiencia y oro */
   .hud { display:flex; align-items:center; gap:10px; font:bold 14px monospace; white-space:nowrap; }
+  /* vertical (móvil): el HUD más compacto para que quepa entero (antes se cortaba la estamina) */
+  @container (orientation:portrait) { .hud { gap:6px; font-size:12px; flex-wrap:wrap; } .hud .xp { width:56px; } .cabecera h2 { font-size:17px; }
+    /* batalla: los 4 botones (huir, velocidad, sonido, auto) en 2×2 en vez de en columna: deja más alto para la escena */
+    .acciones .util { display:grid; grid-template-columns:repeat(2, auto); gap:6px; }
+    /* duelo: los dos más juntos para que la escena (limitada por el ancho) salga más grande */
+    #pBatalla #arena { gap:40px; } #pBatalla #acompana { left:-10px; } }
   .hud .xp { width:70px; height:8px; background:#0008; border:1px solid #000; border-radius:4px; overflow:hidden; }
   .hud .xp i { display:block; height:100%; background:#5cf; }
   .hud .oro { color:#ffd84a; }

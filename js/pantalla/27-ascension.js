@@ -33,10 +33,28 @@
     guardar(); pintarFormacion();
   });   // { heroes: [...], enemigos: [...], ronda: n }
   const arenaG = $('arenaGrupo');
+  // En vertical (pantalla más alta que ancha) la formación va en diagonal: tu grupo abajo a la izquierda y los enemigos
+  // arriba a la derecha. Así la escena llena el móvil (en horizontal salía a ~1/3 de tamaño). Solo cambia dónde se dibuja
+  // cada uno: los ataques se animan con la distancia entre los dos, sirva la posición que sirva.
+  const XY_HEROE_V = { atras: [135, 680], arriba: [20, 565], abajo: [250, 565], frente: [135, 450] };   // +50 arriba: sus barras de vida
+  const XY_ENEMIGO_V = { frente: [275, 280], arriba: [160, 165], abajo: [390, 165], atras: [275, 50] };
+  const ANCHO_GRUPO_V = 686, ALTO_GRUPO_V = 910;
+  const enVertical = () => document.body.clientHeight > document.body.clientWidth;   // el lienzo (puede estar girado)
+  let grupoVertical = null;
+  function colocarGrupo() {   // posición de cada unidad según la orientación (y la vuelve a poner si cambió)
+    if (!batalla.grupo) return;
+    grupoVertical = enVertical();
+    for (const u of [...batalla.grupo.heroes, ...batalla.grupo.enemigos]) {
+      [u.x, u.y] = (grupoVertical ? (u.lado === 0 ? XY_HEROE_V : XY_ENEMIGO_V) : (u.lado === 0 ? XY_HEROE : XY_ENEMIGO))[u.pos];
+      if (u.el) Object.assign(u.el.style, { left: u.x + 'px', top: u.y + 'px', zIndex: 2 + Math.round(u.y / 50) });
+    }
+  }
   function ajustarGrupo() {
-    const esc = document.querySelector('.escena'), e = Math.min(1, (esc.clientWidth - 16) / ANCHO_GRUPO, (esc.clientHeight - 30) / ALTO_GRUPO);
-    Object.assign(arenaG.style, { width: ANCHO_GRUPO + 'px', height: ALTO_GRUPO + 'px', transform: `scale(${e})`,
-      marginLeft: `${-(1 - e) * ANCHO_GRUPO / 2}px`, marginRight: `${-(1 - e) * ANCHO_GRUPO / 2}px`, marginBottom: `${-(1 - e) * ALTO_GRUPO}px` });
+    if (batalla.grupo && grupoVertical !== enVertical()) colocarGrupo();
+    const ancho = grupoVertical ? ANCHO_GRUPO_V : ANCHO_GRUPO, alto = grupoVertical ? ALTO_GRUPO_V : ALTO_GRUPO;
+    const esc = document.querySelector('.escena'), e = Math.min(1, (esc.clientWidth - 16) / ancho, (esc.clientHeight - 30) / alto);
+    Object.assign(arenaG.style, { width: ancho + 'px', height: alto + 'px', transform: `scale(${e})`,
+      marginLeft: `${-(1 - e) * ancho / 2}px`, marginRight: `${-(1 - e) * ancho / 2}px`, marginBottom: `${-(1 - e) * alto}px` });
   }
   function dibujarUnidad(u) {
     const el = document.createElement('div');
@@ -48,7 +66,7 @@
   }
   async function dibujarGrupo(c) {
     arenaG.innerHTML = ''; $('oleada').textContent = c.torre ? `Piso ${c.torre}` : '';
-    const { heroes, enemigos } = batalla.grupo;
+    const { heroes, enemigos } = batalla.grupo; colocarGrupo();
     for (const u of heroes) {
       dibujarUnidad(u);
       if (u.yo) u.el.classList.add('yo');
