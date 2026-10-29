@@ -55,6 +55,12 @@
   .camp-evento:empty { display:none; }
   .mision { display:flex; align-items:center; gap:10px; background:#2e2a38; border-radius:8px; padding:6px 10px; border-left:4px solid #4a4458; }
   .mision.lista-m { border-left-color:#7fe07f; } .mision.hecha { opacity:.5; }
+  .actividad { position:relative; margin:14px 18px 22px; }
+  .actividad .prog { height:8px; background:#000; border-radius:4px; overflow:hidden; } .actividad .prog i { display:block; height:100%; background:#7fe07f; }
+  .cofre-act { position:absolute; top:50%; transform:translate(-50%,-50%); width:34px; height:34px; padding:0; border-radius:50%; font-size:16px; background:#2e2a38; border:2px solid #4a4458; }
+  .cofre-act small { position:absolute; top:34px; left:50%; transform:translateX(-50%); font-size:10px; color:#fffa; }
+  .cofre-act.lista-m { border-color:#7fe07f; animation:latidoCofre 1s infinite alternate; } .cofre-act.hecha { opacity:.5; }
+  @keyframes latidoCofre { to { transform:translate(-50%,-50%) scale(1.12); } }
   .mision .info { flex:1; min-width:0; font-size:13px; } .mision .info small { display:block; color:#bbb; }
   .mision .prog { height:5px; background:#000; border-radius:3px; margin-top:3px; overflow:hidden; } .mision .prog i { display:block; height:100%; background:#7fe07f; }
   .mision button { margin:0; min-height:34px; padding:4px 10px; font-size:12px; }

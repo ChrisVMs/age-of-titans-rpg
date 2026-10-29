@@ -5,15 +5,17 @@
                     login: loginDisponible(), expedicion: expedicionLista() };
     let cuerpo = '';
     if (misTab === 'diaria' || misTab === 'semanal') {
-      const lista = misionesVisibles(misTab), R = M['r' + misTab], b = BONUS_MISIONES[misTab], hechas = Object.keys(R).filter(k => k !== 'bonus').length;
+      const lista = misionesVisibles(misTab), R = M['r' + misTab], cofres = BONUS_MISIONES[misTab], hechas = misionesHechas(R), tope = cofres.at(-1).meta;
       cuerpo = `<small class="nota">${misTab === 'diaria' ? 'Se renuevan cada día.' : 'Se renuevan cada lunes.'}</small>` + lista.map(m => {
         const v = Math.min(m.meta, M[misTab][m.ev] || 0), lista_ = v >= m.meta, rec = R[m.id];
         return `<div class="mision${rec ? ' hecha' : lista_ ? ' lista-m' : ''}"><div class="info">${m.txt}<small>${textoPremio(m.premio)}</small>
           <div class="prog"><i style="width:${v / m.meta * 100}%"></i></div></div><small>${v}/${m.meta}</small>
           <button data-reclamar="${m.id}" ${lista_ && !rec ? '' : 'disabled'}>${rec ? '✔' : 'Reclamar'}</button></div>`;
-      }).join('') + `<div class="mision${R.bonus ? ' hecha' : hechas >= b.meta ? ' lista-m' : ''}"><div class="info">⭐ Completa ${b.meta} misiones<small>${textoPremio(b.premio)}</small>
-          <div class="prog"><i style="width:${Math.min(1, hechas / b.meta) * 100}%"></i></div></div><small>${Math.min(hechas, b.meta)}/${b.meta}</small>
-          <button data-reclamar="bonus" ${hechas >= b.meta && !R.bonus ? '' : 'disabled'}>${R.bonus ? '✔' : 'Reclamar'}</button></div>`;
+      }).join('');
+      cuerpo = `<div class="actividad"><div class="prog"><i style="width:${Math.min(1, hechas / tope) * 100}%"></i></div>${cofres.map((c, i) => {
+        const rec = R['cofre' + i], listo = hechas >= c.meta;
+        return `<button class="cofre-act${rec ? ' hecha' : listo ? ' lista-m' : ''}" style="left:${c.meta / tope * 100}%" data-reclamar="cofre${i}" ${listo && !rec ? '' : 'disabled'}>${rec ? '✔' : '🎁'}<small>${c.meta}</small></button>`;
+      }).join('')}</div><small class="nota">🎁 ${cofres.map(c => `${c.meta}: ${textoPremio(c.premio)}`).join(' · ')}</small>` + cuerpo;
     } else if (misTab === 'login') {
       const L = jugador.login || { dias: 0 }, hoyIdx = L.dias % 7;
       cuerpo = `<small class="nota">Entra cada día para recoger tu recompensa. Cada semana completa las recompensas suben un 25 % (hasta ×3). Llevas ${L.dias} días.</small>

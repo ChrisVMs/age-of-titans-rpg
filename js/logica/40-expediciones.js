@@ -12,7 +12,8 @@
   // un botón viejo (p. ej. tras cambiar de día) no cobra dos veces.
   function reclamarMision(tipo, id) {
     const M = revisarMisiones(), R = M['r' + tipo], m = MISIONES[tipo].find(x => x.id === id);
-    const hecha = id === 'bonus' ? Object.keys(R).filter(k => k !== 'bonus').length >= BONUS_MISIONES[tipo].meta : m && (M[tipo][m.ev] || 0) >= m.meta;
+    const cofre = id.startsWith('cofre') && BONUS_MISIONES[tipo][+id.slice(5)];
+    const hecha = cofre ? misionesHechas(R) >= cofre.meta : m && (M[tipo][m.ev] || 0) >= m.meta;
     if (R[id] || !hecha) return null;
-    const pr = id === 'bonus' ? BONUS_MISIONES[tipo].premio : m.premio; R[id] = true; darPremio(pr); return pr;
+    const pr = cofre ? cofre.premio : m.premio; R[id] = true; darPremio(pr); return pr;
   }

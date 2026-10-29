@@ -19,6 +19,7 @@ estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre 
 5. Torre: hitos desde el piso 100 (Esencia y Ancestral).
 6. Calibrar todo con `node pruebas/progresion.js`: Etapa 2 para los días ~15-45 (poder 35-50 k), Etapa 3 para ~45-110;
    el aura y lo Ancestral deben seguir subiendo el poder hasta el nivel 80. Repartir la Esencia en consecuencia.
+   Que maximizar todo lleve meses (hoy ~día 24): estrellas o "despertar" por sistema con coste empinado (ver `retencion`).
 7. Arte: enemigos y jefes nuevos e iconos Ancestral (lista en **Arte pendiente**). Hasta entonces, lo nuevo se juega solo en
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 

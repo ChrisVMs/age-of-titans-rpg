@@ -9,6 +9,9 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 
 ## Sin publicar (rama `qa`)
 
+### 🎁 Misiones
+- Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
+
 ### 🧪 Modo pruebas
 - En la web y en la app: 7 toques en la versión del Campamento lo activan o lo quitan (con su propia partida, aparte de la real).
 

@@ -18,7 +18,13 @@
       { id: 's_cofre', txt: 'Abre 20 cofres',               ev: 'cofres',    meta: 20,  premio: { piedra: 60 } },
     ],
   };
-  const BONUS_MISIONES = { diaria: { meta: 5, premio: { almas: 5, estamina: 30 } }, semanal: { meta: 5, premio: { almas: 30, oro: 15000 } } };
+  // Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana). Una sesión corta ya cobra el
+  // primero; el último pide hacer casi todo. Ids 'cofre0'.. en las cobradas (R).
+  const BONUS_MISIONES = {
+    diaria:  [{ meta: 2, premio: { oro: 1500 } }, { meta: 4, premio: { almas: 3, estamina: 20 } }, { meta: 6, premio: { almas: 5, estamina: 30, polvo: 5 } }],
+    semanal: [{ meta: 3, premio: { piedra: 60, oro: 8000 } }, { meta: 5, premio: { almas: 30, oro: 15000 } }],
+  };
+  const misionesHechas = R => Object.keys(R).filter(k => !k.startsWith('cofre') && k !== 'bonus').length;
   // login: ciclo de 7 días; cada semana completa sube las recompensas un 25 % (hasta ×3)
   const LOGIN = [{ oro: 1000 }, { piedra: 20 }, { polvo: 5 }, { estamina: 50 }, { almas: 5 }, { oro: 3000, piedra: 20 }, { almas: 10, polvo: 10 }];
   function revisarMisiones() {
@@ -48,4 +54,4 @@
   const MODO_MISION = { jefe: 'pEvento', arena: 'pArena', arenaVict: 'pArena', torre: 'pTorre', encantar: 'pHerreria' };
   const misionesVisibles = tipo => MISIONES[tipo].filter(m => desbloqueado(MODO_MISION[m.ev]));
   function misionesReclamables(tipo) { const M = revisarMisiones(); return misionesVisibles(tipo).filter(m => (M[tipo][m.ev] || 0) >= m.meta && !M['r' + tipo][m.id]).length; }
-  function bonusDisponible(tipo) { const M = revisarMisiones(); return !M['r' + tipo].bonus && Object.keys(M['r' + tipo]).length >= BONUS_MISIONES[tipo].meta; }
+  function bonusDisponible(tipo) { const R = revisarMisiones()['r' + tipo]; return BONUS_MISIONES[tipo].some((b, i) => !R['cofre' + i] && misionesHechas(R) >= b.meta); }

@@ -75,7 +75,7 @@
     }
   }
   function simCobrar() {   // misiones y bonus hechos
-    for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); reclamarMision(tipo, 'bonus'); }
+    for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); BONUS_MISIONES[tipo].forEach((_, i) => reclamarMision(tipo, 'cofre' + i)); }
   }
   // Un jugador gratuito juega días seguidos sin pantalla, con las decisiones del bot: cada día recoge el login y las
   // expediciones, gasta la estamina, sube la Torre, usa las entradas de arena, jefes, calabozo y Torre de reyes, cobra las
