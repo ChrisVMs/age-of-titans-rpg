@@ -20,7 +20,8 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
 - Que se pueda probar sin navegador (`pruebas/cargar.js`, escenarios, simulador) y con azar sembrado (`rnd`).
 - Contenido como datos (listas de etapas, calabozos, misiones…): añadir uno nuevo = añadir una entrada, no código nuevo.
 - Valores de balance en constantes con nombre, en un solo sitio.
-- Al terminar: `node pruebas/escenarios.js` y `node pruebas/sin-pantalla.js`; si cambia el balance, `node pruebas/progresion.js`.
+- Lo nuevo fuera del combate lleva su prueba en `pruebas/sistemas.js` (una entrada por prueba).
+- Al terminar: `node pruebas/escenarios.js`, `node pruebas/sistemas.js` y `node pruebas/sin-pantalla.js`; si cambia el balance, `node pruebas/progresion.js`.
 
 ## Pruebas en navegador
 - Las pruebas en el navegador las hace el usuario. No abrir el navegador para verificar cambios normales.

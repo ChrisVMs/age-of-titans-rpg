@@ -1,8 +1,8 @@
   // ---------------- Expediciones (pantalla) ----------------
   function pintarMisiones() {
-    const M = revisarMisiones(), tabs = { diaria: 'Diarias', semanal: 'Semanales', expedicion: 'Expedición' };   // el login tiene su propio icono (📅)
+    const M = revisarMisiones(), tabs = { diaria: 'Diarias', semanal: 'Semanales', evSemana: 'Evento', expedicion: 'Expedición' };   // el login tiene su propio icono (📅)
     const punto = { diaria: misionesReclamables('diaria') || bonusDisponible('diaria'), semanal: misionesReclamables('semanal') || bonusDisponible('semanal'),
-                    login: loginDisponible(), expedicion: expedicionLista() };
+                    login: loginDisponible(), evSemana: eventoReclamable(), expedicion: expedicionLista() };
     let cuerpo = '';
     if (misTab === 'diaria' || misTab === 'semanal') {
       const lista = misionesVisibles(misTab), R = M['r' + misTab], cofres = BONUS_MISIONES[misTab], hechas = misionesHechas(R), tope = cofres.at(-1).meta;
@@ -16,6 +16,15 @@
         const rec = R['cofre' + i], listo = hechas >= c.meta;
         return `<button class="cofre-act${rec ? ' hecha' : listo ? ' lista-m' : ''}" style="left:${c.meta / tope * 100}%" data-reclamar="cofre${i}" ${listo && !rec ? '' : 'disabled'}>${rec ? '✔' : '🎁'}<small>${c.meta}</small></button>`;
       }).join('')}</div><small class="nota">🎁 ${cofres.map(c => `${c.meta}: ${textoPremio(c.premio)}`).join(' · ')}</small>` + cuerpo;
+    } else if (misTab === 'evSemana') {
+      const E = revisarEvento(), t = temaSemana(), tieneT = (jugador.titulos || {})[idTituloTema(t)];
+      cuerpo = `<div class="torre-card"><h3>${t.icono} ${t.nombre}</h3>
+          <small>🎟️ ${t.fichas < 1 ? `1 ficha cada ${Math.round(1 / t.fichas)}` : t.fichas} por ${t.unidad} · esta semana ${E.ganadas}/${TOPE_FICHAS_SEMANA}</small>
+          <b>🎟️ ${E.fichas} fichas</b></div>
+        <div class="mision${tieneT ? ' hecha' : ''}"><div class="info">Título «${t.titulo[0]}»<small>${textoBono(t.titulo[1])} · solo esta semana</small></div>
+          <button data-evcomprar="titulo" ${puedeComprarEvento('titulo') ? '' : 'disabled'}>${tieneT ? '✔' : `🎟️ ${PRECIO_TITULO_EVENTO}`}</button></div>` +
+        TIENDA_EVENTO.map(it => `<div class="mision"><div class="info">${textoPremio(it.premio)}<small>${compradosEvento(it.id)}/${it.max} esta semana</small></div>
+          <button data-evcomprar="${it.id}" ${puedeComprarEvento(it.id) ? '' : 'disabled'}>🎟️ ${it.coste}</button></div>`).join('');
     } else if (misTab === 'login') {
       const L = jugador.login || { dias: 0 }, hoyIdx = L.dias % 7;
       cuerpo = `<small class="nota">Entra cada día para recoger tu recompensa. Cada semana completa las recompensas suben un 25 % (hasta ×3). Llevas ${L.dias} días.</small>
@@ -42,6 +51,7 @@
     if (b.dataset.mtab && !desbloqueado(b.dataset.mtab)) return avisoBloqueo(b.dataset.mtab);
     if (b.dataset.mtab) misTab = b.dataset.mtab;
     if (b.dataset.reclamar) { const pr = reclamarMision(misTab, b.dataset.reclamar); if (pr) avisar(textoPremio(pr)); }
+    if (b.dataset.evcomprar) { const r = comprarEvento(b.dataset.evcomprar); if (r) avisar(r.titulo ? `Nuevo título: «${r.titulo}»` : textoPremio(r)); }
     if (b.dataset.expm) expMasc = b.dataset.expm;
     if (b.dataset.exph) expHoras = +b.dataset.exph;
     if (b.id === 'mandarExp' && !jugador.expedicion) { jugador.expedicion = { mascota: expMasc, horas: expHoras, fin: Date.now() + expHoras * 3600000 }; avisar('🧭 ¡En marcha!'); }

@@ -3,7 +3,7 @@
   function avisosCampamento() {
     const masc = MASCOTAS.some(m => { const n = nivelMascota(m); return n > 0 && n < MASCOTA_MAX && jugador.oro >= costeMejora(m, n); });
     const jefe = entradasJefe() > 0 && Object.keys(MUNDIALES).some(id => estadoMundial(id).vida > 0);
-    const mis = misionesReclamables('diaria') || misionesReclamables('semanal') || bonusDisponible('diaria') || bonusDisponible('semanal') || expedicionLista();   // el login avisa en su propio icono
+    const mis = misionesReclamables('diaria') || misionesReclamables('semanal') || bonusDisponible('diaria') || bonusDisponible('semanal') || eventoReclamable() || expedicionLista();   // el login avisa en su propio icono
     const R = revisarReyes();
     return { reyes: R.entradas > 0 && Object.keys(R.vencidas).length < 4, misiones: mis, arena: revisarArena().entradas > 0, arbol: puntosLibres() > 0, titulos: !!jugador.tituloNuevo, mascota: masc, batalla: jugador.estamina >= ESTAMINA_MAX, jefe };
   }

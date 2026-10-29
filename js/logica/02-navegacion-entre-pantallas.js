@@ -5,7 +5,7 @@
     pHerreria: [3, 'Herrería'], pMascota: [5, 'Mascotas'], mascota: [5, 'Mascotas'], pArbol: [8, 'Habilidades'], pTorre: [10, 'Torre'],
     refinar: [12, 'Refinar y pulir'], pArena: [15, 'Arena'], pRunas: [18, 'Runas y reliquias'], expedicion: [18, 'Expediciones'],
     skins: [20, 'Skins'], titulos: [20, 'Títulos'], pColeccion: [20, 'Colección'], pCalabozo: [25, 'Calabozo multijugador'],
-    pEvento: [30, 'Jefes mundiales'], pReyes: [35, 'Torre de reyes'], aura: [40, 'Aura'],
+    pEvento: [30, 'Jefes mundiales'], pReyes: [35, 'Torre de reyes'], aura: [40, 'Aura'], evSemana: [10, 'Evento semanal'],
   };
   const nivelDesbloqueo = id => (DESBLOQUEOS[id] || [0])[0];
   const desbloqueado = id => !DESBLOQUEOS[id] || jugador.nivel >= DESBLOQUEOS[id][0] || (jugador.ascension || 0) > 0;

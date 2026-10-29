@@ -33,7 +33,7 @@
     if (M.semana !== semana()) { M.semana = semana(); M.semanal = {}; M.rsemanal = {}; }
     return M;
   }
-  function contarMision(ev, n = 1) { const M = revisarMisiones(); M.diaria[ev] = (M.diaria[ev] || 0) + n; M.semanal[ev] = (M.semanal[ev] || 0) + n; }
+  function contarMision(ev, n = 1) { const M = revisarMisiones(); M.diaria[ev] = (M.diaria[ev] || 0) + n; M.semanal[ev] = (M.semanal[ev] || 0) + n; sumarFichas(ev, n); }
   // Login de 30 días: un casillero por día (se reclama desde el icono 📅 del Campamento); al completar el 30 vuelve al 1.
   // No hace falta entrar días seguidos: cada día que entras reclamas el siguiente casillero.
   function premioDia(d) {

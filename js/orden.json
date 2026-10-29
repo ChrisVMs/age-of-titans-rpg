@@ -43,6 +43,7 @@
   "js/logica/41-ascension-2.js",
   "js/logica/42-campamento.js",
   "js/logica/44-aura.js",
+  "js/logica/45-evento-semanal.js",
   "js/logica/99-lista.js",
   "js/pantalla/01-inicio.js",
   "js/pantalla/02-navegacion-entre-pantallas.js",
