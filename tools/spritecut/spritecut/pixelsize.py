@@ -99,10 +99,14 @@ def detect_pitch(rgb, alpha, max_size=32, step=0.005, rel=0.6):
     zx, mx = _spectrum(_edge_profile(rgb, alpha, 1), pitches)
     zy, my = _spectrum(_edge_profile(rgb, alpha, 0), pitches)
     mag = (mx + my) / 2
-    # el paso más grande con magnitud cercana a la máxima (los armónicos son pasos menores)
-    i = int(np.nonzero(mag >= rel * mag.max())[0][-1])
+    # Prominencia: pico frente a su entorno (mediana en ±0.75 px de paso). Las formas
+    # grandes del sprite dan energía en pasos largos, pero no un pico estrecho como la rejilla.
+    from scipy.ndimage import median_filter
+    prom = mag / np.maximum(median_filter(mag, size=int(1.5 / step) | 1, mode="nearest"), 1e-9)
+    # el paso más grande con prominencia cercana a la máxima (los armónicos son pasos menores)
+    i = int(np.nonzero(prom >= rel * prom.max())[0][-1])
     j0, j1 = max(0, i - 40), min(len(mag), i + 40)
-    i = j0 + int(mag[j0:j1].argmax())
+    i = j0 + int(prom[j0:j1].argmax())
     p = float(pitches[i])
     fx = float((-np.angle(zx[i]) / (2 * np.pi) * p) % p)
     fy = float((-np.angle(zy[i]) / (2 * np.pi) * p) % p)

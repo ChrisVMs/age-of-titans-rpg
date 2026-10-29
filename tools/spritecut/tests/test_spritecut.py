@@ -152,3 +152,22 @@ def test_cols_and_separate_canvas(tmp_path):
     assert len(by["attack"]["canvases"]) == 3 and len(by["fx"]["canvases"]) == 1
     assert by["walk"]["canvas"] == by["attack"]["canvas"]
     assert res["info"]["warnings"] == []
+
+
+def test_fractional_pitch_and_grid_lines(tmp_path):
+    """Hoja reescalada a 3.625 px por píxel (nearest) con líneas de grilla dibujadas."""
+    sheet, _ = synth.make_sheet()
+    nat = sheet[::synth.S, ::synth.S]
+    h, w = nat.shape[:2]
+    big = np.asarray(Image.fromarray(nat).resize((round(w * 3.625), round(h * 3.625)), Image.NEAREST)).copy()
+    H, W = big.shape[:2]
+    for i in range(1, 4):
+        big[:, int(W * i / 4) - 1:int(W * i / 4) + 2] = (0, 80, 0)
+    big[H // 2 - 1:H // 2 + 2] = (0, 80, 0)
+    Image.fromarray(big).save(tmp_path / "knight.png")
+    (tmp_path / "knight.json").write_text(json.dumps(dict(synth.HYP, expected_pixel_size=None)))
+    info = process(tmp_path / "knight.png")["info"]
+    assert abs(info["pixel_size"]["detected"] - 3.625) < 0.02
+    assert info["frames_detected"] == 8
+    assert len(info["grid_lines"]["x"]) == 3 and len(info["grid_lines"]["y"]) == 1
+    assert not any("pegados" in w for w in info["warnings"])

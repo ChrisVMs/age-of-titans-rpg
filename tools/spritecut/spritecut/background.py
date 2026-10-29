@@ -148,3 +148,65 @@ def despill(rgb, alpha, bg, depth=3, resid_max=40.0, t_min=0.15):
     rgb = rgb.copy()
     rgb[fix] = rgb[iy, ix][fix]
     return rgb, alpha & ~kill, int(fix.sum()), int(kill.sum())
+
+
+def _blend_mask(rgb, c0, c1, resid_max):
+    """Píxeles que están sobre el segmento de color c0→c1 (mezcla de ambos)."""
+    c0, c1 = np.asarray(c0, np.float64), np.asarray(c1, np.float64)
+    v = c1 - c0
+    t = np.clip(((rgb - c0) * v).sum(-1) / max((v * v).sum(), 1e-9), 0, 1)
+    return np.sqrt(((rgb - (c0 + t[..., None] * v)) ** 2).sum(-1)) <= resid_max
+
+
+def remove_grid_lines(rgb, alpha, bg=None, min_cover=0.6, max_width=8, margin=2, resid_max=40.0):
+    """Líneas separadoras dibujadas por la IA: columnas/filas finas, opacas en casi todo
+    su largo y de color uniforme. En la franja (±margin) se quitan los píxeles del color de
+    la línea o mezcla de línea y fondo (el JPG las difumina).
+    Devuelve (alpha, {"x": [centros], "y": [centros]}, píxeles quitados)."""
+    alpha = alpha.copy()
+    found, removed = {"x": [], "y": []}, 0
+    for key in ("x", "y"):
+        cover = alpha.mean(axis=0 if key == "x" else 1)
+        n_len = alpha.shape[1] if key == "y" else alpha.shape[0]
+        lab, n = ndimage.label(cover >= min_cover)
+        for i in range(1, n + 1):
+            idx = np.nonzero(lab == i)[0]
+            if len(idx) > max_width:
+                continue
+            core = idx[cover[idx].argmax()]
+            line = rgb[:, core] if key == "x" else rgb[core]
+            ref = np.median(line[(alpha[:, core] if key == "x" else alpha[core])], axis=0)
+            if (color_dist(line, ref) <= 40).mean() < min_cover:
+                continue                      # no es una línea uniforme (p. ej. un sprite ancho)
+            a, b = max(0, idx[0] - margin), min(len(cover), idx[-1] + 1 + margin)
+            band = (slice(None), slice(a, b)) if key == "x" else (slice(a, b), slice(None))
+            sub_rgb = rgb[band].astype(np.float64)
+            m = color_dist(rgb[band], ref) <= resid_max
+            if bg is not None:
+                m |= _blend_mask(sub_rgb, ref, bg, resid_max)
+            m &= alpha[band]
+            found[key].append(float((idx[0] + idx[-1]) / 2))
+            removed += int(m.sum())
+            sub = alpha[band]
+            sub[m] = False
+            alpha[band] = sub
+    return alpha, found, removed
+
+
+def chroma_despill(rgb, alpha, bg):
+    """Fondo de un solo canal (verde o azul puro): ese canal no puede superar al mayor de
+    los otros dos en el sprite. Quita el tinte del JPG sin tocar cian, amarillo ni grises.
+    No se aplica a fondos de dos canales (magenta), donde dañaría los morados."""
+    if bg is None:
+        return rgb, 0
+    b = np.asarray(bg)
+    hi = np.nonzero(b >= 200)[0]
+    if len(hi) != 1 or (b < 60).sum() != 2:
+        return rgb, 0
+    k = int(hi[0])
+    others = [c for c in range(3) if c != k]
+    lim = rgb[..., others].max(-1)
+    m = alpha & (rgb[..., k] > lim)
+    out = rgb.copy()
+    out[..., k] = np.where(m, lim, rgb[..., k])
+    return out, int(m.sum())

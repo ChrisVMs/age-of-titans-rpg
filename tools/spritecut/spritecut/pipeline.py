@@ -46,13 +46,46 @@ def process(path, opt=Options()):
     warnings += notes
     alpha, bg_stats = background.remove_background(
         rgb, alpha0, bg, opt.tolerance, opt.hole_min_area, opt.halo_tolerance)
+    alpha, lines, nlines = background.remove_grid_lines(rgb, alpha, bg)
+    if lines["x"] or lines["y"]:
+        bg_stats["grid_lines_removed"] = nlines
+        info["grid_lines"] = lines
+        # repetir: el fondo que quedaba encerrado entre líneas y bordes ya es accesible
+        alpha2, st2 = background.remove_background(
+            rgb, alpha, bg, opt.tolerance, opt.hole_min_area, opt.halo_tolerance)
+        alpha = alpha2
+        for k in ("bg_removed", "holes_removed", "halo_removed"):
+            bg_stats[k] += st2[k]
+        g = hyp.get("grid") or {}
+        lc, lr = len(lines["x"]) + 1, len(lines["y"]) + 1
+        # líneas en el borde de la imagen no separan celdas
+        lc -= sum(1 for x in lines["x"] if x < 4 or x > W - 5)
+        lr -= sum(1 for y in lines["y"] if y < 4 or y > H - 5)
+        if g and (int(g.get("cols", lc)) != lc or int(g.get("rows", lr)) != lr):
+            warnings.append(f"líneas de grilla dibujadas: {lc}x{lr} celdas; el JSON dice {g.get('cols')}x{g.get('rows')}")
     if opt.despill:
         rgb, alpha, nfix, nkill = background.despill(rgb, alpha, bg)
-        bg_stats.update(despill_fixed=nfix, despill_removed=nkill)
+        rgb, nchroma = background.chroma_despill(rgb, alpha, bg)
+        bg_stats.update(despill_fixed=nfix, despill_removed=nkill, chroma_despill=nchroma)
     info["background"] = {"color": to_hex(bg) if bg else None, **bg_stats}
 
     # 2. Componentes y frames
     lab, comps, discarded = segment.components(alpha, opt.min_area)
+    if info.get("grid_lines"):
+        # restos del JPG alrededor de las líneas: componentes casi enteros dentro de la franja
+        band = np.zeros_like(alpha)
+        for x in info["grid_lines"]["x"]:
+            band[:, max(0, int(x) - 8):int(x) + 9] = True
+        for y in info["grid_lines"]["y"]:
+            band[max(0, int(y) - 8):int(y) + 9] = True
+        keep = []
+        for c in comps:
+            m = lab == c["label"]
+            if band[m].mean() >= 0.9:
+                discarded.append({**c, "reason": "resto de línea de grilla"})
+            else:
+                keep.append(c)
+        comps = keep
     info["components"] = len(comps)
     info["discarded"] = discarded
     for d in discarded:
