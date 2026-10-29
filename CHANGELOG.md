@@ -13,6 +13,10 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### ✨ Despertar (desde el nivel 50)
+- Mascotas, reliquias y skins al máximo se despiertan con Esencia: 5 niveles (+10 % del bono cada uno), pasiva en D3 y brillo en D5.
+- La Esencia del barrido y de los calabozos baja: el aura y el despertar duran meses.
+
 ### 🌀 La Grieta (desde el nivel 25)
 - 15 pisos que cambian cada semana. La vida no se recupera entre pisos y tras cada victoria eliges 1 de 3 bendiciones. 2 intentos por semana.
 

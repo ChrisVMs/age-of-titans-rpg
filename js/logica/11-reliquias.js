@@ -22,15 +22,18 @@
   }
   const RELIQUIA_MAX = 5, NOMBRE_JEFE = { cerbero: 'Cerbero', asmodeo: 'Asmodeo', minotauro: 'Gran Minotauro' };
   const nivelReliquia = id => (jugador.reliquias || {})[id] || 0;
-  function efectoReliquias(esp) { return reliquiasActivas().reduce((s, r) => s + (r.ef && r.ef[esp] ? r.ef[esp] * nivelReliquia(r.id) / 100 : 0), 0); }
+  function efectoReliquias(esp) { return reliquiasActivas().reduce((s, r) => s + (r.ef && r.ef[esp] ? r.ef[esp] * nivelReliquia(r.id) * multDespertar('reliquia', r.id) / 100 : 0), 0); }
+  // pasiva del despertar: lo que tus reliquias despertadas dan a tus aliados (se calcula con tu partida, no la suya)
+  function efectoReliquiasAliados(esp) { return reliquiasActivas().reduce((s, r) => s + (r.ef && r.ef[esp] && pasivaDespertar('reliquia', r.id) ? r.ef[esp] * nivelReliquia(r.id) * multDespertar('reliquia', r.id) / 100 * PASIVA_RELIQUIA : 0), 0); }
   function golpesEstado() {   // reliquias + nodos del árbol de la clase actual
-    return [...reliquiasActivas().filter(r => r.golpe).map(r => ({ ...r.golpe, prob: r.golpe.prob * nivelReliquia(r.id) / 100 })),
+    return [...reliquiasActivas().filter(r => r.golpe).map(r => ({ ...r.golpe, prob: r.golpe.prob * nivelReliquia(r.id) * multDespertar('reliquia', r.id) / 100 })),
             ...nodosClase().filter(n => n.golpe && rango(n.id)).map(n => ({ ...n.golpe, prob: n.golpe.prob * rango(n.id) / 100 }))];
   }
   function textoReliquia(r, n = Math.max(1, nivelReliquia(r.id))) {
-    if (r.ef) return textoBonos({}, Object.fromEntries(Object.entries(r.ef).map(([a, v]) => [a, v * n])));
+    const k = multDespertar('reliquia', r.id);
+    if (r.ef) return textoBonos({}, Object.fromEntries(Object.entries(r.ef).map(([a, v]) => [a, v * n * k])));
     const g = r.golpe, e = ESTADOS[g.estado];
-    return `${g.prob * n} % de ${e.nombre.toLowerCase()} ${e.icono} al golpear (${g.turnos} turnos, ${g.pct * 100} % de tu ataque por turno)`;
+    return `${Math.round(g.prob * n * k * 10) / 10} % de ${e.nombre.toLowerCase()} ${e.icono} al golpear (${g.turnos} turnos, ${g.pct * 100} % de tu ataque por turno)`;
   }
   // Al terminar un intento contra un jefe mundial: reliquia segura si lo derrotas; si no, probabilidad según el daño
   function botinReliquia(jefe, gano) {

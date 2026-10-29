@@ -111,7 +111,7 @@
   // sube +23 % por nivel; en las siguientes el jugador apenas crece en poder, así que suben más despacio.
   let ESCALA_ETAPA = { 1: { desde: 1, paso: 1 }, 2: { desde: 15, paso: .55 }, 3: { desde: 19, paso: .4 } };
   // Premio propio de las etapas altas: Esencia (aura) y, en el último jefe, equipo Ancestral
-  const ESENCIA_ETAPA = { 2: 4, 3: 8 };   // por batalla ganada en Normal; las demás dificultades, × su premio
+  const ESENCIA_ETAPA = { 2: 2, 3: 3 };   // por batalla ganada en Normal; las demás dificultades, × su premio
   // n = dificultad del nivel (en la Etapa 1, su número: 1-1 = 1 ... 1-10 = 10; las etapas altas usan ESCALA_ETAPA): la base
   // crece ~23 % de vida y de daño por cada punto de n
   // Daño base 3-5: estos enemigos luchan siempre en grupo (todos golpean en la misma ronda), así que pegan la mitad que
@@ -162,6 +162,7 @@
   // (la experiencia, a la mitad: XP_BARRIDO).
   // Da lo mismo que ganar la batalla: premio, oro/XP y botín de cada enemigo (con eventos y efectos), misiones y maestría.
   let XP_BARRIDO = .5;   // parte de la XP de la batalla que da el barrido: la mitad, para que pelear valga más que repetir (let: lo ajusta el simulador)
+  let ESENCIA_BARRIDO = .04;   // y de la Esencia (los decimales se guardan para el siguiente): con la entera se llenaban el aura y el despertar en un mes
   function barrido(c, d) {
     revisarEstamina();
     if (!superada(c.id, d)) return;
@@ -179,7 +180,8 @@
     g.oro = Math.round(g.oro * (1 + efecto('oro')) * (ev.oro || 1)); g.xp = Math.round(g.xp * XP_BARRIDO * (ev.xp || 1) * (1 + efecto('experiencia')));
     g.piedra = Math.round(g.piedra * (ev.mat || 1)); g.polvo = Math.round(g.polvo * (ev.mat || 1));
     jugador.objetos.push(...objetos);
-    ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo, esencia: g.esencia || 0 });
+    const es = (g.esencia || 0) * ESENCIA_BARRIDO + (jugador.restoEsencia || 0); jugador.restoEsencia = es % 1;
+    ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo, esencia: Math.floor(es) });
     ui.avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
     ui.pintarCampanas();
   }

@@ -63,10 +63,10 @@
   let pasoMascota = 0;
   const mascotaActual = () => { const id = jugador.mascota; return id && MASCOTAS.find(m => m.id === id); };
   const nivelMascota = m => (jugador.mascotas || {})[m.id] || 0;
-  function efectoMascota(esp) { const m = mascotaActual(); return m && m.ef && m.ef[esp] ? valorNivel(m.ef[esp], nivelMascota(m)) / 100 : 0; }
+  function efectoMascota(esp) { const m = mascotaActual(); return m && m.ef && m.ef[esp] ? valorNivel(m.ef[esp], nivelMascota(m)) * multDespertar('mascota', m.id) / 100 : 0; }
   // textos de bonos y efectos de una mascota a cierto nivel
-  const bonosMascota = (m, n) => [...Object.entries(m.bono).map(([a, v]) => `+${valorNivel(v, n)}% ${ATRIBUTOS[a]}`),
-    ...Object.entries(m.ef || {}).map(([a, v]) => `+${valorNivel(v, n)}% ${nombreEf(a)}`)];
+  const bonosMascota = (m, n, k = multDespertar('mascota', m.id)) => [...Object.entries(m.bono).map(([a, v]) => `+${Math.round(valorNivel(v, n) * k * 10) / 10}% ${ATRIBUTOS[a]}`),
+    ...Object.entries(m.ef || {}).map(([a, v]) => `+${Math.round(valorNivel(v, n) * k * 10) / 10}% ${nombreEf(a)}`)];
   // Pantalla de mascotas: rejilla de iconos por categoría (todas a la vista) + ficha de la elegida al lado
   let mascSel = null;
   // comprar solo si no la tienes (antes reiniciaba su nivel a 1); mejorar solo si es tuya (sin dueño el coste era 0)

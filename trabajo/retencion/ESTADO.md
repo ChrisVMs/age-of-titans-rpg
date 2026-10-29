@@ -7,8 +7,8 @@ Que el jugador tenga algo que hacer hoy, esta semana y a largo plazo, como Wartu
 un ciclo semanal con premios exclusivos y una progresión que no se termina en semanas.
 
 ## Próximo paso
-**Paso 6: Despertar** (segunda vida de mascotas, runas y reliquias al máximo, con Esencia). Va junto al paso 6 de
-`contenido-nivel-alto` (estirar el tramo final). Proponer al usuario el diseño antes de hacerlo.
+**Paso 7: Ruinas del campamento** (edificios con bono pequeño que producen recursos mientras no juegas, con tope).
+Proponer el diseño al usuario antes de hacerlo.
 
 ## Plan
 Referencia Wartune (mismas intenciones, mecánicas propias). Orden acordado: Grieta → Despertar → Campamento → Ecos → Pacto e
@@ -19,7 +19,7 @@ invasiones cuando haya servidor.
 4. Estirar el tramo final (maximizar en meses, no en ~24 días): ver paso 6 de `contenido-nivel-alto` y el paso 6 aquí.
 5. ✅ **La Grieta**: 15 pisos semanales sembrados, la vida no se recupera, 1 de 3 bendiciones tras cada piso,
    2 intentos por semana, se cobra solo lo nuevo. Dificultad según lo más difícil superado en la campaña.
-6. **Despertar**: al máximo, mascota/runa/reliquia se "despierta" (efecto visual + pasiva única) con Esencia.
+6. ✅ **Despertar**: al máximo, mascota/runa/reliquia se "despierta" (efecto visual + pasiva única) con Esencia.
 7. **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
 8. **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
 9. **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
@@ -29,6 +29,20 @@ invasiones cuando haya servidor.
 No copiar de Wartune: VIP agresivo / pago para ganar, decenas de monedas, pantallas llenas de puntos rojos.
 
 ## Última sesión
+**2026-10-29 · Claude (Despertar)**
+- `js/logica/06b-despertar.js` (carga antes de mascotas/skins/reliquias): `TIPOS_DESPERTAR` (mascota, reliquia, skin),
+  `COSTE_DESPERTAR` (5 niveles, 560 🌟 por objeto), `PCT_DESPERTAR` (+10 % del bono por nivel), pasivas en D3
+  (`PASIVA_MASCOTA` repetir acción, `PASIVA_RELIQUIA` 50 % a aliados, `PASIVA_SKIN` +5 al efecto y +3 al tope), visual en D5.
+  Desbloqueo `despertar` en el nivel 50.
+- Aplicado en `efectoMascota`, `estadisticas` (bono de mascota), `resolverMascota`, `bonoSkinBase`/`valorSkin`, `efecto`
+  (tope), `efectoReliquias`, `golpesEstado`, `efectoReliquiasAliados` (aliados en `unidadJugador`) y los textos.
+- Pantalla `js/pantalla/32-despertar.js`: `botonDespertar` en las fichas de mascota, skin y reliquia al máximo. CSS D5.
+- Esencia (la llenaba en un mes): `ESENCIA_ETAPA` 2/3, `ESENCIA_BARRIDO` .04 con decimales acumulados
+  (`jugador.restoEsencia`), `ESENCIA_CALABOZO` 5/10. El simulador mide la Esencia por fuente.
+- Medición (3 semillas): despertar total D9-D12 el día 30, D20-D23 hacia el día 90-120; el poder sube hasta entonces.
+  El Nv 80 sigue llegando rápido (días 35-52): va al paso 6 de `contenido-nivel-alto`.
+- Verificación: 13/13 sistemas (3 del despertar), 14/14 escenarios, igual con pantalla y sin ella.
+
 **2026-10-29 · Claude (Grieta)**
 - `js/logica/47-grieta.js`: `GRIETA_PISOS`, `GRIETA_INTENTOS`, `BENDICIONES` (datos), `GRIETA_ESCALA`, `pisoGrieta`,
   `batallaGrieta`, `grietaTerminada` (desde `cobrarResultado`), `elegirBendicion`, `bendicionSugerida`. Salir a mitad de un

@@ -55,6 +55,26 @@ const PRUEBAS = {
     jugador.nivel = 40; batallaGrieta(); const G = revisarGrieta(), salio = !G.activa && G.intentos === 1;
     G.semana = 'otra'; revisarGrieta();
     [salio, G.intentos === GRIETA_INTENTOS, G.piso === 0]`,
+  'Despertar: pide el máximo y nivel 50, cobra y sube el bono un 10 % por nivel': `
+    const m = MASCOTAS[0]; jugador.mascotas = { [m.id]: 9 }; jugador.mascota = m.id; jugador.nivel = 50;
+    jugador.oro = 1e6; jugador.mat.esencia = 1000;
+    const sinMax = despertar('mascota', m.id) === false; jugador.mascotas[m.id] = 10; jugador.nivel = 49;
+    const sinNivel = despertar('mascota', m.id) === false; jugador.nivel = 50;
+    const a = Object.keys(m.bono)[0], pct = () => { const k = m.bono[a]; return valorNivel(k, 10) * multDespertar('mascota', m.id); };
+    const p0 = pct(), es0 = jugador.mat.esencia, ok = despertar('mascota', m.id), p1 = pct();
+    [sinMax, sinNivel, ok, Math.abs(p1 / p0 - 1.1) < 1e-9, jugador.mat.esencia === es0 - COSTE_DESPERTAR[0].esencia]`,
+  'Despertar: tope en D5 y pasiva desde D3': `
+    const k = SKINS[0]; jugador.skinsPropias = { [k.id]: 5 }; jugador.skin = k.id; jugador.nivel = 60; jugador.oro = 1e7; jugador.mat.esencia = 1e4;
+    const v0 = valorSkin(k); despertar('skin', k.id); despertar('skin', k.id); const sinPasiva = !pasivaDespertar('skin', k.id);
+    despertar('skin', k.id); const v3 = valorSkin(k), conPasiva = pasivaDespertar('skin', k.id);
+    despertar('skin', k.id); despertar('skin', k.id);
+    [sinPasiva, conPasiva, Math.abs(v3 - (Math.round((k.valor * 1 * 1.3 + PASIVA_SKIN.valor) * 10) / 10)) < 1e-9, v3 > v0,
+     nivelDespertar('skin', k.id) === DESPERTAR_MAX, despertar('skin', k.id) === false]`,
+  'Despertar: las reliquias despertadas dan la mitad a los aliados': `
+    const r = RELIQUIAS.find(x => x.ef); const esp = Object.keys(r.ef)[0];
+    jugador.reliquias = { [r.id]: 5 }; jugador.reliquiasPuestas = [r.id]; jugador.nivel = 60; jugador.oro = 1e7; jugador.mat.esencia = 1e4;
+    const antes = efectoReliquiasAliados(esp); for (let i = 0; i < 3; i++) despertar('reliquia', r.id);
+    [antes === 0, Math.abs(efectoReliquiasAliados(esp) - efectoReliquias(esp) * PASIVA_RELIQUIA) < 1e-9]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

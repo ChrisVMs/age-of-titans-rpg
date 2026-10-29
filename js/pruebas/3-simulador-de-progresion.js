@@ -35,6 +35,12 @@
     if (desbloqueado('aura')) cands.push({   // el aura: Esencia y oro
       valor: () => { const n = nivelAura(), c = costeAura(n); return n >= AURA_MAX || !tieneCoste(c) ? 0 : prueba(() => { jugador.aura = n + 1; }, () => { jugador.aura = n; }) / c.oro; },
       hacer: () => subirAura() });
+    if (desbloqueado('despertar'))   // despertar lo que lleva puesto y ya está al máximo
+      for (const [tipo, id] of [...(mascotaActual() ? [['mascota', mascotaActual().id]] : []), ...(skinActual() ? [['skin', skinActual().id]] : []),
+                                ...reliquiasActivas().map(r => ['reliquia', r.id])]) cands.push({
+        valor: () => { if (!puedeDespertar(tipo, id) || !tieneCoste(costeDespertar(tipo, id))) return 0; const n = nivelDespertar(tipo, id), D = ((jugador.despertar ||= {})[tipo] ||= {});
+          return prueba(() => { D[id] = n + 1; }, () => { D[id] = n; }) / costeDespertar(tipo, id).oro; },
+        hacer: () => despertar(tipo, id) });
     if (desbloqueado('skins')) for (const k of SKINS) cands.push({
       valor: () => { const n = estrellasSkin(k.id), oro = n ? COSTE_ESTRELLA(n) : PRECIO_SKIN, puesta = jugador.skin;
         if (n >= 5 || jugador.oro < oro) return 0;
@@ -96,8 +102,8 @@
           calabozos: {}, calabozosDif: {}, mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } });   // los campos que el juego rellena al cargar
         const hitos = { nivel: {}, campana: {}, torre: {}, jefes: {}, calabozo: {}, reyes: {}, grieta: {} }, dia = [], fuentes = {};
         const xpTotal = () => { let t = jugador.xp; for (let n = 1; n < jugador.nivel; n++) t += xpParaSubir(n); return t; };
-        const medir = (fuente, f) => { const x = xpTotal(), o = jugador.oro, r = f(), F = fuentes[fuente] ||= { xp: 0, oro: 0, veces: 0 };
-          F.xp += xpTotal() - x; F.oro += jugador.oro - o; F.veces++; return r; };   // XP y oro de cada fuente (el oro gastado en mejoras no cuenta: se mide aparte)
+        const medir = (fuente, f) => { const x = xpTotal(), o = jugador.oro, es = jugador.mat.esencia || 0, r = f(), F = fuentes[fuente] ||= { xp: 0, oro: 0, esencia: 0, veces: 0 };
+          F.xp += xpTotal() - x; F.oro += jugador.oro - o; F.esencia += Math.max(0, (jugador.mat.esencia || 0) - es); F.veces++; return r; };   // XP y oro de cada fuente (el oro gastado en mejoras no cuenta: se mide aparte)
         const aliados = () => {   // copias del simulado como aliados (los bots se buscan por nombre)
           const nombres = Array.from({ length: grupo - 1 }, (_, i) => `Aliado ${i + 1}`);
           cacheBots.splice(botsAntes.length, Infinity, ...nombres.map(nombre => Object.assign(structuredClone(jugador), { nombre })));
@@ -156,7 +162,7 @@
             }
             if (!c) {   // farmeo: el barrido que más rinde (XP, oro y Esencia) entre los niveles ya superados
               const rinde = ([y, df]) => { const D = y.dificultades[df], s = k => (D.premio[k] || 0) + D.enemigos.reduce((t, e) => t + (e[k] || 0), 0);
-                return s('xp') * XP_BARRIDO + s('oro') + (D.premio.esencia || 0) * 300; };
+                return s('xp') * XP_BARRIDO + s('oro') + (D.premio.esencia || 0) * ESENCIA_BARRIDO * 300; };
               const x = jugador.estamina >= ESTAMINA_CAMPANA && CAMPANAS.flatMap(y => ORDEN_DIF.map(df => [y, df])).filter(([y, df]) => superada(y.id, df)).sort((a, b) => rinde(b) - rinde(a))[0];
               if (!x) break;
               medir('barrido', () => barrido(...x)); batallas++; continue;
@@ -175,7 +181,8 @@
             }
           }
           for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
-          dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas });
+          dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
+            despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0) });
         }
         return { hitos, dia, fuentes, final: dia.at(-1) };
       });

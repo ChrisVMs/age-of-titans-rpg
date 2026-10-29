@@ -6,6 +6,7 @@
   "js/logica/04-atributos-estrellas-y-rarezas.js",
   "js/logica/05-encantamiento-y-refinamiento.js",
   "js/logica/06-progreso-del-jugador.js",
+  "js/logica/06b-despertar.js",
   "js/logica/07-mascotas.js",
   "js/logica/08-skins.js",
   "js/logica/09-clases-y-arbol-de.js",
@@ -77,7 +78,8 @@
   "js/pantalla/28-campamento.js",
   "js/pantalla/29-aura.js",
   "js/pantalla/30-recargas.js",
-  "js/pantalla/31-grieta.js"
+  "js/pantalla/31-grieta.js",
+  "js/pantalla/32-despertar.js"
  ],
  "pruebas": [
   "js/pruebas/1-bot.js",

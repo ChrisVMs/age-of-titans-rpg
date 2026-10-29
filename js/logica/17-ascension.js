@@ -14,7 +14,7 @@
     // aplican una vez. Multiplicarlos en cadena hacía crecer el endgame de forma exponencial (cada fuente nueva valía más).
     const pct = { ataque: 0, defensa: 0, vida: 0, armadura: 0 }, sumar = f => { for (const [a, v] of Object.entries(f)) if (a in pct) pct[a] += v; };
     const m = mascotaActual();
-    if (m) sumar(Object.fromEntries(Object.entries(m.bono).map(([a, v]) => [a, valorNivel(v, nivelMascota(m))])));
+    if (m) sumar(Object.fromEntries(Object.entries(m.bono).map(([a, v]) => [a, valorNivel(v, nivelMascota(m)) * multDespertar('mascota', m.id)])));
     const k = skinActual();
     if (k) sumar({ [k.base[0]]: bonoSkinBase(k) });
     for (const fuente of [statsArbol(), statsRunas(), statsMaestria(), statsColeccion(), statsAscension(), statsAura()]) sumar(fuente);

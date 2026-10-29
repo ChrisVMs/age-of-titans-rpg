@@ -19,11 +19,11 @@
   const PRECIO_SKIN = 5000, COSTE_ESTRELLA = n => 3000 * n;   // compra (★1) y mejora ★n -> ★n+1
   const estrellasSkin = id => (jugador.skinsPropias || {})[id] || 0;
   const skinActual = () => { const k = SKINS.find(x => x.id === jugador.skin); return k && estrellasSkin(k.id) ? k : null; };
-  const bonoSkinBase = k => k.base[1] * estrellasSkin(k.id);           // % del atributo base
+  const bonoSkinBase = k => Math.round(k.base[1] * estrellasSkin(k.id) * multDespertar('skin', k.id) * 10) / 10;           // % del atributo base
   // efecto especial de la skin equipada (0 si no lo tiene)
   // El efecto especial crece con las estrellas: ★1 60 %, ★2 70 %, ★3 80 %, ★4 90 %, ★5 100 % (y brillo). Bonos pequeños:
   // dan identidad (Infernal daño, Cristalino crítico, Necro-guardián aguante, Áurico economía, Obsidiana jefes) sin ser obligatorias.
-  const valorSkin = (k, n = estrellasSkin(k.id)) => Math.round(k.valor * (.5 + .1 * n) * 10) / 10;
+  const valorSkin = (k, n = estrellasSkin(k.id)) => Math.round((k.valor * (.5 + .1 * n) * multDespertar('skin', k.id) + (pasivaDespertar('skin', k.id) ? PASIVA_SKIN.valor : 0)) * 10) / 10;
   const efectoSkin = esp => { const k = skinActual(); return k && k.esp === esp ? valorSkin(k) / 100 : 0; };
   // Efecto total (fracción): base + skin + árbol + líneas secundarias del equipo, con tope
   // Mientras dura un cálculo de poder, lo que no cambia se calcula una vez (poder() pide unos 15 efectos y cada uno volvía a
@@ -36,7 +36,8 @@
     for (const uid of Object.values(jugador.equipado)) for (const [a, v] of Object.entries(valores(objeto(uid)))) if (a in SECUNDARIOS) t[a] = (t[a] || 0) + v;
     return t;
   }
-  const efecto = esp => Math.min(TOPE_SEC[esp] ?? Infinity, (BASE_SEC[esp] || 0) + efectoSkin(esp) + efectoArbol(esp) + (secEquipo()[esp] || 0) / 100
+  const topeExtraSkin = esp => { const k = skinActual(); return k && k.esp === esp && pasivaDespertar('skin', k.id) ? PASIVA_SKIN.tope : 0; };
+  const efecto = esp => Math.min((TOPE_SEC[esp] ?? Infinity) + topeExtraSkin(esp), (BASE_SEC[esp] || 0) + efectoSkin(esp) + efectoArbol(esp) + (secEquipo()[esp] || 0) / 100
     + efectoReliquias(esp) + efectoRunas(esp) + efectoColeccion(esp) + efectoMaestria(esp) + efectoMascota(esp) + (CLASES[jugador.clase].ef[esp] || 0) + efectoConjuntos(esp));
   const skinsDisponibles = () => SKINS.filter(k => estrellasSkin(k.id) > 0);
   let skinSel = null;   // skin seleccionada en la pestaña (tocar una no la equipa)
@@ -53,7 +54,7 @@
       </div>
       <div class="fila">
         ${puesta ? '<button data-acc="quitar">Desequipar</button>' : '<button data-acc="equipar">EQUIPAR</button>'}
-        ${n < 5 ? `<button data-acc="mejorar" ${jugador.oro < COSTE_ESTRELLA(n) ? 'disabled' : ''}>Mejorar a ★${n + 1} ● ${COSTE_ESTRELLA(n)}</button>` : '<button disabled>★ máx.</button>'}
+        ${n < 5 ? `<button data-acc="mejorar" ${jugador.oro < COSTE_ESTRELLA(n) ? 'disabled' : ''}>Mejorar a ★${n + 1} ● ${COSTE_ESTRELLA(n)}</button>` : botonDespertar('skin', k.id)}
       </div></div>`;
   }
   function mejorarSkin(k) {   // ★n → ★n+1

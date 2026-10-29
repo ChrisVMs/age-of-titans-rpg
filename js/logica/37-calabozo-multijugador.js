@@ -17,7 +17,7 @@
     { id: 7, nombre: 'Fosa de los demonios',  icono: '🔥', n: 21, tipos: ['diablillo', 'demonio', 'sucubo'],    jefe: 'verdugo', alto: 2, arte: false },
     { id: 8, nombre: 'Corazón del Abismo',    icono: '🕳️', n: 22.5, tipos: ['demonio', 'sucubo', 'diablillo'],    jefe: 'senor',   alto: 2, arte: false },
   ].filter(c => c.arte !== false || MODO_PRUEBAS);
-  const ESENCIA_CALABOZO = { 1: 10, 2: 20 };   // por victoria en Normal (× el premio de la dificultad)
+  const ESENCIA_CALABOZO = { 1: 5, 2: 10 };   // por victoria en Normal (× el premio de la dificultad)
   const PROB_ANCESTRAL_CAL = { normal: 0, dificil: 0, pesadilla: .05, infierno: .12 };   // solo los de alto 2
   jugador.calabozos ||= {};
   const calabozo = id => CALABOZOS.find(c => c.id === id) || CALABOZOS[0];

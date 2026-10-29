@@ -16,7 +16,7 @@
     const bonos = bonosMascota(m, nv).map(t => `<li>${t}</li>`).join('');
     const boton = !tiene ? `<button data-masc="${m.id}" data-acc="comprar" ${jugador.oro < m.precio ? 'disabled' : ''}>Comprar ● ${m.precio}</button>`
       : `<div class="fila-cofre">${puesta ? '<button disabled>Acompañando</button>' : `<button data-masc="${m.id}" data-acc="equipar">Llevar</button>`}
-         ${n < MASCOTA_MAX ? `<button data-masc="${m.id}" data-acc="mejorar" ${jugador.oro < costeMejora(m, n) ? 'disabled' : ''}>Mejorar ● ${costeMejora(m, n)}</button>` : '<button disabled>Nivel máx.</button>'}</div>`;
+         ${n < MASCOTA_MAX ? `<button data-masc="${m.id}" data-acc="mejorar" ${jugador.oro < costeMejora(m, n) ? 'disabled' : ''}>Mejorar ● ${costeMejora(m, n)}</button>` : botonDespertar('mascota', m.id)}</div>`;
     $('mascotas').innerHTML = `<div class="masc-rejilla">${rejilla}</div>
       <div class="cofre mascota-card${puesta ? ' puesta' : ''}" style="--cm:${c.color}"><span class="tag-cat">${c.nombre}</span><div class="cara">${dibujoMascota(m, .5)}</div>
         <h3>${m.nombre}${tiene ? ` · Nv ${n}` : ''}</h3><ul>${bonos}<li>${textoAccionMascota(m, nv)}</li></ul>${boton}</div>`;

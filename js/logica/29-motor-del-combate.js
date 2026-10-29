@@ -39,7 +39,7 @@
     const u = crearUnidad(0, m.pos, m.yo ? `${jugador.nombre} Nv ${jugador.nivel}` : `${m.perfil.nombre} Nv ${m.perfil.nivel}`);
     u.heroe = true; u.yo = !!m.yo; u.perfil = m.perfil; u.clase = m.perfil.clase; u.conEfectos = true;
     u.st = u.yo ? batalla.st : conPerfil(m.perfil, estadisticas);
-    u.ef = u.yo ? efecto : k => conPerfil(m.perfil, () => efecto(k));
+    u.ef = u.yo ? efecto : k => conPerfil(m.perfil, () => efecto(k)) + efectoReliquiasAliados(k);   // + reliquias despertadas tuyas
     u.golpes = u.yo ? golpesEstado() : conPerfil(m.perfil, golpesEstado);
     u.s4 = u.yo ? set4 : j => conPerfil(m.perfil, () => set4(j));   // sets de 4 piezas de cada jugador
     if (u.yo) { u.habs = HABILIDADES; u.carga = batalla.carga; }
@@ -303,7 +303,8 @@
   function resolverMascota() {
     const R = reglas(), m = mascotaActual(), yo = heroeYo(); if (!m || !yo || yo.vida <= 0) return;
     if (++batalla.grupo.turnoMascota < m.accion.turnos) return; batalla.grupo.turnoMascota = 0;
-    const pct = valorNivel(m.accion.pct, nivelMascota(m)) / 100;
+    const pct = valorNivel(m.accion.pct, nivelMascota(m)) * multDespertar('mascota', m.id) / 100;
+    if (pasivaDespertar('mascota', m.id) && rnd() < PASIVA_MASCOTA) batalla.grupo.turnoMascota = m.accion.turnos - 1;   // despertada: repite al turno siguiente
     if (m.accion.tipo === 'cura') {
       const t = vivos(batalla.grupo.heroes).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
       curar(t, Math.min(t.vidaMax - t.vida, Math.round(t.vidaMax * pct * (1 + efecto('curacion')))), '🐾 '); emitir('espera', R.esperas.curaMascota); return;
