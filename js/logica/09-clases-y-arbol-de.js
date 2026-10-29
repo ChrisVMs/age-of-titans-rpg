@@ -7,12 +7,12 @@
   //   cargaInicial: las habilidades empiezan la batalla cargadas
   // Clases: cada una cambia los atributos base (mod, en %), da un efecto propio (ef) y tiene sus habilidades y su árbol.
   // Se puede cambiar de clase gratis fuera de batalla; los puntos del árbol y la maestría son de cada clase.
-  // Arquero y Mago usan por ahora el sprite del guerrero (sprites propios pendientes).
+  // El Arquero usa por ahora el sprite del guerrero; la Maga tiene el suyo (img/maga/tira.png, mismas 14 poses).
   const CLASES = {
     guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: {}, ef: {} },
     arquero:  { nombre: 'Arquero',  icono: '🏹', desc: 'Daño alto y críticos; menos vida y defensa. Hace sangrar y envenena.',
                 mod: { ataque: 10, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 } },
-    mago:     { nombre: 'Mago',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
+    mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
                 mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 } },
   };
   const ARBOL = {

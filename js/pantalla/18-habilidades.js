@@ -13,7 +13,23 @@
     aplastante: () => guerrero.jugar([
         [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 350, 360],
         [2, 170, , () => marcoGuerrero.classList.remove('carga')], [3, 90, , sonidoEspada], [4, 220, , r => { arco(); r(); }], [5, 120], [6, 200, 0], [7, 150]]),
+    // Maga: lanza desde su sitio; cuanto más fuerte la habilidad, más tiempo conjura
+    bola: () => lanzarMaga(300),
+    lanza: () => lanzarMaga(150),
+    meteoro: () => lanzarMaga(450),
   };
+  // Maga: prepara el bastón, conjura y suelta la bola de fuego
+  function bolaMaga(alImpacto) {
+    const p = document.createElement('div'); p.className = 'proyectil';
+    p.innerHTML = `<img src="${IMG_BOLA}" alt="" class="bola-maga">`;
+    p.style.left = (slots[0].offsetLeft + 200) + 'px'; p.style.top = (slots[0].offsetTop + 80) + 'px'; arena.appendChild(p);
+    void p.offsetWidth;
+    p.style.left = (slots[1].offsetLeft + 60) + 'px'; p.style.top = (slots[1].offsetTop + 80) + 'px';
+    setTimeout(() => { p.remove(); alImpacto(); }, 300);
+  }
+  const lanzarMaga = (carga = 0) => guerrero.jugar([
+    [1, 150 + carga, , () => carga && marcoGuerrero.classList.add('carga')], [2, 120, , () => marcoGuerrero.classList.remove('carga')],
+    [3, 110, , sonidoLlamas], [4, 220, , bolaMaga], [5, 200], [6, 130], [7, 120]]);
   function estela() {
     const e = document.createElement('div'); e.className = 'estela';
     e.style.left = (slots[0].offsetLeft + 150) + 'px'; e.style.top = (slots[0].offsetTop + 120) + 'px'; e.style.width = '520px';
@@ -50,7 +66,7 @@
   });
 
   const ataques = [
-    () => guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
+    () => jugador.clase === 'mago' ? lanzarMaga() : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
     tipo => batalla.enemigo.cerbero ? ataqueCerbero(tipo) : batalla.enemigo.asmodeo ? ataqueAsmodeo(tipo) : batalla.enemigo.minotauro ? ataqueMinotauro(tipo) : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
       [1, 220], [2, 260, batalla.enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),

@@ -1,4 +1,5 @@
   // ---------------- Vista del guerrero (pantalla) ----------------
+  const TIRA_MAGA = `img/maga/tira.png?v=${VERSION_IMG}`, IMG_BOLA = `img/maga/proyectil.png?v=${VERSION_IMG}`;
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }
   // capas del guerrero en un contenedor (sin registrarlas: las vistas de aliados se pintan con su propio perfil)
   function montarCapas(cont) {
@@ -34,14 +35,16 @@
       const m = modelo[objeto(jugador.equipado[r]).modelo];
       capaDe[r].style.backgroundImage = `url(${m.tira || RANURAS[r].tira})`; capaDe[r].style.filter = m.color;
     }
-    const k = skinActual();
+    // la Maga tiene sprite propio: se dibuja como una skin animada (las skins son del guerrero)
+    const maga = jugador.clase === 'mago';
+    const k = maga ? { tira: TIRA_MAGA } : skinActual();
     {
       capaDe._cont.classList.toggle('con-skin', !!k);
       capaDe._cont.classList.toggle('con-skin-anim', !!(k && k.tira));
-      if (k) capaDe._skin.src = k.img;
+      if (k && k.img) capaDe._skin.src = k.img;
       capaDe._skinAnim.style.backgroundImage = k && k.tira ? `url(${k.tira})` : 'none';
       capaDe._skinAnim.style.backgroundSize = '4144px 208px';
-      const brilla = k && estrellasSkin(k.id) >= 5;   // ★5: brillo del color de la skin, como un buff
+      const brilla = k && !maga && estrellasSkin(k.id) >= 5;   // ★5: brillo del color de la skin, como un buff
       capaDe._cont.classList.toggle('brillo-skin', !!brilla);
       capaDe._cont.style.setProperty('--brillo', brilla ? k.color : 'transparent');   // tira de 14 cuadros (sea de 185 o de 370 px), a la escala del guerrero
     }

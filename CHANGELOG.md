@@ -9,6 +9,11 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 
 ## Sin publicar (rama `qa`)
 
+### 🔮 Maga
+- La clase Mago pasa a ser **Maga**, con sprite y animaciones propios (antes usaba los del guerrero).
+- Ataca y lanza sus habilidades desde su sitio: prepara el bastón, conjura y suelta una bola de fuego.
+- Frames en `img/maga/`, recortados de `tools/hojas/maga_hd.jpg` con `tools/split_sheet.py`. `tira.png` sigue las 14 poses del guerrero.
+
 ### 🎁 Misiones
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.

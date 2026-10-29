@@ -8,17 +8,17 @@
     { id: 'aplastante', clase: 'guerrero', nombre: 'Golpe aplastante', icono: '🔨', turnos: 5, mult: 3, aturde: true, nodo: 'aplastante',   // se aprende en el árbol
       animacion: 'aplastante' },
   ];
-  // Arquero y Mago: mismas animaciones del guerrero hasta tener sus sprites. aplica: estado que puede dejar el golpe.
+  // Arquero: mismas animaciones del guerrero hasta tener su sprite; la Maga lanza desde su sitio. aplica: estado que puede dejar el golpe.
   HAB_TODAS.push(
     { id: 'disparo', clase: 'arquero', nombre: 'Disparo certero', icono: '🏹', turnos: 3, mult: 2.2, animacion: 'estocada' },
     { id: 'lluvia', clase: 'arquero', nombre: 'Lluvia de flechas', icono: '🌧️', turnos: 4, mult: 1.6, animacion: 'tajo',
       aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
     { id: 'perforante', clase: 'arquero', nombre: 'Flecha perforante', icono: '🗡️', turnos: 5, mult: 3.2, perfora: true, nodo: 'perforante', animacion: 'aplastante' },
-    { id: 'bola', clase: 'mago', nombre: 'Bola de fuego', icono: '🔥', turnos: 3, mult: 2, animacion: 'estocada',
+    { id: 'bola', clase: 'mago', nombre: 'Bola de fuego', icono: '🔥', turnos: 3, mult: 2, animacion: 'bola',
       aplica: { estado: 'quemadura', prob: .5, turnos: 2, pct: .2 } },
-    { id: 'lanza', clase: 'mago', nombre: 'Lanza de hielo', icono: '❄️', turnos: 4, mult: 1.7, animacion: 'tajo',
+    { id: 'lanza', clase: 'mago', nombre: 'Lanza de hielo', icono: '❄️', turnos: 4, mult: 1.7, animacion: 'lanza',
       aplica: { estado: 'congelacion', prob: .3, turnos: 1 } },
-    { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', animacion: 'aplastante',
+    { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', animacion: 'meteoro',
       aplica: { estado: 'quemadura', prob: .8, turnos: 3, pct: .3 } },
   );
   // Habilidades de la batalla: las de la clase (las de nodo, si están aprendidas), con las mejoras del árbol

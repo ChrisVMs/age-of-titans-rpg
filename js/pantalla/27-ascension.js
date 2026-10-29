@@ -114,7 +114,8 @@
   }
   async function volver(u) { u.el.style.transform = ''; await wait(220); u.el.style.zIndex = 2 + Math.round(u.y / 50); }
   async function proyectil(u, t, icono) {
-    const p = document.createElement('div'); p.className = 'proyectil'; p.textContent = icono;
+    const p = document.createElement('div'); p.className = 'proyectil';
+    if (u.clase === 'mago') p.innerHTML = `<img src="${IMG_BOLA}" alt="" class="bola-maga${u.lado === 0 ? '' : ' izq'}">`; else p.textContent = icono;
     p.style.left = (u.x + (u.lado === 0 ? 180 : 40)) + 'px'; p.style.top = (u.y + 80) + 'px'; arenaG.appendChild(p);
     void p.offsetWidth;   // fuerza el layout para que la transición arranque (rAF no corre con la pestaña oculta)
     p.style.left = (t.x + 80) + 'px'; p.style.top = (t.y + 80) + 'px'; await wait(300); p.remove();

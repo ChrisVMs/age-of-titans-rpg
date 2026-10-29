@@ -34,3 +34,7 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
 
 ## Textos del juego
 - Mensajes, avisos y botones: cortos y sin redundancia. No repetir en varios sitios lo que ya se dijo una vez (ni en botón, ni en aviso previo, ni en el resultado).
+
+## Sprites
+- Para dividir hojas de sprites usar solo `tools/split_sheet.py`; para unir frames en una hoja, `tools/build_sheet.py`. No usar otras herramientas ni reescalar o interpolar.
+- Guardar la hoja fuente en `tools/hojas/` y los frames en `img/<personaje>/`.
