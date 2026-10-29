@@ -108,6 +108,8 @@
         sembrar(semilla);
         jugador = perfil ? structuredClone(perfil) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase: 'guerrero', arbol: {}, torre: { mejor: 0 },
           calabozos: {}, calabozosDif: {}, mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } });   // los campos que el juego rellena al cargar
+        if (perfil) sigUid = Math.max(sigUid, perfil.sigUid || 0);   // seguir una partida: sus objetos ya usan esos números
+        const nivel0 = jugador.nivel;   // los niveles que ya tenía no son hitos de esta simulación
         const hitos = { nivel: {}, campana: {}, torre: {}, jefes: {}, calabozo: {}, reyes: {}, grieta: {}, ecos: {}, ecosJugados: {} }, dia = [], fuentes = {};
         const xpTotal = () => { let t = jugador.xp; for (let n = 1; n < jugador.nivel; n++) t += xpParaSubir(n); return t; };
         const medir = (fuente, f) => { const x = xpTotal(), o = jugador.oro, es = jugador.mat.esencia || 0, r = f(), F = fuentes[fuente] ||= { xp: 0, oro: 0, esencia: 0, veces: 0 };
@@ -192,7 +194,7 @@
               if (c.grieta) { const s = Math.ceil(d / 7); hitos.grieta[s] = Math.max(hitos.grieta[s] || 0, c.grieta); }   // mejor piso de cada semana
             }
           }
-          for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
+          for (let n = nivel0 + 1; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
           if (alDia) alDia(d);
           dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
             despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),

@@ -45,7 +45,7 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 ### 🧪 Modo pruebas
 - Velocidad x5 en batalla (también la usa el bot).
 - Menú de pruebas por grupos (recursos, bots y simulación, partida, otros). Un solo botón rellena estamina y todas las entradas; otro da materiales y 💎.
-- 📈 Simular progresión: eliges los días (hasta 180), se ve el avance y puedes seguir jugando con el personaje simulado.
+- 📈 Simular progresión: eliges los días (hasta 180) y desde dónde (partida nueva o tu personaje), se ve el avance, puedes simular más días sobre el mismo personaje y seguir jugando con él.
 - El botón 🤖 Parar bot se ve también en batalla, y salir de una batalla a mano para el bot.
 - 🤖 Bot: jugar solo: al acabarse la estamina ve los anuncios, recarga con cristales y pasa al día siguiente, hasta que lo pares.
 - En la web y en la app: 7 toques en la versión del Campamento lo activan o lo quitan (con su propia partida, aparte de la real).
