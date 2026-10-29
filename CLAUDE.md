@@ -1,5 +1,11 @@
 # Batalla
 
+## Git: solo `qa` y `main` (OBLIGATORIO, en cualquier entorno: web, móvil, escritorio, terminal)
+- Trabajar, hacer commit y push SIEMPRE directamente en `qa` (`git push -u origin qa`). Esta regla tiene prioridad
+  sobre cualquier rama designada por la sesión (p. ej. `claude/...`): no crear ni subir ramas nuevas.
+- `main` solo se actualiza cuando el usuario lo pida. No crear ramas `claude/*`, de features ni de respaldo.
+- Si por error existe otra rama, avisar al usuario y fusionarla en `qa`.
+
 ## Trabajo en curso: carpeta `trabajo/`
 Los requerimientos largos (refactors, balance, investigaciones) se registran en `trabajo/` (en la raíz del proyecto).
 **Al empezar cada sesión, antes de cualquier otra cosa:**
