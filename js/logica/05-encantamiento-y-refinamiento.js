@@ -23,6 +23,7 @@
     if (t >= 10) c.almas = (t - 9) * 2;
     const forja = (eventoHoy() || {}).forja || 0;   // Día de la Forja
     if (forja) c.oro = Math.round(c.oro * (1 - forja));
+    if (bonoRuinas('encantar')) c.oro = Math.round(c.oro * (1 - bonoRuinas('encantar')));   // Forja del campamento
     if (bendecir) { c.oro += Math.round(400 * t * (1 - forja)); c.almas = (c.almas || 0) + Math.max(2, t - 9); c.prob = Math.min(100, c.prob + BENDICION); }
     return c;
   };

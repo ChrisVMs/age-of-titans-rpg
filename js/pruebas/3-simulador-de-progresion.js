@@ -80,6 +80,11 @@
       if (poder() <= base) o.lineas[linea] = vieja;
     }
   }
+  function simRuinas() {   // con oro de sobra (3 veces el coste), el edificio más barato
+    if (!desbloqueado('pRuinas')) return;
+    for (;;) { const e = EDIFICIOS.filter(x => edificioAbierto(x) && nivelEdificio(x.id) < EDIFICIO_MAX).sort((a, b) => nivelEdificio(a.id) - nivelEdificio(b.id))[0];
+      if (!e || jugador.oro < 3 * costeEdificio(nivelEdificio(e.id)).oro || !mejorarEdificio(e.id)) return; }
+  }
   function simCobrar() {   // misiones y bonus hechos
     for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); BONUS_MISIONES[tipo].forEach((_, i) => reclamarMision(tipo, 'cofre' + i)); }
     comprarEvento('titulo'); for (const it of [...TIENDA_EVENTO].reverse()) while (comprarEvento(it.id));   // el título primero; luego lo más caro
@@ -122,6 +127,7 @@
           offsetDias = offset0 + d - 1; revisarEstamina(); jugador.estamina += estaminaExtra;   // recargas extra del día (anuncios, diamantes)
           revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); entradasJefe();   // lo que se renueva cada día, como al abrir el juego (el Campamento lo revisa al pintarse)
           if (loginDisponible()) medir('login', reclamarLogin);
+          if (desbloqueado('pRuinas')) medir('ruinas', recogerRuinas);   // una vez al día (lo que quepa en el almacén)
           if (desbloqueado('expedicion')) {   // expediciones de 8 h al día (las que da tiempo a mandar y recoger)
             const m = MASCOTAS.filter(x => nivelMascota(x) > 0 && x.id !== jugador.mascota).sort((a, b) => Object.keys(CAT_MASCOTA).indexOf(b.cat) - Object.keys(CAT_MASCOTA).indexOf(a.cat))[0];
             if (m) for (let i = 0; i < expediciones; i++) medir('expedición', () => darPremio(premioExpedicion(m, 8)));
@@ -133,7 +139,7 @@
             if (batallas % 5 === 0) {   // cada 5 batallas (y al empezar el día) organiza el equipo y gasta
               botCofres(); botEquipar(); botArbol();
               desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));   // lo que no lleva puesto, a almas
-              simMejorar(); simRunas(); simRefinar();
+              simMejorar(); simRunas(); simRefinar(); simRuinas();
             }
             let k = null, c = null;
             if (jugador.estamina >= ESTAMINA_CAMPANA)
@@ -182,7 +188,8 @@
           }
           for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
           dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
-            despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0) });
+            despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),
+            ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0) });
         }
         return { hitos, dia, fuentes, final: dia.at(-1) };
       });

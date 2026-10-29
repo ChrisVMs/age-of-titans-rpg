@@ -47,6 +47,7 @@
   "js/logica/45-evento-semanal.js",
   "js/logica/46-recargas-y-cristales.js",
   "js/logica/47-grieta.js",
+  "js/logica/49-ruinas.js",
   "js/logica/99-lista.js",
   "js/pantalla/01-inicio.js",
   "js/pantalla/02-navegacion-entre-pantallas.js",
@@ -79,7 +80,8 @@
   "js/pantalla/29-aura.js",
   "js/pantalla/30-recargas.js",
   "js/pantalla/31-grieta.js",
-  "js/pantalla/32-despertar.js"
+  "js/pantalla/32-despertar.js",
+  "js/pantalla/33-ruinas.js"
  ],
  "pruebas": [
   "js/pruebas/1-bot.js",

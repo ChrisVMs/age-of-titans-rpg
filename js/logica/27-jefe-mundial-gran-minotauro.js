@@ -101,7 +101,7 @@
       estadoMundial(batalla.campana.mundial).vida = Math.max(0, enemigoDuelo().vida);
     }
     const ev = eventoHoy() || {};   // eventos por calendario
-    batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
+    batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro') + bonoRuinas('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
     batalla.ganado.xp = Math.round(batalla.ganado.xp * (ev.xp || 1));
     batalla.ganado.piedra = Math.round(batalla.ganado.piedra * (ev.mat || 1)); batalla.ganado.polvo = Math.round(batalla.ganado.polvo * (ev.mat || 1));   // Día de la Forja
     if (batalla.campana.mundial && ev.jefes) for (const k of ['oro', 'xp', 'piedra', 'polvo']) batalla.ganado[k] = Math.round(batalla.ganado[k] * ev.jefes);   // Día de Jefes

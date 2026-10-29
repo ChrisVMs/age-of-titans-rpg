@@ -75,6 +75,24 @@ const PRUEBAS = {
     jugador.reliquias = { [r.id]: 5 }; jugador.reliquiasPuestas = [r.id]; jugador.nivel = 60; jugador.oro = 1e7; jugador.mat.esencia = 1e4;
     const antes = efectoReliquiasAliados(esp); for (let i = 0; i < 3; i++) despertar('reliquia', r.id);
     [antes === 0, Math.abs(efectoReliquiasAliados(esp) - efectoReliquias(esp) * PASIVA_RELIQUIA) < 1e-9]`,
+  'Ruinas: producen por hora, con tope del almacén, y guardan los decimales': `
+    jugador.nivel = 30; jugador.oro = 1e7; jugador.mat.piedra = 1e4;
+    mejorarEdificio('forja'); mejorarEdificio('forja'); const p0 = jugador.mat.piedra;
+    offsetDias += 1 / 24; const una = produccionRuinas().piedra;       // 1 h a Nv 2: 0,5 × 2 = 1 piedra
+    offsetDias += 1; const tope = produccionRuinas().piedra;            // 25 h: se queda en las 8 del almacén
+    const r = recogerRuinas(), tras = produccionRuinas().piedra;
+    [Math.abs(una - 1) < 1e-6, Math.abs(tope - 8) < 1e-6, r.piedra === 8, jugador.mat.piedra === p0 + 8, tras === 0]`,
+  'Ruinas: reloj hacia atrás no produce; edificio bloqueado por nivel; el almacén amplía el tope': `
+    jugador.nivel = 30; jugador.oro = 1e8; jugador.mat.piedra = 1e4; mejorarEdificio('forja');
+    offsetDias -= 2; const atras = produccionRuinas().piedra || 0; offsetDias += 2;
+    const bloqueado = mejorarEdificio('pozo') === false;
+    for (let i = 0; i < 10; i++) mejorarEdificio('almacen');
+    [atras === 0, bloqueado, Math.abs(horasAlmacen() - 16) < 1e-9, mejorarEdificio('almacen') === false]`,
+  'Ruinas: bonos de estadísticas, oro y encantar': `
+    jugador.nivel = 30; jugador.oro = 1e8; jugador.mat.piedra = 1e4;
+    const vida0 = estadisticas().vida, o = { enc: 0 }, enc0 = costeEncantar(o).oro;
+    for (let i = 0; i < 10; i++) { mejorarEdificio('altar'); mejorarEdificio('forja'); mejorarEdificio('tesoreria'); }
+    [estadisticas().vida > vida0, Math.abs(bonoRuinas('oro') - .05) < 1e-9, costeEncantar(o).oro === Math.round(enc0 * .9)]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

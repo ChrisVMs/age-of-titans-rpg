@@ -41,6 +41,7 @@
     if (id === 'pColeccion') pintarColeccion();
     if (id === 'pTorre') pintarTorre();
     if (id === 'pGrieta') pintarGrieta();
+    if (id === 'pRuinas') pintarRuinas();
     if (id === 'pReyes') pintarReyes();
     if (id === 'pFormacion') pintarFormacion();
     if (id === 'pRanking') pintarRanking();

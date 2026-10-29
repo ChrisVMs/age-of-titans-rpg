@@ -7,7 +7,7 @@ Que el jugador tenga algo que hacer hoy, esta semana y a largo plazo, como Wartu
 un ciclo semanal con premios exclusivos y una progresión que no se termina en semanas.
 
 ## Próximo paso
-**Paso 7: Ruinas del campamento** (edificios con bono pequeño que producen recursos mientras no juegas, con tope).
+**Paso 8: Ecos** (3-5 bots rivales con memoria que suben contigo, te retan en la arena, ranking semanal contra ellos).
 Proponer el diseño al usuario antes de hacerlo.
 
 ## Plan
@@ -20,7 +20,7 @@ invasiones cuando haya servidor.
 5. ✅ **La Grieta**: 15 pisos semanales sembrados, la vida no se recupera, 1 de 3 bendiciones tras cada piso,
    2 intentos por semana, se cobra solo lo nuevo. Dificultad según lo más difícil superado en la campaña.
 6. ✅ **Despertar**: al máximo, mascota/runa/reliquia se "despierta" (efecto visual + pasiva única) con Esencia.
-7. **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
+7. ✅ **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
 8. **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
 9. **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
 10. **Pacto de compañeros** (gremio sin servidor: 3 héroes, tecnologías comunes, jefe semanal). Cuando haya servidor.
@@ -29,6 +29,18 @@ invasiones cuando haya servidor.
 No copiar de Wartune: VIP agresivo / pago para ganar, decenas de monedas, pantallas llenas de puntos rojos.
 
 ## Última sesión
+**2026-10-29 · Claude (Ruinas del campamento)**
+- `js/logica/49-ruinas.js`: `EDIFICIOS` (datos: producción por hora y nivel, bono), `costeEdificio`, `produccionRuinas`,
+  `recogerRuinas` (guarda decimales), `mejorarEdificio` (recoge antes), `statsRuinas`, `bonoRuinas`, `horasAlmacen`.
+  Tiempo del juego (`ahoraJuego`); reloj hacia atrás = nada. Sin esperas. Desbloqueo `pRuinas` en el nivel 5.
+- Bonos enchufados: `estadisticas` (vida/defensa), oro de batalla (`cobrarResultado`), `costeEncantar` (Forja).
+  Cambio sobre la propuesta: el Laboratorio da +defensa (el refinado no tiene un sitio limpio para "mejor prob.").
+- Pantalla `js/pantalla/33-ruinas.js` (filas, producción por día) e icono 🏚️ con punto rojo al pasar del 50 %.
+- Simulador: recoge cada día y mejora el edificio más barato con oro de sobra (3× el coste); el bot visual también.
+- Coste ×10 tras medir (con el primero se completaban en ~30 días): ahora 60 niveles hacia los días 90-150.
+  Producción: ~3 % del oro total; Pozo ~2,5 🌟/día.
+- Verificación: 16/16 sistemas (3 de ruinas), 14/14 escenarios, igual con pantalla y sin ella; captura del panel.
+
 **2026-10-29 · Claude (Despertar)**
 - `js/logica/06b-despertar.js` (carga antes de mascotas/skins/reliquias): `TIPOS_DESPERTAR` (mascota, reliquia, skin),
   `COSTE_DESPERTAR` (5 niveles, 560 🌟 por objeto), `PCT_DESPERTAR` (+10 % del bono por nivel), pasivas en D3

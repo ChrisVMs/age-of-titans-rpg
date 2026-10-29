@@ -70,6 +70,8 @@
     offsetDias++; try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}
     revisarEstamina(); revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); revisarRecargas(); entradasJefe();
     if (loginDisponible()) reclamarLogin();
+    if (desbloqueado('pRuinas')) recogerRuinas();
+    simRuinas();
     for (const k in botFallos) delete botFallos[k];
     $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
     return `Bot: día ${offsetDias + 1}`;
