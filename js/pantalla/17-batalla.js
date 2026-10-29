@@ -83,6 +83,19 @@
   const sonidoEspadaMinotauro = sonidoAzar(['minotaur_sword', 'minotaur_sword2', 'minotaur_sword3', 'minotaur_sword4'].map(n => Object.assign(new Audio(`audio/minotauro/${n}.mp3`), { preload: 'auto' })));
   const sonidoLlamas = sonidoAzar(['flame_cerberus', 'flame_cerberus2'].map(n => Object.assign(new Audio(`audio/cerbero/${n}.mp3`), { preload: 'auto' })));
   musica.loop = true; musica.volume = .35;
+  // Sonido sí/no (botón 🔊 en el Campamento y en la batalla; se recuerda): todo sonido pasa por play(), que lo silencia
+  let silencio = false; try { silencio = localStorage.getItem('batalla.silencio') === '1'; } catch {}
+  if (typeof HTMLMediaElement !== 'undefined') {   // (sin navegador, en las pruebas, no existe)
+    const playOriginal = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () { this.muted = silencio; return playOriginal.call(this); };
+  }
+  function ponerSilencio(v) {
+    silencio = v; musica.muted = musicaEpica.muted = v;
+    document.querySelectorAll('.btn-sonido').forEach(b => { b.textContent = v ? '🔇' : '🔊'; b.title = v ? 'Activar sonido' : 'Silenciar'; });
+    try { localStorage.setItem('batalla.silencio', v ? '1' : '0'); } catch {}
+  }
+  document.querySelectorAll('.btn-sonido').forEach(b => b.onclick = () => ponerSilencio(!silencio));
+  ponerSilencio(silencio);
   addEventListener('resize', () => batalla.campana && batalla.campana.grupo ? ajustarGrupo() : ajustarEscala());
   // Sonidos reales de espada (separados de sword.mp3); el guerrero usa uno al azar
   const espadas = ['warrior_slash', 'warrior_slash2', 'warrior_slash3', 'warrior_slash4'].map(n => { const a = new Audio(`audio/guerrero/${n}.mp3`); a.preload = 'auto'; return a; });

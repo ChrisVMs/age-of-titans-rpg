@@ -39,7 +39,11 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Tocar la estamina abre las recargas: 3 anuncios al día (+50 cada uno) y una recarga de +150 por 50 💎.
 - Cristales 💎: en los cofres de misiones y la primera vez que completas un capítulo en cada dificultad.
 
+### 🔊 Sonido
+- Botón para silenciar o activar el sonido, en el Campamento y en la batalla (se recuerda).
+
 ### 🧪 Modo pruebas
+- Velocidad x5 en batalla (también la usa el bot).
 - 🤖 Bot: jugar solo: al acabarse la estamina ve los anuncios, recarga con cristales y pasa al día siguiente, hasta que lo pares.
 - En la web y en la app: 7 toques en la versión del Campamento lo activan o lo quitan (con su propia partida, aparte de la real).
 

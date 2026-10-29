@@ -1,7 +1,7 @@
   // ---------------- Batalla ----------------
    // misma confirmación que la flecha de la cabecera
-  // avance rápido: x1 -> x1.5 -> x2.5 (se recuerda entre partidas)
-  const VELOCIDADES = [1, 1.5, 2.5];
+  // avance rápido: x1 -> x1.5 -> x2.5 (se recuerda entre partidas); en modo pruebas también x5 (lo usa el bot)
+  const VELOCIDADES = MODO_PRUEBAS ? [1, 1.5, 2.5, 5] : [1, 1.5, 2.5];
   // Escala el escenario para que quepa en cualquier pantalla (móvil vertical u horizontal)
   // En pantallas bajas los combatientes están más juntos (CSS: gap de .arena) para verse más grandes;
   // los avances de los ataques se acortan en lo mismo para que el golpe siga llegando al rival.
