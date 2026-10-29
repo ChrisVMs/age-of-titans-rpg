@@ -44,3 +44,5 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
 ## Sprites
 - Para dividir hojas de sprites usar solo `tools/split_sheet.py`; para unir frames en una hoja, `tools/build_sheet.py`. No usar otras herramientas ni reescalar o interpolar.
 - Guardar la hoja fuente en `tools/hojas/` y los frames en `img/<personaje>/`.
+- Cada personaje, clase, jefe o mascota nuevo (o con sprite o animación nueva) se añade SIEMPRE a `animaciones.html`
+  (lista `PERSONAJES`), con todas sus animaciones y los mismos tiempos que en el juego.

@@ -79,6 +79,15 @@
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
       { nombre: 'Reposo alternativo (sin usar)', cuadros: seq(8, 11, 200) },
     ] },
+    { id: 'maga', nombre: 'Maga', desc: 'Jugador · clase Mago · 14 cuadros', capas: ['img/maga/tira.png'], ancho: 370, alto: 260, total: 14, escala: .8, animaciones: [
+      { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
+      { nombre: 'Ataque (lanza desde su sitio)', cuadros: [[1, 150], [2, 120], [3, 110], [4, 220], [5, 200], [6, 130], [7, 120], [0, 600]] },
+      { nombre: 'Lanza de hielo (habilidad)', cuadros: [[1, 300], [2, 120], [3, 110], [4, 220], [5, 200], [6, 130], [7, 120], [0, 600]] },
+      { nombre: 'Bola de fuego (habilidad)', cuadros: [[1, 450], [2, 120], [3, 110], [4, 220], [5, 200], [6, 130], [7, 120], [0, 600]] },
+      { nombre: 'Meteoro (habilidad)', cuadros: [[1, 600], [2, 120], [3, 110], [4, 220], [5, 200], [6, 130], [7, 120], [0, 600]] },
+      { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/maga/proyectil.png'], ancho: 217, alto: 218, total: 1, escala: .5 }, cuadros: [[0, 1000]] },
+      { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
+    ] },
     { id: 'parca', nombre: 'Parca', desc: 'Campaña · 7 cuadros', capas: ['img/enemigos/parca.png'], ancho: 260, alto: 200, total: 7, escala: 1, espejo: true, animaciones: [
       { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
       { nombre: 'Ataque', cuadros: [[1, 220], [2, 260], [3, 260], [4, 250], [0, 600]] },
