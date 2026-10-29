@@ -63,8 +63,16 @@
   $('cerrarPruebas').onclick = () => $('pruebasMenu').classList.remove('visible');
   $('campTitulos').onclick = () => { invTab = 'titulos'; ir('pInventario'); };
   $('oroPrueba').onclick = () => { ganar(10000, 0); avisar('+10 000 oro'); };
-  $('estaminaPrueba').onclick = () => { jugador.estamina = ESTAMINA_MAX; guardar(); pintarHud(); avisar('Estamina al máximo'); };
-  $('jefePrueba').onclick = () => { jugador.mundiales = {}; delete jugador.mundial; jugador.entradasJefe = ENTRADAS_JEFE; guardar(); avisar('Jefes mundiales y entradas regenerados'); };
+  $('matPrueba').onclick = () => { darPremio({ piedra: 200, polvo: 50, almas: 50, esencia: 100, cristales: 100 }); guardar(); pintarHud(); avisar('🔷 200 · ✨ 50 · 💠 50 · 🌟 100 · 💎 100'); };
+  // estamina, jefes mundiales, Torre de reyes, arena, calabozo, Grieta, recargas y reto del Eco: todo de nuevo como al empezar el día
+  $('entradasPrueba').onclick = () => {
+    jugador.estamina = ESTAMINA_MAX; jugador.mundiales = {}; delete jugador.mundial; jugador.entradasJefe = ENTRADAS_JEFE;
+    const R = revisarReyes(); R.entradas = INTENTOS_REYES; R.vencidas = {};
+    const a = revisarArena(); a.entradas = ARENA_ENTRADAS; generarRivales();
+    revisarCalabozo().entradas = INTENTOS_CALABOZO; Object.assign(revisarRecargas(), { anuncios: 0, cristales: false });
+    const G = revisarGrieta(); if (!G.activa) G.intentos = GRIETA_INTENTOS; revisarEcos().hecho = false;
+    guardar(); pintarHud(); pintarCampamento(); avisar('Estamina y entradas al máximo');
+  };
   $('resetPrueba').onclick = async () => {   // partida nueva desde cero (conserva el nombre), sin oro ni materiales
     if (!await confirmar('¿Reiniciar el personaje? Vuelve al nivel 1 sin oro, materiales ni progreso. No se puede deshacer.', 'Reiniciar', 'Cancelar')) return;
     const nombre = jugador.nombre; jugador = partidaNueva(); jugador.nombre = nombre; jugador.oro = 0;
@@ -73,13 +81,9 @@
     if (canalPestanas) canalPestanas.postMessage({ t: 'tomar', id: idPestana });
     pestanaBloqueada = false; guardar(); location.reload();
   };
-  $('reyesPrueba').onclick = () => { const R = revisarReyes(); R.entradas = INTENTOS_REYES; R.vencidas = {}; guardar(); pintarCampamento();
-    if (pantallaActual === 'pReyes') pintarReyes(); avisar('Torre de reyes reiniciada'); };
-  $('arenaPrueba').onclick = () => { const a = revisarArena(); a.entradas = ARENA_ENTRADAS; generarRivales(); guardar(); pintarCampamento();
-    if (pantallaActual === 'pArena') pintarArena(); avisar('Arena reiniciada: entradas y rivales nuevos'); };
   function pintarPerfilesPrueba() {
     let hay = false; try { hay = !!localStorage.getItem(CLAVE_RESPALDO); } catch {}
-    $('perfilesPrueba').innerHTML = `<small>Jugar con un bot:</small> ${DEF_BOTS.map((d, i) => `<button class="prueba" data-bot="${i}">${CLASES[d.clase].icono} ${d.nombre}</button>`).join('')}
+    $('perfilesPrueba').innerHTML = `<small>Jugar con la partida de un bot:</small> ${DEF_BOTS.map((d, i) => `<button class="prueba" data-bot="${i}">${CLASES[d.clase].icono} ${d.nombre}</button>`).join('')}
       ${hay ? '<button class="prueba" data-bot="volver">↩ Volver a mi partida</button>' : ''}`;
   }
   $('perfilesPrueba').addEventListener('click', e => {

@@ -250,7 +250,11 @@
   .modos-batalla button small { font-size:11px; font-weight:normal; opacity:.8; }
   #otraPestana { z-index:2000; background:#000e; } #otraPestana p { text-align:center; line-height:1.4; } #otraPestana .fila { display:flex; justify-content:center; }
   #dialogo { z-index:1000; } #dialogo p { margin:4px 0 12px; text-align:center; line-height:1.4; white-space:pre-line; } #dialogo .fila { display:flex; gap:8px; justify-content:center; }
-  #pruebasMenu .caja { display:flex; flex-direction:column; gap:8px; }
+  #pruebasMenu .caja { display:flex; flex-direction:column; gap:6px; width:min(680px, 94vw); max-width:none; }
+  #perfilesPrueba { flex-wrap:wrap; justify-content:flex-start; } #perfilesPrueba .prueba { min-height:34px; margin:0; }
+  #pruebasMenu h3 { margin:6px 0 0; font-size:13px; text-align:left; color:#ffd84a; }
+  .pruebas-grupo { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:6px; }
+  .pruebas-grupo .prueba { min-height:40px; margin:0; } .pruebas-grupo .prueba-check { grid-column:span 2; justify-content:flex-start; }
   .sim-lista { display:grid; grid-template-columns:auto 1fr; gap:6px 10px; align-items:center; margin:10px 0; text-align:left; }
   .esc-lista { display:grid; grid-template-columns:auto 1fr; gap:4px 8px; margin:10px 0; text-align:left; font-size:12px; }
   .esc-lista small { color:#aaa; }
@@ -920,21 +924,31 @@
     </div></div>
     <div class="modal" id="pruebasMenu"><div class="caja">
       <h2>Pruebas <small id="pruebasVersion"></small></h2>
-      <button class="prueba" id="oroPrueba">+10 000 oro (pruebas)</button>
-      <button class="prueba" id="estaminaPrueba">Regenerar estamina (pruebas)</button>
-      <button class="prueba" id="jefePrueba">Regenerar jefes mundiales (pruebas)</button>
-      <button class="prueba" id="resetPrueba">Reiniciar personaje: nivel 1, sin nada (pruebas)</button>
-      <button class="prueba" id="reyesPrueba">Reiniciar Torre de reyes: intentos y premios (pruebas)</button>
-      <button class="prueba" id="arenaPrueba">Reiniciar arena: entradas y rivales (pruebas)</button>
-      <button class="prueba" id="puntosPrueba">+5 puntos de habilidad (pruebas)</button>
+      <h3>💰 Recursos</h3>
+      <div class="pruebas-grupo">
+        <button class="prueba" id="oroPrueba">+10 000 oro</button>
+        <button class="prueba" id="matPrueba">+ Materiales y 💎</button>
+        <button class="prueba" id="puntosPrueba">+5 puntos de habilidad</button>
+        <button class="prueba" id="entradasPrueba">🔄 Rellenar estamina y entradas</button>
+      </div>
+      <h3>🤖 Bots y simulación</h3>
+      <div class="pruebas-grupo">
+        <button class="prueba" id="botJugar">🤖 Bot: jugar solo</button>
+        <button class="prueba" id="botRepetir">🔁 Bot: repetir batalla</button>
+        <button class="prueba" id="progPrueba">📈 Simular progresión</button>
+        <button class="prueba" id="simPrueba">📊 Simular batallas</button>
+        <button class="prueba" id="escPrueba">✅ Escenarios</button>
+      </div>
+      <h3>👤 Partida</h3>
       <div class="prueba-check" id="perfilesPrueba"></div>
-      <label class="prueba-check"><input type="checkbox" id="pruebasBatalla"> Botones de prueba en batalla</label>
-      <button class="prueba" id="botRepetir">🤖 Bot: repetir batalla (pruebas)</button>
-      <button class="prueba" id="botJugar">🤖 Bot: jugar solo (pruebas)</button>
-      <button class="prueba" id="simPrueba">📊 Simular batallas (pruebas)</button>
-      <button class="prueba" id="progPrueba">📈 Simular progresión (pruebas)</button>
-      <button class="prueba" id="escPrueba">✅ Escenarios de prueba (pruebas)</button>
-      <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
+      <div class="pruebas-grupo">
+        <button class="prueba" id="resetPrueba">Reiniciar personaje</button>
+      </div>
+      <h3>⚙️ Otros</h3>
+      <div class="pruebas-grupo">
+        <label class="prueba-check"><input type="checkbox" id="pruebasBatalla"> Botones de prueba en batalla</label>
+        <button class="prueba" onclick="location.href='animaciones.html'">Ver animaciones</button>
+      </div>
       <button id="cerrarPruebas">Cerrar</button>
     </div></div>
   </div>
