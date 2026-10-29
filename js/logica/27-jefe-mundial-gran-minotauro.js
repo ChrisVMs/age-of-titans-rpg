@@ -121,11 +121,14 @@
     if (gano && batalla.campana.idCampana) contarMision('victoria');
     if (batalla.campana.mundial) contarMision('jefe');
     if (batalla.campana.arena) contarMision('arena');
-    ganar(batalla.ganado.oro, batalla.ganado.xp, { piedra: batalla.ganado.piedra, polvo: batalla.ganado.polvo, almas: batalla.ganado.almas || 0 });
+    ganar(batalla.ganado.oro, batalla.ganado.xp, { piedra: batalla.ganado.piedra, polvo: batalla.ganado.polvo, almas: batalla.ganado.almas || 0, esencia: batalla.ganado.esencia || 0 });
     if (gano && batalla.campana.mundial) { jugador.logros ||= {}; (jugador.logros.jefes ||= {})[batalla.campana.mundial] = true; guardar(); }
     if (gano && batalla.campana.idCampana) {
       jugador.superadas = jugador.superadas || {};
       const clave = `${batalla.campana.idCampana}:${batalla.campana.dif}`, sig = ORDEN_DIF[ORDEN_DIF.indexOf(batalla.campana.dif) + 1];
+      if (batalla.campana.ancestral && (!jugador.superadas[clave] || rnd() < PROB_ANCESTRAL[batalla.campana.dif])) {   // Señor del Abismo
+        const o = objetoAncestral(); jugador.objetos.push(o); obtenidos.push(o);
+      }
       if (!jugador.superadas[clave]) {
         jugador.superadas[clave] = true; guardar();
         const nx = CAMPANAS[CAMPANAS.findIndex(x => x.id === batalla.campana.idCampana) + 1];

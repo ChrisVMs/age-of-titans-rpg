@@ -1,22 +1,19 @@
 # Contenido de nivel alto
 
-**Estado:** en curso · **Rama:** `qa` · **Actualizado:** 2026-10-28
+**Estado:** en curso · **Rama:** `qa` · **Actualizado:** 2026-10-29
 
 ## Objetivo
 Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga retos y progreso. Hoy el poder del jugador se
 estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre alta caen mucho antes del nivel 80.
 
 ## Próximo paso
-**Paso 3: Etapa 2 y Etapa 3 de la campaña.** El escalado actual (+23 % de vida y daño por nivel, `crearDificultad`) no
-sirve para 20 niveles más: definir el escalado de las etapas 2-3 con el poder del jugador por día (ver **Mediciones**),
-los 6 tipos de enemigo y 2 jefes nuevos (sprite provisional: parca con color), y que en el juego publicado salgan como
-"Próximamente" hasta tener el arte (`etapa.arte`). Hecho cuando se jueguen en modo pruebas y el simulador las recorra.
+**Paso 4: Calabozos 5-8** (premio: Esencia y Ancestral; dificultad pensada para el poder de los días ~30-110).
 
 ## Plan
 1. ✅ Aura: 10 niveles, +2 % a todo por nivel, con Esencia y oro; se ve bajo el personaje (tenue → late desde el 5 →
    muy brillante con destellos en el 10). Desde el nivel 40.
 2. ✅ Rareza Ancestral: equipo por encima de mítico, solo del contenido alto.
-3. Etapa 2 «Las ruinas del reino caído» (esqueletos, caballeros espectrales, gárgolas; jefe: Rey Liche) y Etapa 3
+3. ✅ Etapa 2 «Las ruinas del reino caído» (esqueletos, caballeros espectrales, gárgolas; jefe: Rey Liche) y Etapa 3
    «El Abismo» (diablillos, demonios de fuego, súcubos; jefe: Señor del Abismo). 10 niveles cada una.
 4. Calabozos 5-8.
 5. Torre: hitos desde el piso 100 (Esencia y Ancestral).
@@ -26,18 +23,19 @@ los 6 tipos de enemigo y 2 jefes nuevos (sprite provisional: parca con color), y
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
-**2026-10-28 · Claude**
-- Rareza Ancestral (`RAREZAS.ancestral`: ×7, 4 líneas extra, venta 3000, `soloContenidoAlto`), encantamiento hasta +30
-  (+21..+30 al 10 %), desguace 50 almas, color turquesa (`.r-ancestral`). 4 piezas "de los Antiguos" (`casco_antiguo`,
-  `arm_antiguo`, `esp_antigua`, `capa_antigua`) con color provisional. `objetoAncestral(ranura)` para los premios.
-  La Fortuna ya no puede subir un objeto de cofre a Ancestral (`objetoAzar`).
-- Arreglado: los perfiles sin Esencia (bots, perfiles de prueba cargados desde el menú 🧪) rompían el inventario y la barra
-  de la herrería; la herrería ya no muestra la Esencia (no se usa ahí).
-- `pruebas/equivalencia.js`: compara dos versiones del juego con las mismas 234 batallas, sin navegador (otra versión en
-  un `git worktree`).
-- Verificación: 234 batallas idénticas al commit anterior, 14/14 escenarios; Ancestral encanta hasta +30, 0 en 3000 cofres
-  míticos con Fortuna alta; inventario y herrería sin errores.
-- Commit en `qa` (ver `git log`).
+**2026-10-29 · Claude**
+- Etapas 2 y 3 (10 niveles cada una, 10 enemigos nuevos con sprite provisional). Con `arte: false` solo se juegan en modo
+  pruebas (`etapaDisponible`); en el juego publicado salen "Próximamente".
+- Escalado: `ESCALA_ETAPA` (n equivalente de la Etapa 1: Etapa 2 desde 15 en pasos de 0,55; Etapa 3 desde 19 en pasos de 0,4).
+  Dificultades más juntas en las etapas altas (`MOD_DIF_ALTO`): con las de la Etapa 1 la Difícil era un muro.
+- Esencia por victoria (`ESENCIA_ETAPA`: 4 y 8, × el premio de la dificultad). La Ancestral sale en el 3-10 (siempre la
+  primera vez; después según `PROB_ANCESTRAL`).
+- Arreglado: la Esencia no se cobraba (ni en batalla ni en barrido).
+- Simulador: compra el aura, barre lo que más rinde y `progresion.js` muestra los días por etapa y dificultad.
+- Medición (3 semillas, 300 de estamina): Etapa 2 Normal día 8, Difícil 10-16, Pesadilla 24-33; Etapa 3 Normal 21-28,
+  Difícil 55-106. Aura al 10 y Nv 80 hacia el día 46-52. **Pendiente en el paso 6:** el Nv 80 llega rápido con 300 de
+  estamina y el aura se llena pronto.
+- Verificación: 14/14 escenarios, igual con pantalla y sin ella.
 
 ## Decisiones
 - 2026-10-28 · Contenido alto: etapas 2 y 3, calabozos 5-8 y hitos de la Torre desde el 100 (usuario). Arte nuevo: se
@@ -49,7 +47,8 @@ los 6 tipos de enemigo y 2 jefes nuevos (sprite provisional: parca con color), y
 - Aura: hecha con CSS (no necesita imágenes).
 - Equipo Ancestral: casco, armadura, espada y capa "de los Antiguos" (capas del guerrero como las demás piezas; hoy
   usan las de otra pieza con un filtro turquesa, `METAL.ancestral` y `TELA.ancestral`).
-- (se completa en los pasos 2-5)
+- Etapas 2-3: esqueleto, caballero, gárgola, diablillo, demonio y súcubo; jefes Campeón, Liche, Verdugo y Señor del Abismo.
+- (se completa en los pasos 4-5)
 
 ## Cómo verificar
 - `node pruebas/equivalencia.js <otra versión>`: mismas batallas que antes (234 casos).

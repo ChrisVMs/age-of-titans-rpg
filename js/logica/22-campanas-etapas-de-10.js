@@ -15,6 +15,14 @@
     pesadilla: { vida: 3.2, dano: 3.2, armadura: 30, estados: 1,   premio: 4, oro: 2.2, drop: 1.5 },
     infierno:  { vida: 6,   dano: 7.2, armadura: 60, estados: 1.3, premio: 8, oro: 3.2, drop: 2 },
   };
+  // Etapas altas: dificultades más juntas (mismo premio). En ese tramo el jugador ya no mejora tanto el equipo: con la
+  // escalera de la Etapa 1 (×6 de vida en Infierno) la Difícil era un muro.
+  const MOD_DIF_ALTO = {
+    normal: MOD_DIF.normal,
+    dificil:   { ...MOD_DIF.dificil,   vida: 1.35, dano: 1.45 },
+    pesadilla: { ...MOD_DIF.pesadilla, vida: 1.8,  dano: 2 },
+    infierno:  { ...MOD_DIF.infierno,  vida: 2.4,  dano: 2.8 },
+  };
   // tipos de enemigo: multiplicadores sobre la base del nivel y estados que aplican
   const TIPOS_ENEMIGO = {
     parca:     { nombre: 'Parca',             vida: 1,    dano: 1,    filtro: '' },
@@ -36,6 +44,26 @@
     bruja:     { nombre: 'Bruja del pantano', vida: 3.8,  dano: 1.6,  armadura: 50, jefe: true, avance: 170,
                  filtro: 'sepia(1) saturate(4) hue-rotate(70deg) brightness(.7)',
                  aplica: [{ estado: 'veneno', prob: .4, turnos: 3, pct: .03 }, { estado: 'congelacion', prob: .12, turnos: 1 }] },
+    // Etapa 2: las ruinas del reino caído (sprites propios pendientes: hoja de la parca con otro color)
+    esqueleto: { nombre: 'Esqueleto guerrero', vida: 1.1,  dano: 1.1,  armadura: 15, filtro: 'grayscale(1) brightness(1.45) contrast(1.1)' },
+    caballero: { nombre: 'Caballero espectral', vida: 1.2, dano: 1.05, armadura: 45, filtro: 'grayscale(.6) sepia(.3) hue-rotate(170deg) brightness(1.2) saturate(1.6)',
+                 aplica: [{ estado: 'aturdimiento', prob: .08, turnos: 1 }] },
+    gargola:   { nombre: 'Gárgola',            vida: 1.5,  dano: .95,  armadura: 30, filtro: 'grayscale(1) brightness(.75) contrast(1.3)' },
+    campeon:   { nombre: 'Campeón caído',      vida: 3.6,  dano: 1.6,  armadura: 60, jefe: true, avance: 170, filtro: 'grayscale(.5) sepia(.6) hue-rotate(-15deg) brightness(.9) contrast(1.3)',
+                 aplica: [{ estado: 'sangrado', prob: .3, turnos: 3, pct: .03 }, { estado: 'aturdimiento', prob: .1, turnos: 1 }] },
+    liche:     { nombre: 'Rey Liche',          vida: 4,    dano: 1.7,  armadura: 60, jefe: true, avance: 170, filtro: 'sepia(1) saturate(3) hue-rotate(150deg) brightness(1.1)',
+                 aplica: [{ estado: 'congelacion', prob: .15, turnos: 1 }, { estado: 'veneno', prob: .35, turnos: 3, pct: .03 }] },
+    // Etapa 3: el Abismo (sprites propios pendientes)
+    diablillo: { nombre: 'Diablillo',          vida: 1,    dano: 1.2,  armadura: 15, filtro: 'sepia(1) saturate(8) hue-rotate(-30deg) brightness(1.05)',
+                 aplica: [{ estado: 'quemadura', prob: .35, turnos: 2, pct: .04 }] },
+    demonio:   { nombre: 'Demonio',            vida: 1.4,  dano: 1.35, armadura: 35, filtro: 'sepia(1) saturate(6) hue-rotate(-50deg) brightness(.6) contrast(1.4)',
+                 aplica: [{ estado: 'quemadura', prob: .3, turnos: 2, pct: .05 }] },
+    sucubo:    { nombre: 'Súcubo',             vida: 1.15, dano: 1.15, armadura: 20, filtro: 'sepia(1) saturate(5) hue-rotate(270deg) brightness(.85)',
+                 aplica: [{ estado: 'sangrado', prob: .35, turnos: 3, pct: .035 }] },
+    verdugo:   { nombre: 'Verdugo infernal',   vida: 3.8,  dano: 1.8,  armadura: 70, jefe: true, avance: 170, filtro: 'sepia(1) saturate(7) hue-rotate(-40deg) brightness(.55) contrast(1.5)',
+                 aplica: [{ estado: 'quemadura', prob: .35, turnos: 2, pct: .05 }, { estado: 'sangrado', prob: .3, turnos: 3, pct: .035 }] },
+    senor:     { nombre: 'Señor del Abismo',   vida: 4.4,  dano: 1.9,  armadura: 80, jefe: true, avance: 170, filtro: 'sepia(1) saturate(9) hue-rotate(-45deg) brightness(.45) contrast(1.6)',
+                 aplica: [{ estado: 'quemadura', prob: .4, turnos: 3, pct: .05 }, { estado: 'aturdimiento', prob: .1, turnos: 1 }] },
   };
   // Etapas: cada nivel = [nombre, enemigos en orden]
   const ETAPAS = [
@@ -51,16 +79,47 @@
       ['Bosque de los ahorcados', ['escarcha', 'ignea', 'pantano']],
       ['Guarida de la bruja',     ['pantano', 'escarcha', 'ignea', 'bruja']],
     ] },
-    { id: 2, nombre: 'Etapa 2', bloqueada: true },
-    { id: 3, nombre: 'Etapa 3', bloqueada: true },
+    { id: 2, nombre: 'Etapa 2: Las ruinas del reino caído', arte: false, niveles: [
+      ['Puerta derruida',         ['esqueleto', 'esqueleto', 'gargola']],
+      ['Patio de armas',          ['esqueleto', 'caballero', 'esqueleto']],
+      ['Capilla profanada',       ['caballero', 'esqueleto', 'gargola']],
+      ['Murallas rotas',          ['gargola', 'gargola', 'caballero']],
+      ['Salón de los caídos',     ['caballero', 'esqueleto', 'campeon']],
+      ['Biblioteca maldita',      ['esqueleto', 'gargola', 'esqueleto']],
+      ['Criptas reales',          ['caballero', 'caballero', 'gargola']],
+      ['Torre del vigía',         ['gargola', 'caballero', 'gargola']],
+      ['Puente de los reyes',     ['caballero', 'gargola', 'caballero']],
+      ['Trono del Rey Liche',     ['esqueleto', 'caballero', 'gargola', 'liche']],
+    ] },
+    { id: 3, nombre: 'Etapa 3: El Abismo', arte: false, niveles: [
+      ['Grieta humeante',         ['diablillo', 'diablillo', 'sucubo']],
+      ['Ríos de lava',            ['diablillo', 'demonio', 'diablillo']],
+      ['Jardín de ceniza',        ['sucubo', 'diablillo', 'sucubo']],
+      ['Forja de almas',          ['demonio', 'diablillo', 'demonio']],
+      ['Cadalso del verdugo',     ['sucubo', 'demonio', 'verdugo']],
+      ['Templo de los pactos',    ['sucubo', 'sucubo', 'diablillo']],
+      ['Llanura de huesos',       ['demonio', 'sucubo', 'demonio']],
+      ['Muralla de fuego',        ['demonio', 'demonio', 'diablillo']],
+      ['Puertas del Abismo',      ['sucubo', 'demonio', 'sucubo']],
+      ['Corazón del Abismo',      ['diablillo', 'demonio', 'sucubo', 'senor']],
+    ] },
   ];
-  // n = número de nivel en toda la campaña (1-1 = 1, 2-1 = 11...): la base crece ~23 % de vida y de daño por nivel
+  // arte: false = sus enemigos aún no tienen sprite propio. En el juego publicado sale "Próximamente"; en modo pruebas se
+  // juega con la hoja de la parca recoloreada (y el simulador la recorre).
+  const etapaDisponible = e => !!e.niveles && (e.arte !== false || MODO_PRUEBAS);
+  // Escalado de cada etapa: dificultad a la que empieza (n equivalente de la Etapa 1) y cuánto sube por nivel. La Etapa 1
+  // sube +23 % por nivel; en las siguientes el jugador apenas crece en poder, así que suben más despacio.
+  let ESCALA_ETAPA = { 1: { desde: 1, paso: 1 }, 2: { desde: 15, paso: .55 }, 3: { desde: 19, paso: .4 } };
+  // Premio propio de las etapas altas: Esencia (aura) y, en el último jefe, equipo Ancestral
+  const ESENCIA_ETAPA = { 2: 4, 3: 8 };   // por batalla ganada en Normal; las demás dificultades, × su premio
+  // n = dificultad del nivel (en la Etapa 1, su número: 1-1 = 1 ... 1-10 = 10; las etapas altas usan ESCALA_ETAPA): la base
+  // crece ~23 % de vida y de daño por cada punto de n
   // Daño base 3-5: estos enemigos luchan siempre en grupo (todos golpean en la misma ronda), así que pegan la mitad que
   // un enemigo en solitario. Lo que dicen sus datos es lo que pegan: el combate no aplica ningún multiplicador aparte.
   // El cofre de los drops depende del nivel (no de la dificultad): farmear 1-1 en Infierno no da cofres dorados.
   const cofreDeNivel = n => n <= 3 ? 'madera' : n <= 7 ? 'hierro' : n <= 10 ? 'dorado' : 'mitico';
-  function crearDificultad(n, d, tipos) {
-    const m = MOD_DIF[d], vidaBase = 45 * 1.23 ** (n - 1), danoBase = 1.23 ** (n - 1), k = m.premio, g = 1.25 ** (n - 1);
+  function crearDificultad(n, d, tipos, mods = MOD_DIF) {
+    const m = mods[d], vidaBase = 45 * 1.23 ** (n - 1), danoBase = 1.23 ** (n - 1), k = m.premio, g = 1.25 ** (n - 1);
     const enemigos = tipos.map(t => {
       const T = TIPOS_ENEMIGO[t], vida = Math.round(vidaBase * T.vida * m.vida);
       return { nombre: T.nombre, jefe: T.jefe, avance: T.avance, filtro: T.filtro, vida, armadura: (T.armadura || 0) + m.armadura,
@@ -73,11 +132,16 @@
                polvo: Math.min(.9, (.2 + .03 * n) * (1 + (k - 1) / 6)), cofre: cofreDeNivel(n), drop: m.drop }, enemigos };
   }
   // Lista plana de niveles: { id: '1-3', etapa, nombre, jefe, dificultades }
-  const CAMPANAS = ETAPAS.filter(e => e.niveles).flatMap(e => e.niveles.map(([nombre, tipos], i) => {
-    const n = (e.id - 1) * 10 + i + 1;
+  // (armarCampanas rehace la lista: el simulador la usa para probar otros ESCALA_ETAPA)
+  const CAMPANAS = [];
+  function armarCampanas() { CAMPANAS.splice(0, Infinity, ...ETAPAS.filter(etapaDisponible).flatMap(e => e.niveles.map(([nombre, tipos], i) => {
+    const E = ESCALA_ETAPA[e.id], n = E.desde + i * E.paso;   // n equivalente de la Etapa 1 (decimal en las etapas altas)
+    const dificultades = Object.fromEntries(ORDEN_DIF.map(d => [d, crearDificultad(n, d, tipos, e.id > 1 ? MOD_DIF_ALTO : MOD_DIF)]));
+    if (ESENCIA_ETAPA[e.id]) for (const d of ORDEN_DIF) dificultades[d].premio.esencia = Math.round(ESENCIA_ETAPA[e.id] * MOD_DIF[d].premio);
     return { id: `${e.id}-${i + 1}`, etapa: e.id, nombre: `${e.id}-${i + 1} ${nombre}`, jefe: tipos.some(t => TIPOS_ENEMIGO[t].jefe),
-             dificultades: Object.fromEntries(ORDEN_DIF.map(d => [d, crearDificultad(n, d, tipos)])) };
-  }));
+             ancestral: e.id === 3 && i === 9, dificultades };
+  }))); }
+  armarCampanas();
   // Partidas del sistema anterior (claves '1:normal', '2:dificil'...): ese progreso ya no corresponde a ningún nivel
   if (jugador.superadas) for (const k of Object.keys(jugador.superadas)) if (!/^\d+-\d+:/.test(k)) delete jugador.superadas[k];
   const superada = (id, d) => !!(jugador.superadas || {})[`${id}:${d}`];
@@ -111,8 +175,10 @@
     g.oro = Math.round(g.oro * (1 + efecto('oro')) * (ev.oro || 1)); g.xp = Math.round(g.xp * XP_BARRIDO * (ev.xp || 1) * (1 + efecto('experiencia')));
     g.piedra = Math.round(g.piedra * (ev.mat || 1)); g.polvo = Math.round(g.polvo * (ev.mat || 1));
     jugador.objetos.push(...objetos);
-    ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo });
+    ganar(g.oro, g.xp, { piedra: g.piedra, polvo: g.polvo, esencia: g.esencia || 0 });
     ui.avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
     ui.pintarCampanas();
   }
-  function batallaCampana(c, d) { return { nombre: `${c.nombre} · ${DIFICULTADES[d]}`, idCampana: c.id, dif: d, ...c.dificultades[d] }; }
+  function batallaCampana(c, d) { return { nombre: `${c.nombre} · ${DIFICULTADES[d]}`, idCampana: c.id, dif: d, ancestral: c.ancestral, ...c.dificultades[d] }; }
+  // Señor del Abismo (3-10): pieza Ancestral segura la primera vez en cada dificultad; luego, con esta probabilidad (no en el Auto)
+  const PROB_ANCESTRAL = { normal: .1, dificil: .15, pesadilla: .25, infierno: .4 };

@@ -6,7 +6,8 @@ const { Worker, isMainThread, parentPort, workerData } = require('worker_threads
 const resumen = `(r => { const H = r.hitos, f = o => Object.entries(o).map(([k, d]) => k + ':' + d).join(' ');
   return { nivel: [30, 50, 60, 70, 80].map(n => n + ':' + (H.nivel[n] || '-')).join(' '), jefes: f(H.jefes), reyes: f(H.reyes),
     torre: f(Object.fromEntries(Object.entries(H.torre).filter(([p]) => p % 20 === 0))), calabozos: Object.keys(H.calabozo).length,
-    final: 'Nv ' + r.final.nivel + ' · poder ' + r.final.poder + ' · piso ' + r.final.torre }; })`;
+    campana: [1, 2, 3].map(e => e + ':' + ORDEN_DIF.map(d => H.campana[e + '-10 ' + d] || '-').join('/')).join(' '),
+    final: 'Nv ' + r.final.nivel + ' · poder ' + r.final.poder + ' · piso ' + r.final.torre + ' · aura ' + r.final.aura }; })`;
 
 if (isMainThread) {
   const confs = process.argv[2] ? JSON.parse(fs.readFileSync(process.argv[2], 'utf8')) : [1, 2, 3].map(semilla => ({ nombre: 'semilla ' + semilla, dias: 90, semilla }));
@@ -20,5 +21,6 @@ if (isMainThread) {
 } else {
   const c = workerData, juego = require('./cargar')();
   for (const [k, v] of Object.entries(c.ajustes || {})) juego.correr(`${k} = ${JSON.stringify(v)}`);
+  if (c.ajustes && c.ajustes.ESCALA_ETAPA) juego.correr('armarCampanas()');
   parentPort.postMessage(juego.correr(`${resumen}(simularProgresion(${JSON.stringify({ dias: c.dias || 90, semilla: c.semilla || 1, estaminaExtra: c.estaminaExtra || 0, grupo: c.grupo || 3 })}))`));
 }

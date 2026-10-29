@@ -32,6 +32,9 @@
         if ((n && n >= MASCOTA_MAX) || jugador.oro < oro) return 0;
         return prueba(() => { jugador.mascotas[m.id] = n + 1; jugador.mascota = m.id; }, () => { if (n) jugador.mascotas[m.id] = n; else delete jugador.mascotas[m.id]; jugador.mascota = puesta; }) / oro; },
       hacer: () => { const ok = nivelMascota(m) ? mejorarMascota(m) : comprarMascota(m); if (ok) ponerMascota(); return ok; } });
+    if (desbloqueado('aura')) cands.push({   // el aura: Esencia y oro
+      valor: () => { const n = nivelAura(), c = costeAura(n); return n >= AURA_MAX || !tieneCoste(c) ? 0 : prueba(() => { jugador.aura = n + 1; }, () => { jugador.aura = n; }) / c.oro; },
+      hacer: () => subirAura() });
     if (desbloqueado('skins')) for (const k of SKINS) cands.push({
       valor: () => { const n = estrellasSkin(k.id), oro = n ? COSTE_ESTRELLA(n) : PRECIO_SKIN, puesta = jugador.skin;
         if (n >= 5 || jugador.oro < oro) return 0;
@@ -146,8 +149,10 @@
               const df = Object.keys(DIF_REYES).find(x => !revisarReyes().vencidas[x] && pocos('reyes' + x));
               if (df) { revisarReyes().entradas--; k = 'reyes' + df; c = batallaReyes(df, ['x'], null); }
             }
-            if (!c) {   // farmeo: barrido del nivel más alto ya superado
-              const x = jugador.estamina >= ESTAMINA_CAMPANA && [...CAMPANAS].reverse().flatMap(y => [...ORDEN_DIF].reverse().map(df => [y, df])).find(([y, df]) => superada(y.id, df));
+            if (!c) {   // farmeo: el barrido que más rinde (XP, oro y Esencia) entre los niveles ya superados
+              const rinde = ([y, df]) => { const D = y.dificultades[df], s = k => (D.premio[k] || 0) + D.enemigos.reduce((t, e) => t + (e[k] || 0), 0);
+                return s('xp') * XP_BARRIDO + s('oro') + (D.premio.esencia || 0) * 300; };
+              const x = jugador.estamina >= ESTAMINA_CAMPANA && CAMPANAS.flatMap(y => ORDEN_DIF.map(df => [y, df])).filter(([y, df]) => superada(y.id, df)).sort((a, b) => rinde(b) - rinde(a))[0];
               if (!x) break;
               medir('barrido', () => barrido(...x)); batallas++; continue;
             }
@@ -164,7 +169,7 @@
             }
           }
           for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
-          dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, batallas });
+          dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas });
         }
         return { hitos, dia, fuentes, final: dia.at(-1) };
       });
