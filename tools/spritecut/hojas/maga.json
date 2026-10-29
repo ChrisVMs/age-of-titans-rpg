@@ -1,6 +1,0 @@
-{"name": "maga", "background": "#00FF00", "grid": {"cols": 5, "rows": 4}, "anchor": "feet",
- "animations": [{"row": 0, "name": "idle", "frames": 5},
-                {"row": 1, "name": "walk", "frames": 5},
-                {"row": 2, "name": "idle2", "frames": 5},
-                {"row": 3, "name": "cast", "cols": [0, 1, 2, 3]},
-                {"row": 3, "name": "proyectil", "cols": [4], "separate": true}]}
