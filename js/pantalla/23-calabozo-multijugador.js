@@ -32,9 +32,13 @@
     pintarSala();
   }
   // ranking del servidor: lista a la izquierda; el jugador elegido, a la derecha
+  let rankTab = 'servidor';
+  const tabsRanking = () => `<div class="tabs">${[['servidor', 'Servidor'], ['ecos', 'Ecos']].map(([k, t]) =>
+    `<button data-ranktab="${k}" class="${k === rankTab ? 'on' : ''}${k === 'ecos' && retoPendiente() ? ' con-punto' : ''}" style="position:relative">${t}</button>`).join('')}</div>`;
   function pintarRanking() {
+    if (rankTab === 'ecos' && desbloqueado('pArena')) return pintarEcos();
     const ranking = rankingServidor(), x = ranking[rankSel] || ranking[0], p = x.yo ? jugador : x.bot, s0 = conPerfil(p, estadisticas);
-    $('ranking').innerHTML = `<div class="ranking-vista"><div class="ranking-servidor">${ranking.map((r, i) =>
+    $('ranking').innerHTML = tabsRanking() + `<div class="ranking-vista"><div class="ranking-servidor">${ranking.map((r, i) =>
         `<div class="${r.yo ? 'yo' : ''}${i === rankSel ? ' sel' : ''}" data-rank="${i}"><b>#${i + 1}</b><span>${CLASES[r.clase].icono} ${r.nombre}</span><span class="clase">${CLASES[r.clase].nombre}</span><span>Nv ${r.nivel}</span><b>⚔ ${r.poder.toLocaleString('es')}</b></div>`).join('')}</div>
       <div class="ranking-ficha"><div class="pj-mini grande" data-retrato="${x.yo ? '' : x.nombre}"></div>
         <b>${i18nPuesto(rankSel)} ${x.nombre}</b><small>${CLASES[x.clase].icono} ${CLASES[x.clase].nombre} · Nv ${x.nivel}</small>
@@ -42,7 +46,23 @@
         <small>❤ ${s0.vida.toLocaleString('es')} · 🗡 ${s0.ataque} · 🛡 ${s0.defensa} · ⛨ ${s0.armadura}</small></div></div>`;
     pintarRetratos($('ranking'));
   }
-  $('ranking').addEventListener('click', e => { const r = e.target.closest('[data-rank]'); if (r) { rankSel = +r.dataset.rank; pintarRanking(); } });
+  $('ranking').addEventListener('click', e => {
+    const t = e.target.closest('[data-ranktab]');
+    if (t) { if (t.dataset.ranktab === 'ecos' && !desbloqueado('pArena')) return avisoBloqueo('pArena'); rankTab = t.dataset.ranktab; return pintarRanking(); }
+    if (e.target.closest('#retoEco')) { const c = batallaEco(); if (c) { guardar(); iniciarCampana(c); } return; }
+    const r = e.target.closest('[data-rank]'); if (r) { rankSel = +r.dataset.rank; pintarRanking(); }
+  });
+  // Ecos: el reto del día, el historial con cada uno y el ranking de la semana
+  function pintarEcos() {
+    const E = revisarEcos(), r = eco(E.reto), R = E.rival[r.id], frase = r.frases.reto[Math.floor(azarSemilla(`reto ${hoy()}`)() * r.frases.reto.length)];
+    $('ranking').innerHTML = tabsRanking() + `<div class="torre-card"><h3>${r.icono} ${r.nombre}${R.venganza ? ' · 🔥 venganza' : ''}</h3>
+        <small>«${frase}»</small><small>Gratis · ${textoPremio(PREMIO_RETO)} · 💎 ${R.venganza ? CRISTALES_VENGANZA : CRISTALES_RETO}</small>
+        <button id="retoEco" ${retoPendiente() ? '' : 'disabled'}>${retoPendiente() ? 'Aceptar el reto' : 'Mañana, otro reto'}</button></div>
+      ${ECOS.map(e => { const x = E.rival[e.id]; return `<div class="mision"><span style="font-size:22px">${e.icono}</span><div class="info">${e.nombre}
+        <small>tú ${x.gan} – ${x.per}${x.venganza ? ` · 🔥 +${Math.round(x.venganza * 100)} %` : ''}</small></div></div>`; }).join('')}
+      <div class="ranking"><h3>Ranking de la semana</h3>${rankingEcos().map((x, i) => `<div class="${x.yo ? 'yo' : ''}"><span>${i18nPuesto(i)} ${x.icono || ''} ${x.nombre}</span>
+        <b>${x.puntos.toLocaleString('es')}</b><small>${PREMIO_RANKING_ECOS[i] ? `💎 ${PREMIO_RANKING_ECOS[i].cristales} · 🎟️ ${PREMIO_RANKING_ECOS[i].fichas}` : ''}</small></div>`).join('')}</div>`;
+  }
   // dibuja el personaje (con su equipo y skin) en cada hueco [data-retrato]; vacío = tú
   function pintarRetratos(cont) {
     cont.querySelectorAll('[data-retrato]').forEach(el => {

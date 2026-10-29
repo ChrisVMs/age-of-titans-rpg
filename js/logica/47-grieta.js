@@ -58,7 +58,7 @@
     if (!gano) { terminarIntentoGrieta(); return `<br>🌀 Fin del intento en el piso ${n}`; }
     G.piso = n; G.vida = Math.max(.01, vidaFrac);
     let t = '';
-    if (n > G.mejor) { G.mejor = n; const pj = PREMIO_JEFE_GRIETA[n]; if (pj) { darPremio(pj); t += `<br>🏅 Piso ${n}: ${textoPremio(pj)}`; } }
+    if (n > G.mejor) { G.mejor = n; sumarPuntosEco(PUNTOS_ECO.grieta); const pj = PREMIO_JEFE_GRIETA[n]; if (pj) { darPremio(pj); t += `<br>🏅 Piso ${n}: ${textoPremio(pj)}`; } }
     if (n >= GRIETA_PISOS) { terminarIntentoGrieta(); return t + '<br>🌀 ¡Grieta completada!'; }
     G.ofertas = elegirMods(azarSemilla('bend' + G.semana + ':' + n + ':' + G.intentos), 3, BENDICIONES).map(b => b.id);
     return t;

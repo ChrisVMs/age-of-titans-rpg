@@ -110,7 +110,7 @@
     obtenidos = [...batalla.ganado.objetos];
     if (batalla.ganado.objetos.length) jugador.objetos.push(...batalla.ganado.objetos);
     if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano) + botinEquipoJefe(batalla.campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
-    if (batalla.campana.arena) extraRes += resultadoArena(gano);
+    if (batalla.campana.arena) extraRes += batalla.campana.eco ? resultadoEco(gano) : resultadoArena(gano);
     if (batalla.campana.torre && gano) extraRes += pisoSuperado(batalla.campana.torre);
     if (batalla.campana.grieta) { const u = heroeYo(); extraRes += grietaTerminada(gano, u.vida / u.vidaMax); }
     if (batalla.campana.calabozo && gano && !batalla.campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
@@ -124,7 +124,7 @@
     if ((batalla.campana.reyes || batalla.campana.calabozo) && sala) { for (const m of sala.miembros.slice(1)) m.listo = false; sala.trasBatalla = true; }   // de vuelta a la fase previa: todos pulsan Ready otra vez
     if (gano && batalla.campana.idCampana) contarMision('victoria');
     if (batalla.campana.mundial) contarMision('jefe');
-    if (batalla.campana.arena) contarMision('arena');
+    if (batalla.campana.arena && !batalla.campana.eco) contarMision('arena');
     ganar(batalla.ganado.oro, batalla.ganado.xp, { piedra: batalla.ganado.piedra, polvo: batalla.ganado.polvo, almas: batalla.ganado.almas || 0, esencia: batalla.ganado.esencia || 0 });
     if (gano && batalla.campana.mundial) { jugador.logros ||= {}; (jugador.logros.jefes ||= {})[batalla.campana.mundial] = true; guardar(); }
     if (gano && batalla.campana.idCampana) {

@@ -22,6 +22,7 @@
     $('campArena').classList.toggle('con-punto', a.arena);
     $('campMisiones').classList.toggle('con-punto', !!a.misiones);
     $('campReyes').classList.toggle('con-punto', a.reyes);
+    $('campRanking').classList.toggle('con-punto', retoPendiente());
     $('campRuinas').classList.toggle('con-punto', desbloqueado('pRuinas') && EDIFICIOS.some(e => nivelEdificio(e.id)) && llenadoRuinas() > .5);
     $('campLogin').classList.toggle('con-punto', loginDisponible());
     const ev = eventoHoy(), man = eventoDia((ahoraJuego().getDay() + 1) % 7);

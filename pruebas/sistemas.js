@@ -93,6 +93,24 @@ const PRUEBAS = {
     const vida0 = estadisticas().vida, o = { enc: 0 }, enc0 = costeEncantar(o).oro;
     for (let i = 0; i < 10; i++) { mejorarEdificio('altar'); mejorarEdificio('forja'); mejorarEdificio('tesoreria'); }
     [estadisticas().vida > vida0, Math.abs(bonoRuinas('oro') - .05) < 1e-9, costeEncantar(o).oro === Math.round(enc0 * .9)]`,
+  'Ecos: reto diario gratis, una vez al día, con memoria y venganza': `
+    jugador.nivel = 20; const E = revisarEcos(), id = E.reto, R = E.rival[id], f0 = fuerzaEco(id), cr0 = jugador.cristales;
+    const otro = ECOS.find(e => e.id !== id).id, noOtro = batallaEco(otro) === null;
+    prepararBatalla(batallaEco()); cobrarResultado(true);
+    const gano = [R.gan, R.racha].join(), venganza = Math.abs(fuerzaEco(id) / f0 - (1 + VENGANZA_PASO)) < 1e-9, cr1 = jugador.cristales - cr0;
+    const unaVez = batallaEco() === null; E.dia = 'ayer'; revisarEcos(); E.reto = id;
+    prepararBatalla(batallaEco()); cobrarResultado(false);
+    [noOtro, gano === '1,1', venganza, cr1 === CRISTALES_RETO, unaVez, R.venganza === 0 && R.racha === 0 && R.per === 1, E.puntos === PUNTOS_ECO.victoria]`,
+  'Ecos: la venganza tiene tope y Aldric baja tras 3 victorias seguidas': `
+    jugador.nivel = 20; const E = revisarEcos(), R = E.rival.aldric; const f0 = eco('aldric').fuerza(R);
+    for (let i = 0; i < 5; i++) { E.dia = 'x' + i; revisarEcos(); E.reto = 'aldric'; prepararBatalla(batallaEco()); cobrarResultado(true); }
+    [R.venganza === VENGANZA_MAX, f0 === 1.15, eco('aldric').fuerza(R) === 1.05]`,
+  'Ecos: ranking semanal con premio el lunes y título a las 10 victorias': `
+    jugador.nivel = 20; const E = revisarEcos(); E.puntos = 1e6; const cr0 = jugador.cristales, fi0 = revisarEvento().fichas;
+    const primero = rankingEcos()[0].yo; E.semana = 'pasada'; revisarEcos();
+    E.rival.kael.gan = VICTORIAS_TITULO_ECO; revisarTitulos(false);
+    [primero, jugador.cristales - cr0 === PREMIO_RANKING_ECOS[0].cristales, revisarEvento().fichas - fi0 === PREMIO_RANKING_ECOS[0].fichas, E.puntos === 0,
+     jugador.titulos.eco_kael === true]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

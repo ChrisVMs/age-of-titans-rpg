@@ -105,7 +105,7 @@
         sembrar(semilla);
         jugador = perfil ? structuredClone(perfil) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase: 'guerrero', arbol: {}, torre: { mejor: 0 },
           calabozos: {}, calabozosDif: {}, mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } });   // los campos que el juego rellena al cargar
-        const hitos = { nivel: {}, campana: {}, torre: {}, jefes: {}, calabozo: {}, reyes: {}, grieta: {} }, dia = [], fuentes = {};
+        const hitos = { nivel: {}, campana: {}, torre: {}, jefes: {}, calabozo: {}, reyes: {}, grieta: {}, ecos: {}, ecosJugados: {} }, dia = [], fuentes = {};
         const xpTotal = () => { let t = jugador.xp; for (let n = 1; n < jugador.nivel; n++) t += xpParaSubir(n); return t; };
         const medir = (fuente, f) => { const x = xpTotal(), o = jugador.oro, es = jugador.mat.esencia || 0, r = f(), F = fuentes[fuente] ||= { xp: 0, oro: 0, esencia: 0, veces: 0 };
           F.xp += xpTotal() - x; F.oro += jugador.oro - o; F.esencia += Math.max(0, (jugador.mat.esencia || 0) - es); F.veces++; return r; };   // XP y oro de cada fuente (el oro gastado en mejoras no cuenta: se mide aparte)
@@ -162,6 +162,7 @@
               const df = Object.keys(DIF_REYES).find(x => !revisarReyes().vencidas[x] && pocos('reyes' + x));
               if (df) { revisarReyes().entradas--; k = 'reyes' + df; c = batallaReyes(df, ['x'], null); }
             }
+            if (!c && retoPendiente()) { k = 'eco'; c = batallaEco(); }   // el reto del Eco, siempre
             if (!c && desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso
               elegirBendicion(bendicionSugerida());
               c = batallaGrieta(); if (c) k = 'grieta';
@@ -173,8 +174,9 @@
               if (!x) break;
               medir('barrido', () => barrido(...x)); batallas++; continue;
             }
-            const fuente = c.idCampana ? 'campaña' : c.grieta ? 'grieta' : c.torre ? 'torre' : c.arena ? 'arena' : c.mundial ? 'jefes' : c.calabozo ? 'calabozo' : 'reyes';
+            const fuente = c.idCampana ? 'campaña' : c.eco ? 'eco' : c.grieta ? 'grieta' : c.torre ? 'torre' : c.arena ? 'arena' : c.mundial ? 'jefes' : c.calabozo ? 'calabozo' : 'reyes';
             const gano = medir(fuente, () => jugar(c)); batallas++;
+            if (c.eco) hitos.ecosJugados[c.eco] = (hitos.ecosJugados[c.eco] || 0) + 1;
             if (gano === null) break;
             if (!gano) fallos[k] = (fallos[k] || 0) + 1;
             else {
@@ -183,6 +185,7 @@
               if (c.mundial) hitos.jefes[c.mundial] ||= d;
               if (c.calabozo) hitos.calabozo[`${c.cal} ${c.calabozo}`] ||= d;
               if (c.reyes) hitos.reyes[c.reyes] ||= d;
+              if (c.eco) hitos.ecos[c.eco] = (hitos.ecos[c.eco] || 0) + 1;
               if (c.grieta) { const s = Math.ceil(d / 7); hitos.grieta[s] = Math.max(hitos.grieta[s] || 0, c.grieta); }   // mejor piso de cada semana
             }
           }

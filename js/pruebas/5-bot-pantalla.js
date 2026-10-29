@@ -23,6 +23,7 @@
       const id = Object.keys(MUNDIALES).find(m => estadoMundial(m).vida > 0 && pocos('jefe' + m));
       if (id) return { clave: 'jefe' + id, iniciar: () => { mundialSel = id; iniciarMundial(); } };
     }
+    if (retoPendiente()) return { clave: 'eco', iniciar: () => iniciarCampana(batallaEco()) };   // reto del Eco
     if (desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso
       elegirBendicion(bendicionSugerida());
       if (puedeEntrarGrieta()) return { clave: 'grieta', iniciar: () => iniciarCampana(batallaGrieta()) };

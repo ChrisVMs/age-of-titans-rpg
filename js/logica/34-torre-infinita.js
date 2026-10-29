@@ -23,7 +23,7 @@
   }
   function pisoSuperado(n) {
     if (n <= jugador.torre.mejor) return '';
-    jugador.torre.mejor = n; contarMision('torre');
+    jugador.torre.mejor = n; contarMision('torre'); sumarPuntosEco(PUNTOS_ECO.torre);
     let t = `<br><b>🗼 Piso ${n} superado</b>`;
     if (n % 10 === 0) {   // hito: almas, oro y un objeto del cofre de ese tramo
       const h = premioHito(n), o = objetoAzar(COFRES.find(k => k.id === pisoTorre(n).cofreHito).probs, .1);

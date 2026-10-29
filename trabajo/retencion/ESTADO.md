@@ -7,7 +7,7 @@ Que el jugador tenga algo que hacer hoy, esta semana y a largo plazo, como Wartu
 un ciclo semanal con premios exclusivos y una progresión que no se termina en semanas.
 
 ## Próximo paso
-**Paso 8: Ecos** (3-5 bots rivales con memoria que suben contigo, te retan en la arena, ranking semanal contra ellos).
+**Paso 9: Códice de colección** (sets completos —bestiario por etapa, títulos por rareza— dan bono permanente y marco).
 Proponer el diseño al usuario antes de hacerlo.
 
 ## Plan
@@ -21,7 +21,7 @@ invasiones cuando haya servidor.
    2 intentos por semana, se cobra solo lo nuevo. Dificultad según lo más difícil superado en la campaña.
 6. ✅ **Despertar**: al máximo, mascota/runa/reliquia se "despierta" (efecto visual + pasiva única) con Esencia.
 7. ✅ **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
-8. **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
+8. ✅ **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
 9. **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
 10. **Pacto de compañeros** (gremio sin servidor: 3 héroes, tecnologías comunes, jefe semanal). Cuando haya servidor.
 11. **Invasiones** del campamento a horas fijas (oleada con los bots; 30 min). Necesita notificaciones en móvil.
@@ -29,6 +29,18 @@ invasiones cuando haya servidor.
 No copiar de Wartune: VIP agresivo / pago para ganar, decenas de monedas, pantallas llenas de puntos rojos.
 
 ## Última sesión
+**2026-10-29 · Claude (Ecos)**
+- `js/logica/50-ecos.js`: `ECOS` (datos: curva de fuerza, estilo, frases, título), `ECO_BASE` (1,7), venganza
+  (`VENGANZA_PASO`/`VENGANZA_MAX`), reto del día sembrado (`revisarEcos`), `batallaEco` (motor de arena, gratis),
+  `resultadoEco` (desde `cobrarResultado`), `puntosEco`/`rankingEcos` (sin estado: sembrados por semana y día),
+  premio el lunes (`PREMIO_RANKING_ECOS`: 💎 y 🎟️), títulos `eco_<id>` a las 10 victorias. Puntos tuyos: retos,
+  pisos de la Torre y de la Grieta. Desbloqueo con la Arena (Nv 15).
+- Pantalla: pestaña "Ecos" en 🏅 Ranking (reto, historial, ranking); punto rojo en Ranking con el reto pendiente.
+  Huir del reto = derrota (como la arena).
+- Simulador y bot visual aceptan el reto cada día. Medición (3 semillas, 90 días): ganas el 32-86 % según el Eco
+  (media ~62 %); con `ECO_BASE` 1 era el 97-100 %.
+- Verificación: 19/19 sistemas (3 de los Ecos), 14/14 escenarios, igual con pantalla y sin ella; captura y reto en navegador.
+
 **2026-10-29 · Claude (Ruinas del campamento)**
 - `js/logica/49-ruinas.js`: `EDIFICIOS` (datos: producción por hora y nivel, bono), `costeEdificio`, `produccionRuinas`,
   `recogerRuinas` (guarda decimales), `mejorarEdificio` (recoge antes), `statsRuinas`, `bonoRuinas`, `horasAlmacen`.

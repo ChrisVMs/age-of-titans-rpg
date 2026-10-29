@@ -273,8 +273,8 @@
       const e = estadoMundial(batalla.campana.mundial);
       if (!batalla.terminada) { e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; }   // abandono: el daño cuenta para el ranking
       e.vida = Math.max(0, enemigoDuelo().vida); guardar(); destino = destino === 'pCampana' ? 'pEvento' : destino; }
-    if (batalla.campana && batalla.campana.arena && !batalla.terminada) avisar(resultadoArena(false).replace(/<[^>]+>/g, ' ').trim());   // huir de la arena = derrota
-    if (batalla.campana && batalla.campana.arena && destino === 'pCampana') destino = 'pArena';
+    if (batalla.campana && batalla.campana.arena && !batalla.terminada) avisar((batalla.campana.eco ? resultadoEco : resultadoArena)(false).replace(/<[^>]+>/g, ' ').trim());   // huir de la arena (o de un Eco) = derrota
+    if (batalla.campana && batalla.campana.arena && destino === 'pCampana') destino = batalla.campana.eco ? 'pRanking' : 'pArena';
     if (batalla.campana && batalla.campana.torre && destino === 'pCampana') destino = 'pTorre';
     if (batalla.campana && batalla.campana.reyes && destino === 'pCampana') destino = 'pReyes';
     if (batalla.campana && batalla.campana.calabozo && destino === 'pCampana') destino = 'pCalabozo';
@@ -300,7 +300,7 @@
       if (acc === 'salir') salirBatalla(batalla.campana.grieta ? 'pGrieta' : 'pCampana');
     };
   };
-  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.grieta ? 'pGrieta' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
+  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.eco ? 'pRanking' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.grieta ? 'pGrieta' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
   $('resOtra').onclick = () => batalla.campana.mundial ? iniciarMundial() : batalla.campana.torre ? iniciarTorre() : iniciarCampana(batalla.campana);
 
   $('resTexto').addEventListener('click', e => { const b = e.target.closest('[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });   // objetos ganados en la batalla: se muestran como iconos en el resultado
@@ -316,7 +316,7 @@
       + (obtenidos.length ? `<div class="obtenidos">Obtenido: ${obtenidos.map(o => `<button class="item r-${modelo[o.modelo].rareza}" data-uid="${o.uid}">${icono(modelo[o.modelo])}</button>`).join('')}</div>` : '');
     $('resOtra').textContent = batalla.campana.torre ? (gano ? `Subir al piso ${batalla.campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
     $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo || batalla.campana.grieta ? 'none' : '';
-    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : batalla.campana.grieta ? 'Volver a la Grieta' : 'Volver a campaña';
+    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.eco ? 'Volver a los Ecos' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : batalla.campana.grieta ? 'Volver a la Grieta' : 'Volver a campaña';
     $('resultado').classList.add('visible');
     if (!gano && batalla.enemigo.minotauro) { parca.frames.classList.add('quieto'); parca.ver(19); }   // rugido de victoria
     if (!gano && batalla.enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(16); }   // pose de victoria

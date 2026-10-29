@@ -48,6 +48,7 @@
   "js/logica/46-recargas-y-cristales.js",
   "js/logica/47-grieta.js",
   "js/logica/49-ruinas.js",
+  "js/logica/50-ecos.js",
   "js/logica/99-lista.js",
   "js/pantalla/01-inicio.js",
   "js/pantalla/02-navegacion-entre-pantallas.js",

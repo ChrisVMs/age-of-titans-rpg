@@ -8,6 +8,7 @@ const resumen = `(r => { const H = r.hitos, f = o => Object.entries(o).map(([k, 
     torre: f(Object.fromEntries(Object.entries(H.torre).filter(([p]) => p % 20 === 0))), calabozos: f(Object.fromEntries(Object.entries(H.calabozo).filter(([k]) => +k.split(" ")[0] > 4))),
     campana: [1, 2, 3].map(e => e + ':' + ORDEN_DIF.map(d => H.campana[e + '-10 ' + d] || '-').join('/')).join(' '),
     grieta: Object.values(H.grieta).join(' '),
+    ecos: Object.keys(H.ecosJugados).map(k => k + ' ' + Math.round((H.ecos[k] || 0) / H.ecosJugados[k] * 100) + '%').join(' · '),
     poder: [30, 45, 60, 90, 120, 150].filter(d => r.dia[d - 1]).map(d => d + ':' + Math.round(r.dia[d - 1].poder / 1000) + 'k/D' + r.dia[d - 1].despertar + '/R' + r.dia[d - 1].ruinas).join(' '),
     final: 'Nv ' + r.final.nivel + ' · poder ' + r.final.poder + ' · piso ' + r.final.torre + ' · aura ' + r.final.aura }; })`;
 
