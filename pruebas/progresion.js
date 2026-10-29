@@ -7,6 +7,7 @@ const resumen = `(r => { const H = r.hitos, f = o => Object.entries(o).map(([k, 
   return { nivel: [30, 50, 60, 70, 80].map(n => n + ':' + (H.nivel[n] || '-')).join(' '), jefes: f(H.jefes), reyes: f(H.reyes),
     torre: f(Object.fromEntries(Object.entries(H.torre).filter(([p]) => p % 20 === 0))), calabozos: f(Object.fromEntries(Object.entries(H.calabozo).filter(([k]) => +k.split(" ")[0] > 4))),
     campana: [1, 2, 3].map(e => e + ':' + ORDEN_DIF.map(d => H.campana[e + '-10 ' + d] || '-').join('/')).join(' '),
+    grieta: Object.values(H.grieta).join(' '),
     final: 'Nv ' + r.final.nivel + ' · poder ' + r.final.poder + ' · piso ' + r.final.torre + ' · aura ' + r.final.aura }; })`;
 
 if (isMainThread) {

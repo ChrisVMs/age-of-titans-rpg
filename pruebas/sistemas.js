@@ -35,6 +35,26 @@ const PRUEBAS = {
     jugador.superadas['1-10:normal'] = true;
     const r = premioCapitulo('1-10', 'normal'), otra = premioCapitulo('1-10', 'normal');
     [antes === null, r.cristales === CRISTALES_CAPITULO.normal, otra === null, jugador.cristales === c0 + CRISTALES_CAPITULO.normal, premioCapitulo('1-10', 'dificil') === null]`,
+  'Grieta: la vida pasa al piso siguiente y las bendiciones suben estadísticas': `
+    jugador.nivel = 40; const G = revisarGrieta(), c = batallaGrieta(); prepararBatalla(c);
+    heroeYo().vida = Math.round(heroeYo().vidaMax / 2); cobrarResultado(true);
+    const ofertas = G.ofertas.length, mitad = Math.abs(G.vida - .5) < .01;
+    const b = G.ofertas.map(id => BENDICIONES.find(x => x.id === id)).find(x => x.st && !x.cura) || BENDICIONES.find(x => x.id === G.ofertas[0]);
+    const sinElegir = batallaGrieta() === null; elegirBendicion(b.id);
+    const c2 = batallaGrieta(), atq = estadisticas().ataque; prepararBatalla(c2);
+    [ofertas === 3, mitad, sinElegir, c2.grieta === 2, Math.abs(heroeYo().vida / heroeYo().vidaMax - G.vida) < .01,
+     !b.st || !b.st.ataque || batalla.st.ataque > atq]`,
+  'Grieta: perder termina el intento, 2 por semana, y se cobra solo lo nuevo': `
+    jugador.nivel = 40; const G = revisarGrieta();
+    prepararBatalla(batallaGrieta()); cobrarResultado(true); G.ofertas = null;
+    prepararBatalla(batallaGrieta()); cobrarResultado(false);
+    const tras1 = [G.activa, G.intentos, G.mejor].join(), c = batallaGrieta(), premio1 = Object.keys(c.premio).length;
+    prepararBatalla(c); cobrarResultado(false);
+    [tras1 === 'false,1,1', premio1 === 0, batallaGrieta() === null]`,
+  'Grieta: salir a mitad de un piso cuenta como derrota; el lunes se reinicia': `
+    jugador.nivel = 40; batallaGrieta(); const G = revisarGrieta(), salio = !G.activa && G.intentos === 1;
+    G.semana = 'otra'; revisarGrieta();
+    [salio, G.intentos === GRIETA_INTENTOS, G.piso === 0]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

@@ -138,10 +138,14 @@
     const E = ESCALA_ETAPA[e.id], n = E.desde + i * E.paso;   // n equivalente de la Etapa 1 (decimal en las etapas altas)
     const dificultades = Object.fromEntries(ORDEN_DIF.map(d => [d, crearDificultad(n, d, tipos, e.id > 1 ? MOD_DIF_ALTO : MOD_DIF)]));
     if (ESENCIA_ETAPA[e.id]) for (const d of ORDEN_DIF) dificultades[d].premio.esencia = Math.round(ESENCIA_ETAPA[e.id] * MOD_DIF[d].premio);
-    return { id: `${e.id}-${i + 1}`, etapa: e.id, nombre: `${e.id}-${i + 1} ${nombre}`, jefe: tipos.some(t => TIPOS_ENEMIGO[t].jefe),
+    return { id: `${e.id}-${i + 1}`, etapa: e.id, n, mods: e.id > 1 ? MOD_DIF_ALTO : MOD_DIF, nombre: `${e.id}-${i + 1} ${nombre}`, jefe: tipos.some(t => TIPOS_ENEMIGO[t].jefe),
              ancestral: e.id === 3 && i === 9, dificultades };
   }))); }
   armarCampanas();
+  // Poder demostrado: el n equivalente más alto que has superado, contando la dificultad (cada nivel de campaña es ~+23 %
+  // de vida y de daño, así que una dificultad que multiplica vida×daño por k vale log(k) / log(1,23²) niveles).
+  const nDificultad = (c, d) => c.n + Math.log(c.mods[d].vida * c.mods[d].dano) / (2 * Math.log(1.23));
+  const nPoderCampana = () => Math.max(1, ...CAMPANAS.flatMap(c => ORDEN_DIF.filter(d => superada(c.id, d)).map(d => nDificultad(c, d))));
   // Partidas del sistema anterior (claves '1:normal', '2:dificil'...): ese progreso ya no corresponde a ningún nivel
   if (jugador.superadas) for (const k of Object.keys(jugador.superadas)) if (!/^\d+-\d+:/.test(k)) delete jugador.superadas[k];
   const superada = (id, d) => !!(jugador.superadas || {})[`${id}:${d}`];

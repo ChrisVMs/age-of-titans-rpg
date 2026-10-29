@@ -7,18 +7,40 @@ Que el jugador tenga algo que hacer hoy, esta semana y a largo plazo, como Wartu
 un ciclo semanal con premios exclusivos y una progresión que no se termina en semanas.
 
 ## Próximo paso
-**Paso 3** va en el paso 6 de `contenido-nivel-alto` (estirar el tramo final). Aquí queda opcional: ranking semanal de
-fichas contra los bots, con premio por puesto (pedir visto bueno al usuario).
+**Paso 6: Despertar** (segunda vida de mascotas, runas y reliquias al máximo, con Esencia). Va junto al paso 6 de
+`contenido-nivel-alto` (estirar el tramo final). Proponer al usuario el diseño antes de hacerlo.
 
 ## Plan
-1. ✅ Barra de actividad diaria y semanal: cofres al completar 2/4/6 misiones del día y 3/5 de la semana (antes un solo
-   bonus a las 5).
-2. ✅ Evento semanal: tema rotativo (6 temas) que da fichas; tienda de fichas con límite semanal y el título exclusivo del tema.
-3. Estirar el tramo final para que maximizar lleve meses: va en el paso 6 de `contenido-nivel-alto` (estrellas o
-   "despertar" por sistema con coste empinado, aura más cara).
-4. Gremios (necesita servidor real): tecnología de gremio, jefe de gremio. Queda para cuando exista el servidor.
+Referencia Wartune (mismas intenciones, mecánicas propias). Orden acordado: Grieta → Despertar → Campamento → Ecos → Pacto e
+invasiones cuando haya servidor.
+1. ✅ Barra de actividad diaria y semanal (cofres a 2/4/6 y 3/5 misiones).
+2. ✅ Evento semanal: tema rotativo que da fichas; tienda con límite semanal y título exclusivo del tema.
+3. ✅ Recargas de estamina (3 anuncios + 1 con cristales al día) y cristales (misiones y capítulos completos).
+4. Estirar el tramo final (maximizar en meses, no en ~24 días): ver paso 6 de `contenido-nivel-alto` y el paso 6 aquí.
+5. ✅ **La Grieta**: 15 pisos semanales sembrados, la vida no se recupera, 1 de 3 bendiciones tras cada piso,
+   2 intentos por semana, se cobra solo lo nuevo. Dificultad según lo más difícil superado en la campaña.
+6. **Despertar**: al máximo, mascota/runa/reliquia se "despierta" (efecto visual + pasiva única) con Esencia.
+7. **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
+8. **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
+9. **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
+10. **Pacto de compañeros** (gremio sin servidor: 3 héroes, tecnologías comunes, jefe semanal). Cuando haya servidor.
+11. **Invasiones** del campamento a horas fijas (oleada con los bots; 30 min). Necesita notificaciones en móvil.
+
+No copiar de Wartune: VIP agresivo / pago para ganar, decenas de monedas, pantallas llenas de puntos rojos.
 
 ## Última sesión
+**2026-10-29 · Claude (Grieta)**
+- `js/logica/47-grieta.js`: `GRIETA_PISOS`, `GRIETA_INTENTOS`, `BENDICIONES` (datos), `GRIETA_ESCALA`, `pisoGrieta`,
+  `batallaGrieta`, `grietaTerminada` (desde `cobrarResultado`), `elegirBendicion`, `bendicionSugerida`. Salir a mitad de un
+  piso = derrota (`enCurso`). Sin estamina. Desbloqueo `pGrieta` en el nivel 25.
+- Motor: `prepararBatalla` acepta `c.stPct` (bonos solo de esa batalla) y `c.vidaYo` (vida inicial en fracción).
+- Campaña: `nPoderCampana()` (n equivalente más alto superado, contando la dificultad). La Grieta escala con eso: con el
+  nivel se volvía imposible en el tramo final (el nivel sube y el poder no).
+- Pantalla `js/pantalla/31-grieta.js` e icono 🌀 en el Campamento. Bot visual y simulador la juegan.
+- Medición (3 semillas): mejor piso por semana 6-14 tras la primera (la primera, 9-15).
+- Verificación: 10/10 sistemas (3 de la Grieta), 14/14 escenarios, igual con pantalla y sin ella; en navegador: pantalla,
+  batalla con la vida arrastrada, bendiciones.
+
 **2026-10-29 · Claude (recargas, cristales y bot)**
 - `js/logica/46-recargas-y-cristales.js`: `ANUNCIOS_DIA` × `ESTAMINA_ANUNCIO`, `RECARGA_CRISTALES` (1 al día),
   `cobrarAnuncio`, `recargarConCristales`, `premioCapitulo` (cristales la 1.ª vez que se completa una etapa en cada

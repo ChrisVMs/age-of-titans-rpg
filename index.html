@@ -55,6 +55,9 @@
   .camp-evento:empty { display:none; }
   .mision { display:flex; align-items:center; gap:10px; background:#2e2a38; border-radius:8px; padding:6px 10px; border-left:4px solid #4a4458; }
   .mision.lista-m { border-left-color:#7fe07f; } .mision.hecha { opacity:.5; }
+  .bendicion { display:flex; flex-direction:column; width:100%; margin-top:6px; text-align:left; }
+  .grieta-vida { display:flex; align-items:center; gap:8px; margin:6px 0; } .grieta-vida .prog { flex:1; height:8px; background:#000; border-radius:4px; overflow:hidden; }
+  .grieta-vida .prog i { display:block; height:100%; background:#e05c5c; }
   .actividad { position:relative; margin:14px 18px 22px; }
   .actividad .prog { height:8px; background:#000; border-radius:4px; overflow:hidden; } .actividad .prog i { display:block; height:100%; background:#7fe07f; }
   .cofre-act { position:absolute; top:50%; transform:translate(-50%,-50%); width:34px; height:34px; padding:0; border-radius:50%; font-size:16px; background:#2e2a38; border:2px solid #4a4458; }
@@ -872,6 +875,7 @@
         <button class="camp-icono" data-ir="pRanking" id="campRanking">🏅<small>Ranking</small></button>
         <button class="camp-icono" data-ir="pColeccion" id="campColeccion">📚<small>Colección</small></button>
         <button class="camp-icono" data-ir="pTorre" id="campTorre">🗼<small>Torre</small></button>
+        <button class="camp-icono" data-ir="pGrieta" id="campGrieta">🌀<small>Grieta</small></button>
         <button class="camp-icono evento" data-ir="pReyes" id="campReyes">👑<small>Reyes</small></button>
         <button class="camp-icono" data-ir="pMisiones" id="campMisiones">📋<small>Misiones</small></button>
       </div>
@@ -992,6 +996,11 @@
   <div class="pantalla" id="pTorre">
     <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Torre infinita</h2><div class="hud"></div></div>
     <div class="panel" id="torre"></div>
+  </div>
+
+  <div class="pantalla" id="pGrieta">
+    <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>La Grieta</h2><div class="hud"></div></div>
+    <div class="panel" id="grieta"></div>
   </div>
 
   <!-- Misiones, login diario y expediciones -->
@@ -1133,6 +1142,7 @@
 <script src="js/logica/44-aura.js"></script>
 <script src="js/logica/45-evento-semanal.js"></script>
 <script src="js/logica/46-recargas-y-cristales.js"></script>
+<script src="js/logica/47-grieta.js"></script>
 <script src="js/logica/99-lista.js"></script>
 <script src="js/pantalla/01-inicio.js"></script>
 <script src="js/pantalla/02-navegacion-entre-pantallas.js"></script>
@@ -1164,6 +1174,7 @@
 <script src="js/pantalla/28-campamento.js"></script>
 <script src="js/pantalla/29-aura.js"></script>
 <script src="js/pantalla/30-recargas.js"></script>
+<script src="js/pantalla/31-grieta.js"></script>
 <script>
   // Herramientas de pruebas (menú 🧪: bot, simuladores, escenarios): solo en modo pruebas. Mismo orden que js/orden.json.
   if (MODO_PRUEBAS) for (const f of ["js/pruebas/1-bot.js", "js/pruebas/2-simulador-de-batallas.js", "js/pruebas/3-simulador-de-progresion.js", "js/pruebas/4-escenarios.js", "js/pruebas/5-bot-pantalla.js", "js/pruebas/6-simuladores-pantalla.js", "js/pruebas/7-escenarios-pantalla.js"]) {

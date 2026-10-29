@@ -76,10 +76,12 @@
   function prepararBatalla(c) {
     batalla.id = (batalla.id || 0) + 1;   // identifica la batalla: lo que quede por dibujar de otra anterior se descarta
     batalla.danoHecho = 0; batalla.especialCerbero = null; batalla.turnoBola = 0; batalla.turnoLanza = 0; batalla.turnoOnda = 0; batalla.turnoCura = 0; batalla.turnoEscudo = 0; batalla.escudoRestante = 0; batalla.turnoFuria = FURIA.turnos - 1; batalla.furiaRestante = 0; batalla.especialMinotauro = null; batalla.turnoTajo = 0; batalla.especialAsmodeo = null;
-    c.grupo = !!(c.idCampana || c.torre || c.reyes || c.calabozo);   // campaña, Torre y Torre de reyes: batalla por grupos en rombo
+    c.grupo = !!(c.idCampana || c.torre || c.reyes || c.calabozo || c.grieta);   // campaña, Torre y Torre de reyes: batalla por grupos en rombo
     batalla.campana = c; batalla.reglas = c.grupo ? REGLAS.grupo : REGLAS.duelo;
     prepararHabilidades(); batalla.st = estadisticas(); batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] }; batalla.terminada = false;
+    for (const [a, v] of Object.entries(c.stPct || {})) batalla.st[a] = Math.round(batalla.st[a] * (1 + v / 100));   // bonos solo de esta batalla (Grieta)
     if (c.grupo) armarGrupo(c); else armarDuelo();
+    if (c.vidaYo && c.grupo) { const u = heroeYo(); u.vida = Math.max(1, Math.round(u.vidaMax * c.vidaYo)); }   // vida que arrastra (Grieta)
   }
   let obtenidos = [];
   // Fin de la batalla: cobra lo ganado (botín de los enemigos, premio, recompensas propias de cada modo), marca lo superado
@@ -110,6 +112,7 @@
     if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano) + botinEquipoJefe(batalla.campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
     if (batalla.campana.arena) extraRes += resultadoArena(gano);
     if (batalla.campana.torre && gano) extraRes += pisoSuperado(batalla.campana.torre);
+    if (batalla.campana.grieta) { const u = heroeYo(); extraRes += grietaTerminada(gano, u.vida / u.vidaMax); }
     if (batalla.campana.calabozo && gano && !batalla.campana.ayuda) {   // recompensa propia del calabozo: un objeto garantizado, mejor cuanto más difícil
       extraRes += calabozoSuperado(batalla.campana.cal);
       if (difAbierta(batalla.campana.cal, batalla.campana.calabozo)) jugador.calabozosDif[`${batalla.campana.cal}:${batalla.campana.calabozo}`] = true;

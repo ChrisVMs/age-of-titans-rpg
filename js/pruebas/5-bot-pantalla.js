@@ -23,6 +23,10 @@
       const id = Object.keys(MUNDIALES).find(m => estadoMundial(m).vida > 0 && pocos('jefe' + m));
       if (id) return { clave: 'jefe' + id, iniciar: () => { mundialSel = id; iniciarMundial(); } };
     }
+    if (desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso
+      elegirBendicion(bendicionSugerida());
+      if (puedeEntrarGrieta()) return { clave: 'grieta', iniciar: () => iniciarCampana(batallaGrieta()) };
+    }
     if (jugador.estamina >= ESTAMINA_CAMPANA)   // farmeo: barrido del nivel más alto ya superado
       for (const c of [...CAMPANAS].reverse()) for (const d of [...ORDEN_DIF].reverse()) if (superada(c.id, d)) return { barrido: [c, d] };
     return null;

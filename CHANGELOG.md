@@ -13,6 +13,9 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Barra de actividad: cofres al completar 2, 4 y 6 misiones del día (3 y 5 de la semana).
 - Evento semanal (desde el nivel 10): cada semana una actividad da fichas para la tienda del evento, con un título exclusivo del tema.
 
+### 🌀 La Grieta (desde el nivel 25)
+- 15 pisos que cambian cada semana. La vida no se recupera entre pisos y tras cada victoria eliges 1 de 3 bendiciones. 2 intentos por semana.
+
 ### ⚡ Estamina y cristales
 - Tocar la estamina abre las recargas: 3 anuncios al día (+50 cada uno) y una recarga de +150 por 50 💎.
 - Cristales 💎: en los cofres de misiones y la primera vez que completas un capítulo en cada dificultad.

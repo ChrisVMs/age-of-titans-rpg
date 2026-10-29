@@ -240,7 +240,7 @@
   }
   async function iniciarCampana(c) {
     revisarEstamina();
-    const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
+    const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo || c.grieta ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
     if (jugador.estamina < coste) { avisar('Sin estamina: vuelve mañana'); return; }
     jugador.estamina -= coste; if (coste) contarMision('estamina', coste); guardar(); pintarHud();
     prepararBatalla(c);
@@ -289,7 +289,7 @@
   // Abandonar: hay que confirmarlo y no se cobra nada de lo ganado en la batalla
   $('huir').onclick = () => {
     if (enRonda) return;   // ataque en curso: se puede salir al terminar la ronda
-    if (batalla.terminada) return salirBatalla('pCampana');
+    if (batalla.terminada) return salirBatalla(batalla.campana.grieta ? 'pGrieta' : 'pCampana');
     modalFijo = true;
     abrirModal('comun', `<h2>¿Abandonar la batalla?</h2>
       <p>Si sales ahora <b>no recibirás ninguna recompensa</b> (oro, experiencia ni materiales) y la estamina gastada no se devuelve.</p>
@@ -297,10 +297,10 @@
     $('detCaja').onclick = e => {
       const acc = e.target.closest('button')?.dataset.acc; if (!acc) return;
       modalFijo = false; cerrarModal();
-      if (acc === 'salir') salirBatalla('pCampana');
+      if (acc === 'salir') salirBatalla(batalla.campana.grieta ? 'pGrieta' : 'pCampana');
     };
   };
-  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
+  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.grieta ? 'pGrieta' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
   $('resOtra').onclick = () => batalla.campana.mundial ? iniciarMundial() : batalla.campana.torre ? iniciarTorre() : iniciarCampana(batalla.campana);
 
   $('resTexto').addEventListener('click', e => { const b = e.target.closest('[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });   // objetos ganados en la batalla: se muestran como iconos en el resultado
@@ -315,8 +315,8 @@
     $('resTexto').innerHTML += extraRes + (sinBotin ? '<br><small>En la Torre el botín solo se cobra al superar el piso.</small>' : '')
       + (obtenidos.length ? `<div class="obtenidos">Obtenido: ${obtenidos.map(o => `<button class="item r-${modelo[o.modelo].rareza}" data-uid="${o.uid}">${icono(modelo[o.modelo])}</button>`).join('')}</div>` : '');
     $('resOtra').textContent = batalla.campana.torre ? (gano ? `Subir al piso ${batalla.campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
-    $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo ? 'none' : '';
-    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : 'Volver a campaña';
+    $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo || batalla.campana.grieta ? 'none' : '';
+    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : batalla.campana.grieta ? 'Volver a la Grieta' : 'Volver a campaña';
     $('resultado').classList.add('visible');
     if (!gano && batalla.enemigo.minotauro) { parca.frames.classList.add('quieto'); parca.ver(19); }   // rugido de victoria
     if (!gano && batalla.enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(16); }   // pose de victoria
