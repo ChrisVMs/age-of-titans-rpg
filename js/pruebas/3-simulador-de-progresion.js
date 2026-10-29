@@ -97,8 +97,9 @@
   // Corre sobre una copia de la partida (aislado).
   //   perfil: partida de la que parte (por defecto, una nueva) · dias · semilla: azar reproducible · expediciones: de 8 h al
   //   día · grupo: jugadores en calabozo y reyes (los aliados son copias del simulado: gente de su mismo nivel) ·
-  //   estaminaExtra: recargas al día además de la gratis (anuncios, diamantes)
-  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0 } = {}) {
+  //   estaminaExtra: recargas al día además de la gratis (anuncios, diamantes) · alDia(d): aviso al terminar cada día (progreso)
+  //   Devuelve también la partida simulada (jugador), para poder seguir jugándola.
+  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null } = {}) {
     const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()];
     window.setTimeout = () => 0;   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
     try {
@@ -191,11 +192,13 @@
             }
           }
           for (let n = 2; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
+          if (alDia) alDia(d);
           dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
             despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),
             ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0), codice: Object.keys((jugador.codice || {}).hitos || {}).length });
         }
-        return { hitos, dia, fuentes, final: dia.at(-1) };
+        jugador.sigUid = sigUid;   // la partida simulada, lista para guardarse como la tuya
+        return { hitos, dia, fuentes, final: dia.at(-1), jugador: structuredClone(jugador) };
       });
     } finally { window.setTimeout = temporizador; offsetDias = offset0; cacheBots.splice(botsAntes.length); }
   }
