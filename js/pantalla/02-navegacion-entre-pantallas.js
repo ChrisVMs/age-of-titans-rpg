@@ -9,6 +9,17 @@
       $('dialogo').classList.add('visible');
     });
   }
+  // diálogo con varias opciones (botones con ids): devuelve el id elegido
+  function elegirOpcion(texto, opciones) {
+    return new Promise(res => {
+      const o = $('dialogoOpciones'), fila = $('dialogoSi').parentElement;
+      $('dialogoTexto').textContent = texto; fila.hidden = true; o.hidden = false;
+      o.innerHTML = opciones.map(x => `<button data-op="${x.id}">${x.texto}</button>`).join('');
+      o.onclick = e => { const b = e.target.closest('[data-op]'); if (!b) return;
+        $('dialogo').classList.remove('visible'); o.hidden = true; o.onclick = null; fila.hidden = false; res(b.dataset.op); };
+      $('dialogo').classList.add('visible');
+    });
+  }
   Object.assign(ui, { mensaje, enBatalla: () => pantallaActual === 'pBatalla' });
   function mensaje(texto, ok = 'OK') {
     return colaMensaje = colaMensaje.then(() => new Promise(res => {
