@@ -267,7 +267,7 @@
     btn.disabled = false;
     ir('pBatalla');
     const pista = c.mundial ? musicaEpica : musica;
-    musica.pause(); musicaEpica.pause(); pista.currentTime = 0; pista.play();
+    musicaMenu.pause(); musica.pause(); musicaEpica.pause(); pista.currentTime = 0; pista.play();
     pintarEspecial();
     if (c.grupo) { await dibujarGrupo(c); iniciarCuentaTurno(); } else await mostrarEnemigo();
   }
@@ -290,6 +290,7 @@
     musica.pause(); musicaEpica.pause();
     $('resultado').classList.remove('visible');
     ir(destino);
+    sonarMusicaMenu();
   }
   // Abandonar: hay que confirmarlo y no se cobra nada de lo ganado en la batalla
   $('huir').onclick = () => {

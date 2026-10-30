@@ -1,7 +1,7 @@
   // ---------------- Progreso del jugador (se guarda en el navegador) (pantalla) ----------------
   function bloquearPestana() {
     if (pestanaBloqueada) return; pestanaBloqueada = true; auto = false;
-    try { musica.pause(); musicaEpica.pause(); } catch {}
+    try { musica.pause(); musicaEpica.pause(); musicaMenu.pause(); } catch {}
     document.getElementById('otraPestana').classList.add('visible');
   }
   if (canalPestanas) {
