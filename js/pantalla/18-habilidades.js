@@ -28,13 +28,12 @@
   const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
   const cargaAsesino = on => () => marcoGuerrero.classList.toggle('carga', on);
   return {
-    // se agacha, salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (hoja de ataque, sin la carga)
-    ataque: () => [[A(1), 110], [A(2), 90, 360], [A(3), 90], [A(11), 100], [A(14), 110, , sonidoEspada],
+    // salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (cuadros 11-19)
+    ataque: () => [[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
       [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
-    // cruza las cuchillas, las carga hasta estallar, salta y barre con el destello
-    punalada: () => [...tramo(A, 1, 3, 90), [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 80),
-      [A(10), 170, , cargaAsesino(false)], [A(11), 100, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
-      [A(15), 200, , r => r()], [A(16), 140], [A(17), 120, 0], [A(18), 120], [A(19), 150], [A(0), 120]],
+    // se acerca agachado, cruza las cuchillas, las carga y estallan contra el enemigo (cuadros 1-10)
+    punalada: () => [[A(1), 110, 360], [A(2), 90], [A(3), 90], [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 90),
+      [A(10), 220, , r => { cargaAsesino(false)(); sonidoEspada(); r(); }], [A(3), 120, 0], [A(0), 150]],
     // se envuelve en sombras, se desvanece, se lanza y descarga dos tajos
     paso: () => [...tramo(S, 15, 19, 100), [S(0), 160], [S(1), 150, 360, () => { estela(); sonidoEspada(); }],
       [S(2), 90], [S(3), 90], [S(4), 180, , r => r()], [S(8), 120, 0], [S(9), 130]],
