@@ -22,7 +22,7 @@
     danza: () => guerrero.jugar(ANIM_ASESINO.danza()),
   };
   // Asesino: cuadros de img/asesino/tira.png, en el orden de sus hojas (tools/hojas/asesino_*.jpg):
-  // ataque 0-19 · sombra 20-39 · derrota 40-54 · retroceso 55-69 · reposo 70-79 · puñalada 80-99 · preparación 100-107. Va cuerpo a cuerpo.
+  // ataque 0-19 · sombra 20-39 · derrota 40-54 · retroceso 55-69 · reposo 70-79 · puñalada 80-99 · preparación 100-108 (108: intermedio entre 102 y 103). Va cuerpo a cuerpo.
   const ANIM_ASESINO = (() => {
   const A = n => n, S = n => 20 + n, G = n => 40 + n, C = n => 55 + n, P = n => 80 + n, R = n => 100 + n;
   const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
@@ -32,7 +32,7 @@
       [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
     // en su sitio desenvaina y cruza las cuchillas (preparación 0-7), las carga hasta que estallan (ataque 5-10); se lanza (sombra 1), apuñala (sombra 7)
     // y remata (sombra 8). Los cuadros de la hoja de puñalada son los intermedios: carrera, frenada, apuntar y volver al reposo
-    punalada: () => [[R(0), 130], [R(1), 130], [R(2), 130], [R(3), 140], ...tramo(R, 4, 7, 110), ...tramo(A, 5, 9, 110),
+    punalada: () => [[R(0), 130], [R(1), 130], [R(2), 120], [R(8), 110], [R(3), 140], ...tramo(R, 4, 7, 110), ...tramo(A, 5, 9, 110),
       [A(10), 240], [S(1), 90, 360], ...tramo(P, 9, 12, 60), [P(13), 80], ...tramo(P, 15, 17, 70),
       [P(18), 90, , sonidoEspada], [S(7), 200, , r => r()], [P(1), 110], [S(8), 150], [P(3), 110, 0], [P(4), 110], [P(6), 120], [70, 200]],
     // se envuelve en sombras, se desvanece, se lanza y descarga dos tajos

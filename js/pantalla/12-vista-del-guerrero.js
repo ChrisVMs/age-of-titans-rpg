@@ -1,12 +1,12 @@
   // ---------------- Vista del guerrero (pantalla) ----------------
   const TIRA_MAGA = `img/maga/tira.png?v=${VERSION_IMG}`, TIRA_ASESINO = `img/asesino/tira.png?v=${VERSION_IMG}`, IMG_BOLA = `img/maga/proyectil.png?v=${VERSION_IMG}`;
-  // Clases con sprite propio. La Maga sigue las 14 poses del guerrero; el Asesino tiene su tira de 108 cuadros
+  // Clases con sprite propio. La Maga sigue las 14 poses del guerrero; el Asesino tiene su tira de 109 cuadros
   // (celda 325x357) con sus animaciones (ANIM_ASESINO en 18-habilidades) y una escala por hoja fuente, porque
   // cada hoja dibuja al personaje a otro tamaño (se iguala al mostrarlo; la imagen no se reescala).
   const SPRITE_CLASE = {
     mago: { tira: TIRA_MAGA },
-    asesino: { tira: TIRA_ASESINO, cuadros: 108, celda: [325, 357],
-               escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : .57,   // ataque y sombra · derrota · retroceso · reposo · puñalada · preparación (tamaño como la Maga)
+    asesino: { tira: TIRA_ASESINO, cuadros: 109, celda: [325, 357],
+               escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : .88,   // ataque y sombra · derrota · retroceso · reposo · puñalada · preparación (108: intermedio) (tamaño como la Maga)
                // reposo: [cuadro, ms] de ida y vuelta (sin saltar del último al primero); se detiene más en los extremos. 76-78 cambian de postura de golpe
                reposo: [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]] },
   };

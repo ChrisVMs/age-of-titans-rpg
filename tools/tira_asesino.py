@@ -4,7 +4,7 @@ import subprocess, glob, shutil, sys, numpy as np
 from collections import deque
 from PIL import Image
 S = sys.argv[1] if len(sys.argv) > 1 else "/tmp/tira_asesino"; T = f'{S}/todos'; shutil.rmtree(T, True); import os; os.makedirs(T)
-HOJAS = [('ataque', 5, 4), ('sombra', 5, 4), ('golpe', 5, 3), ('carrera', 5, 3), ('reposo', 5, 2), ('punalada', 5, 4), ('preparacion', 4, 2)]
+HOJAS = [('ataque', 5, 4), ('sombra', 5, 4), ('golpe', 5, 3), ('carrera', 5, 3), ('reposo', 5, 2), ('punalada', 5, 4), ('preparacion', 4, 2), ('preparacion2', 1, 1)]
 def limpiar(a):
     m = a[..., 3] > 0; H, W = m.shape
     for i in list(range(16)) + list(range(H - 16, H)):
@@ -27,10 +27,10 @@ def limpiar(a):
     return a
 fr = []
 for h, c, r in HOJAS:
-    subprocess.run(['python3', 'tools/split_sheet.py', f'tools/hojas/asesino_{h}.jpg', '--uniform', '--cols', str(c), '--rows', str(r),
-                    '--inset', '3', '--names', h, '--out', f'{S}/fr_{h}'], check=True, capture_output=True)
+    subprocess.run(['python3', 'tools/split_sheet.py', glob.glob(f'tools/hojas/asesino_{h}.*')[0], '--uniform', '--cols', str(c), '--rows', str(r),
+                    '--inset', '3' if r > 1 else '0', '--names', h, '--out', f'{S}/fr_{h}'], check=True, capture_output=True)
     for f in sorted(glob.glob(f'{S}/fr_{h}/*.png')): fr.append((h, limpiar(np.array(Image.open(f)))))
-esc = lambda i: .84 if i < 40 else .74 if i < 55 else .72 if i < 70 else .58 if i < 80 else .82 if i < 100 else .57
+esc = lambda i: .84 if i < 40 else .74 if i < 55 else .72 if i < 70 else .58 if i < 80 else .82 if i < 100 else .57 if i < 108 else .88
 def suelo(a):   # pies apoyados: quita filas vacías bajo los pies
     return a[:np.nonzero((a[..., 3] > 0).any(1))[0].max() + 1]
 def capucha(a):  # centro horizontal de la capucha (primeras filas), respecto del centro del cuadro
@@ -42,9 +42,9 @@ def mover(a, d):
     elif d < 0: b[:, :d] = a[:, -d:]
     else: b = a
     return b
-arr = [suelo(a) if h in ('reposo', 'preparacion') else a for h, a in fr]
+arr = [suelo(a) if h.startswith(('reposo', 'preparacion')) else a for h, a in fr]
 # cuadros en su sitio: se alinean por la capucha con el reposo (a la escala de cada hoja)
-QUIETOS = list(range(0, 11)) + [19] + list(range(33, 40)) + list(range(55, 70)) + list(range(70, 80)) + list(range(83, 87)) + list(range(100, 108))
+QUIETOS = list(range(0, 11)) + [19] + list(range(33, 40)) + list(range(55, 70)) + list(range(70, 80)) + list(range(83, 87)) + list(range(100, 109))
 ref = capucha(arr[70]) * esc(70)
 for k in QUIETOS:
     d = int(round(ref / esc(k) - capucha(arr[k]))); arr[k] = mover(arr[k], d); print(k, d, end='  ')
