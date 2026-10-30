@@ -88,7 +88,7 @@
       { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/maga/proyectil.png'], ancho: 217, alto: 218, total: 1, escala: .5 }, cuadros: [[0, 1000]] },
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
     ] },
-    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 108 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79, puñalada 80-99, preparación 100-107)', capas: ['img/asesino/tira.png?v=15'], ancho: 325, alto: 357, total: 108, escala: .8,
+    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 108 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79, puñalada 80-99, preparación 100-107)', capas: ['img/asesino/tira.png?v=16'], ancho: 325, alto: 357, total: 108, escala: .8,
       escalaCuadro: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : .57, animaciones: [   // escalaCuadro: las mismas que SPRITE_CLASE.asesino
       { nombre: 'Reposo', cuadros: [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]] },
       { nombre: 'Ataque (salta, barre, vuelve)', cuadros: [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [16, 130], [17, 120], [18, 120], [19, 130], [70, 600]] },
