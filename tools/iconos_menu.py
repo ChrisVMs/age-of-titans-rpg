@@ -33,14 +33,41 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
             '-', 'auto', '-', '-', 'desconocido', 'ranura_vacia', 'oro_1', 'plata_2', 'bronce_3', '-', '-', '-', '-', 'tienda_campana', 'hoguera_hd'], False),
           # batalla: baldosa verde con contorno y el nombre escrito abajo (se recorta antes: 'marco_texto')
           ('iconos_batalla.jpg', 5, 5, ['hab_estocada', 'hab_tajo', 'hab_aplastante', 'hab_disparo', 'hab_perforante', 'hab_lluvia', 'hab_bola', 'hab_lanza', '-', 'hab_meteoro',
-            'hab_punalada', 'hab_paso', 'hab_danza', 'est_quemadura', 'est_veneno', '-', 'est_sangrado', 'est_congelacion', '-', 'est_aturdimiento'], 'marco_texto')]
+            'hab_punalada', 'hab_paso', 'hab_danza', 'est_quemadura', 'est_veneno', '-', 'est_sangrado', 'est_congelacion', '-', 'est_aturdimiento'], 'marco_texto'),
+          # árbol del Guerrero: fondo gris oscuro (no verde) y nombre escrito abajo ('gris_texto')
+          ('iconos_arbol_guerrero.jpg', 5, 4, ['rama_furia', 'rama_baluarte', 'rama_tactica', 'nodo_fuerza', 'nodo_certero',
+            'nodo_estocada_m', 'nodo_sed', 'nodo_aplastante', 'nodo_piel', 'nodo_coraza',
+            'nodo_represalia', 'nodo_aliento', 'nodo_bastion', 'nodo_maestria', 'nodo_reflejos',
+            'nodo_tajo_veloz', 'nodo_cazador', 'nodo_adrenalina', '-', '-'], 'gris_texto')]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:
   tmp = tempfile.mkdtemp()
-  subprocess.run(['python3', 'tools/split_sheet.py', f'tools/hojas/{hoja}', '--cols', str(cols), '--rows', str(filas), '--uniform', '--out', tmp],
+  uniforme = [] if conBaldosa == 'gris_texto' else ['--uniform']   # sin verde, las celdas se cortan tal cual (el texto queda abajo)
+  subprocess.run(['python3', 'tools/split_sheet.py', f'tools/hojas/{hoja}', '--cols', str(cols), '--rows', str(filas), *uniforme, '--out', tmp],
                  check=True, capture_output=True)
   for nombre, f in zip(nombres, sorted(glob.glob(f'{tmp}/*.png'))):
     if nombre == '-': continue
     a = np.array(Image.open(f).convert('RGBA')).astype(int); modo = conBaldosa
+    if modo == 'gris_texto':   # nombre abajo (24 %) y fondo gris oscuro liso: se quita rellenando desde el borde
+        a = a[:int(a.shape[0] * .74)]; a[..., 3] = 255
+        mx = a[..., :3].max(-1); mn = a[..., :3].min(-1); H, W = mx.shape
+        pasa = (mx - mn <= 14) & (mx >= 14) & (mx <= 75)
+        fuera = np.zeros((H, W), bool); pila = [(y, x) for y in (0, H - 1) for x in range(W)] + [(y, x) for x in (0, W - 1) for y in range(H)]
+        while pila:
+            y, x = pila.pop()
+            if 0 <= y < H and 0 <= x < W and pasa[y, x] and not fuera[y, x]:
+                fuera[y, x] = True; pila += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+        a[..., 3] = np.where(fuera, 0, 255)
+        m = a[..., 3] > 0; visto = np.zeros((H, W), bool)   # texto de la fila de arriba: manchas enteras en el 14 % superior
+        for y0, x0 in zip(*np.nonzero(m)):
+            if visto[y0, x0]: continue
+            zona, pila = [], [(y0, x0)]; visto[y0, x0] = True
+            while pila:
+                y, x = pila.pop(); zona.append((y, x))
+                for yy, xx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
+                    if 0 <= yy < H and 0 <= xx < W and m[yy, xx] and not visto[yy, xx]: visto[yy, xx] = True; pila.append((yy, xx))
+            if max(y for y, _ in zona) < H * .14 or len(zona) < 30:
+                for y, x in zona: a[y, x, 3] = 0
+        im = Image.fromarray(a.astype('uint8')); im.crop(im.getbbox()).save(f'img/iconos/{nombre}.png'); continue
     if modo == 'marco_texto':   # el nombre escrito ocupa el 24 % inferior de la celda
         a = a[:int(a.shape[0] * .76)]; modo = 'marco'
     if modo in ('insignia', 'oscura'):   # verde del dibujo dentro de la baldosa (limo, brillos): lo que no toca el borde vuelve a ser opaco
