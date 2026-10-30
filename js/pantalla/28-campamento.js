@@ -1,7 +1,7 @@
   // ---------------- Campamento (menú principal) (pantalla) ----------------
   function pintarObjetivos() {
-    $('campObjetivos').innerHTML = `<b>🎯 Objetivos</b>` + objetivosCercanos().map(o =>
-      `<button data-ir="${o.ir}"><span>${o.icono} ${o.txt}</span><span class="barra-obj"><i style="width:${Math.round(o.pct * 100)}%"></i></span></button>`).join('');
+    $('campObjetivos').innerHTML = `<b><img class="ic-txt" src="img/iconos/misiones.png" alt="">Objetivos</b>` + objetivosCercanos().map(o =>
+      `<button data-ir="${o.ir}"><span><img class="ic-txt" src="img/iconos/${o.icono}.png" alt="">${o.txt}</span><span class="barra-obj"><i style="width:${Math.round(o.pct * 100)}%"></i></span></button>`).join('');
   }
   function pintarCampamento() {
     pintarAura(document.querySelector('.camp-guerrero'), nivelAura());
