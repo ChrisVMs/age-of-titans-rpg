@@ -22,8 +22,8 @@
     const huecos = sala.miembros.map((m, i) => {
       const p = perfilDe(m.n), estado = i === 0 ? '<small><img class="ic-txt" src="img/iconos/reyes.png" alt="">Dueño</small>'
         : !m.llego ? '<small>⏳ Invitación enviada…</small>'
-        : m.n === 'yo' ? `<button class="ready${m.listo ? ' on' : ''}" data-ready="1" ${puede ? '' : 'disabled'}>${m.listo ? '✔ READY' : 'Ready'}</button>`
-        : `<span class="ready${m.listo ? ' on' : ''}">${m.listo ? '✔ READY' : '⏳ Ready'}</span>`;
+        : m.n === 'yo' ? `<button class="ready${m.listo ? ' on' : ''}" data-ready="1" ${puede ? '' : 'disabled'}>${m.listo ? '<img class="ic-txt" src="img/iconos/hecho.png" alt="">READY' : 'Ready'}</button>`
+        : `<span class="ready${m.listo ? ' on' : ''}">${m.listo ? '<img class="ic-txt" src="img/iconos/hecho.png" alt="">READY' : '⏳ Ready'}</span>`;
       return `<div class="sala-slot ${m.llego ? 'lleno' : 'espera'}"><div class="pj-mini" data-retrato="${m.n === 'yo' ? '' : m.n}"></div><b>${nombreDe(m.n)}</b>${datos(p)}
         ${estado}${mio && i > 0 ? `<button data-expulsar="${m.n}">Expulsar</button>` : ''}</div>`;
     });
@@ -40,7 +40,7 @@
         <div class="rombo fila">${POSICIONES.map(pos => { const P = posSala(sala), n = Object.keys(P).find(k => P[k] === pos);
           return `<button class="casilla${n ? ' ocupada' : ''}${sala.selPos === pos ? ' sel' : ''}" data-pos-sala="${pos}" data-pos="${pos}" ${mio ? '' : 'disabled'}>${n ? `${CLASES[perfilDe(n).clase].icono} ${nombreDe(n)}` : '—'}<small>${NOMBRE_POS[pos]} · ${PESO_POS[pos]} %</small></button>`; }).join('')}</div>
       ${reyes ? `<div class="sala-difs">${Object.entries(DIF_REYES).map(([id, x]) =>
-          `<button data-dif-reyes="${id}" class="${id === sala.dif ? 'on' : ''}" ${mio ? '' : 'disabled'}>${x.nombre}<small>${Math.round(x.pct * 100)} % atributos${R.vencidas[id] ? ' · ✔' : ''}</small></button>`).join('')}</div>
+          `<button data-dif-reyes="${id}" class="${id === sala.dif ? 'on' : ''}" ${mio ? '' : 'disabled'}>${x.nombre}<small>${Math.round(x.pct * 100)} % atributos${R.vencidas[id] ? ' · <img class="ic-txt" src="img/iconos/hecho.png" alt="">' : ''}</small></button>`).join('')}</div>
         <div class="sala-rivales">${reyesSemana().map(r => `<span>${i18nPuesto(r.puesto - 1)} ${iconoClase(r.clase)}${r.nombre} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${Math.round(r.poder * d.pct).toLocaleString('es')}</span>`).join('')}</div>
         <small class="nota">Premio ${d.nombre}${R.vencidas[sala.dif] ? ' (ya cobrado esta semana)' : ''}: ${textoPremio(d.premio)}. Pesadilla o Infierno: título «Matarreyes».</small>`
       : `<div class="sala-rivales"><span>3 monstruos + 👹 ${TIPOS_ENEMIGO[calabozo(sala.cal).jefe].nombre}</span><span>+${VIDA_POR_ALIADO * 100} % de vida por aliado</span></div>`}

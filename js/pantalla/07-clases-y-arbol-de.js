@@ -15,8 +15,8 @@
     $('arbol').innerHTML = `${htmlMaestria()}${htmlAscension()}
       ${propia ? `<div class="arbol-puntos">Puntos libres: <b>${puntosLibres(A)}</b> · gastados ${puntosGastados(A)}
         <button id="reiniciarArbol" ${puntosGastados() || pend ? '' : 'disabled'}>Reiniciar ● ${costeReinicio()}</button></div>
-        ${pend ? `<div class="arbol-guardar"><span>✏️ ${pend} punto${pend > 1 ? 's' : ''} sin guardar</span>
-          <button id="descartarArbol">Descartar</button><button id="guardarArbol">💾 Guardar</button></div>` : ''}` : ''}
+        ${pend ? `<div class="arbol-guardar"><span><img class="ic-txt" src="img/iconos/editar.png" alt="">${pend} punto${pend > 1 ? 's' : ''} sin guardar</span>
+          <button id="descartarArbol">Descartar</button><button id="guardarArbol"><img class="ic-txt" src="img/iconos/guardar.png" alt="">Guardar</button></div>` : ''}` : ''}
       <div class="ramas">${ramas.map(rama => `<div class="rama"><h3>${iconoDe(rama)} ${rama.nombre}<small>${puntosRama(rama, A)} pts</small></h3>
         ${rama.nodos.map((n, i) => {
           const r = rango(n.id, A), abierto = nodoAbierto(rama, i, A), nuevo = r > rango(n.id);

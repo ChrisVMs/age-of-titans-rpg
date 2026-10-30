@@ -10,21 +10,21 @@
         const v = Math.min(m.meta, M[misTab][m.ev] || 0), lista_ = v >= m.meta, rec = R[m.id];
         return `<div class="mision${rec ? ' hecha' : lista_ ? ' lista-m' : ''}"><div class="info">${m.txt}<small>${textoPremio(m.premio)}</small>
           <div class="prog"><i style="width:${v / m.meta * 100}%"></i></div></div><small>${v}/${m.meta}</small>
-          <button data-reclamar="${m.id}" ${lista_ && !rec ? '' : 'disabled'}>${rec ? '✔' : 'Reclamar'}</button></div>`;
+          <button data-reclamar="${m.id}" ${lista_ && !rec ? '' : 'disabled'}>${rec ? '<img class="ic-txt" src="img/iconos/hecho.png" alt="">' : 'Reclamar'}</button></div>`;
       }).join('');
       cuerpo = `<div class="actividad"><div class="prog"><i style="width:${Math.min(1, hechas / tope) * 100}%"></i></div>${cofres.map((c, i) => {
         const rec = R['cofre' + i], listo = hechas >= c.meta;
-        return `<button class="cofre-act${rec ? ' hecha' : listo ? ' lista-m' : ''}" style="left:${c.meta / tope * 100}%" data-reclamar="cofre${i}" ${listo && !rec ? '' : 'disabled'}>${rec ? '✔' : '🎁'}<small>${c.meta}</small></button>`;
-      }).join('')}</div><small class="nota">🎁 ${cofres.map(c => `${c.meta}: ${textoPremio(c.premio)}`).join(' · ')}</small>` + cuerpo;
+        return `<button class="cofre-act${rec ? ' hecha' : listo ? ' lista-m' : ''}" style="left:${c.meta / tope * 100}%" data-reclamar="cofre${i}" ${listo && !rec ? '' : 'disabled'}>${rec ? '<img class="ic-txt" src="img/iconos/hecho.png" alt="">' : '<img class="ic-txt" src="img/iconos/regalo.png" alt="">'}<small>${c.meta}</small></button>`;
+      }).join('')}</div><small class="nota"><img class="ic-txt" src="img/iconos/regalo.png" alt="">${cofres.map(c => `${c.meta}: ${textoPremio(c.premio)}`).join(' · ')}</small>` + cuerpo;
     } else if (misTab === 'evSemana') {
       const E = revisarEvento(), t = temaSemana(), tieneT = (jugador.titulos || {})[idTituloTema(t)];
       cuerpo = `<div class="torre-card"><h3>${t.icono} ${t.nombre}</h3>
-          <small>🎟️ ${t.fichas < 1 ? `1 ficha cada ${Math.round(1 / t.fichas)}` : t.fichas} por ${t.unidad} · esta semana ${E.ganadas}/${TOPE_FICHAS_SEMANA}</small>
-          <b>🎟️ ${E.fichas} fichas</b></div>
+          <small><img class="ic-txt" src="img/iconos/ficha.png" alt="">${t.fichas < 1 ? `1 ficha cada ${Math.round(1 / t.fichas)}` : t.fichas} por ${t.unidad} · esta semana ${E.ganadas}/${TOPE_FICHAS_SEMANA}</small>
+          <b><img class="ic-txt" src="img/iconos/ficha.png" alt="">${E.fichas} fichas</b></div>
         <div class="mision${tieneT ? ' hecha' : ''}"><div class="info">Título «${t.titulo[0]}»<small>${textoBono(t.titulo[1])} · solo esta semana</small></div>
-          <button data-evcomprar="titulo" ${puedeComprarEvento('titulo') ? '' : 'disabled'}>${tieneT ? '✔' : `🎟️ ${PRECIO_TITULO_EVENTO}`}</button></div>` +
+          <button data-evcomprar="titulo" ${puedeComprarEvento('titulo') ? '' : 'disabled'}>${tieneT ? '<img class="ic-txt" src="img/iconos/hecho.png" alt="">' : `<img class="ic-txt" src="img/iconos/ficha.png" alt="">${PRECIO_TITULO_EVENTO}`}</button></div>` +
         TIENDA_EVENTO.map(it => `<div class="mision"><div class="info">${textoPremio(it.premio)}<small>${compradosEvento(it.id)}/${it.max} esta semana</small></div>
-          <button data-evcomprar="${it.id}" ${puedeComprarEvento(it.id) ? '' : 'disabled'}>🎟️ ${it.coste}</button></div>`).join('');
+          <button data-evcomprar="${it.id}" ${puedeComprarEvento(it.id) ? '' : 'disabled'}><img class="ic-txt" src="img/iconos/ficha.png" alt="">${it.coste}</button></div>`).join('');
     } else if (misTab === 'login') {
       const L = jugador.login || { dias: 0 }, hoyIdx = L.dias % 7;
       cuerpo = `<small class="nota">Entra cada día para recoger tu recompensa. Cada semana completa las recompensas suben un 25 % (hasta ×3). Llevas ${L.dias} días.</small>

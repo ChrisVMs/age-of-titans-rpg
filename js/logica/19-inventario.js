@@ -46,6 +46,6 @@
       (o.enc ? `<div><span class="enc">Encantamiento +${o.enc}/${encMax(o)}</span><span class="enc">+${Math.round(ENC_PRINCIPAL[PRINCIPAL[m.ranura]] * r.mult * o.enc)} ${ATRIBUTOS[PRINCIPAL[m.ranura]]}</span></div>` : '') +
       (m.jefe ? (() => { const C = CONJUNTOS[m.jefe], n = piezasConjunto()[m.jefe] || 0;
         return `<div><span class="enc">Set «${C.nombre}» · ${n}/4 equipadas</span></div>` + [2, 3].map(k =>
-          `<div><span class="enc" style="opacity:${n >= k ? 1 : .5}">${k} piezas${n >= k ? ' ✔' : ''}</span><span class="enc" style="opacity:${n >= k ? 1 : .5}">${textoNivelSet(C[k])}</span></div>`).join('')
-          + `<div><span class="enc" style="opacity:${n >= 4 ? 1 : .5}">4 piezas${n >= 4 ? ' ✔' : ''}</span><span class="enc" style="opacity:${n >= 4 ? 1 : .5}">${C.especial}</span></div>`; })() : '');
+          `<div><span class="enc" style="opacity:${n >= k ? 1 : .5}">${k} piezas${n >= k ? ' <img class="ic-txt" src="img/iconos/hecho.png" alt="">' : ''}</span><span class="enc" style="opacity:${n >= k ? 1 : .5}">${textoNivelSet(C[k])}</span></div>`).join('')
+          + `<div><span class="enc" style="opacity:${n >= 4 ? 1 : .5}">4 piezas${n >= 4 ? ' <img class="ic-txt" src="img/iconos/hecho.png" alt="">' : ''}</span><span class="enc" style="opacity:${n >= 4 ? 1 : .5}">${C.especial}</span></div>`; })() : '');
   }

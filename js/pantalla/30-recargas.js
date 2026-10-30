@@ -4,7 +4,7 @@
   ui.verAnuncio ||= async () => true;
   function pintarRecargas() {
     abrirModal('comun', `<h2><img class="ic-txt" src="img/iconos/estamina.png" alt="">Estamina ${jugador.estamina}/${ESTAMINA_MAX}</h2>
-      <button id="recAnuncio" ${anunciosQuedan() > 0 ? '' : 'disabled'}>📺 Anuncio: +${ESTAMINA_ANUNCIO} <img class="ic-txt" src="img/iconos/estamina.png" alt="">(${anunciosQuedan()}/${ANUNCIOS_DIA})</button>
+      <button id="recAnuncio" ${anunciosQuedan() > 0 ? '' : 'disabled'}><img class="ic-txt" src="img/iconos/anuncio.png" alt="">Anuncio: +${ESTAMINA_ANUNCIO} <img class="ic-txt" src="img/iconos/estamina.png" alt="">(${anunciosQuedan()}/${ANUNCIOS_DIA})</button>
       <button id="recCristales" ${puedeRecargaCristales() ? '' : 'disabled'}><img class="ic-txt" src="img/iconos/cristales.png" alt="">${RECARGA_CRISTALES.coste}: +${RECARGA_CRISTALES.estamina} <img class="ic-txt" src="img/iconos/estamina.png" alt="">${revisarRecargas().cristales ? ' (mañana)' : ''}</button>
       <button id="recCerrar">Cerrar</button>`);
   }

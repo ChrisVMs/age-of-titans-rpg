@@ -11,12 +11,12 @@
       <div class="acc-runa">${r.nivel < RUNA_MAX ? `<button class="mejorar${tieneCoste(costeMejoraRuna(r.nivel)) ? '' : ' sin-recursos'}" data-acc="mejorar" data-runa="${r.uid}">▲ Nv ${r.nivel + 1}</button>` : ''}
       ${r.nivel < RUNA_MAX && iguales(r).length >= 2 ? `<button class="fusionar" data-acc="fusionar" data-runa="${r.uid}">Fusionar → Nv ${r.nivel + 1}</button>` : ''}
       <button class="pulir${tieneCoste(COSTE_PULIR_RUNA) ? '' : ' sin-recursos'}" data-acc="pulir" data-runa="${r.uid}"><img class="ic-txt" src="img/iconos/pulir.png" alt="">Pulir</button>
-      ${puesta ? '' : `<button class="fundir" data-acc="fundir" data-runa="${r.uid}">♻ Fundir</button>`}</div></div>`;
+      ${puesta ? '' : `<button class="fundir" data-acc="fundir" data-runa="${r.uid}"><img class="ic-txt" src="img/iconos/reciclar.png" alt="">Fundir</button>`}</div></div>`;
     const libres = jugador.runas.filter(r => !puestas.includes(r.uid)).sort((a, b) => b.nivel - a.nivel || a.tipo.localeCompare(b.tipo));
     $('runas').innerHTML = `
       <h3>Ranuras de runa</h3>
       <div class="rejilla ranuras-runa">${puestas.map(uid => { const r = jugador.runas.find(x => x.uid === uid);
-        return r ? tarjeta(r, true) : '<div class="item vacia"><span style="font-size:28px">◇</span><small>Vacía</small></div>'; }).join('')}</div>
+        return r ? tarjeta(r, true) : '<div class="item vacia"><span class="ic-runa"><img class="ic-grande" src="img/iconos/ranura_vacia.png" alt=""></span><small>Vacía</small></div>'; }).join('')}</div>
       <div class="fila" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button data-acc="crear" ${tieneCoste(COSTE_RUNA) ? '' : 'disabled'}>Crear runa al azar</button><small>Crea una runa de tipo aleatorio · cuesta <span class="${jugador.oro < COSTE_RUNA.oro ? 'falta' : ''}"><img class="ic-txt" src="img/iconos/oro.png" alt="">${COSTE_RUNA.oro} oro</span> y <span class="${jugador.mat.polvo < COSTE_RUNA.polvo ? 'falta' : ''}"><img class="ic-txt" src="img/iconos/mat_polvo.png" alt=""> ${COSTE_RUNA.polvo} polvo</span></small></div>
       <h3>Tus runas (${libres.length})</h3>
       <small class="nota">Junta 3 runas iguales del mismo nivel para fusionarlas en una de nivel superior (máx. Nv ${RUNA_MAX}). Las runas <b style="color:${CAL_RUNA[1].color}">raras</b> y <b style="color:${CAL_RUNA[2].color}">perfectas</b> suman un efecto secundario; púlelas (${htmlPremio(COSTE_PULIR_RUNA)}) para subir su calidad o cambiar el secundario.${hayHueco ? '' : ' Las 4 ranuras están llenas: quita una para equipar otra.'}</small>

@@ -8,7 +8,7 @@
         <div class="retrato" style="${m.retrato(v, max)}"></div>
         <div class="barra"><i style="width:${pct}%"></i></div>
         <small>${muerto ? '¡Derrotado hoy! Vuelve mañana.' : `Vida: ${v} / ${max}`}</small>
-        <button id="desafiar" ${muerto || entradasJefe() <= 0 ? 'disabled' : ''}>Desafiar · 🎟 ${entradasJefe()}/${ENTRADAS_JEFE}</button>
+        <button id="desafiar" ${muerto || entradasJefe() <= 0 ? 'disabled' : ''}>Desafiar · <img class="ic-txt" src="img/iconos/ficha.png" alt="">${entradasJefe()}/${ENTRADAS_JEFE}</button>
         ${!muerto && entradasJefe() <= 0 ? `<small class="falta">Sin entradas de jefe: vuelven mañana (${ENTRADAS_JEFE} al día).</small>` : ''}
       </div>
       <div class="ev-der"><ul>

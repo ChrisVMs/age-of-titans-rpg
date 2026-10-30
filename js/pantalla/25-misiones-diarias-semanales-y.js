@@ -4,7 +4,7 @@
     abrirModal('comun', `<h2>📅 Login diario</h2><small>Un casillero por día que entres. Al completar el 30, vuelve a empezar.</small>
       <div class="login30">${Array.from({ length: 30 }, (_, i) => { const d = i + 1, ok = d <= hecho, hoyD = d === hecho + 1 && loginDisponible();
         return `<button class="dia30${ok ? ' hecho' : ''}${hoyD ? ' hoy' : ''}${d % 7 === 0 || d === 30 ? ' grande' : ''}" ${hoyD ? 'data-login30="1"' : 'disabled'}>
-          <b>${d}</b><small>${ok ? '✔' : textoPremio(premioDia(d))}</small></button>`; }).join('')}</div>
+          <b>${d}</b><small>${ok ? '<img class="ic-txt" src="img/iconos/hecho.png" alt="">' : textoPremio(premioDia(d))}</small></button>`; }).join('')}</div>
       <div class="fila"><button data-acc="cerrar">Cerrar</button></div>`);
     $('detCaja').onclick = e => {
       const b = e.target.closest('button'); if (!b) return;

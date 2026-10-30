@@ -85,7 +85,7 @@
   function pintarPerfilesPrueba() {
     let hay = false; try { hay = !!localStorage.getItem(CLAVE_RESPALDO); } catch {}
     $('perfilesPrueba').innerHTML = `<small>Jugar con la partida de un bot:</small> ${DEF_BOTS.map((d, i) => `<button class="prueba" data-bot="${i}">${iconoClase(d.clase)}${d.nombre}</button>`).join('')}
-      ${hay ? '<button class="prueba" data-bot="volver">↩ Volver a mi partida</button>' : ''}`;
+      ${hay ? '<button class="prueba" data-bot="volver"><img class="ic-txt" src="img/iconos/volver.png" alt="">Volver a mi partida</button>' : ''}`;
   }
   $('perfilesPrueba').addEventListener('click', e => {
     const b = e.target.closest('[data-bot]'); if (!b) return;
