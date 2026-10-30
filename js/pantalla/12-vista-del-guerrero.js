@@ -6,7 +6,7 @@
   const SPRITE_CLASE = {
     mago: { tira: TIRA_MAGA },
     asesino: { tira: TIRA_ASESINO, cuadros: 80, celda: [312, 314],
-               escala: i => i < 40 ? 1 : i < 55 ? .88 : i < 70 ? .86 : .69,   // ataque y sombra · golpe · carrera · reposo
+               escala: i => i < 40 ? 1 : i < 55 ? .88 : i < 70 ? .86 : .69,   // ataque y sombra · derrota · retroceso · reposo
                reposo: [70, 71, 72, 73, 74, 75, 76, 77, 78, 79] },
   };
   const spriteClase = (clase = jugador.clase) => SPRITE_CLASE[clase];

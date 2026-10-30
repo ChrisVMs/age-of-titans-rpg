@@ -14,7 +14,7 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Habilidades: **Puñalada** (×1,6, sangra), **Paso sombrío** (×2,4, envenena) y **Danza de cuchillas** (×3,5, atraviesa armadura; se aprende en el árbol).
 - Árbol de 3 ramas: Filo, Sombras y Venenos.
 - Va cuerpo a cuerpo (también en grupo). Sprite propio de 80 cuadros (`img/asesino/tira.png`) con todas sus hojas (`tools/hojas/asesino_*.jpg`):
-  reposo animado, carrera y tajo, habilidades, retroceso al recibir un golpe y derrota.
+  reposo animado, ataque, habilidades, retroceso al recibir un golpe y derrota.
 - Arquero y Maga marcan `distancia` en `CLASES`: el resto de clases ataca cuerpo a cuerpo.
 
 ### 🔮 Maga

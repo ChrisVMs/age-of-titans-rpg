@@ -22,15 +22,15 @@
     danza: () => guerrero.jugar(ANIM_ASESINO.danza()),
   };
   // Asesino: cuadros de img/asesino/tira.png, en el orden de sus hojas (tools/hojas/asesino_*.jpg):
-  // ataque 0-19 · sombra 20-39 · golpe 40-54 · carrera 55-69 · reposo 70-79. Va cuerpo a cuerpo.
+  // ataque 0-19 · sombra 20-39 · derrota 40-54 · retroceso 55-69 · reposo 70-79. Va cuerpo a cuerpo.
   const ANIM_ASESINO = (() => {
   const A = n => n, S = n => 20 + n, G = n => 40 + n, C = n => 55 + n;
   const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
   const cargaAsesino = on => () => marcoGuerrero.classList.toggle('carga', on);
   return {
-    // corre hacia el enemigo, tajo, frena y vuelve a su sitio
-    ataque: () => [[C(2), 90, 360], [C(3), 80], [C(4), 80], [C(5), 80], [C(6), 80], [C(7), 80],
-      [C(1), 160, , r => { sonidoEspada(); r(); }], [C(8), 120], [C(9), 110, 0], ...tramo(C, 10, 14, 80)],
+    // se agacha, salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (hoja de ataque, sin la carga)
+    ataque: () => [[A(1), 110], [A(2), 90, 360], [A(3), 90], [A(11), 100], [A(14), 110, , sonidoEspada],
+      [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
     // cruza las cuchillas, las carga hasta estallar, salta y barre con el destello
     punalada: () => [...tramo(A, 1, 3, 90), [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 80),
       [A(10), 170, , cargaAsesino(false)], [A(11), 100, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
@@ -42,8 +42,8 @@
     danza: () => [[S(16), 160, , cargaAsesino(true)], [S(17), 260, , cargaAsesino(false)], [S(5), 110, 360], [S(6), 90],
       [S(7), 150, , sonidoEspada], [S(10), 240, , r => { arco(); sonidoEspada(); r(); }], [S(11), 200, 0],
       [S(12), 120], [S(13), 120], [S(14), 150]],
-    golpe: () => [...tramo(G, 1, 4, 110), [G(0), 120]],               // retrocede al recibir el golpe
-    derrota: () => [...tramo(G, 5, 9, 130), ...tramo(G, 10, 14, 150)],   // hinca la rodilla y cae
+    golpe: () => tramo(C, 1, 14, 70),                                     // recibe el golpe, salta atrás, derrapa y se recompone
+    derrota: () => [...tramo(G, 1, 9, 120), ...tramo(G, 10, 14, 150)],   // recibe el golpe, hinca la rodilla y cae
   };
   })();
   const ANIM_CLASE = { asesino: ANIM_ASESINO };   // clases con animaciones propias (las demás usan las del guerrero)
