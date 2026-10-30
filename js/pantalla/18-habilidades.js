@@ -39,8 +39,8 @@
     paso: () => [...tramo(S, 15, 19, 100), [S(0), 160], [S(1), 150, 360, () => { estela(); sonidoEspada(); }],
       [S(2), 90], [S(3), 90], [S(4), 180, , r => r()], [S(8), 120, 0], [S(9), 130]],
     // buff en su sitio: cruza las cuchillas, le brillan los ojos y se envuelve en su aura de sombras
-    danza: () => [[S(15), 130], [S(16), 160], [S(17), 220, , sonidoEspada], [S(18), 180], [S(19), 180], [S(18), 160], [S(19), 160],
-      [S(17), 160, , r => r()], [S(16), 130], [S(15), 130]],
+    danza: () => [[S(15), 130], [S(16), 160], [S(17), 200, , sonidoEspada], [S(19), 180], [S(18), 240, , r => r()], [S(19), 180],
+      [S(17), 160], [S(16), 130], [S(15), 130]],
     golpe: () => [[C(1), 160], [C(2), 180], [C(7), 140], [C(9), 120], [C(10), 120]],   // encaja el golpe, se encoge y se recompone
     derrota: () => [...tramo(G, 1, 9, 120), ...tramo(G, 10, 14, 150)],   // recibe el golpe, hinca la rodilla y cae
   };
