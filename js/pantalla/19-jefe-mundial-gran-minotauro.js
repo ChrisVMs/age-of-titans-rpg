@@ -253,7 +253,8 @@
     marcoGuerrero.classList.remove('carga');
     $('pBatalla').classList.toggle('modo-grupo', c.grupo);
     const fondo = fondoBatalla(c); $('pBatalla').classList.toggle('con-fondo', !!fondo);
-    $('pBatalla').style.backgroundImage = fondo ? `url(${fondo})` : '';
+    $('pBatalla').style.backgroundImage = fondo ? `url(${fondo.img})` : '';
+    $('pBatalla').style.setProperty('--zoom-fondo', fondo ? fondo.zoom : 1);
     // el acelerador solo existe en combates sin otros jugadores online; en multijugador, x1 (salvo en modo pruebas)
     const multi = !!(c.reyes || c.calabozo) && !MODO_PRUEBAS;
     $('btnVel').style.display = multi ? 'none' : '';
