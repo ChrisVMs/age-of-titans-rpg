@@ -26,6 +26,7 @@
       aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .15 } },
     { id: 'danza', clase: 'asesino', nombre: 'Danza de cuchillas', icono: '✖️', turnos: 6, mult: 0, buff: 'danza', animacion: 'danza' },   // buff: no golpea
   );
+  for (const h of HAB_TODAS) h.img = 'hab_' + h.id;   // icono HD: img/iconos/hab_<id>.png
   // Habilidades de la batalla: las de la clase (las de nodo, si están aprendidas), con las mejoras del árbol
   let HABILIDADES = [];
   let sinRecarga = false;   // pruebas: las habilidades del jugador siempre cargadas

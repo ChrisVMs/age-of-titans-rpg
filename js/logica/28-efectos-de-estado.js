@@ -10,6 +10,7 @@
     aturdimiento: { icono: '💫', nombre: 'Aturdimiento', control: true },
     danza:        { icono: '✖️', nombre: 'Danza de cuchillas', mejora: true },   // buff del Asesino: más daño (BUFF_DANZA)
   };
+  for (const [id, e] of Object.entries(ESTADOS)) e.img = id === 'danza' ? 'hab_danza' : 'est_' + id;   // icono HD
   // Buffs propios (habilidades con 'buff'): no hacen daño ni hacen perder el turno; duran sus turnos de ataque.
   const BUFF_DANZA = { turnos: 3, dano: .5 };   // Danza de cuchillas: +50 % de daño en los 3 ataques siguientes
   // Daño de los estados que ponen los monstruos: FIJO, un % (TOPE_PCT_ESTADO como mucho) de la vida que se espera que tenga

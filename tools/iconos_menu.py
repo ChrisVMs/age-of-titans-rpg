@@ -27,13 +27,22 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
             'runa_penetracion', 'runa_reduccion', 'runa_resistencia', 'runa_habilidad', 'runa_jefes', 'runa_fortuna',
             'rel_colmillo', 'rel_collar', 'rel_ceniza', 'rel_ala', 'rel_corona', 'rel_sello',
             'rel_cuerno', 'rel_hacha', 'rel_pezuna', 'mat_piedra', 'mat_polvo', 'mat_almas',
-            'mat_esencia', 'runas', 'pulir'], 'oscura')]
+            'mat_esencia', 'runas', 'pulir'], 'oscura'),
+          # interfaz: verde plano (celdas vacías con '-')
+          ('iconos_interfaz.jpg', 5, 5, ['hecho', 'estrella', 'ficha', 'regalo', 'reciclar', 'guardar', 'cambiar', 'volver', 'anuncio', 'editar',
+            '-', 'auto', '-', '-', 'desconocido', 'ranura_vacia', 'oro_1', 'plata_2', 'bronce_3', '-', '-', '-', '-', 'tienda_campana', 'hoguera_hd'], False),
+          # batalla: baldosa verde con contorno y el nombre escrito abajo (se recorta antes: 'marco_texto')
+          ('iconos_batalla.jpg', 5, 5, ['hab_estocada', 'hab_tajo', 'hab_aplastante', 'hab_disparo', 'hab_perforante', 'hab_lluvia', 'hab_bola', 'hab_lanza', '-', 'hab_meteoro',
+            'hab_punalada', 'hab_paso', 'hab_danza', 'est_quemadura', 'est_veneno', '-', 'est_sangrado', 'est_congelacion', '-', 'est_aturdimiento'], 'marco_texto')]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:
   tmp = tempfile.mkdtemp()
   subprocess.run(['python3', 'tools/split_sheet.py', f'tools/hojas/{hoja}', '--cols', str(cols), '--rows', str(filas), '--uniform', '--out', tmp],
                  check=True, capture_output=True)
   for nombre, f in zip(nombres, sorted(glob.glob(f'{tmp}/*.png'))):
+    if nombre == '-': continue
     a = np.array(Image.open(f).convert('RGBA')).astype(int); modo = conBaldosa
+    if modo == 'marco_texto':   # el nombre escrito ocupa el 24 % inferior de la celda
+        a = a[:int(a.shape[0] * .76)]; modo = 'marco'
     if modo in ('insignia', 'oscura'):   # verde del dibujo dentro de la baldosa (limo, brillos): lo que no toca el borde vuelve a ser opaco
         m = a[..., 3] < 128; H, W = m.shape; fuera = np.zeros((H, W), bool)
         pila = [(y, x) for y in (0, H - 1) for x in range(W)] + [(y, x) for x in (0, W - 1) for y in range(H)]

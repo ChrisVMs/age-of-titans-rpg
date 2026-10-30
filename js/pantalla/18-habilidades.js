@@ -87,7 +87,7 @@
     for (const h of HABILIDADES) {
       const b = document.querySelector(`#habilidades [data-hab="${h.id}"]`), falta = h.turnos - batalla.carga[h.id];
       // botón con el símbolo de la habilidad y los turnos que faltan; el nombre queda como etiqueta (al mantener o pasar el ratón)
-      b.innerHTML = `<span class="hab-ic">${h.icono}</span>${falta > 0 ? `<i class="hab-cd">${falta}</i>` : ''}`;
+      b.innerHTML = `<span class="hab-ic">${iconoDe(h, 'ic-hab')}</span>${falta > 0 ? `<i class="hab-cd">${falta}</i>` : ''}`;
       b.title = h.nombre; b.setAttribute('aria-label', h.nombre);
       b.style.setProperty('--cd', falta > 0 ? falta / h.turnos : 0);
       b.classList.toggle('cargada', falta <= 0);   // 'cargada' (no 'lista': esa clase es la lista de niveles de la campaña)

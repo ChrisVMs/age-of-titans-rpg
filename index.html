@@ -238,6 +238,8 @@
   .camp-avatar .cara .ic-cara { width:34px; height:34px; object-fit:contain; }
   .ic-liga { width:1.2em; height:1.2em; object-fit:contain; display:block; }
   .ic-runa .ic-grande { width:40px; height:40px; object-fit:contain; display:block; margin:0 auto; }
+  .hab-ic .ic-hab { width:70%; height:70%; object-fit:contain; }
+  .ic-deco { width:64px; height:64px; object-fit:contain; display:block; }
   .ic-txt { display:inline-block; width:1.35em; height:1.35em; object-fit:contain; vertical-align:-.2em; margin-right:3px; }
   .camp-icono.evento { border-color:#ff9a3a; background:linear-gradient(#c2410c99, #2e2a38dd); }
   .con-punto::after { content:''; position:absolute; top:-4px; right:-4px; width:14px; height:14px; border-radius:50%; background:#ff3b3b;
@@ -906,8 +908,8 @@
     <div class="camp-escena">
       <div class="camp-version" id="campVersion"></div>
       <div class="camp-evento" id="campEvento"></div>
-      <div class="camp-deco" style="left:4%">⛺</div>
-      <div class="camp-deco camp-fuego" style="left:24%; font-size:38px">🔥</div>
+      <div class="camp-deco" style="left:4%"><img class="ic-deco" src="img/iconos/tienda_campana.png" alt=""></div>
+      <div class="camp-deco camp-fuego" style="left:24%"><img class="ic-deco" src="img/iconos/hoguera_hd.png" alt=""></div>
       <div class="camp-accesos">
       <button class="camp-pag oculto" id="campPagAnt" aria-label="Anterior">‹</button>
       <div class="camp-lateral" id="campIconos">
@@ -1142,7 +1144,7 @@
         <button id="btnHuir" class="util-btn" title="Huir" aria-label="Huir">🏳️<small>Huir</small></button>
         <button id="btnVel" class="util-btn" title="Velocidad">⏩<small>x1</small></button>
         <button class="util-btn btn-sonido" aria-label="Sonido"></button>
-        <button id="btnAuto" class="util-btn" title="Autoataque: OFF" aria-label="Autoataque">🤖<small>Auto</small></button>
+        <button id="btnAuto" class="util-btn" title="Autoataque: OFF" aria-label="Autoataque"><img class="ic-hd" src="img/iconos/auto.png" alt=""><small>Auto</small></button>
       </div>
       <div class="combate">
         <span id="habilidades" class="habs"></span>
