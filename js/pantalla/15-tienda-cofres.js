@@ -25,8 +25,8 @@
         <div class="probs">${Object.entries(c.probs).filter(([, p]) => p).map(([r, p]) =>
           `<div class="r-${r}"><span>${RAREZAS[r].nombre}</span><span>${p}%</span></div>`).join('')}</div>
         <div class="fila-cofre">
-          <button data-cofre="${c.id}" data-n="1" ${jugador.oro < c.precio ? 'disabled' : ''}>Abrir ● ${c.precio}</button>
-          <button data-cofre="${c.id}" data-n="10" ${jugador.oro < c.precio * 10 ? 'disabled' : ''}>x10 ● ${c.precio * 10}</button>
+          <button data-cofre="${c.id}" data-n="1" ${jugador.oro < c.precio ? 'disabled' : ''}>Abrir <img class="ic-txt" src="img/iconos/oro.png" alt="">${c.precio}</button>
+          <button data-cofre="${c.id}" data-n="10" ${jugador.oro < c.precio * 10 ? 'disabled' : ''}>x10 <img class="ic-txt" src="img/iconos/oro.png" alt="">${c.precio * 10}</button>
         </div></div>`).join('');
   }
   $('cofres').addEventListener('click', e => {

@@ -47,5 +47,10 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
 - Para dividir hojas de sprites usar solo `tools/split_sheet.py`; para unir frames en una hoja, `tools/build_sheet.py`. No usar otras herramientas ni reescalar o interpolar.
   Única excepción: la reducción a pixel art de `tools/pixelar.py` (mismo proceso para todos los cuadros de un personaje).
 - Guardar la hoja fuente en `tools/hojas/` y los frames en `img/<personaje>/`.
+
+## Iconos y fondos (HD)
+- Cuando el usuario pida un prompt de iconos o fondos, partir SIEMPRE de `PROMPT_ICONOS.md` (bloque común, prompts ya usados,
+  consejos y pendientes) y, al generar uno nuevo, añadirlo ahí. Los sprites animados usan `PROMPT_SPRITE.md`.
+- Los iconos se recortan con `python3 tools/iconos_menu.py` (una entrada por hoja en `HOJAS`) a `img/iconos/<nombre>.png`.
 - Cada personaje, clase, jefe o mascota nuevo (o con sprite o animación nueva) se añade SIEMPRE a `animaciones.html`
   (lista `PERSONAJES`), con todas sus animaciones y los mismos tiempos que en el juego.
