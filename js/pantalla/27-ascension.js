@@ -124,9 +124,9 @@
   async function animHeroe(u, t, hab) {
     const lejos = !!CLASES[u.clase].distancia;
     if (hab) { u.el.querySelector('.frames').classList.add('carga'); await wait(250); u.el.querySelector('.frames').classList.remove('carga'); }
-    if (!lejos) await moverA(u, t);
-    const anim = ANIM_CLASE[u.clase];   // en grupo el avance lo hace moverA: los pasos propios no se desplazan
-    const impacto = u.pj.jugar(anim ? sinAvance((hab && anim[hab.animacion] || anim.ataque)())
+    const anim = ANIM_CLASE[u.clase];   // animación propia: se acerca en el paso que avanza (la preparación, en su casilla)
+    if (!lejos && !anim) await moverA(u, t);
+    const impacto = u.pj.jugar(anim ? enGrupo((hab && anim[hab.animacion] || anim.ataque)(), u, t)
       : [[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);
     if (lejos) await proyectil(u, t, hab ? hab.icono : u.clase === 'arquero' ? '🏹' : '✨');
     await impacto;
@@ -137,7 +137,9 @@
     await u.pj.jugar([[1, 150], [2, 170, , sonidoGuadana], [3, 180, , r => r()], [4, 150]]);
     return () => volver(u);
   }
-  const sinAvance = pasos => pasos.map(([c, ms, , accion]) => [c, ms, undefined, accion]);
+  // pasos de una animación propia en grupo: el paso que avanza llama a moverA; el regreso lo hace 'volver' al final
+  const enGrupo = (pasos, u, t) => pasos.map(([c, ms, mov, accion]) =>
+    [c, ms, undefined, mov ? r => { moverA(u, t); if (accion) accion(r); } : accion]);
   // héroe con animaciones propias: retrocede al recibir el golpe; al caer, se ve la derrota antes de desaparecer
   function retrocedeU(t) { const a = t.lado === 0 && ANIM_CLASE[t.clase]; if (a) t.pj.jugar(a.golpe()); }
   async function caeU(u) {
