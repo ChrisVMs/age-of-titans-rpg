@@ -6,7 +6,7 @@
     if (d >= DESPERTAR_MAX) return `<button disabled>Despertar máx.${marca}</button>`;
     if (!desbloqueado('despertar')) return `<button disabled>Máx. · 🔒 Despertar Nv ${DESBLOQUEOS.despertar[0]}</button>`;
     const c = costeDespertar(tipo, id);
-    return `<button data-despertar="${tipo}:${id}" ${tieneCoste(c) ? '' : 'disabled'} title="${d + 1 === D_PASIVA ? 'D3: ' + TIPOS_DESPERTAR[tipo].pasiva : ''}">Despertar D${d + 1} · ${textoPremio(c)}${marca}</button>`;
+    return `<button data-despertar="${tipo}:${id}" ${tieneCoste(c) ? '' : 'disabled'} title="${d + 1 === D_PASIVA ? 'D3: ' + TIPOS_DESPERTAR[tipo].pasiva : ''}">Despertar D${d + 1} · ${htmlPremio(c)}${marca}</button>`;
   }
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-despertar]'); if (!b || b.disabled) return;

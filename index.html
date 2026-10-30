@@ -237,6 +237,7 @@
   .ic-hd { display:block; width:1.4em; height:1.4em; object-fit:contain; margin:0 auto; pointer-events:none; filter:drop-shadow(0 1px 2px #000a); }
   .camp-avatar .cara .ic-cara { width:34px; height:34px; object-fit:contain; }
   .ic-liga { width:1.2em; height:1.2em; object-fit:contain; display:block; }
+  .ic-runa .ic-grande { width:40px; height:40px; object-fit:contain; display:block; margin:0 auto; }
   .ic-txt { display:inline-block; width:1.35em; height:1.35em; object-fit:contain; vertical-align:-.2em; margin-right:3px; }
   .camp-icono.evento { border-color:#ff9a3a; background:linear-gradient(#c2410c99, #2e2a38dd); }
   .con-punto::after { content:''; position:absolute; top:-4px; right:-4px; width:14px; height:14px; border-radius:50%; background:#ff3b3b;
@@ -981,7 +982,7 @@
   <!-- Inventario -->
   <div class="pantalla" id="pInventario">
     <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Héroe</h2><div class="hud"></div></div>
-    <div class="tabs heroe-tabs"><button class="on"><img class="ic-txt" src="img/iconos/inventario.png" alt="">Equipo</button><button data-ir="pArbol" class="tab-arbol"><img class="ic-txt" src="img/iconos/habilidades.png" alt="">Habilidades</button><button data-ir="pRunas"><img class="ic-txt" src="img/iconos/cristales.png" alt="">Runas</button></div>
+    <div class="tabs heroe-tabs"><button class="on"><img class="ic-txt" src="img/iconos/inventario.png" alt="">Equipo</button><button data-ir="pArbol" class="tab-arbol"><img class="ic-txt" src="img/iconos/habilidades.png" alt="">Habilidades</button><button data-ir="pRunas"><img class="ic-txt" src="img/iconos/runas.png" alt="">Runas</button></div>
     <div class="inv-cuerpo">
       <div class="lado">
         <div class="vitrina"><div class="frames guerrero" id="vitrina" role="img" aria-label="Guerrero"></div></div>
@@ -1005,14 +1006,14 @@
   <!-- Árbol de habilidades (por clase) -->
   <div class="pantalla" id="pArbol">
     <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Héroe</h2><div class="hud"></div></div>
-    <div class="tabs heroe-tabs"><button data-ir="pInventario"><img class="ic-txt" src="img/iconos/inventario.png" alt="">Equipo</button><button class="on tab-arbol"><img class="ic-txt" src="img/iconos/habilidades.png" alt="">Habilidades</button><button data-ir="pRunas"><img class="ic-txt" src="img/iconos/cristales.png" alt="">Runas</button></div>
+    <div class="tabs heroe-tabs"><button data-ir="pInventario"><img class="ic-txt" src="img/iconos/inventario.png" alt="">Equipo</button><button class="on tab-arbol"><img class="ic-txt" src="img/iconos/habilidades.png" alt="">Habilidades</button><button data-ir="pRunas"><img class="ic-txt" src="img/iconos/runas.png" alt="">Runas</button></div>
     <div class="arbol" id="arbol"></div>
   </div>
 
   <!-- Runas y reliquias -->
   <div class="pantalla" id="pRunas">
     <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Héroe</h2><div class="hud"></div></div>
-    <div class="tabs heroe-tabs"><button data-ir="pInventario"><img class="ic-txt" src="img/iconos/inventario.png" alt="">Equipo</button><button data-ir="pArbol" class="tab-arbol"><img class="ic-txt" src="img/iconos/habilidades.png" alt="">Habilidades</button><button class="on"><img class="ic-txt" src="img/iconos/cristales.png" alt="">Runas</button></div>
+    <div class="tabs heroe-tabs"><button data-ir="pInventario"><img class="ic-txt" src="img/iconos/inventario.png" alt="">Equipo</button><button data-ir="pArbol" class="tab-arbol"><img class="ic-txt" src="img/iconos/habilidades.png" alt="">Habilidades</button><button class="on"><img class="ic-txt" src="img/iconos/runas.png" alt="">Runas</button></div>
     <div class="panel" id="runas"></div>
   </div>
 

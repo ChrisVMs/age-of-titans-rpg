@@ -12,6 +12,7 @@
     { id: 'hacha',    jefe: 'minotauro', nombre: 'Hacha rota',           icono: '🪓', golpe: { estado: 'sangrado', prob: 5, turnos: 3, pct: .25 } },
     { id: 'pezuna',   jefe: 'minotauro', nombre: 'Pezuña de bronce',     icono: '🔔', ef: { danoCritico: 8 } },
   ];
+  for (const r of RELIQUIAS) r.img = 'rel_' + r.id;   // icono HD: img/iconos/rel_<id>.png
   // Solo 3 reliquias activas a la vez (elegidas por el jugador): son una decisión de build, no una suma de todo.
   // Por eso cada una vale más por nivel que cuando estaban todas activas. Sin elección guardada, se usan las 3 de más nivel.
   const RANURAS_RELIQUIA = 3;

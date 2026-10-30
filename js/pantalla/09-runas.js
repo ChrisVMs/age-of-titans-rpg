@@ -4,26 +4,26 @@
     jugador.runas ||= []; jugador.runasPuestas ||= Array(RANURAS_RUNA).fill(null);
     const puestas = jugador.runasPuestas, hayHueco = puestas.includes(null);
     const iguales = r => jugador.runas.filter(x => x !== r && !puestas.includes(x.uid) && x.tipo === r.tipo && x.nivel === r.nivel);
-    const tarjeta = (r, puesta) => `<div class="item runa${puesta ? ' puesto' : ''}"><span style="font-size:28px">${RUNAS[r.tipo].icono}</span>
+    const tarjeta = (r, puesta) => `<div class="item runa${puesta ? ' puesto' : ''}"><span class="ic-runa">${iconoDe(RUNAS[r.tipo], 'ic-grande')}</span>
       <small>${RUNAS[r.tipo].nombre}${r.cal ? ` <b style="color:${CAL_RUNA[r.cal].color}">${CAL_RUNA[r.cal].nombre}</b>` : ''} · Nv ${r.nivel}</small><b>${textoRuna(r)}</b>
       ${puesta ? `<button data-acc="quitar" data-runa="${r.uid}">Quitar</button>`
                : `<button data-acc="equipar" data-runa="${r.uid}" ${hayHueco ? '' : 'disabled'}>EQUIPAR</button>`}
       <div class="acc-runa">${r.nivel < RUNA_MAX ? `<button class="mejorar${tieneCoste(costeMejoraRuna(r.nivel)) ? '' : ' sin-recursos'}" data-acc="mejorar" data-runa="${r.uid}">▲ Nv ${r.nivel + 1}</button>` : ''}
       ${r.nivel < RUNA_MAX && iguales(r).length >= 2 ? `<button class="fusionar" data-acc="fusionar" data-runa="${r.uid}">Fusionar → Nv ${r.nivel + 1}</button>` : ''}
-      <button class="pulir${tieneCoste(COSTE_PULIR_RUNA) ? '' : ' sin-recursos'}" data-acc="pulir" data-runa="${r.uid}">💎 Pulir</button>
+      <button class="pulir${tieneCoste(COSTE_PULIR_RUNA) ? '' : ' sin-recursos'}" data-acc="pulir" data-runa="${r.uid}"><img class="ic-txt" src="img/iconos/pulir.png" alt="">Pulir</button>
       ${puesta ? '' : `<button class="fundir" data-acc="fundir" data-runa="${r.uid}">♻ Fundir</button>`}</div></div>`;
     const libres = jugador.runas.filter(r => !puestas.includes(r.uid)).sort((a, b) => b.nivel - a.nivel || a.tipo.localeCompare(b.tipo));
     $('runas').innerHTML = `
       <h3>Ranuras de runa</h3>
       <div class="rejilla ranuras-runa">${puestas.map(uid => { const r = jugador.runas.find(x => x.uid === uid);
         return r ? tarjeta(r, true) : '<div class="item vacia"><span style="font-size:28px">◇</span><small>Vacía</small></div>'; }).join('')}</div>
-      <div class="fila" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button data-acc="crear" ${tieneCoste(COSTE_RUNA) ? '' : 'disabled'}>Crear runa al azar</button><small>Crea una runa de tipo aleatorio · cuesta <span class="${jugador.oro < COSTE_RUNA.oro ? 'falta' : ''}">● ${COSTE_RUNA.oro} oro</span> y <span class="${jugador.mat.polvo < COSTE_RUNA.polvo ? 'falta' : ''}">✨ ${COSTE_RUNA.polvo} polvo</span></small></div>
+      <div class="fila" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button data-acc="crear" ${tieneCoste(COSTE_RUNA) ? '' : 'disabled'}>Crear runa al azar</button><small>Crea una runa de tipo aleatorio · cuesta <span class="${jugador.oro < COSTE_RUNA.oro ? 'falta' : ''}"><img class="ic-txt" src="img/iconos/oro.png" alt="">${COSTE_RUNA.oro} oro</span> y <span class="${jugador.mat.polvo < COSTE_RUNA.polvo ? 'falta' : ''}"><img class="ic-txt" src="img/iconos/mat_polvo.png" alt=""> ${COSTE_RUNA.polvo} polvo</span></small></div>
       <h3>Tus runas (${libres.length})</h3>
-      <small class="nota">Junta 3 runas iguales del mismo nivel para fusionarlas en una de nivel superior (máx. Nv ${RUNA_MAX}). Las runas <b style="color:${CAL_RUNA[1].color}">raras</b> y <b style="color:${CAL_RUNA[2].color}">perfectas</b> suman un efecto secundario; púlelas (● ${COSTE_PULIR_RUNA.oro} · ✨ ${COSTE_PULIR_RUNA.polvo}) para subir su calidad o cambiar el secundario.${hayHueco ? '' : ' Las 4 ranuras están llenas: quita una para equipar otra.'}</small>
+      <small class="nota">Junta 3 runas iguales del mismo nivel para fusionarlas en una de nivel superior (máx. Nv ${RUNA_MAX}). Las runas <b style="color:${CAL_RUNA[1].color}">raras</b> y <b style="color:${CAL_RUNA[2].color}">perfectas</b> suman un efecto secundario; púlelas (${htmlPremio(COSTE_PULIR_RUNA)}) para subir su calidad o cambiar el secundario.${hayHueco ? '' : ' Las 4 ranuras están llenas: quita una para equipar otra.'}</small>
       <div class="rejilla">${libres.map(r => tarjeta(r, false)).join('') || '<small>Aún no tienes runas sin equipar.</small>'}</div>
       <h3>Reliquias · ${reliquiasActivas().length}/${RANURAS_RELIQUIA} activas</h3><small class="nota">Se consiguen derrotando o dañando a los jefes mundiales; repetirla sube su nivel. Solo ${RANURAS_RELIQUIA} pueden estar activas: elige las que encajen con tu build.</small>
       <div class="rejilla reliquias">${RELIQUIAS.map(r => { const n = nivelReliquia(r.id), activa = reliquiasActivas().includes(r);
-        return `<div class="item${n ? '' : ' bloq'}${activa ? ' puesto' : ''}${nivelDespertar('reliquia', r.id) >= D_VISUAL ? ' marco-d5' : ''}"><span style="font-size:28px">${r.icono}</span><small>${r.nombre}${n ? ` · Nv ${n}/${RELIQUIA_MAX}` : ''}</small>
+        return `<div class="item${n ? '' : ' bloq'}${activa ? ' puesto' : ''}${nivelDespertar('reliquia', r.id) >= D_VISUAL ? ' marco-d5' : ''}"><span class="ic-runa">${iconoDe(r, 'ic-grande')}</span><small>${r.nombre}${n ? ` · Nv ${n}/${RELIQUIA_MAX}` : ''}</small>
           <b>${n ? textoReliquia(r) : `🔒 ${NOMBRE_JEFE[r.jefe]}`}</b>
           ${n ? (activa ? `<button data-acc="quitarRel" data-rel="${r.id}">Quitar</button>` : `<button data-acc="ponerRel" data-rel="${r.id}" ${reliquiasActivas().length < RANURAS_RELIQUIA ? '' : 'disabled'}>ACTIVAR</button>`) : ''}
           ${n >= RELIQUIA_MAX ? botonDespertar('reliquia', r.id) : ''}</div>`; }).join('')}</div>`;

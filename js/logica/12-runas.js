@@ -16,6 +16,7 @@
     jefes:       { nombre: 'Runa cazadora',     icono: '🔺', v: 1.5 },
     fortuna:     { nombre: 'Runa de fortuna',   icono: '🍀', v: 2 },
   };
+  for (const [k, r] of Object.entries(RUNAS)) r.img = 'runa_' + k;   // icono HD: img/iconos/runa_<tipo>.png
   const RUNA_MAX = 10, RANURAS_RUNA = 4, COSTE_RUNA = { oro: 500, polvo: 5 };
   // Calidad de runa (r.cal): 0 normal, 1 rara, 2 perfecta. Las raras y perfectas añaden un efecto secundario (r.extra)
   // a 1/3 o 2/3 del valor de su propia runa por nivel. Al crear: 15 % rara, 3 % perfecta. Fusionar conserva la mejor
