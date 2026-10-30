@@ -18,6 +18,8 @@
     asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
                 mod: { ataque: 12, vida: -10, defensa: -15 }, ef: { critico: .08, danoCritico: .15, esquiva: .05 } },
   };
+  // icono HD de la clase para la pantalla (el emoji 'icono' queda para textos como avisos y nombres de enemigos)
+  const iconoClase = id => `<img class="ic-txt" src="img/iconos/clase_${id}.png" alt="${CLASES[id].nombre}">`;
   const ARBOL = {
     guerrero: [
       { id: 'furia', nombre: 'Furia', icono: '🗡️', nodos: [

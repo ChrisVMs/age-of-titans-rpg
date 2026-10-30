@@ -7,7 +7,7 @@
     pintarAura(document.querySelector('.camp-guerrero'), nivelAura());
     const pct = jugador.xp / xpParaSubir(jugador.nivel) * 100, c = CLASES[jugador.clase], m = mascotaActual(), a = avisosCampamento();
     $('campAvatar').className = 'camp-avatar' + (marcoActual() ? ' marco-' + marcoActual() : '');
-    $('campAvatar').innerHTML = `<span class="cara">${c.icono}<b>${jugador.nivel}</b></span>
+    $('campAvatar').innerHTML = `<span class="cara"><img class="ic-cara" src="img/iconos/clase_${jugador.clase}.png" alt="${c.nombre}"><b>${jugador.nivel}</b></span>
       <span><span class="poder"><img class="ic-txt" src="img/iconos/poder.png" alt="Poder">${poder().toLocaleString('es')}</span><span class="xp"><i style="width:${pct}%"></i></span></span>`;
     $('campRecursos').innerHTML = `<span class="recurso oro"><img class="ic-txt" src="img/iconos/oro.png" alt="Oro">${jugador.oro.toLocaleString('es')}</span><span class="recurso cristales"><img class="ic-txt" src="img/iconos/cristales.png" alt="Cristales">${jugador.cristales || 0}</span><span class="recurso estamina"><img class="ic-txt" src="img/iconos/estamina.png" alt="Estamina">${jugador.estamina}/${ESTAMINA_MAX} ＋</span>`;
     $('campNombre').innerHTML = `${etiquetaTitulo(tituloActual())}${jugador.nombre} · ${c.nombre} Nv ${jugador.nivel}`;

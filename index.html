@@ -234,8 +234,9 @@
                 border:2px solid #4a4458; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   .camp-icono small { font-size:9px; font-weight:normal; }
   /* iconos HD del menú (img/iconos, de tools/iconos_menu.py): ocupan el sitio del emoji */
-  .ic { display:block; width:1.4em; height:1.4em; object-fit:contain; margin:0 auto; pointer-events:none; filter:drop-shadow(0 1px 2px #000a); }
-  .ic-txt { display:inline-block; width:1.15em; height:1.15em; object-fit:contain; vertical-align:-.2em; margin-right:3px; }
+  .ic-hd { display:block; width:1.4em; height:1.4em; object-fit:contain; margin:0 auto; pointer-events:none; filter:drop-shadow(0 1px 2px #000a); }
+  .camp-avatar .cara .ic-cara { width:34px; height:34px; object-fit:contain; }
+  .ic-txt { display:inline-block; width:1.35em; height:1.35em; object-fit:contain; vertical-align:-.2em; margin-right:3px; }
   .camp-icono.evento { border-color:#ff9a3a; background:linear-gradient(#c2410c99, #2e2a38dd); }
   .con-punto::after { content:''; position:absolute; top:-4px; right:-4px; width:14px; height:14px; border-radius:50%; background:#ff3b3b;
                       border:2px solid #14121a; animation:latido 1.2s ease-in-out infinite; }
@@ -900,19 +901,19 @@
       <div class="camp-accesos">
       <button class="camp-pag oculto" id="campPagAnt" aria-label="Anterior">‹</button>
       <div class="camp-lateral" id="campIconos">
-        <button class="camp-icono evento" data-ir="pEvento" id="campJefe"><img class="ic" src="img/iconos/jefe.png" alt=""><small>Jefe</small></button>
-        <button class="camp-icono" data-ir="pArbol" id="campArbol"><img class="ic" src="img/iconos/habilidades.png" alt=""><small>Habilidades</small></button>
-        <button class="camp-icono" id="campTitulos"><img class="ic" src="img/iconos/titulos.png" alt=""><small>Títulos</small></button>
-        <button class="camp-icono" data-ir="pArena" id="campArena"><img class="ic" src="img/iconos/arena.png" alt=""><small>Arena</small></button>
-        <button class="camp-icono" id="campLogin"><img class="ic" src="img/iconos/login.png" alt=""><small>Login</small></button>
-        <button class="camp-icono" data-ir="pBolsa" id="campBolsa"><img class="ic" src="img/iconos/inventario.png" alt=""><small>Inventario</small></button>
-        <button class="camp-icono" data-ir="pRanking" id="campRanking"><img class="ic" src="img/iconos/ranking.png" alt=""><small>Ranking</small></button>
-        <button class="camp-icono" data-ir="pColeccion" id="campColeccion"><img class="ic" src="img/iconos/coleccion.png" alt=""><small>Colección</small></button>
-        <button class="camp-icono" data-ir="pTorre" id="campTorre"><img class="ic" src="img/iconos/torre.png" alt=""><small>Torre</small></button>
-        <button class="camp-icono" data-ir="pGrieta" id="campGrieta"><img class="ic" src="img/iconos/grieta.png" alt=""><small>Grieta</small></button>
-        <button class="camp-icono" data-ir="pRuinas" id="campRuinas"><img class="ic" src="img/iconos/ruinas.png" alt=""><small>Ruinas</small></button>
-        <button class="camp-icono evento" data-ir="pReyes" id="campReyes"><img class="ic" src="img/iconos/reyes.png" alt=""><small>Reyes</small></button>
-        <button class="camp-icono" data-ir="pMisiones" id="campMisiones"><img class="ic" src="img/iconos/misiones.png" alt=""><small>Misiones</small></button>
+        <button class="camp-icono evento" data-ir="pEvento" id="campJefe"><img class="ic-hd" src="img/iconos/jefe.png" alt=""><small>Jefe</small></button>
+        <button class="camp-icono" data-ir="pArbol" id="campArbol"><img class="ic-hd" src="img/iconos/habilidades.png" alt=""><small>Habilidades</small></button>
+        <button class="camp-icono" id="campTitulos"><img class="ic-hd" src="img/iconos/titulos.png" alt=""><small>Títulos</small></button>
+        <button class="camp-icono" data-ir="pArena" id="campArena"><img class="ic-hd" src="img/iconos/arena.png" alt=""><small>Arena</small></button>
+        <button class="camp-icono" id="campLogin"><img class="ic-hd" src="img/iconos/login.png" alt=""><small>Login</small></button>
+        <button class="camp-icono" data-ir="pBolsa" id="campBolsa"><img class="ic-hd" src="img/iconos/inventario.png" alt=""><small>Inventario</small></button>
+        <button class="camp-icono" data-ir="pRanking" id="campRanking"><img class="ic-hd" src="img/iconos/ranking.png" alt=""><small>Ranking</small></button>
+        <button class="camp-icono" data-ir="pColeccion" id="campColeccion"><img class="ic-hd" src="img/iconos/coleccion.png" alt=""><small>Colección</small></button>
+        <button class="camp-icono" data-ir="pTorre" id="campTorre"><img class="ic-hd" src="img/iconos/torre.png" alt=""><small>Torre</small></button>
+        <button class="camp-icono" data-ir="pGrieta" id="campGrieta"><img class="ic-hd" src="img/iconos/grieta.png" alt=""><small>Grieta</small></button>
+        <button class="camp-icono" data-ir="pRuinas" id="campRuinas"><img class="ic-hd" src="img/iconos/ruinas.png" alt=""><small>Ruinas</small></button>
+        <button class="camp-icono evento" data-ir="pReyes" id="campReyes"><img class="ic-hd" src="img/iconos/reyes.png" alt=""><small>Reyes</small></button>
+        <button class="camp-icono" data-ir="pMisiones" id="campMisiones"><img class="ic-hd" src="img/iconos/misiones.png" alt=""><small>Misiones</small></button>
       </div>
       <button class="camp-pag oculto" id="campPagSig" aria-label="Siguiente">›</button>
       </div>
@@ -924,11 +925,11 @@
       </div>
     </div>
     <nav class="camp-nav">
-      <button data-ir="pInventario" id="navHeroe"><img class="ic" src="img/iconos/heroe.png" alt=""><small>Héroe</small></button>
-      <button data-ir="pMascota" id="navMascota"><img class="ic" src="img/iconos/mascota.png" alt=""><small>Mascota</small></button>
-      <button class="batalla" id="navBatalla"><img class="ic" src="img/iconos/batalla.png" alt=""><small>BATALLA</small></button>
-      <button data-ir="pHerreria"><img class="ic" src="img/iconos/herreria.png" alt=""><small>Herrería</small></button>
-      <button data-ir="pTienda"><img class="ic" src="img/iconos/tienda.png" alt=""><small>Tienda</small></button>
+      <button data-ir="pInventario" id="navHeroe"><img class="ic-hd" src="img/iconos/heroe.png" alt=""><small>Héroe</small></button>
+      <button data-ir="pMascota" id="navMascota"><img class="ic-hd" src="img/iconos/mascota.png" alt=""><small>Mascota</small></button>
+      <button class="batalla" id="navBatalla"><img class="ic-hd" src="img/iconos/batalla.png" alt=""><small>BATALLA</small></button>
+      <button data-ir="pHerreria"><img class="ic-hd" src="img/iconos/herreria.png" alt=""><small>Herrería</small></button>
+      <button data-ir="pTienda"><img class="ic-hd" src="img/iconos/tienda.png" alt=""><small>Tienda</small></button>
     </nav>
     <div class="modal" id="modoBatalla"><div class="caja modos-batalla">
       <h2>¿Qué quieres jugar?</h2>

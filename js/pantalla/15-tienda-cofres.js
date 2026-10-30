@@ -84,7 +84,7 @@
   };
   function pintarPerfilesPrueba() {
     let hay = false; try { hay = !!localStorage.getItem(CLAVE_RESPALDO); } catch {}
-    $('perfilesPrueba').innerHTML = `<small>Jugar con la partida de un bot:</small> ${DEF_BOTS.map((d, i) => `<button class="prueba" data-bot="${i}">${CLASES[d.clase].icono} ${d.nombre}</button>`).join('')}
+    $('perfilesPrueba').innerHTML = `<small>Jugar con la partida de un bot:</small> ${DEF_BOTS.map((d, i) => `<button class="prueba" data-bot="${i}">${iconoClase(d.clase)}${d.nombre}</button>`).join('')}
       ${hay ? '<button class="prueba" data-bot="volver">↩ Volver a mi partida</button>' : ''}`;
   }
   $('perfilesPrueba').addEventListener('click', e => {

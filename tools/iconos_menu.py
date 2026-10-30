@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
-# Recorta los iconos del menú de tools/hojas/iconos_menu.jpg (5x5) en img/iconos/<nombre>.png con split_sheet.py.
-# Cada icono viene sobre una baldosa verde oscuro: se quita (relleno desde los bordes) y se recorta al dibujo.
+# Recorta las hojas de iconos de tools/hojas/ en img/iconos/<nombre>.png con split_sheet.py:
+#   iconos_menu.jpg (5x5): cada icono viene sobre una baldosa verde oscuro, que se quita (relleno desde los bordes).
+#   iconos_clases.jpg (4x2): sobre verde plano (sin baldosa).
 # Uso (desde la raíz): python3 tools/iconos_menu.py
 import subprocess, glob, tempfile, numpy as np
 from PIL import Image
+HOJAS = []   # (hoja, columnas, filas, nombres, quitar baldosa)
 NOMBRES = ['jefe', 'habilidades', 'titulos', 'arena', 'login', 'inventario', 'ranking', 'coleccion', 'torre', 'grieta',
            'ruinas', 'reyes', 'misiones', 'heroe', 'mascota', 'batalla', 'herreria', 'tienda', 'oro', 'cristales',
            'estamina', 'poder']
-tmp = tempfile.mkdtemp()
-subprocess.run(['python3', 'tools/split_sheet.py', 'tools/hojas/iconos_menu.jpg', '--cols', '5', '--rows', '5', '--uniform', '--out', tmp],
-               check=True, capture_output=True)
-for nombre, f in zip(NOMBRES, sorted(glob.glob(f'{tmp}/*.png'))):
+HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
+          ('iconos_clases.jpg', 4, 2, ['clase_guerrero', 'clase_arquero', 'clase_mago', 'clase_asesino', 'vida', 'ataque', 'defensa', 'armadura'], False)]
+for hoja, cols, filas, nombres, conBaldosa in HOJAS:
+  tmp = tempfile.mkdtemp()
+  subprocess.run(['python3', 'tools/split_sheet.py', f'tools/hojas/{hoja}', '--cols', str(cols), '--rows', str(filas), '--uniform', '--out', tmp],
+                 check=True, capture_output=True)
+  for nombre, f in zip(nombres, sorted(glob.glob(f'{tmp}/*.png'))):
     a = np.array(Image.open(f).convert('RGBA')).astype(int)
+    if not conBaldosa:
+        a[..., 3] = np.where(a[..., 3] < 40, 0, a[..., 3])   # restos casi transparentes del borde de la celda
+        im = Image.fromarray(a.astype('uint8')); im.crop(im.getbbox()).save(f'img/iconos/{nombre}.png'); print(nombre, im.getbbox()); continue
     r, g, b = a[..., 0], a[..., 1], a[..., 2]
     # baldosa: tras split_sheet queda oscura y algo verdosa (~12,25,18); el contorno negro del dibujo no es verdoso.
     # Se borra la zona de baldosa conectada con los bordes (relleno desde fuera), así el dibujo no pierde nada.

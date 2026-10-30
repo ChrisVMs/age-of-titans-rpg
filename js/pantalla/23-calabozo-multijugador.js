@@ -39,11 +39,11 @@
     if (rankTab === 'ecos' && desbloqueado('pArena')) return pintarEcos();
     const ranking = rankingServidor(), x = ranking[rankSel] || ranking[0], p = x.yo ? jugador : x.bot, s0 = conPerfil(p, estadisticas);
     $('ranking').innerHTML = tabsRanking() + `<div class="ranking-vista"><div class="ranking-servidor">${ranking.map((r, i) =>
-        `<div class="${r.yo ? 'yo' : ''}${i === rankSel ? ' sel' : ''}" data-rank="${i}"><b>#${i + 1}</b><span>${CLASES[r.clase].icono} ${r.nombre}</span><span class="clase">${CLASES[r.clase].nombre}</span><span>Nv ${r.nivel}</span><b>⚔ ${r.poder.toLocaleString('es')}</b></div>`).join('')}</div>
+        `<div class="${r.yo ? 'yo' : ''}${i === rankSel ? ' sel' : ''}" data-rank="${i}"><b>#${i + 1}</b><span>${iconoClase(r.clase)}${r.nombre}</span><span class="clase">${CLASES[r.clase].nombre}</span><span>Nv ${r.nivel}</span><b><img class="ic-txt" src="img/iconos/poder.png" alt="Poder">${r.poder.toLocaleString('es')}</b></div>`).join('')}</div>
       <div class="ranking-ficha"><div class="pj-mini grande${x.yo && marcoActual() ? ' marco-' + marcoActual() : ''}" data-retrato="${x.yo ? '' : x.nombre}"></div>
-        <b>${i18nPuesto(rankSel)} ${x.nombre}</b><small>${CLASES[x.clase].icono} ${CLASES[x.clase].nombre} · Nv ${x.nivel}</small>
-        <small>⚔ ${x.poder.toLocaleString('es')} poder</small>
-        <small>❤ ${s0.vida.toLocaleString('es')} · 🗡 ${s0.ataque} · 🛡 ${s0.defensa} · ⛨ ${s0.armadura}</small></div></div>`;
+        <b>${i18nPuesto(rankSel)} ${x.nombre}</b><small>${iconoClase(x.clase)}${CLASES[x.clase].nombre} · Nv ${x.nivel}</small>
+        <small><img class="ic-txt" src="img/iconos/poder.png" alt="Poder">${x.poder.toLocaleString('es')} poder</small>
+        <small style="white-space:nowrap"><img class="ic-txt" src="img/iconos/vida.png" alt="Vida">${s0.vida.toLocaleString('es')} · <img class="ic-txt" src="img/iconos/ataque.png" alt="Ataque">${s0.ataque} · <img class="ic-txt" src="img/iconos/defensa.png" alt="Defensa">${s0.defensa} · <img class="ic-txt" src="img/iconos/armadura.png" alt="Armadura">${s0.armadura}</small></div></div>`;
     pintarRetratos($('ranking'));
   }
   $('ranking').addEventListener('click', e => {

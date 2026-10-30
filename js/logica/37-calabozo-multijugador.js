@@ -48,4 +48,4 @@
   }
   // el calabozo se elige arriba (combo): la lista muestra sus salas y "Crear sala" abre una para ese calabozo
   let calSel = 1, difCal = 'normal';
-  const i18nPuesto = i => i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+  const i18nPuesto = i => i === 0 ? '<img class="ic-txt" src="img/iconos/reyes.png" alt="1.º">' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;

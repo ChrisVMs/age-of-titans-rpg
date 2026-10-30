@@ -9,7 +9,7 @@
     $('perfil').innerHTML = (editandoNombre
         ? `<div class="nombre-edit"><input id="nombreInput" maxlength="14" value="${jugador.nombre.replace(/"/g, '&quot;')}" aria-label="Tu nombre"><button id="guardarNombre" aria-label="Guardar">✔</button><button id="cancelarNombre" aria-label="Cancelar">✖</button></div>`
         : `<div class="nombre-jugador"><b>${jugador.nombre}</b><button id="editarNombre" aria-label="Editar nombre">✏️</button></div>`) +
-      `${etiquetaTitulo(tituloActual())}<div><b>${CLASES[jugador.clase].icono} ${CLASES[jugador.clase].nombre}</b> · Nv ${jugador.nivel}</div><div class="xp"><i style="width:${pct}%"></i></div>
+      `${etiquetaTitulo(tituloActual())}<div><b>${iconoClase(jugador.clase)}${CLASES[jugador.clase].nombre}</b> · Nv ${jugador.nivel}</div><div class="xp"><i style="width:${pct}%"></i></div>
       <small>${jugador.xp} / ${xpParaSubir(jugador.nivel)} XP</small>
       <div class="masc">Mascota: ${m ? `<span style="font-size:22px">${m.hoja ? '' : m.cara}</span>${m.hoja ? dibujoMascota(m, .16) : ''} <b>${m.nombre}</b> Nv ${nivelMascota(m)}` : '<i>ninguna</i>'}</div>`;
   }
