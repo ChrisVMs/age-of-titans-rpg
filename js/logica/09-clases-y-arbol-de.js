@@ -114,8 +114,8 @@
       ] },
     ],
   };
-  // iconos HD (img/iconos/rama_<id>.png y nodo_<id>.png) de las clases que ya los tienen; las demás siguen con su emoji
-  for (const clase of ['asesino', 'guerrero', 'arquero']) for (const r of ARBOL[clase]) { r.img = 'rama_' + r.id; for (const n of r.nodos) n.img = 'nodo_' + n.id; }
+  // iconos HD de ramas y nodos: img/iconos/rama_<id>.png y nodo_<id>.png (tools/iconos_menu.py)
+  for (const clase of Object.keys(ARBOL)) for (const r of ARBOL[clase]) { r.img = 'rama_' + r.id; for (const n of r.nodos) n.img = 'nodo_' + n.id; }
   // icono de un nodo, rama o especialización: su imagen HD si la tiene, si no su emoji
   const iconoDe = (x, cls = 'ic-txt') => x.img ? `<img class="${cls}" src="img/iconos/${x.img}.png" alt="">` : x.icono;
   const costeReinicio = () => Math.max(500, 100 * jugador.nivel);   // crece con el nivel (8 000 al nivel 80)

@@ -42,7 +42,11 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
           ('iconos_arbol_arquero.jpg', 5, 4, ['rama_precision', 'rama_supervivencia', 'rama_caceria', 'nodo_punteria', 'nodo_ojo_halcon',
             'nodo_disparo_m', 'nodo_letal', 'nodo_perforante', 'nodo_agilidad', 'nodo_cuero',
             'nodo_trampas', 'nodo_instinto', 'nodo_camuflaje', 'nodo_rastreo', 'nodo_flecha_ven',
-            'nodo_lluvia_r', 'nodo_penetrante', 'nodo_marca', '-', '-'], 'gris_texto')]
+            'nodo_lluvia_r', 'nodo_penetrante', 'nodo_marca', '-', '-'], 'gris_texto'),
+          ('iconos_arbol_mago.jpg', 5, 4, ['rama_fuego', 'rama_hielo', 'rama_arcano', 'nodo_poder_arc', 'nodo_ignicion',
+            'nodo_bola_m', 'nodo_combustion', 'nodo_meteoro', 'nodo_escarcha', 'nodo_piel_hielo',
+            'nodo_lanza_m', 'nodo_hielo_et', 'nodo_ventisca', 'nodo_sabiduria', 'nodo_mente',
+            'nodo_drenaje', 'nodo_concentra', 'nodo_torrente', '-', '-'], 'gris_texto')]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:
   tmp = tempfile.mkdtemp()
   # sin verde: celdas tal cual (el texto queda abajo) y un croma que no existe (magenta) para no apagar los verdes del dibujo
