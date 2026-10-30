@@ -9,6 +9,12 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 
 ## Sin publicar (rama `qa`)
 
+### 🗡️ Asesino (clase nueva)
+- +12 % ataque, −10 % vida, −15 % defensa; +8 % crítico, +15 % daño crítico, +5 % esquiva.
+- Habilidades: **Puñalada** (×1,6, sangra), **Paso sombrío** (×2,4, envenena) y **Danza de cuchillas** (×3,5, atraviesa armadura; se aprende en el árbol).
+- Árbol de 3 ramas: Filo, Sombras y Venenos.
+- Sprite propio (`img/asesino/tira.png`, 14 poses), recortado de `tools/hojas/asesino_*.jpg` con `tools/split_sheet.py`.
+
 ### 🔮 Maga
 - La clase Mago pasa a ser **Maga**, con sprite y animaciones propios (antes usaba los del guerrero).
 - Ataca y lanza sus habilidades desde su sitio: prepara el bastón, conjura y suelta una bola de fuego.

@@ -17,6 +17,14 @@
     bola: () => lanzarMaga(300),
     lanza: () => lanzarMaga(150),
     meteoro: () => lanzarMaga(450),
+    // Asesino: 12 = acometida sombría, 13 = cruce de cuchillas, 4 = impacto
+    punalada: () => guerrero.jugar([[1, 160, 380], [3, 80, , sonidoEspada], [4, 160, , r => r()], [6, 160, 0], [7, 120]]),
+    paso: () => guerrero.jugar([
+        [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 250],
+        [12, 150, 380, () => { marcoGuerrero.classList.remove('carga'); estela(); sonidoEspada(); }], [5, 180, , r => r()], [6, 200, 0], [7, 150]]),
+    danza: () => guerrero.jugar([
+        [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 350], [12, 140, 380, () => marcoGuerrero.classList.remove('carga')],
+        [13, 220, , r => { arco(); sonidoEspada(); r(); }], [4, 180], [5, 120], [6, 200, 0], [7, 150]]),
   };
   // Maga: prepara el bastón, conjura y suelta la bola de fuego
   function bolaMaga(alImpacto) {

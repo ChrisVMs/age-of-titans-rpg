@@ -7,13 +7,15 @@
   //   cargaInicial: las habilidades empiezan la batalla cargadas
   // Clases: cada una cambia los atributos base (mod, en %), da un efecto propio (ef) y tiene sus habilidades y su árbol.
   // Se puede cambiar de clase gratis fuera de batalla; los puntos del árbol y la maestría son de cada clase.
-  // El Arquero usa por ahora el sprite del guerrero; la Maga tiene el suyo (img/maga/tira.png, mismas 14 poses).
+  // El Arquero usa por ahora el sprite del guerrero; la Maga y el Asesino tienen el suyo (img/<clase>/tira.png, mismas 14 poses).
   const CLASES = {
     guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: {}, ef: {} },
     arquero:  { nombre: 'Arquero',  icono: '🏹', desc: 'Daño alto y críticos; menos vida y defensa. Hace sangrar y envenena.',
                 mod: { ataque: 10, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 } },
     mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
                 mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 } },
+    asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
+                mod: { ataque: 12, vida: -10, defensa: -15 }, ef: { critico: .08, danoCritico: .15, esquiva: .05 } },
   };
   const ARBOL = {
     guerrero: [
@@ -83,6 +85,29 @@
         { id: 'drenaje',     nombre: 'Drenaje',           icono: '🩸', max: 3, ef: { robo: 2 }, d: r => `${2 * r} % de robo de vida` },
         { id: 'concentra',   nombre: 'Concentración',     icono: '🔮', max: 3, ef: { danoCritico: 8 }, d: r => `+${8 * r} % de daño crítico` },
         { id: 'torrente',    nombre: 'Torrente de maná',  icono: '🌊', max: 1, poder: 2, cargaInicial: true, d: () => 'Empiezas cada batalla con las habilidades cargadas' },
+      ] },
+    ],
+    asesino: [
+      { id: 'filo', nombre: 'Filo', icono: '🗡️', nodos: [
+        { id: 'filo_agudo',  nombre: 'Filo agudo',        icono: '🔪', max: 5, stat: { ataque: 2 }, d: r => `+${2 * r} % de ataque` },
+        { id: 'punto_debil', nombre: 'Punto débil',       icono: '🎯', max: 5, ef: { critico: 2 }, d: r => `${2 * r} % de prob. de crítico` },
+        { id: 'punalada_m',  nombre: 'Puñalada profunda', icono: '🩸', max: 3, poder: 1.5, habMult: ['punalada', .2], d: r => `Puñalada hace +${20 * r} % de daño` },
+        { id: 'ejecutor',    nombre: 'Ejecutor',          icono: '💀', max: 3, ef: { danoCritico: 8 }, d: r => `+${8 * r} % de daño crítico` },
+        { id: 'danza',       nombre: 'Danza de cuchillas', icono: '✖️', max: 1, poder: 4, d: () => 'Nueva habilidad: cruce de cuchillas ×3,5 que atraviesa la armadura (recarga 6)' },
+      ] },
+      { id: 'sombras', nombre: 'Sombras', icono: '🌑', nodos: [
+        { id: 'esquivo',     nombre: 'Esquivo',           icono: '💨', max: 5, ef: { esquiva: 2 }, d: r => `${2 * r} % de prob. de esquivar` },
+        { id: 'manto',       nombre: 'Manto oscuro',      icono: '🧥', max: 5, stat: { vida: 3, defensa: 2 }, d: r => `+${3 * r} % de vida y +${2 * r} % de defensa` },
+        { id: 'paso_r',      nombre: 'Paso veloz',        icono: '👣', max: 1, poder: 2, habRecarga: ['paso', 1], d: () => 'Paso sombrío se recarga 1 turno antes' },
+        { id: 'evasion',     nombre: 'Evasión',           icono: '🌫️', max: 3, ef: { reduccion: 3 }, d: r => `-${3 * r} % de daño recibido` },
+        { id: 'emboscada',   nombre: 'Emboscada',         icono: '🌘', max: 1, poder: 2, cargaInicial: true, d: () => 'Empiezas cada batalla con las habilidades cargadas' },
+      ] },
+      { id: 'venenos', nombre: 'Venenos', icono: '☠️', nodos: [
+        { id: 'toxina',      nombre: 'Toxina',            icono: '🧪', max: 5, golpe: { estado: 'veneno', prob: 4, turnos: 3, pct: .12 }, poder: 1, d: r => `${4 * r} % de envenenar al golpear (acumulable)` },
+        { id: 'desangrar',   nombre: 'Desangrar',         icono: '🩸', max: 5, golpe: { estado: 'sangrado', prob: 4, turnos: 3, pct: .2 }, poder: 1, d: r => `${4 * r} % de hacer sangrar al golpear (3 turnos, 20 % de tu ataque)` },
+        { id: 'sed_a',       nombre: 'Sed de sangre',     icono: '🍷', max: 3, ef: { robo: 2 }, d: r => `${2 * r} % de robo de vida` },
+        { id: 'cazarrecom',  nombre: 'Cazarrecompensas',  icono: '🐲', max: 3, ef: { jefes: 5 }, d: r => `+${5 * r} % de daño contra jefes` },
+        { id: 'golpe_gracia', nombre: 'Golpe de gracia',  icono: '⚰️', max: 1, ef: { remate: 15 }, d: () => '+15 % de daño a enemigos por debajo del 50 % de vida' },
       ] },
     ],
   };

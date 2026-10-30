@@ -88,6 +88,15 @@
       { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/maga/proyectil.png'], ancho: 217, alto: 218, total: 1, escala: .5 }, cuadros: [[0, 1000]] },
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
     ] },
+    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 14 cuadros', capas: ['img/asesino/tira.png'], ancho: 370, alto: 260, total: 14, escala: .8, animaciones: [
+      { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
+      { nombre: 'Ataque', cuadros: [[1, 250], [2, 170], [3, 90], [4, 160], [5, 120], [6, 200], [7, 150], [0, 600]] },
+      { nombre: 'Puñalada (habilidad)', cuadros: [[1, 160], [3, 80], [4, 160], [6, 160], [7, 120], [0, 600]] },
+      { nombre: 'Paso sombrío (habilidad)', cuadros: [[1, 390], [12, 150], [5, 180], [6, 200], [7, 150], [0, 600]] },
+      { nombre: 'Danza de cuchillas (habilidad)', cuadros: [[1, 490], [12, 140], [13, 220], [4, 180], [5, 120], [6, 200], [7, 150], [0, 600]] },
+      { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
+      { nombre: 'Reposo alternativo (sin usar)', cuadros: [[8, 200], [9, 200], [10, 200], [11, 200]] },
+    ] },
     { id: 'parca', nombre: 'Parca', desc: 'Campaña · 7 cuadros', capas: ['img/enemigos/parca.png'], ancho: 260, alto: 200, total: 7, escala: 1, espejo: true, animaciones: [
       { nombre: 'Reposo (respira)', cuadros: [[0, 1000]], respira: true },
       { nombre: 'Ataque', cuadros: [[1, 220], [2, 260], [3, 260], [4, 250], [0, 600]] },
