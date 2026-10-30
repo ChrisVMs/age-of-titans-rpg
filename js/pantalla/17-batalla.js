@@ -40,7 +40,7 @@
   }
   // Personajes animados cuadro a cuadro
   // escala(i): tamaño del cuadro i (tiras hechas con hojas de distinto tamaño); reposo(): cuadros del reposo animado, si tiene
-  const REPOSO_MS = 140;
+  const REPOSO_MS = 240;
   const personajeClase = (el, clase) => personaje(el, 296, i => escalaCuadro(i, clase), () => reposoClase(clase));
   function personaje(slot, ancho, escala = () => 1, reposo = () => null) {
     const frames = slot.querySelector('.frames'), pj = slot.querySelector('.pj');
