@@ -18,7 +18,7 @@
     if (!sala || sala.modo !== modo) return pintarListaSalas(modo, cont);
     if (sala.trasBatalla) { sala.trasBatalla = false; reiniciarReady(sala); }
     const reyes = modo === 'reyes', R = reyes ? revisarReyes() : null, d = reyes ? DIF_REYES[sala.dif] : null, mio = esDueno(sala, 'yo'), puede = puedeJugar(modo);
-    const datos = p => `<small>${iconoClase(p.clase)}${CLASES[p.clase].nombre} Nv ${p.nivel} · ⚔ ${conPerfil(p, () => poder()).toLocaleString('es')}</small>`;
+    const datos = p => `<small>${iconoClase(p.clase)}${CLASES[p.clase].nombre} Nv ${p.nivel} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${conPerfil(p, () => poder()).toLocaleString('es')}</small>`;
     const huecos = sala.miembros.map((m, i) => {
       const p = perfilDe(m.n), estado = i === 0 ? '<small><img class="ic-txt" src="img/iconos/reyes.png" alt="">Dueño</small>'
         : !m.llego ? '<small>⏳ Invitación enviada…</small>'
@@ -33,7 +33,7 @@
     const motivo = !puede ? ' (sin intentos hoy)' : pendientes ? ' (esperando ready…)' : '';
     cont.innerHTML = `<b>Sala #${sala.id}</b> <small>· <img class="ic-txt" src="img/iconos/heroe.png" alt="">${sala.miembros.length}/${MAX_JUGADORES}</small><div class="sala-slots">${huecos.join('')}</div>
       ${sala.invitando ? `<div class="rey"><div class="info"><b>Invitar a un jugador</b>${candidatosSala().map(b =>
-          `<small style="display:flex;align-items:center;gap:8px;justify-content:space-between">${iconoClase(b.clase)}${b.nombre} · Nv ${b.nivel} · ⚔ ${conPerfil(b, () => poder()).toLocaleString('es')}
+          `<small style="display:flex;align-items:center;gap:8px;justify-content:space-between">${iconoClase(b.clase)}${b.nombre} · Nv ${b.nivel} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${conPerfil(b, () => poder()).toLocaleString('es')}
            <button data-enviar="${b.nombre}" style="margin:0;min-height:30px;padding:3px 10px">Invitar</button></small>`).join('') || `<small>${MODO_PRUEBAS ? 'No hay más jugadores disponibles' : 'No hay jugadores conectados'}</small>`}</div>
           <button data-cerrar-invitar="1">Cerrar</button></div>` : ''}
       <small><b>Formación</b> · ${mio ? 'toca dos casillas para intercambiarlas' : 'la elige el dueño'}</small>
@@ -41,12 +41,12 @@
           return `<button class="casilla${n ? ' ocupada' : ''}${sala.selPos === pos ? ' sel' : ''}" data-pos-sala="${pos}" data-pos="${pos}" ${mio ? '' : 'disabled'}>${n ? `${CLASES[perfilDe(n).clase].icono} ${nombreDe(n)}` : '—'}<small>${NOMBRE_POS[pos]} · ${PESO_POS[pos]} %</small></button>`; }).join('')}</div>
       ${reyes ? `<div class="sala-difs">${Object.entries(DIF_REYES).map(([id, x]) =>
           `<button data-dif-reyes="${id}" class="${id === sala.dif ? 'on' : ''}" ${mio ? '' : 'disabled'}>${x.nombre}<small>${Math.round(x.pct * 100)} % atributos${R.vencidas[id] ? ' · ✔' : ''}</small></button>`).join('')}</div>
-        <div class="sala-rivales">${reyesSemana().map(r => `<span>${i18nPuesto(r.puesto - 1)} ${iconoClase(r.clase)}${r.nombre} · ⚔ ${Math.round(r.poder * d.pct).toLocaleString('es')}</span>`).join('')}</div>
+        <div class="sala-rivales">${reyesSemana().map(r => `<span>${i18nPuesto(r.puesto - 1)} ${iconoClase(r.clase)}${r.nombre} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${Math.round(r.poder * d.pct).toLocaleString('es')}</span>`).join('')}</div>
         <small class="nota">Premio ${d.nombre}${R.vencidas[sala.dif] ? ' (ya cobrado esta semana)' : ''}: ${textoPremio(d.premio)}. Pesadilla o Infierno: título «Matarreyes».</small>`
       : `<div class="sala-rivales"><span>3 monstruos + 👹 ${TIPOS_ENEMIGO[calabozo(sala.cal).jefe].nombre}</span><span>+${VIDA_POR_ALIADO * 100} % de vida por aliado</span></div>`}
       <div class="sala-acciones"><button data-salir-sala="1">Abandonar sala</button>
         ${!reyes ? `<small>Intentos: ${revisarCalabozo().entradas}/${INTENTOS_CALABOZO}</small>` : ''}
-        ${mio ? `<button data-empezar="1" ${puede && !pendientes ? '' : 'disabled'}>⚔ Empezar${motivo}</button>` : `<small>${pendientes ? 'Pulsa Ready: el dueño empezará cuando todos estéis listos' : `${nombreDe(sala.miembros[0].n)} va a empezar…`}</small>`}</div>`;
+        ${mio ? `<button data-empezar="1" ${puede && !pendientes ? '' : 'disabled'}><img class="ic-txt" src="img/iconos/batalla.png" alt="">Empezar${motivo}</button>` : `<small>${pendientes ? 'Pulsa Ready: el dueño empezará cuando todos estéis listos' : `${nombreDe(sala.miembros[0].n)} va a empezar…`}</small>`}</div>`;
     pintarRetratos(cont);
   }
   function clickSala(e) {

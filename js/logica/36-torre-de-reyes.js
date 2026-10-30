@@ -33,11 +33,11 @@
   }
   function reyVencido(dif) {
     const R = revisarReyes(), d = DIF_REYES[dif];
-    if (R.vencidas[dif]) return `<br>👑 Ya ganaste ${d.nombre} esta semana: sin premio extra.`;
+    if (R.vencidas[dif]) return `<br><img class="ic-txt" src="img/iconos/reyes.png" alt="">Ya ganaste ${d.nombre} esta semana: sin premio extra.`;
     R.vencidas[dif] = true; darPremio(d.premio);
     if (dif === 'pesadilla' || dif === 'infierno') sumarLogro('reyes1');
     guardar();
-    return `<br><b>👑 ¡Has vencido a los 3 reyes en ${d.nombre}!</b> ${textoPremio(d.premio)}`;
+    return `<br><b><img class="ic-txt" src="img/iconos/reyes.png" alt="">¡Has vencido a los 3 reyes en ${d.nombre}!</b> ${htmlPremio(d.premio)}`;
   }
   // La pantalla de la Torre de reyes ES la sala previa (grupo, dificultad, empezar). El ranking tiene su propia pantalla.
   let rankSel = 0;

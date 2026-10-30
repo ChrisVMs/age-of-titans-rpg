@@ -11,7 +11,7 @@
     const rejilla = Object.entries(CAT_MASCOTA).map(([cat, c]) => `<div class="masc-grupo" style="--cm:${c.color}"><h4>● ${c.nombre} <small>● ${c.precio}</small></h4>
       <div class="masc-cat">${MASCOTAS.filter(x => x.cat === cat).map(x => { const n = nivelMascota(x);
         return `<button class="masc-tile${n ? '' : ' bloq'}${x.id === mascSel ? ' sel' : ''}${jugador.mascota === x.id ? ' puesta' : ''}" data-msel="${x.id}">
-          <span class="ic">${dibujoMascota(x, .16)}</span><small>${x.nombre}</small><b>${n ? 'Nv ' + n : '🔒'}</b></button>`; }).join('')}</div></div>`).join('');
+          <span class="ic">${dibujoMascota(x, .16)}</span><small>${x.nombre}</small><b>${n ? 'Nv ' + n : '<img class="ic-txt" src="img/iconos/candado.png" alt="">'}</b></button>`; }).join('')}</div></div>`).join('');
     const c = CAT_MASCOTA[m.cat], n = nivelMascota(m), tiene = n > 0, puesta = jugador.mascota === m.id, nv = Math.max(1, n);
     const bonos = bonosMascota(m, nv).map(t => `<li>${t}</li>`).join('');
     const boton = !tiene ? `<button data-masc="${m.id}" data-acc="comprar" ${jugador.oro < m.precio ? 'disabled' : ''}>Comprar ● ${m.precio}</button>`

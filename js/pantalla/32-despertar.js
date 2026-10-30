@@ -4,7 +4,7 @@
   function botonDespertar(tipo, id) {
     const d = nivelDespertar(tipo, id), marca = d ? ` <span class="despierto">D${d}</span>` : '';
     if (d >= DESPERTAR_MAX) return `<button disabled>Despertar máx.${marca}</button>`;
-    if (!desbloqueado('despertar')) return `<button disabled>Máx. · 🔒 Despertar Nv ${DESBLOQUEOS.despertar[0]}</button>`;
+    if (!desbloqueado('despertar')) return `<button disabled>Máx. · <img class="ic-txt" src="img/iconos/candado.png" alt="">Despertar Nv ${DESBLOQUEOS.despertar[0]}</button>`;
     const c = costeDespertar(tipo, id);
     return `<button data-despertar="${tipo}:${id}" ${tieneCoste(c) ? '' : 'disabled'} title="${d + 1 === D_PASIVA ? 'D3: ' + TIPOS_DESPERTAR[tipo].pasiva : ''}">Despertar D${d + 1} · ${htmlPremio(c)}${marca}</button>`;
   }

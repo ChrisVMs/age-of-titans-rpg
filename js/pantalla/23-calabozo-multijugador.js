@@ -56,12 +56,12 @@
   function pintarEcos() {
     const E = revisarEcos(), r = eco(E.reto), R = E.rival[r.id], frase = r.frases.reto[Math.floor(azarSemilla(`reto ${hoy()}`)() * r.frases.reto.length)];
     $('ranking').innerHTML = tabsRanking() + `<div class="torre-card"><h3>${r.icono} ${r.nombre}${R.venganza ? ' · 🔥 venganza' : ''}</h3>
-        <small>«${frase}»</small><small>Gratis · ${textoPremio(PREMIO_RETO)} · 💎 ${R.venganza ? CRISTALES_VENGANZA : CRISTALES_RETO}</small>
+        <small>«${frase}»</small><small>Gratis · ${htmlPremio(PREMIO_RETO)} · <img class="ic-txt" src="img/iconos/cristales.png" alt="">${R.venganza ? CRISTALES_VENGANZA : CRISTALES_RETO}</small>
         <button id="retoEco" ${retoPendiente() ? '' : 'disabled'}>${retoPendiente() ? 'Aceptar el reto' : 'Mañana, otro reto'}</button></div>
       ${ECOS.map(e => { const x = E.rival[e.id]; return `<div class="mision"><span style="font-size:22px">${e.icono}</span><div class="info">${e.nombre}
         <small>tú ${x.gan} – ${x.per}${x.venganza ? ` · 🔥 +${Math.round(x.venganza * 100)} %` : ''}</small></div></div>`; }).join('')}
       <div class="ranking"><h3>Ranking de la semana</h3>${rankingEcos().map((x, i) => `<div class="${x.yo ? 'yo' : ''}"><span>${i18nPuesto(i)} ${x.icono || ''} ${x.nombre}</span>
-        <b>${x.puntos.toLocaleString('es')}</b><small>${PREMIO_RANKING_ECOS[i] ? `💎 ${PREMIO_RANKING_ECOS[i].cristales} · 🎟️ ${PREMIO_RANKING_ECOS[i].fichas}` : ''}</small></div>`).join('')}</div>`;
+        <b>${x.puntos.toLocaleString('es')}</b><small>${PREMIO_RANKING_ECOS[i] ? `<img class="ic-txt" src="img/iconos/cristales.png" alt="">${PREMIO_RANKING_ECOS[i].cristales} · 🎟️ ${PREMIO_RANKING_ECOS[i].fichas}` : ''}</small></div>`).join('')}</div>`;
   }
   // dibuja el personaje (con su equipo y skin) en cada hueco [data-retrato]; vacío = tú
   function pintarRetratos(cont) {

@@ -24,7 +24,7 @@
       <h3>Reliquias · ${reliquiasActivas().length}/${RANURAS_RELIQUIA} activas</h3><small class="nota">Se consiguen derrotando o dañando a los jefes mundiales; repetirla sube su nivel. Solo ${RANURAS_RELIQUIA} pueden estar activas: elige las que encajen con tu build.</small>
       <div class="rejilla reliquias">${RELIQUIAS.map(r => { const n = nivelReliquia(r.id), activa = reliquiasActivas().includes(r);
         return `<div class="item${n ? '' : ' bloq'}${activa ? ' puesto' : ''}${nivelDespertar('reliquia', r.id) >= D_VISUAL ? ' marco-d5' : ''}"><span class="ic-runa">${iconoDe(r, 'ic-grande')}</span><small>${r.nombre}${n ? ` · Nv ${n}/${RELIQUIA_MAX}` : ''}</small>
-          <b>${n ? textoReliquia(r) : `🔒 ${NOMBRE_JEFE[r.jefe]}`}</b>
+          <b>${n ? textoReliquia(r) : `<img class="ic-txt" src="img/iconos/candado.png" alt="">${NOMBRE_JEFE[r.jefe]}`}</b>
           ${n ? (activa ? `<button data-acc="quitarRel" data-rel="${r.id}">Quitar</button>` : `<button data-acc="ponerRel" data-rel="${r.id}" ${reliquiasActivas().length < RANURAS_RELIQUIA ? '' : 'disabled'}>ACTIVAR</button>`) : ''}
           ${n >= RELIQUIA_MAX ? botonDespertar('reliquia', r.id) : ''}</div>`; }).join('')}</div>`;
   }

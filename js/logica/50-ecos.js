@@ -80,5 +80,5 @@
     R.gan++; R.racha++; R.venganza = Math.min(VENGANZA_MAX, R.venganza + VENGANZA_PASO);
     const cr = venganza ? CRISTALES_VENGANZA : CRISTALES_RETO; jugador.cristales += cr;
     E.puntos += PUNTOS_ECO.victoria + (venganza ? PUNTOS_ECO.venganza : 0);
-    return `<br>${e.icono} «${frase(e.frases.pierde)}» · tú ${R.gan} – ${R.per} ${e.nombre} · 💎 ${cr}`;
+    return `<br>${e.icono} «${frase(e.frases.pierde)}» · tú ${R.gan} – ${R.per} ${e.nombre} · <img class="ic-txt" src="img/iconos/cristales.png" alt="">${cr}`;
   }

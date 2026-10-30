@@ -8,7 +8,7 @@
         (Frente 50 % · Arriba 20 % · Abajo 20 % · Retaguardia 10 %); las habilidades, en cualquiera. En grupo, máximo ${MAX_JUGADORES} jugadores
         (sin servidor, los aliados son los bots del ranking) y los enemigos tienen +${VIDA_POR_ALIADO * 100} % de vida por aliado.</small>
       <div class="fichas"><button data-ficha="yo" class="${fichaSel === 'yo' ? 'on' : ''}">${nombreDe('yo')}</button>
-        ${(MODO_PRUEBAS ? DEF_BOTS : []).map(d => `<button data-ficha="${d.nombre}" class="${fichaSel === d.nombre ? 'on' : ''}">${nombreDe(d.nombre)} · ⚔ ${conPerfil(bots().find(b => b.nombre === d.nombre), () => poder()).toLocaleString('es')}</button>`).join('')}
+        ${(MODO_PRUEBAS ? DEF_BOTS : []).map(d => `<button data-ficha="${d.nombre}" class="${fichaSel === d.nombre ? 'on' : ''}">${nombreDe(d.nombre)} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${conPerfil(bots().find(b => b.nombre === d.nombre), () => poder()).toLocaleString('es')}</button>`).join('')}
         <button data-ficha="quitar" class="${fichaSel === 'quitar' ? 'on' : ''}">✖ Quitar aliado</button></div>
       <div class="rombo">${POSICIONES.map(pos => { const q = quien(pos);
         return `<button class="casilla${q ? ' ocupada' : ''}" data-pos="${pos}">${q ? nombreDe(q) : '—'}<small>${NOMBRE_POS[pos]} · ${PESO_POS[pos]} %</small></button>`; }).join('')}</div>

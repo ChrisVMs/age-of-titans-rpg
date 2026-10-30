@@ -3,9 +3,9 @@
   // anuncio por visto (la app Android lo cambiará por el anuncio real).
   ui.verAnuncio ||= async () => true;
   function pintarRecargas() {
-    abrirModal('comun', `<h2>⚡ Estamina ${jugador.estamina}/${ESTAMINA_MAX}</h2>
-      <button id="recAnuncio" ${anunciosQuedan() > 0 ? '' : 'disabled'}>📺 Anuncio: +${ESTAMINA_ANUNCIO} ⚡ (${anunciosQuedan()}/${ANUNCIOS_DIA})</button>
-      <button id="recCristales" ${puedeRecargaCristales() ? '' : 'disabled'}>💎 ${RECARGA_CRISTALES.coste}: +${RECARGA_CRISTALES.estamina} ⚡${revisarRecargas().cristales ? ' (mañana)' : ''}</button>
+    abrirModal('comun', `<h2><img class="ic-txt" src="img/iconos/estamina.png" alt="">Estamina ${jugador.estamina}/${ESTAMINA_MAX}</h2>
+      <button id="recAnuncio" ${anunciosQuedan() > 0 ? '' : 'disabled'}>📺 Anuncio: +${ESTAMINA_ANUNCIO} <img class="ic-txt" src="img/iconos/estamina.png" alt="">(${anunciosQuedan()}/${ANUNCIOS_DIA})</button>
+      <button id="recCristales" ${puedeRecargaCristales() ? '' : 'disabled'}><img class="ic-txt" src="img/iconos/cristales.png" alt="">${RECARGA_CRISTALES.coste}: +${RECARGA_CRISTALES.estamina} <img class="ic-txt" src="img/iconos/estamina.png" alt="">${revisarRecargas().cristales ? ' (mañana)' : ''}</button>
       <button id="recCerrar">Cerrar</button>`);
   }
   document.addEventListener('click', async e => {

@@ -33,7 +33,7 @@
     return `<div class="maestria"><img class="ic-txt" src="img/iconos/maestria.png" alt="">Maestría del ${c.nombre.toLowerCase()}: <b>Nv ${m.n}/${MAESTRIA_MAX}</b>
       ${m.n < MAESTRIA_MAX ? `<div class="xp"><i style="width:${m.xp / m.falta * 100}%"></i></div><small>${m.xp} / ${m.falta} · se gana combatiendo</small>` : ''}
       <br><small>${m.n ? textoBonos(statsMaestria(), Math.floor(m.n / 10) ? { habilidad: Math.floor(m.n / 10) * 2 } : {}) : 'Sin bonos todavía'}</small>
-      <div class="especialidades">${m.n < MAESTRIA_ESPECIAL ? `<small>🔒 Especialización en maestría Nv ${MAESTRIA_ESPECIAL}</small>`
+      <div class="especialidades">${m.n < MAESTRIA_ESPECIAL ? `<small><img class="ic-txt" src="img/iconos/candado.png" alt="">Especialización en maestría Nv ${MAESTRIA_ESPECIAL}</small>`
         : Object.entries(ESPECIALIDADES).map(([id, x]) => { const on = especialidad() === id;
             return `<button data-especial="${id}" class="${on ? 'on' : ''}">${iconoDe(x)} ${x.nombre}<small>${textoBonos({}, Object.fromEntries(Object.entries(x.ef).map(([a, v]) => [a, Math.round(v * factorEspecial() * 100)])))}</small>${!on && especialidad() ? `<small>● ${COSTE_ESPECIAL}</small>` : ''}</button>`; }).join('')}</div></div>`;
   }

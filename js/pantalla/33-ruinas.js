@@ -11,7 +11,7 @@
           : e.bono.encantar ? `−${Math.round(e.bono.encantar * m * 100)} % oro al encantar` : e.bono.almacen ? `+${r1(e.bono.almacen * m)} ${e.txt}` : '';
         return `<div class="mision${abierto ? '' : ' hecha'}"><span style="font-size:24px">${n ? e.icono : '🏚️'}</span>
           <div class="info">${e.nombre}${n ? ` · Nv ${n}/${EDIFICIO_MAX}` : ''}<small>${[prod, bono].filter(Boolean).join(' · ')}</small></div>
-          ${!abierto ? `<small>🔒 Nv ${e.nivel}</small>` : n >= EDIFICIO_MAX ? '<button disabled>Máx.</button>'
+          ${!abierto ? `<small><img class="ic-txt" src="img/iconos/candado.png" alt="">Nv ${e.nivel}</small>` : n >= EDIFICIO_MAX ? '<button disabled>Máx.</button>'
             : `<button data-edificio="${e.id}" ${tieneCoste(c) ? '' : 'disabled'}>${n ? 'Mejorar' : 'Reconstruir'}<br><small>${textoPremio(c)}</small></button>`}</div>`;
       }).join('')}`;
   }
