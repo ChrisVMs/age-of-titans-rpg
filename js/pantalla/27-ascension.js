@@ -123,8 +123,9 @@
   // ataque de un héroe: los guerreros van cuerpo a cuerpo; arqueros y magos disparan desde su casilla
   async function animHeroe(u, t, hab) {
     const lejos = !!CLASES[u.clase].distancia;
-    if (hab) { u.el.querySelector('.frames').classList.add('carga'); await wait(250); u.el.querySelector('.frames').classList.remove('carga'); }
-    const anim = ANIM_CLASE[u.clase];   // animación propia: se acerca en el paso que avanza (la preparación, en su casilla)
+    const anim = ANIM_CLASE[u.clase];   // animación propia: ya trae su preparación (sin el brillo de concentración)
+    if (hab && !anim) { u.el.querySelector('.frames').classList.add('carga'); await wait(250); u.el.querySelector('.frames').classList.remove('carga'); }
+    // animación propia: se acerca en el paso que avanza (la preparación, en su casilla)
     if (!lejos && !anim) await moverA(u, t);
     const impacto = u.pj.jugar(anim ? enGrupo((hab && anim[hab.animacion] || anim.ataque)(), u, t)
       : [[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);

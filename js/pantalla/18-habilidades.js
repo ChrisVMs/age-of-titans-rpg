@@ -26,21 +26,20 @@
   const ANIM_ASESINO = (() => {
   const A = n => n, S = n => 20 + n, G = n => 40 + n, C = n => 55 + n, P = n => 80 + n, R = n => 100 + n;
   const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
-  const cargaAsesino = on => () => marcoGuerrero.classList.toggle('carga', on);
   return {
     // salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (cuadros 11-19)
     ataque: () => [[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
       [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
     // en su sitio desenvaina y cruza las cuchillas (preparación 0-7), las carga hasta que estallan (ataque 5-10); se lanza (sombra 1), apuñala (sombra 7)
     // y remata (sombra 8). Los cuadros de la hoja de puñalada son los intermedios: carrera, frenada, apuntar y volver al reposo
-    punalada: () => [[R(0), 130], [R(1), 130], [R(2), 130], [R(3), 140, , cargaAsesino(true)], ...tramo(R, 4, 7, 110), ...tramo(A, 5, 9, 110),
-      [A(10), 240, , cargaAsesino(false)], [S(1), 90, 360], ...tramo(P, 9, 12, 60), [P(13), 80], ...tramo(P, 15, 17, 70),
+    punalada: () => [[R(0), 130], [R(1), 130], [R(2), 130], [R(3), 140], ...tramo(R, 4, 7, 110), ...tramo(A, 5, 9, 110),
+      [A(10), 240], [S(1), 90, 360], ...tramo(P, 9, 12, 60), [P(13), 80], ...tramo(P, 15, 17, 70),
       [P(18), 90, , sonidoEspada], [S(7), 200, , r => r()], [P(1), 110], [S(8), 150], [P(3), 110, 0], [P(4), 110], [P(6), 120], [70, 200]],
     // se envuelve en sombras, se desvanece, se lanza y descarga dos tajos
     paso: () => [...tramo(S, 15, 19, 100), [S(0), 160], [S(1), 150, 360, () => { estela(); sonidoEspada(); }],
       [S(2), 90], [S(3), 90], [S(4), 180, , r => r()], [S(8), 120, 0], [S(9), 130]],
     // aura, tajos con chispa, cruce de cuchillas, se disuelve y reaparece en su sitio
-    danza: () => [[S(16), 160, , cargaAsesino(true)], [S(17), 260, , cargaAsesino(false)], [S(5), 110, 360], [S(6), 90],
+    danza: () => [[S(16), 160], [S(17), 260], [S(5), 110, 360], [S(6), 90],
       [S(7), 150, , sonidoEspada], [S(10), 240, , r => { arco(); sonidoEspada(); r(); }], [S(11), 200, 0],
       [S(12), 120], [S(13), 120], [S(14), 150]],
     golpe: () => [[C(1), 160], [C(2), 180], [C(7), 140], [C(9), 120], [C(10), 120]],   // encaja el golpe, se encoge y se recompone
