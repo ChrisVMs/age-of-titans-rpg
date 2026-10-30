@@ -343,6 +343,11 @@
   .rejilla .item.vacia { opacity:.5; border-style:dashed; }
   .rejilla .item.bloq { filter:grayscale(1); opacity:.45; }
   .rejilla .item b { font-size:11px; }
+  /* reliquias: tarjetas más anchas, textos dentro y botones al pie, todos del mismo ancho */
+  .rejilla.reliquias { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); align-items:stretch; }
+  .rejilla.reliquias .item { display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; overflow:hidden; text-align:center; }
+  .rejilla.reliquias .item b { flex:1; }
+  .rejilla.reliquias .item button { width:100%; margin:0; min-height:34px; padding:4px 6px; font-size:12px; white-space:normal; line-height:1.25; }
   .ranuras-runa { grid-template-columns:repeat(4, 1fr); }
   .item.runa button { margin:0; min-height:30px; padding:3px 6px; font-size:12px; width:100%; }
   .rejilla:has(.item.runa) { grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); }   /* tarjetas de runa anchas: texto en pocas líneas */

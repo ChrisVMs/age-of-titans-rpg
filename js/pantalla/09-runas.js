@@ -22,7 +22,7 @@
       <small class="nota">Junta 3 runas iguales del mismo nivel para fusionarlas en una de nivel superior (máx. Nv ${RUNA_MAX}). Las runas <b style="color:${CAL_RUNA[1].color}">raras</b> y <b style="color:${CAL_RUNA[2].color}">perfectas</b> suman un efecto secundario; púlelas (● ${COSTE_PULIR_RUNA.oro} · ✨ ${COSTE_PULIR_RUNA.polvo}) para subir su calidad o cambiar el secundario.${hayHueco ? '' : ' Las 4 ranuras están llenas: quita una para equipar otra.'}</small>
       <div class="rejilla">${libres.map(r => tarjeta(r, false)).join('') || '<small>Aún no tienes runas sin equipar.</small>'}</div>
       <h3>Reliquias · ${reliquiasActivas().length}/${RANURAS_RELIQUIA} activas</h3><small class="nota">Se consiguen derrotando o dañando a los jefes mundiales; repetirla sube su nivel. Solo ${RANURAS_RELIQUIA} pueden estar activas: elige las que encajen con tu build.</small>
-      <div class="rejilla">${RELIQUIAS.map(r => { const n = nivelReliquia(r.id), activa = reliquiasActivas().includes(r);
+      <div class="rejilla reliquias">${RELIQUIAS.map(r => { const n = nivelReliquia(r.id), activa = reliquiasActivas().includes(r);
         return `<div class="item${n ? '' : ' bloq'}${activa ? ' puesto' : ''}${nivelDespertar('reliquia', r.id) >= D_VISUAL ? ' marco-d5' : ''}"><span style="font-size:28px">${r.icono}</span><small>${r.nombre}${n ? ` · Nv ${n}/${RELIQUIA_MAX}` : ''}</small>
           <b>${n ? textoReliquia(r) : `🔒 ${NOMBRE_JEFE[r.jefe]}`}</b>
           ${n ? (activa ? `<button data-acc="quitarRel" data-rel="${r.id}">Quitar</button>` : `<button data-acc="ponerRel" data-rel="${r.id}" ${reliquiasActivas().length < RANURAS_RELIQUIA ? '' : 'disabled'}>ACTIVAR</button>`) : ''}
