@@ -68,7 +68,9 @@
       console.warn('Simulación sin hilo:', err);
       await new Promise(f => setTimeout(f, 50));
       const o0 = offsetDias; offsetDias = offset;
-      try { r = simularProgresion(opciones); } finally { offsetDias = o0; }
+      try { r = simularProgresion(opciones); }
+      catch (e) { console.error(e); cerrarModal(); avisar('La simulación falló: ' + e.message); return; }
+      finally { offsetDias = o0; }
       pintarHud(); pintarCampamento();
     }
     if (!r) return;

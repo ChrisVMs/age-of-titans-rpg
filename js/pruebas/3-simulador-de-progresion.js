@@ -106,8 +106,9 @@
     try {
       return aislado(() => {
         sembrar(semilla);
-        jugador = perfil ? structuredClone(perfil) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase: 'guerrero', arbol: {}, torre: { mejor: 0 },
-          calabozos: {}, calabozosDif: {}, mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } });   // los campos que el juego rellena al cargar
+        // los campos que el juego rellena al cargar o al abrir sus pantallas (una partida recién reiniciada aún no los tiene)
+        const campos = { arbol: {}, torre: { mejor: 0 }, calabozos: {}, calabozosDif: {}, mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } };
+        jugador = perfil ? Object.assign(campos, structuredClone(perfil)) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase: 'guerrero' }, campos);
         if (perfil) sigUid = Math.max(sigUid, perfil.sigUid || 0);   // seguir una partida: sus objetos ya usan esos números
         const nivel0 = jugador.nivel;   // los niveles que ya tenía no son hitos de esta simulación
         const hitos = { nivel: {}, campana: {}, torre: {}, jefes: {}, calabozo: {}, reyes: {}, grieta: {}, ecos: {}, ecosJugados: {} }, dia = [], fuentes = {};
