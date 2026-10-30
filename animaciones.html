@@ -88,7 +88,8 @@
       { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/maga/proyectil.png'], ancho: 217, alto: 218, total: 1, escala: .5 }, cuadros: [[0, 1000]] },
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
     ] },
-    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 80 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79)', capas: ['img/asesino/tira.png'], ancho: 312, alto: 314, total: 80, escala: .8, animaciones: [
+    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 80 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79)', capas: ['img/asesino/tira.png'], ancho: 324, alto: 326, total: 80, escala: .8,
+      escalaCuadro: i => i < 40 ? 1 : i < 55 ? .88 : i < 70 ? .86 : .69, animaciones: [   // escalaCuadro: las mismas que SPRITE_CLASE.asesino
       { nombre: 'Reposo', cuadros: [[70, 140], [71, 140], [72, 140], [73, 140], [74, 140], [75, 140], [76, 140], [77, 140], [78, 140], [79, 140]] },
       { nombre: 'Ataque (salta, barre, vuelve)', cuadros: [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [16, 130], [17, 120], [18, 120], [19, 130], [70, 600]] },
       { nombre: 'Puñalada (habilidad)', cuadros: [[1, 110], [2, 90], [3, 90], [4, 110], [5, 90], [6, 90], [7, 90], [8, 90], [9, 90], [10, 220], [3, 120], [0, 150], [70, 600]] },
@@ -170,7 +171,11 @@
       el.appendChild(c);
     }
     cont.appendChild(el);
-    return { el, ver: i => el.querySelectorAll('.capa').forEach(c => c.style.backgroundPositionX = (-i * h.ancho * h.escala) + 'px') };
+    // escalaCuadro(i): tamaño de cada cuadro cuando la tira junta hojas que dibujan al personaje a distinto tamaño (como en el juego)
+    return { el, ver: i => el.querySelectorAll('.capa').forEach(c => {
+      c.style.backgroundPositionX = (-i * h.ancho * h.escala) + 'px';
+      if (h.escalaCuadro) { c.style.transformOrigin = '50% 100%'; c.style.scale = h.escalaCuadro(i); }
+    }) };
   }
 
   function mostrar(id) {
