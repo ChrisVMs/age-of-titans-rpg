@@ -38,16 +38,25 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
           ('iconos_arbol_guerrero.jpg', 5, 4, ['rama_furia', 'rama_baluarte', 'rama_tactica', 'nodo_fuerza', 'nodo_certero',
             'nodo_estocada_m', 'nodo_sed', 'nodo_aplastante', 'nodo_piel', 'nodo_coraza',
             'nodo_represalia', 'nodo_aliento', 'nodo_bastion', 'nodo_maestria', 'nodo_reflejos',
-            'nodo_tajo_veloz', 'nodo_cazador', 'nodo_adrenalina', '-', '-'], 'gris_texto')]
+            'nodo_tajo_veloz', 'nodo_cazador', 'nodo_adrenalina', '-', '-'], 'gris_texto'),
+          ('iconos_arbol_arquero.jpg', 5, 4, ['rama_precision', 'rama_supervivencia', 'rama_caceria', 'nodo_punteria', 'nodo_ojo_halcon',
+            'nodo_disparo_m', 'nodo_letal', 'nodo_perforante', 'nodo_agilidad', 'nodo_cuero',
+            'nodo_trampas', 'nodo_instinto', 'nodo_camuflaje', 'nodo_rastreo', 'nodo_flecha_ven',
+            'nodo_lluvia_r', 'nodo_penetrante', 'nodo_marca', '-', '-'], 'gris_texto')]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:
   tmp = tempfile.mkdtemp()
-  uniforme = [] if conBaldosa == 'gris_texto' else ['--uniform']   # sin verde, las celdas se cortan tal cual (el texto queda abajo)
+  # sin verde: celdas tal cual (el texto queda abajo) y un croma que no existe (magenta) para no apagar los verdes del dibujo
+  uniforme = ['--key', 'FF00FF'] if conBaldosa == 'gris_texto' else ['--uniform']
   subprocess.run(['python3', 'tools/split_sheet.py', f'tools/hojas/{hoja}', '--cols', str(cols), '--rows', str(filas), *uniforme, '--out', tmp],
                  check=True, capture_output=True)
   for nombre, f in zip(nombres, sorted(glob.glob(f'{tmp}/*.png'))):
     if nombre == '-': continue
     a = np.array(Image.open(f).convert('RGBA')).astype(int); modo = conBaldosa
     if modo == 'gris_texto':   # nombre abajo (24 %) y fondo gris oscuro liso: se quita rellenando desde el borde
+        # colores de la hoja original (split_sheet apaga los verdes intensos aunque no sean fondo): misma celda de la rejilla
+        k = nombres.index(nombre); hoja_im = Image.open(f'tools/hojas/{hoja}').convert('RGBA'); cw, ch = hoja_im.width / cols, hoja_im.height / filas
+        c0, f0 = k % cols, k // cols
+        a = np.array(hoja_im.crop((round(c0 * cw), round(f0 * ch), round((c0 + 1) * cw), round((f0 + 1) * ch)))).astype(int)
         a = a[:int(a.shape[0] * .74)]; a[..., 3] = 255
         mx = a[..., :3].max(-1); mn = a[..., :3].min(-1); H, W = mx.shape
         pasa = (mx - mn <= 14) & (mx >= 14) & (mx <= 75)
