@@ -5,8 +5,8 @@
     const lista = modo === 'calabozo' ? salas[modo].filter(s => s.cal === calSel) : salas[modo];
     cont.innerHTML = `<b>Salas abiertas</b><div class="salas-lista">${lista.map(s => {
         const llena = s.miembros.length >= MAX_JUGADORES;
-        return `<div class="sala-fila"><b>#${s.id}</b><span>👑 ${nombreDe(s.miembros[0].n)}${s.miembros.slice(1).map(m => ' · ' + nombreDe(m.n)).join('')}</span>
-          <span>${nombreDif(modo, s.dif)}</span><span class="cuenta">👥 ${s.miembros.length}/${MAX_JUGADORES}</span>
+        return `<div class="sala-fila"><b>#${s.id}</b><span><img class="ic-txt" src="img/iconos/reyes.png" alt="">${nombreDe(s.miembros[0].n)}${s.miembros.slice(1).map(m => ' · ' + nombreDe(m.n)).join('')}</span>
+          <span>${nombreDif(modo, s.dif)}</span><span class="cuenta"><img class="ic-txt" src="img/iconos/heroe.png" alt="">${s.miembros.length}/${MAX_JUGADORES}</span>
           <button data-unirse="${s.id}" ${llena ? 'disabled' : ''}>${llena ? 'Llena' : 'Unirse'}</button></div>`; }).join('') || '<small>No hay salas abiertas</small>'}</div>
       <div class="sala-acciones"><button data-crear-sala="1">➕ Crear sala</button></div>`;
   }
@@ -20,7 +20,7 @@
     const reyes = modo === 'reyes', R = reyes ? revisarReyes() : null, d = reyes ? DIF_REYES[sala.dif] : null, mio = esDueno(sala, 'yo'), puede = puedeJugar(modo);
     const datos = p => `<small>${iconoClase(p.clase)}${CLASES[p.clase].nombre} Nv ${p.nivel} · ⚔ ${conPerfil(p, () => poder()).toLocaleString('es')}</small>`;
     const huecos = sala.miembros.map((m, i) => {
-      const p = perfilDe(m.n), estado = i === 0 ? '<small>👑 Dueño</small>'
+      const p = perfilDe(m.n), estado = i === 0 ? '<small><img class="ic-txt" src="img/iconos/reyes.png" alt="">Dueño</small>'
         : !m.llego ? '<small>⏳ Invitación enviada…</small>'
         : m.n === 'yo' ? `<button class="ready${m.listo ? ' on' : ''}" data-ready="1" ${puede ? '' : 'disabled'}>${m.listo ? '✔ READY' : 'Ready'}</button>`
         : `<span class="ready${m.listo ? ' on' : ''}">${m.listo ? '✔ READY' : '⏳ Ready'}</span>`;
@@ -31,7 +31,7 @@
       : `<div class="sala-slot"><div class="pj-mini vacio">➕</div></div>`);
     const pendientes = sala.miembros.slice(1).some(m => !m.listo);
     const motivo = !puede ? ' (sin intentos hoy)' : pendientes ? ' (esperando ready…)' : '';
-    cont.innerHTML = `<b>Sala #${sala.id}</b> <small>· 👥 ${sala.miembros.length}/${MAX_JUGADORES}</small><div class="sala-slots">${huecos.join('')}</div>
+    cont.innerHTML = `<b>Sala #${sala.id}</b> <small>· <img class="ic-txt" src="img/iconos/heroe.png" alt="">${sala.miembros.length}/${MAX_JUGADORES}</small><div class="sala-slots">${huecos.join('')}</div>
       ${sala.invitando ? `<div class="rey"><div class="info"><b>Invitar a un jugador</b>${candidatosSala().map(b =>
           `<small style="display:flex;align-items:center;gap:8px;justify-content:space-between">${iconoClase(b.clase)}${b.nombre} · Nv ${b.nivel} · ⚔ ${conPerfil(b, () => poder()).toLocaleString('es')}
            <button data-enviar="${b.nombre}" style="margin:0;min-height:30px;padding:3px 10px">Invitar</button></small>`).join('') || `<small>${MODO_PRUEBAS ? 'No hay más jugadores disponibles' : 'No hay jugadores conectados'}</small>`}</div>

@@ -3,7 +3,7 @@
     if (!calabozoAbierto(calSel)) calSel = 1;
     if (!difAbierta(calSel, difCal)) difCal = 'normal';
     const enSala = sala && sala.modo === 'calabozo';
-    $('calabozo').innerHTML = `<div class="liga"><span class="ic">🏰</span><div style="flex:1"><b>Calabozo multijugador</b><br>
+    $('calabozo').innerHTML = `<div class="liga"><span class="ic"><img class="ic-liga" src="img/iconos/batalla.png" alt=""></span><div style="flex:1"><b>Calabozo multijugador</b><br>
         <div class="difs-cab" id="difBtns"></div></div>
         <select id="calSel" class="combo" ${enSala ? 'disabled' : ''}>${CALABOZOS.map(c => `<option value="${c.id}" ${c.id === (enSala ? sala.cal : calSel) ? 'selected' : ''} ${calabozoAbierto(c.id) ? '' : 'disabled'}>${c.icono} ${c.nombre} · Nv ${c.n}${jugador.calabozos[c.id] ? ' ✔' : calabozoAbierto(c.id) ? '' : ` 🔒 supera ${calabozo(c.id - 1).nombre}`}</option>`).join('')}</select></div>
       ${(() => { const sig = CALABOZOS.find(c => !calabozoAbierto(c.id)); return sig ? `<small class="nota">🔒 ${sig.icono} ${sig.nombre}: supera ${calabozo(sig.id - 1).icono} ${calabozo(sig.id - 1).nombre} en cualquier dificultad para desbloquearlo.</small>` : ''; })()}
@@ -26,7 +26,7 @@
 
   function pintarReyes() {
     const R = revisarReyes();
-    $('reyes').innerHTML = `<div class="liga"><span class="ic">👑</span><div><b>Torre de reyes</b><br>
+    $('reyes').innerHTML = `<div class="liga"><span class="ic"><img class="ic-liga" src="img/iconos/reyes.png" alt=""></span><div><b>Torre de reyes</b><br>
         <small>Tu grupo contra los 3 reyes del servidor a la vez · intentos hoy: ${R.entradas}/${INTENTOS_REYES} · se reinicia en ${(8 - ahoraJuego().getDay()) % 7 || 7} días</small></div></div>
       <div id="reyesCont"></div>`;
     pintarSala();
