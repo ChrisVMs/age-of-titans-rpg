@@ -31,9 +31,10 @@
     // salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (cuadros 11-19)
     ataque: () => [[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
       [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
-    // se acerca agachado, cruza las cuchillas, las carga y estallan contra el enemigo (cuadros 1-10)
-    punalada: () => [[A(1), 110, 360], [A(2), 90], [A(3), 90], [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 90),
-      [A(10), 220, , r => { cargaAsesino(false)(); sonidoEspada(); r(); }], [A(3), 120, 0], [A(0), 150]],
+    // en su sitio cruza las cuchillas y las carga hasta que estallan (1-10); luego se lanza y apuñala (sombra 1, 7, 8)
+    punalada: () => [[A(1), 110], [A(2), 90], [A(3), 90], [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 90),
+      [A(10), 220, , cargaAsesino(false)], [S(1), 130, 360], [S(7), 200, , r => { sonidoEspada(); r(); }], [S(8), 150],
+      [A(3), 120, 0], [A(0), 150]],
     // se envuelve en sombras, se desvanece, se lanza y descarga dos tajos
     paso: () => [...tramo(S, 15, 19, 100), [S(0), 160], [S(1), 150, 360, () => { estela(); sonidoEspada(); }],
       [S(2), 90], [S(3), 90], [S(4), 180, , r => r()], [S(8), 120, 0], [S(9), 130]],
