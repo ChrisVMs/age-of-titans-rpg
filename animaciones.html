@@ -88,14 +88,14 @@
       { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/maga/proyectil.png'], ancho: 217, alto: 218, total: 1, escala: .5 }, cuadros: [[0, 1000]] },
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
     ] },
-    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 80 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79)', capas: ['img/asesino/tira.png?v=11'], ancho: 324, alto: 326, total: 80, escala: .8,
+    { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 80 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79)', capas: ['img/asesino/tira.png?v=12'], ancho: 324, alto: 326, total: 80, escala: .8,
       escalaCuadro: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : .58, animaciones: [   // escalaCuadro: las mismas que SPRITE_CLASE.asesino
       { nombre: 'Reposo', cuadros: [[70, 140], [71, 140], [72, 140], [73, 140], [74, 140], [75, 140], [76, 140], [77, 140], [78, 140], [79, 140]] },
       { nombre: 'Ataque (salta, barre, vuelve)', cuadros: [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [16, 130], [17, 120], [18, 120], [19, 130], [70, 600]] },
       { nombre: 'Puñalada (habilidad)', cuadros: [[1, 110], [2, 90], [3, 90], [4, 110], [5, 90], [6, 90], [7, 90], [8, 90], [9, 90], [10, 220], [3, 120], [0, 150], [70, 600]] },
       { nombre: 'Paso sombrío (habilidad)', cuadros: [[35, 100], [36, 100], [37, 100], [38, 100], [39, 100], [20, 160], [21, 150], [22, 90], [23, 90], [24, 180], [28, 120], [29, 130], [70, 600]] },
       { nombre: 'Danza de cuchillas (habilidad)', cuadros: [[36, 160], [37, 260], [25, 110], [26, 90], [27, 150], [30, 240], [31, 200], [32, 120], [33, 120], [34, 150], [70, 600]] },
-      { nombre: 'Recibir golpe (retrocede)', cuadros: [[56, 70], [57, 70], [58, 70], [59, 70], [60, 70], [61, 70], [62, 70], [63, 70], [64, 70], [65, 70], [66, 70], [67, 70], [68, 70], [69, 70], [70, 600]] },
+      { nombre: 'Recibir golpe (retrocede)', cuadros: [[56, 160], [57, 180], [62, 140], [64, 120], [65, 120], [70, 600]] },
       { nombre: 'Derrota', cuadros: [[41, 120], [42, 120], [43, 120], [44, 120], [45, 120], [46, 120], [47, 120], [48, 120], [49, 120], [50, 150], [51, 150], [52, 150], [53, 150], [54, 150], [54, 1500]] },
     ] },
     { id: 'parca', nombre: 'Parca', desc: 'Campaña · 7 cuadros', capas: ['img/enemigos/parca.png'], ancho: 260, alto: 200, total: 7, escala: 1, espejo: true, animaciones: [

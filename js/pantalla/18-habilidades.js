@@ -41,7 +41,7 @@
     danza: () => [[S(16), 160, , cargaAsesino(true)], [S(17), 260, , cargaAsesino(false)], [S(5), 110, 360], [S(6), 90],
       [S(7), 150, , sonidoEspada], [S(10), 240, , r => { arco(); sonidoEspada(); r(); }], [S(11), 200, 0],
       [S(12), 120], [S(13), 120], [S(14), 150]],
-    golpe: () => tramo(C, 1, 14, 70),                                     // recibe el golpe, salta atrás, derrapa y se recompone
+    golpe: () => [[C(1), 160], [C(2), 180], [C(7), 140], [C(9), 120], [C(10), 120]],   // encaja el golpe, se encoge y se recompone
     derrota: () => [...tramo(G, 1, 9, 120), ...tramo(G, 10, 14, 150)],   // recibe el golpe, hinca la rodilla y cae
   };
   })();

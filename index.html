@@ -648,7 +648,7 @@
   .vitrina .aura { bottom:2px; }   /* la vitrina recorta lo que sale por abajo */
   .pj { position:absolute; bottom:8px; left:0; transform-origin:50% 100%; transition:transform calc(.25s / var(--vel, 1)) ease-in-out; }
   .frames { transform-origin:50% 100%; animation:respira 2s ease-in-out infinite; }
-  .frames.quieto { animation:none; }
+  .frames.quieto, .frames.reposo-anim { animation:none; }
   @keyframes respira { 0%,100%{transform:scale(1,1) translateY(0)} 50%{transform:scale(1.015,.975) translateY(1px)} }
   .vida { position:absolute; top:-26px; left:50%; width:160px; transform:translateX(-50%); z-index:2; }
   .vida b { display:block; font-size:13px; text-align:center; color:#fff; text-shadow:1px 1px 0 #000; }
