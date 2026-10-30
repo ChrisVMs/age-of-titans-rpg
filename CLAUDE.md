@@ -42,7 +42,10 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
 - Mensajes, avisos y botones: cortos y sin redundancia. No repetir en varios sitios lo que ya se dijo una vez (ni en botón, ni en aviso previo, ni en el resultado).
 
 ## Sprites
+- Las hojas de sprites se piden en **HD** (ver `PROMPT_SPRITE.md`): el estilo final será pixel art, y la conversión la hace
+  `tools/pixelar.py` (tarea pendiente de prioridad alta: `trabajo/pixel-art/`). No pedir hojas en pixel art.
 - Para dividir hojas de sprites usar solo `tools/split_sheet.py`; para unir frames en una hoja, `tools/build_sheet.py`. No usar otras herramientas ni reescalar o interpolar.
+  Única excepción: la reducción a pixel art de `tools/pixelar.py` (mismo proceso para todos los cuadros de un personaje).
 - Guardar la hoja fuente en `tools/hojas/` y los frames en `img/<personaje>/`.
 - Cada personaje, clase, jefe o mascota nuevo (o con sprite o animación nueva) se añade SIEMPRE a `animaciones.html`
   (lista `PERSONAJES`), con todas sus animaciones y los mismos tiempos que en el juego.

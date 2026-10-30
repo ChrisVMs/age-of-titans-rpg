@@ -1,3 +1,7 @@
+> **Pedir siempre en HD** (personajes grandes, con detalle y contornos limpios), nunca en pixel art: el generador no
+> mantiene la misma rejilla de píxeles entre cuadros y la animación tiembla. La conversión a pixel art la hace
+> `tools/pixelar.py` con un proceso fijo para todos los cuadros (ver `trabajo/pixel-art/ESTADO.md`).
+
 Create a 2D sprite sheet of [CHARACTER DESCRIPTION, e.g. "a knight with a blue cape and silver armor"] performing a [ANIMATION, e.g. "walk cycle"], side view, facing right.
 
 CANVAS AND GRID (strict):
