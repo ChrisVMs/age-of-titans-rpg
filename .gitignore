@@ -1,0 +1,4 @@
+# copias comprimidas del proyecto: no van al repositorio
+*.rar
+*.zip
+*.7z
