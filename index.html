@@ -43,7 +43,8 @@
   .hud .estamina { color:#7fe07f; cursor:pointer; } .hud .cristales { color:#7fd8ff; }
 
   /* Menú principal: campamento (héroe en el centro, accesos alrededor) */
-  #menu { background:linear-gradient(#141a33 0%, #2c2547 45%, #4a3550 58%, #2b3a22 58%, #1a2513 100%); }
+  /* fondo: bosque nocturno (img/fondos/menu.jpg) cubriendo la pantalla, con el claro al pie; el degradado queda mientras carga */
+  #menu { background:url(img/fondos/menu.jpg) 50% 100% / cover no-repeat, linear-gradient(#141a33 0%, #2c2547 45%, #4a3550 58%, #2b3a22 58%, #1a2513 100%); }
   .camp-top { width:100%; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; padding:8px 10px; background:linear-gradient(#000b, #0000); z-index:2; }
   .camp-avatar { display:flex; align-items:center; gap:8px; margin:0; min-height:0; padding:3px 12px 3px 3px; background:#000a; color:#eee;
                  border:2px solid #e8b830; border-radius:30px; text-align:left; font-size:12px; }
@@ -886,12 +887,10 @@
       <button class="camp-mini" id="btnOrientacion"></button>
     </div>
     <div class="camp-escena">
-      <div class="camp-luna"></div>
       <div class="camp-version" id="campVersion"></div>
       <div class="camp-evento" id="campEvento"></div>
       <div class="camp-deco" style="left:4%">⛺</div>
       <div class="camp-deco camp-fuego" style="left:24%; font-size:38px">🔥</div>
-      <div class="camp-deco" style="right:22%; bottom:16%; font-size:34px">🌲</div>
       <div class="camp-accesos">
       <button class="camp-pag oculto" id="campPagAnt" aria-label="Anterior">‹</button>
       <div class="camp-lateral" id="campIconos">
