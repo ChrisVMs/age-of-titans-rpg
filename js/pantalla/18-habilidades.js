@@ -31,12 +31,11 @@
     // salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (cuadros 11-19)
     ataque: () => [[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
       [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
-    // en su sitio cruza las cuchillas y las carga hasta que estallan (ataque 1-10); después, todo de la hoja de puñalada:
-    // arranca y corre envuelto en sombras (7-12), frena (13-14), apunta (15-17), estocada (18-19) y vuelve a la guardia (1-6)
+    // en su sitio cruza las cuchillas y las carga hasta que estallan (ataque 1-10); se lanza (sombra 1), apuñala (sombra 7)
+    // y remata (sombra 8). Los cuadros de la hoja de puñalada son los intermedios: carrera, frenada, apuntar y volver al reposo
     punalada: () => [[A(1), 110], [A(2), 90], [A(3), 90], [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 90),
-      [A(10), 220, , cargaAsesino(false)], [P(7), 80, 360], ...tramo(P, 8, 12, 60), [P(13), 90], [P(14), 90],
-      ...tramo(P, 15, 17, 80), [P(18), 110, , sonidoEspada], [P(19), 200, , r => r()], [P(1), 120], [P(2), 120],
-      [P(3), 110, 0], [P(4), 110], [P(5), 110], [P(6), 130]],
+      [A(10), 220, , cargaAsesino(false)], [S(1), 90, 360], ...tramo(P, 9, 12, 60), [P(13), 80], ...tramo(P, 15, 17, 70),
+      [P(18), 90, , sonidoEspada], [S(7), 200, , r => r()], [P(1), 110], [S(8), 150], [P(3), 110, 0], [P(4), 110], [P(6), 120], [70, 200]],
     // se envuelve en sombras, se desvanece, se lanza y descarga dos tajos
     paso: () => [...tramo(S, 15, 19, 100), [S(0), 160], [S(1), 150, 360, () => { estela(); sonidoEspada(); }],
       [S(2), 90], [S(3), 90], [S(4), 180, , r => r()], [S(8), 120, 0], [S(9), 130]],
