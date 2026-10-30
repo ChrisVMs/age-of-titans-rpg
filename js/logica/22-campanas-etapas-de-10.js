@@ -65,9 +65,9 @@
     senor:     { nombre: 'Señor del Abismo',   vida: 4.4,  dano: 1.9,  armadura: 80, jefe: true, avance: 170, filtro: 'sepia(1) saturate(9) hue-rotate(-45deg) brightness(.45) contrast(1.6)',
                  aplica: [{ estado: 'quemadura', prob: .4, turnos: 3, pct: .05 }, { estado: 'aturdimiento', prob: .1, turnos: 1 }] },
   };
-  // Etapas: cada nivel = [nombre, enemigos en orden]
+  // Etapas: cada nivel = [nombre, enemigos en orden]; fondo: imagen de la batalla (sin ella, el fondo por defecto)
   const ETAPAS = [
-    { id: 1, nombre: 'Etapa 1: El cementerio maldito', niveles: [
+    { id: 1, nombre: 'Etapa 1: El cementerio maldito', fondo: 'img/fondos/etapa1.jpg', niveles: [
       ['Puertas del cementerio',  ['parca', 'parca', 'sombria']],
       ['Tumbas olvidadas',        ['parca', 'sombria', 'sombria']],
       ['Cripta sombría',          ['sombria', 'carmesi', 'sombria']],
@@ -187,6 +187,8 @@
     ui.avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
     ui.pintarCampanas();
   }
+  // fondo de la batalla: el de la etapa de esa campaña (las demás batallas, el de siempre)
+  const fondoBatalla = c => { const e = c.idCampana && ETAPAS.find(x => x.id === +c.idCampana.split('-')[0]); return (e && e.fondo) || null; };
   function batallaCampana(c, d) { return { nombre: `${c.nombre} · ${DIFICULTADES[d]}`, idCampana: c.id, dif: d, ancestral: c.ancestral, ...c.dificultades[d] }; }
   // Señor del Abismo (3-10): pieza Ancestral segura la primera vez en cada dificultad; luego, con esta probabilidad (no en el Auto)
   const PROB_ANCESTRAL = { normal: .1, dificil: .15, pesadilla: .25, infierno: .4 };
