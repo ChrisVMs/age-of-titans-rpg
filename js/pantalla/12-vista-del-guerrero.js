@@ -55,7 +55,8 @@
     {
       capaDe._cont.classList.toggle('con-skin', !!k);
       capaDe._cont.classList.toggle('con-skin-anim', !!(k && k.tira));
-      capaDe._cont.classList.toggle('reposo-anim', !!(sp && sp.reposo));   // su reposo ya se mueve: sin la respiración del CSS
+      capaDe._cont.classList.toggle('reposo-anim', !!(sp && sp.reposo));
+      capaDe._cont.classList.toggle('sprite-propio', propio);   // dibujo centrado en su celda (las capas del guerrero no)   // su reposo ya se mueve: sin la respiración del CSS
       if (k && k.img) capaDe._skin.src = k.img;
       capaDe._skinAnim.style.backgroundImage = k && k.tira ? `url(${k.tira})` : 'none';
       // tira larga: cada celda se muestra a 296 px de ancho (lo que avanza cada cuadro) y crece hacia arriba

@@ -661,7 +661,9 @@
   @keyframes auraLate { 0%, 100% { transform:scale(1); } 50% { transform:scale(1.08); filter:brightness(1.3); } }
   @keyframes auraChispas { from { transform:translateY(0); opacity:.8; } to { transform:translateY(-34px); opacity:0; } }
   .aura-vista { position:relative; width:100%; height:80px; }
-  .vitrina .aura { bottom:2px; }   /* la vitrina recorta lo que sale por abajo */
+  .vitrina .aura { bottom:2px; }
+  /* clases con sprite propio: centradas sobre el aura y algo más pequeñas (escala con 'scale' para no pisar la respiración) */
+  .vitrina .frames.sprite-propio { left:calc(50% - 148px); bottom:14px; scale:.82; transform-origin:50% 100%; }   /* la vitrina recorta lo que sale por abajo */
   .pj { position:absolute; bottom:8px; left:0; transform-origin:50% 100%; transition:transform calc(.25s / var(--vel, 1)) ease-in-out; }
   .frames { transform-origin:50% 100%; animation:respira 2s ease-in-out infinite; }
   .frames.quieto, .frames.reposo-anim { animation:none; }
