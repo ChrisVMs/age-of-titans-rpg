@@ -8,7 +8,7 @@
         return `<div class="sala-fila"><b>#${s.id}</b><span><img class="ic-txt" src="img/iconos/reyes.png" alt="">${nombreDe(s.miembros[0].n)}${s.miembros.slice(1).map(m => ' · ' + nombreDe(m.n)).join('')}</span>
           <span>${nombreDif(modo, s.dif)}</span><span class="cuenta"><img class="ic-txt" src="img/iconos/heroe.png" alt="">${s.miembros.length}/${MAX_JUGADORES}</span>
           <button data-unirse="${s.id}" ${llena ? 'disabled' : ''}>${llena ? 'Llena' : 'Unirse'}</button></div>`; }).join('') || '<small>No hay salas abiertas</small>'}</div>
-      <div class="sala-acciones"><button data-crear-sala="1">➕ Crear sala</button></div>`;
+      <div class="sala-acciones"><button data-crear-sala="1"><img class="ic-txt" src="img/iconos/mas.png" alt="">Crear sala</button></div>`;
   }
   function pintarSala() {
     const modo = modoPantalla(), cont = contSala(modo); if (!cont) return;
@@ -27,8 +27,8 @@
       return `<div class="sala-slot ${m.llego ? 'lleno' : 'espera'}"><div class="pj-mini" data-retrato="${m.n === 'yo' ? '' : m.n}"></div><b>${nombreDe(m.n)}</b>${datos(p)}
         ${estado}${mio && i > 0 ? `<button data-expulsar="${m.n}">Expulsar</button>` : ''}</div>`;
     });
-    while (huecos.length < MAX_JUGADORES) huecos.push(mio ? `<div class="sala-slot"><button class="pj-mini vacio" data-invitar="1">➕<small>Invitar</small></button></div>`
-      : `<div class="sala-slot"><div class="pj-mini vacio">➕</div></div>`);
+    while (huecos.length < MAX_JUGADORES) huecos.push(mio ? `<div class="sala-slot"><button class="pj-mini vacio" data-invitar="1"><img class="ic-hd" src="img/iconos/mas.png" alt=""><small>Invitar</small></button></div>`
+      : `<div class="sala-slot"><div class="pj-mini vacio"><img class="ic-hd" src="img/iconos/mas.png" alt=""></div></div>`);
     const pendientes = sala.miembros.slice(1).some(m => !m.listo);
     const motivo = !puede ? ' (sin intentos hoy)' : pendientes ? ' (esperando ready…)' : '';
     cont.innerHTML = `<b>Sala #${sala.id}</b> <small>· <img class="ic-txt" src="img/iconos/heroe.png" alt="">${sala.miembros.length}/${MAX_JUGADORES}</small><div class="sala-slots">${huecos.join('')}</div>

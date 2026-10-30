@@ -3,10 +3,10 @@
     if (!calabozoAbierto(calSel)) calSel = 1;
     if (!difAbierta(calSel, difCal)) difCal = 'normal';
     const enSala = sala && sala.modo === 'calabozo';
-    $('calabozo').innerHTML = `<div class="liga"><span class="ic"><img class="ic-liga" src="img/iconos/batalla.png" alt=""></span><div style="flex:1"><b>Calabozo multijugador</b><br>
+    $('calabozo').innerHTML = `<div class="liga"><span class="ic"><img class="ic-liga" src="img/iconos/cal_${enSala ? sala.cal : calSel}.png" alt=""></span><div style="flex:1"><b>Calabozo multijugador</b><br>
         <div class="difs-cab" id="difBtns"></div></div>
         <select id="calSel" class="combo" ${enSala ? 'disabled' : ''}>${CALABOZOS.map(c => `<option value="${c.id}" ${c.id === (enSala ? sala.cal : calSel) ? 'selected' : ''} ${calabozoAbierto(c.id) ? '' : 'disabled'}>${c.icono} ${c.nombre} · Nv ${c.n}${jugador.calabozos[c.id] ? ' ✔' : calabozoAbierto(c.id) ? '' : ` 🔒 supera ${calabozo(c.id - 1).nombre}`}</option>`).join('')}</select></div>
-      ${(() => { const sig = CALABOZOS.find(c => !calabozoAbierto(c.id)); return sig ? `<small class="nota">🔒 ${sig.icono} ${sig.nombre}: supera ${calabozo(sig.id - 1).icono} ${calabozo(sig.id - 1).nombre} en cualquier dificultad para desbloquearlo.</small>` : ''; })()}
+      ${(() => { const sig = CALABOZOS.find(c => !calabozoAbierto(c.id)); return sig ? `<small class="nota"><img class="ic-txt" src="img/iconos/candado.png" alt=""><img class="ic-txt" src="img/iconos/cal_${sig.id}.png" alt="">${sig.nombre}: supera <img class="ic-txt" src="img/iconos/cal_${sig.id - 1}.png" alt="">${calabozo(sig.id - 1).nombre} en cualquier dificultad para desbloquearlo.</small>` : ''; })()}
       <div id="calabozoCont"></div>`;
     $('calSel').onchange = e => { calSel = +e.target.value; pintarCalabozo(); };   // repinta: las dificultades abiertas dependen del calabozo
     pintarSala();
@@ -15,7 +15,7 @@
   function pintarDifsCalabozo() {
     const enSala = sala && sala.modo === 'calabozo', id = enSala ? sala.cal : calSel, actual = enSala ? sala.dif : difCal, fijo = enSala && !esDueno(sala, 'yo');
     $('difBtns').innerHTML = ORDEN_DIF.map(d => { const ok = difAbierta(id, d);
-      return `<button class="d-${d}${d === actual ? ' on' : ''}" data-difcal="${d}" ${ok && !fijo ? '' : 'disabled'}>${DIFICULTADES[d]}${ok ? '' : ' 🔒'}</button>`; }).join('');
+      return `<button class="d-${d}${d === actual ? ' on' : ''}" data-difcal="${d}" ${ok && !fijo ? '' : 'disabled'}>${DIFICULTADES[d]}${ok ? '' : ' <img class="ic-txt" src="img/iconos/candado.png" alt="">'}</button>`; }).join('');
   }
   $('calabozo').addEventListener('click', e => {   // en tu sala cambia su dificultad (todos vuelven a pulsar Ready); fuera, la de la próxima sala
     const b = e.target.closest('[data-difcal]'); if (!b) return clickSala(e);
