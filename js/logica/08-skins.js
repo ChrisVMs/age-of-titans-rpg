@@ -1,7 +1,7 @@
   // ---------------- Skins ----------------
   // Una skin solo cambia el aspecto del guerrero: tapa las capas del equipo (casco, armadura, espada, capa)
   // pero los stats siguen siendo los del equipo. Cada skin puede tener un bono propio en % (por definir).
-  const VERSION_IMG = 12;   // súbelo al regenerar imágenes de skins: obliga al navegador a no usar la copia vieja
+  const VERSION_IMG = 13;   // súbelo al regenerar imágenes de skins: obliga al navegador a no usar la copia vieja
   // Cada skin: bono base por estrella (atributo, % por ★) + efecto especial (siempre activo) + color de su brillo.
   // Se compra en la Tienda (empieza en ★1) y se mejora hasta ★5; a ★5 el guerrero brilla con su color.
   const SKINS = [
