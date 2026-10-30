@@ -100,7 +100,7 @@
       <div class="atributos">${lineasHtml(o)}</div>
       <div class="atributos">${filasTotales(valores(o), puesto ? null : valores(actual))}</div>
       ${puesto ? '<small>Equipado</small>' : `<small>Total comparado con: ${modelo[actual.modelo].nombre}${actual.enc ? ' +' + actual.enc : ''}</small>`}
-      <div class="fila">${puesto ? '' : `<button data-acc="equipar">Equipar</button>${almasDe(o) ? `<button data-acc="desguazar">Desguazar 💠${almasDe(o)}</button>` : `<button data-acc="vender">Vender ● ${r.venta}</button>`}`}</div>
+      <div class="fila">${puesto ? '' : `<button data-acc="equipar">Equipar</button>${almasDe(o) ? `<button data-acc="desguazar">Desguazar <img class="ic-txt" src="img/iconos/mat_almas.png" alt="">${almasDe(o)}</button>` : `<button data-acc="vender">Vender ● ${r.venta}</button>`}`}</div>
       <div class="fila"><button data-acc="herreria">Herrería</button><button data-acc="cerrar">Cerrar</button></div>`);
     $('detCaja').onclick = async e => {
       const acc = e.target.closest('button')?.dataset.acc; if (!acc) return;

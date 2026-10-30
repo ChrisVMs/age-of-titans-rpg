@@ -11,7 +11,7 @@
     espada:   { nombre: 'Espada',   tira: G + 'espada.png',   icono: 'img/iconos/espada.svg' },
   };
   // filtros de objetos por ranura: solo el icono (el nombre va en el title)
-  const iconoFiltro = r => r === 'todos' ? '<span class="ic-filtro">🎒</span>' : `<img class="ic-filtro" src="${RANURAS[r].icono}" alt="${RANURAS[r].nombre}">`;
+  const iconoFiltro = r => r === 'todos' ? '<img class="ic-filtro" src="img/iconos/inventario.png" alt="Todo">' : `<img class="ic-filtro" src="${RANURAS[r].icono}" alt="${RANURAS[r].nombre}">`;
   const METAL = {
     hierro: '', oro: 'sepia(1) saturate(2.6) hue-rotate(-5deg) brightness(1.15)',
     rojo: 'sepia(1) saturate(4) hue-rotate(-45deg) brightness(.95)', azul: 'sepia(1) saturate(3) hue-rotate(180deg) brightness(.95)',

@@ -31,8 +31,8 @@
   }
   const tieneCoste = c => Object.entries(c).every(([k, v]) => k === 'prob' || (k === 'oro' ? jugador.oro >= v : jugador.mat[k] >= v));
   const textoCoste = c => Object.entries(c).filter(([k]) => k !== 'prob').map(([k, v]) => {
-    const tengo = k === 'oro' ? jugador.oro : jugador.mat[k], ic = k === 'oro' ? '●' : MATERIALES[k].split(' ')[0];
-    return `<span class="${tengo < v ? 'falta' : ''}">${ic} <b>${v}</b></span>`;   // en rojo si no alcanza (sin "tienes": ocupaba espacio)
+    const tengo = k === 'oro' ? jugador.oro : jugador.mat[k];   // icono HD del recurso (icPremio): solo se usa en HTML
+    return `<span class="${tengo < v ? 'falta' : ''}">${icPremio(k)}<b>${v}</b></span>`;   // en rojo si no alcanza (sin "tienes": ocupaba espacio)
   }).join(' · ');
   const faltaCoste = c => Object.entries(c).filter(([k]) => k !== 'prob').map(([k, v]) => {
     const tengo = k === 'oro' ? jugador.oro : jugador.mat[k]; return tengo < v ? `${v - tengo} ${k === 'oro' ? '● oro' : MATERIALES[k]}` : '';
