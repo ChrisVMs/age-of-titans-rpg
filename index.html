@@ -106,8 +106,10 @@
   .unidad.yo .vida b { color:#ffd84a; }
   .unidad.enemigo, .unidad.unidad-rey { cursor:pointer; }   /* tocar un enemigo lo elige como objetivo */
   .unidad.objetivo .pj { filter:drop-shadow(0 0 8px #ff4040) drop-shadow(0 0 3px #ff4040); }
-  .unidad.objetivo::before { content:'🎯'; position:absolute; left:50%; top:-60px; transform:translateX(-50%); font-size:48px; z-index:6; pointer-events:none;
-                             animation:latido 1.2s ease-in-out infinite; }
+  /* objetivo elegido: triángulo rojo fijo que apunta hacia abajo, sobre su nombre */
+  .unidad.objetivo::before { content:''; position:absolute; left:50%; top:-32px; transform:translateX(-50%); z-index:6; pointer-events:none;
+                             border-left:9px solid transparent; border-right:9px solid transparent; border-top:13px solid #ff4040;
+                             filter:drop-shadow(0 1px 1px #000); }
   .unidad.objetivo.muerto::before { display:none; }
   .unidad.enemigo .frames { width:260px; height:200px; animation-delay:-1s; background:url(img/enemigos/parca.png) 0 0 / 1820px 200px no-repeat; }
   .unidad.enemigo .espejo, .unidad.unidad-rey .espejo { transform:scaleX(-1); }   /* los reyes: sprite de jugador mirando a la izquierda */
