@@ -52,6 +52,14 @@
     capas = frames.querySelector('.capa') ? [...frames.querySelectorAll('.capa')] : [frames];
     ver(0);   // reposo: cuadro 0 fijo y la respiración del CSS, o el reposo animado de la clase
     let paso = 0;
+    // al empezar una animación desde el reposo: deshace el reposo cuadro a cuadro hasta su postura inicial (sin saltos)
+    const REGRESO_MS = 45;
+    const regresoReposo = () => {
+      const r = reposo(); if (!r || base !== 0 || !paso) return [];
+      const i = (paso - 1) % r.length, mitad = r.length / 2;   // ida: se vuelve hacia atrás; vuelta: se sigue hacia el inicio
+      const camino = i <= mitad ? r.slice(0, i).reverse() : r.slice(i + 1);
+      paso = 0; return camino.map(([c]) => [c, REGRESO_MS]).concat([[r[0][0], REGRESO_MS]]);
+    };
     (function latido() {   // un cuadro del reposo cada vez, con su propia duración
       const r = reposo(); let ms = 250;
       if (r && base === 0 && !frames.classList.contains('quieto')) { const [c, d] = r[paso++ % r.length]; ver(c); ms = d; }
@@ -59,6 +67,7 @@
     })();
     // pasos: [cuadro, ms, avance(px) | undefined, accion?]; devuelve promesa que se cumple en el impacto
     return { ver, frames, setAncho: a => { ancho = a; }, setBase: b => { base = b; }, get base() { return base; }, async jugar(pasos) {
+      pasos = [...regresoReposo(), ...pasos];
       frames.classList.add('quieto');
       let alImpacto;
       const impacto = new Promise(r => alImpacto = r);
