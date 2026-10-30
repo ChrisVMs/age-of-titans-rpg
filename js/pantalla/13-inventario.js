@@ -50,7 +50,7 @@
     if (invTab === 'skins') pintarTabSkins();
     if (invTab === 'aura') pintarTabAura();
     const st = estadisticas();
-    $('stats').innerHTML = `<div class="poder">⚔ Poder<b>${poder(st).toLocaleString('es')}</b></div>`
+    $('stats').innerHTML = `<div class="poder"><img class="ic-txt" src="img/iconos/poder.png" alt="">Poder<b>${poder(st).toLocaleString('es')}</b></div>`
       + Object.entries(ATRIBUTOS).map(([a, n]) => `<div>${n}<b>${st[a]}</b></div>`).join('')
       + Object.entries(SECUNDARIOS).map(([a, n]) => `<div class="sec">${n}<b>${textoEfecto(a)}</b></div>`).join('')
       + Object.entries(OTROS_EFECTOS).filter(([a]) => efecto(a) > 0).map(([a, n]) => `<div class="sec">${n}<b>${textoEfecto(a)}</b></div>`).join('');
