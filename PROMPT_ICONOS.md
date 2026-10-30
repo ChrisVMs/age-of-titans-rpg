@@ -104,7 +104,8 @@ Row 3: an empty dark socket ring · gold medal · silver medal · bronze medal �
 
 ### Tienda — cofres (1024×256, 4×1) + bloque común
 ```
-Four treasure chests, same shape, front three-quarter view, closed, with a keyhole: 1 a wooden chest with iron bands · 2 an iron chest with steel rivets · 3 a golden chest with gems · 4 a crimson mythic chest with glowing red runes and a soft red aura
+Four treasure chests for the shop of a dark fantasy RPG, matching an existing set of hand-painted cartoon menu icons (trophy, backpack, crown, gift box, anvil). All four have exactly the same chest shape, size and angle: front three-quarter view, lid closed, a keyhole plate in front. Only the material changes. Absolutely no text, no letters.
+1 a worn brown wooden chest with dark iron bands and rivets · 2 a grey iron chest with steel bands, heavy rivets and a dark lock plate · 3 a golden chest with ornate gold trim and small blue and red gems · 4 a crimson mythic chest with black iron trim, glowing red runes on the lid and a soft red glow around it
 ```
 Destino: `cofre_madera`, `cofre_hierro`, `cofre_oro`, `cofre_mitico` (imagen de cada cofre en la Tienda; hoy son SVG).
 
