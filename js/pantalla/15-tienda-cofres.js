@@ -76,7 +76,7 @@
   $('resetPrueba').onclick = async () => {   // partida nueva desde cero (conserva el nombre), sin oro ni materiales
     if (!await confirmar('¿Reiniciar el personaje? Vuelve al nivel 1 sin oro, materiales ni progreso. No se puede deshacer.', 'Reiniciar', 'Cancelar')) return;
     const clase = await elegirOpcion('Elige tu clase', Object.entries(CLASES).map(([id, c]) => ({ id, texto: `${c.icono} ${c.nombre}` })));
-    const nombre = jugador.nombre; jugador = partidaNueva(); jugador.nombre = nombre; jugador.clase = clase; jugador.oro = 0;
+    const nombre = jugador.nombre; jugador = partidaNueva(); jugador.nombre = nombre; jugador.clase = clase; jugador.arbol = {}; jugador.oro = 0;
     for (const k in jugador.mat) jugador.mat[k] = 0;
     // si el juego está abierto en otra pestaña, se bloquea (si no, volvería a guardar encima la partida vieja)
     if (canalPestanas) canalPestanas.postMessage({ t: 'tomar', id: idPestana });
