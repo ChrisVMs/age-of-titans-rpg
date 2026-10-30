@@ -17,7 +17,7 @@
       else if (tipo === 'volver') { const r = regresos.get(a[0]); regresos.delete(a[0]); if (r) await r(); }
       else if (tipo === 'golpe') await dibujarGolpe(...a);
       else if (tipo === 'marcar') marcarObjetivo(a[0]);
-      else if (tipo === 'muerteU') { const [u, jefe] = a; if (!u.duelo) { u.el.classList.add('muerto'); if (u.yo) pintarEspecial(); } else if (!u.heroe) await animarMuerte(jefe); }
+      else if (tipo === 'muerteU') { const [u, jefe] = a; if (!u.duelo) { await caeU(u); u.el.classList.add('muerto'); if (u.yo) pintarEspecial(); } else if (!u.heroe) await animarMuerte(jefe); else await caeHeroe(); }
       else if (tipo === 'mascota') { if (a[0].duelo) $('acompana').style.transform = a[1] ? `translateX(${avanceReal(420)}px) scale(1.2)` : ''; }
       else if (tipo === 'transformar') await animarTransformacion();
       else if (tipo === 'siguiente') await mostrarEnemigo();
@@ -28,7 +28,7 @@
   async function dibujarGolpe(u, t, hab, critico, dano, jefe) {
     const fuerte = !!hab || critico, cls = fuerte ? 'dano critico' : 'dano';
     if (t.duelo) return animarGolpe(u.heroe ? 0 : 1, !!hab, jefe, cls, (fuerte ? '¡' : '-') + dano + (critico ? ' CRÍTICO!' : hab ? '!' : ''));
-    golpeVisual(t); fxU(t, cls, `${hab ? hab.icono + ' ' : ''}-${dano}${critico ? ' CRÍTICO' : ''}`);
+    golpeVisual(t); retrocedeU(t); fxU(t, cls, `${hab ? hab.icono + ' ' : ''}-${dano}${critico ? ' CRÍTICO' : ''}`);
   }
   async function animarAtaque(turno, x) {   // x: la habilidad del guerrero, o lo que decidió hacer el enemigo
     slots[turno].style.zIndex = 3; slots[1 - turno].style.zIndex = '';   // quien ataca, delante
@@ -45,6 +45,7 @@
     }
     if (turno === 0 && jefe.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(especial ? 14 : 13); }   // daño, o retroceso si es una habilidad
     else if (turno === 0 && !jefe.cerbero) { parca.frames.classList.add('quieto'); parca.ver(5); setTimeout(() => parca.ver(6), 250); }
+    if (turno === 1) retrocedeHeroe();
     fx(d, cls, texto);
     await wait(650);
     arena.classList.remove('tiembla');

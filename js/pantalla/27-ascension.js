@@ -71,7 +71,7 @@
       dibujarUnidad(u);
       if (u.yo) u.el.classList.add('yo');
       const capas = montarCapas(u.el.querySelector('.frames')); conPerfil(u.perfil, () => pintarVista(capas));
-      u.pj = personaje(u.el, 296); pintarVida(u.el, u.vida, u.vidaMax);
+      u.pj = personajeClase(u.el, u.clase); pintarVida(u.el, u.vida, u.vidaMax);
       pintarAura(u.el.querySelector('.sombra'), nivelAura(u.perfil));
     }
     const yo = heroes.find(h => h.yo), m = mascotaActual();
@@ -122,10 +122,12 @@
   }
   // ataque de un héroe: los guerreros van cuerpo a cuerpo; arqueros y magos disparan desde su casilla
   async function animHeroe(u, t, hab) {
-    const lejos = u.clase !== 'guerrero';
+    const lejos = !!CLASES[u.clase].distancia;
     if (hab) { u.el.querySelector('.frames').classList.add('carga'); await wait(250); u.el.querySelector('.frames').classList.remove('carga'); }
     if (!lejos) await moverA(u, t);
-    const impacto = u.pj.jugar([[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);
+    const anim = ANIM_CLASE[u.clase];   // en grupo el avance lo hace moverA: los pasos propios no se desplazan
+    const impacto = u.pj.jugar(anim ? sinAvance((hab && anim[hab.animacion] || anim.ataque)())
+      : [[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);
     if (lejos) await proyectil(u, t, hab ? hab.icono : u.clase === 'arquero' ? '🏹' : '✨');
     await impacto;
     return lejos ? null : () => volver(u);
@@ -134,6 +136,14 @@
     await moverA(u, t);
     await u.pj.jugar([[1, 150], [2, 170, , sonidoGuadana], [3, 180, , r => r()], [4, 150]]);
     return () => volver(u);
+  }
+  const sinAvance = pasos => pasos.map(([c, ms, , accion]) => [c, ms, undefined, accion]);
+  // héroe con animaciones propias: retrocede al recibir el golpe; al caer, se ve la derrota antes de desaparecer
+  function retrocedeU(t) { const a = t.lado === 0 && ANIM_CLASE[t.clase]; if (a) t.pj.jugar(a.golpe()); }
+  async function caeU(u) {
+    const a = u.lado === 0 && ANIM_CLASE[u.clase]; if (!a) return;
+    const pasos = a.derrota(); u.pj.setBase(pasos[pasos.length - 1][0]); u.pj.jugar(pasos);
+    await wait(pasos.reduce((t, p) => t + p[1], 0) + 400);
   }
   function golpeVisual(t) { t.el.classList.remove('golpeado'); void t.el.offsetWidth; t.el.classList.add('golpeado'); setTimeout(() => t.el.classList.remove('golpeado'), 600); }
   function pararCuentaTurno() { clearInterval(cuentaTurno); cuentaTurno = null; delete btn.dataset.cuenta; }

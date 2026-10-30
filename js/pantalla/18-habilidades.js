@@ -17,15 +17,44 @@
     bola: () => lanzarMaga(300),
     lanza: () => lanzarMaga(150),
     meteoro: () => lanzarMaga(450),
-    // Asesino: 12 = acometida sombría, 13 = cruce de cuchillas, 4 = impacto
-    punalada: () => guerrero.jugar([[1, 160, 380], [3, 80, , sonidoEspada], [4, 160, , r => r()], [6, 160, 0], [7, 120]]),
-    paso: () => guerrero.jugar([
-        [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 250],
-        [12, 150, 380, () => { marcoGuerrero.classList.remove('carga'); estela(); sonidoEspada(); }], [5, 180, , r => r()], [6, 200, 0], [7, 150]]),
-    danza: () => guerrero.jugar([
-        [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 350], [12, 140, 380, () => marcoGuerrero.classList.remove('carga')],
-        [13, 220, , r => { arco(); sonidoEspada(); r(); }], [4, 180], [5, 120], [6, 200, 0], [7, 150]]),
+    punalada: () => guerrero.jugar(ANIM_ASESINO.punalada()),
+    paso: () => guerrero.jugar(ANIM_ASESINO.paso()),
+    danza: () => guerrero.jugar(ANIM_ASESINO.danza()),
   };
+  // Asesino: cuadros de img/asesino/tira.png, en el orden de sus hojas (tools/hojas/asesino_*.jpg):
+  // ataque 0-19 · sombra 20-39 · golpe 40-54 · carrera 55-69 · reposo 70-79. Va cuerpo a cuerpo.
+  const ANIM_ASESINO = (() => {
+  const A = n => n, S = n => 20 + n, G = n => 40 + n, C = n => 55 + n;
+  const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
+  const cargaAsesino = on => () => marcoGuerrero.classList.toggle('carga', on);
+  return {
+    // corre hacia el enemigo, tajo, frena y vuelve a su sitio
+    ataque: () => [[C(2), 90, 360], [C(3), 80], [C(4), 80], [C(5), 80], [C(6), 80], [C(7), 80],
+      [C(1), 160, , r => { sonidoEspada(); r(); }], [C(8), 120], [C(9), 110, 0], ...tramo(C, 10, 14, 80)],
+    // cruza las cuchillas, las carga hasta estallar, salta y barre con el destello
+    punalada: () => [...tramo(A, 1, 3, 90), [A(4), 110, , cargaAsesino(true)], ...tramo(A, 5, 9, 80),
+      [A(10), 170, , cargaAsesino(false)], [A(11), 100, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
+      [A(15), 200, , r => r()], [A(16), 140], [A(17), 120, 0], [A(18), 120], [A(19), 150], [A(0), 120]],
+    // se envuelve en sombras, se desvanece, se lanza y descarga dos tajos
+    paso: () => [...tramo(S, 15, 19, 100), [S(0), 160], [S(1), 150, 360, () => { estela(); sonidoEspada(); }],
+      [S(2), 90], [S(3), 90], [S(4), 180, , r => r()], [S(8), 120, 0], [S(9), 130]],
+    // aura, tajos con chispa, cruce de cuchillas, se disuelve y reaparece en su sitio
+    danza: () => [[S(16), 160, , cargaAsesino(true)], [S(17), 260, , cargaAsesino(false)], [S(5), 110, 360], [S(6), 90],
+      [S(7), 150, , sonidoEspada], [S(10), 240, , r => { arco(); sonidoEspada(); r(); }], [S(11), 200, 0],
+      [S(12), 120], [S(13), 120], [S(14), 150]],
+    golpe: () => [...tramo(G, 1, 4, 110), [G(0), 120]],               // retrocede al recibir el golpe
+    derrota: () => [...tramo(G, 5, 9, 130), ...tramo(G, 10, 14, 150)],   // hinca la rodilla y cae
+  };
+  })();
+  const ANIM_CLASE = { asesino: ANIM_ASESINO };   // clases con animaciones propias (las demás usan las del guerrero)
+  const animClase = () => ANIM_CLASE[jugador.clase];
+  function retrocedeHeroe() { const a = animClase(); if (a) guerrero.jugar(a.golpe()); }
+  async function caeHeroe() {
+    const a = animClase(); if (!a) return;
+    const pasos = a.derrota(); guerrero.setBase(pasos[pasos.length - 1][0]);   // queda tendido
+    guerrero.jugar(pasos); await wait(pasos.reduce((t, p) => t + p[1], 0));
+    guerrero.frames.classList.add('quieto');
+  }
   // Maga: prepara el bastón, conjura y suelta la bola de fuego
   function bolaMaga(alImpacto) {
     const p = document.createElement('div'); p.className = 'proyectil';
@@ -74,7 +103,7 @@
   });
 
   const ataques = [
-    () => jugador.clase === 'mago' ? lanzarMaga() : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
+    () => jugador.clase === 'mago' ? lanzarMaga() : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
     tipo => batalla.enemigo.cerbero ? ataqueCerbero(tipo) : batalla.enemigo.asmodeo ? ataqueAsmodeo(tipo) : batalla.enemigo.minotauro ? ataqueMinotauro(tipo) : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
       [1, 220], [2, 260, batalla.enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),

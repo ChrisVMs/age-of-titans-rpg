@@ -39,16 +39,22 @@
     setTimeout(() => e.remove(), 1500);
   }
   // Personajes animados cuadro a cuadro
-  function personaje(slot, ancho) {
+  // escala(i): tamaño del cuadro i (tiras hechas con hojas de distinto tamaño); reposo(): cuadros del reposo animado, si tiene
+  const REPOSO_MS = 140;
+  const personajeClase = (el, clase) => personaje(el, 296, i => escalaCuadro(i, clase), () => reposoClase(clase));
+  function personaje(slot, ancho, escala = () => 1, reposo = () => null) {
     const frames = slot.querySelector('.frames'), pj = slot.querySelector('.pj');
     let capas, cuadro = 0, base = 0;
     const skin = frames.querySelector('.skin');
     const ver = i => {
-      cuadro = i; capas.forEach(c => c.style.backgroundPositionX = (-i * ancho) + 'px');
+      cuadro = i; capas.forEach(c => { c.style.backgroundPositionX = (-i * ancho) + 'px'; c.style.scale = escala(i); });
       if (skin) skin.style.transform = 'translateX(-50%) ' + (POSE_SKIN[i] || '');   // la skin es fija: se inclina según el cuadro
     };
     capas = frames.querySelector('.capa') ? [...frames.querySelectorAll('.capa')] : [frames];
-    ver(0);   // reposo: cuadro 0 fijo; la respiración la hace el CSS
+    ver(0);   // reposo: cuadro 0 fijo y la respiración del CSS, o el reposo animado de la clase
+    let paso = 0;
+    setInterval(() => { const r = reposo();
+      if (r && base === 0 && !frames.classList.contains('quieto')) ver(r[paso++ % r.length]); }, REPOSO_MS);
     // pasos: [cuadro, ms, avance(px) | undefined, accion?]; devuelve promesa que se cumple en el impacto
     return { ver, frames, setAncho: a => { ancho = a; }, setBase: b => { base = b; }, get base() { return base; }, async jugar(pasos) {
       frames.classList.add('quieto');
@@ -66,7 +72,7 @@
       return impacto;
     } };
   }
-  const guerrero = personaje(slots[0], 296), parca = personaje(slots[1], 260);
+  const guerrero = personaje(slots[0], 296, i => escalaCuadro(i), () => reposoClase()), parca = personaje(slots[1], 260);
   const sonidoEspada = () => { const a = elegirSonido(espadas); a.currentTime = 0; a.play(); };
   const sonidoGuadana = () => { const a = elegirSonido(guadanas); a.currentTime = 0; a.play(); };
   // Música de batalla en bucle (solo durante la batalla)

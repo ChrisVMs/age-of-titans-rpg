@@ -233,6 +233,7 @@
     ajustarEscala();
     pintarVida(slots[1], enemigoDuelo().vida, enemigoDuelo().vidaMax);
     slots[1].classList.remove('muerto');
+    if (heroeYo().vida > 0) { guerrero.setBase(0); guerrero.frames.classList.remove('quieto'); guerrero.ver(0); }   // de pie tras una derrota anterior
     slots[1].classList.add('entra');
     await wait(50);
     slots[1].classList.remove('entra');

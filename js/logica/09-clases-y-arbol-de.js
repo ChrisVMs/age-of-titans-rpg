@@ -5,15 +5,16 @@
   //   poder: % de poder por rango para nodos especiales que no son estadísticas ni efectos
   //   habMult: [habilidad, +x por rango] · habRecarga: [habilidad, -turnos por rango] · golpe: estado al golpear (prob. % por rango)
   //   cargaInicial: las habilidades empiezan la batalla cargadas
+  // distancia: ataca desde su sitio (las demás van cuerpo a cuerpo)
   // Clases: cada una cambia los atributos base (mod, en %), da un efecto propio (ef) y tiene sus habilidades y su árbol.
   // Se puede cambiar de clase gratis fuera de batalla; los puntos del árbol y la maestría son de cada clase.
   // El Arquero usa por ahora el sprite del guerrero; la Maga y el Asesino tienen el suyo (img/<clase>/tira.png, mismas 14 poses).
   const CLASES = {
     guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: {}, ef: {} },
     arquero:  { nombre: 'Arquero',  icono: '🏹', desc: 'Daño alto y críticos; menos vida y defensa. Hace sangrar y envenena.',
-                mod: { ataque: 10, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 } },
+                mod: { ataque: 10, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 }, distancia: true },
     mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
-                mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 } },
+                mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 }, distancia: true },
     asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
                 mod: { ataque: 12, vida: -10, defensa: -15 }, ef: { critico: .08, danoCritico: .15, esquiva: .05 } },
   };

@@ -1,6 +1,18 @@
   // ---------------- Vista del guerrero (pantalla) ----------------
   const TIRA_MAGA = `img/maga/tira.png?v=${VERSION_IMG}`, TIRA_ASESINO = `img/asesino/tira.png?v=${VERSION_IMG}`, IMG_BOLA = `img/maga/proyectil.png?v=${VERSION_IMG}`;
-  const TIRA_CLASE = { mago: TIRA_MAGA, asesino: TIRA_ASESINO };   // clases con sprite propio (14 poses como el guerrero)
+  // Clases con sprite propio. La Maga sigue las 14 poses del guerrero; el Asesino tiene su tira de 80 cuadros
+  // (celda 312x314) con sus animaciones (ANIM_ASESINO en 18-habilidades) y una escala por hoja fuente, porque
+  // cada hoja dibuja al personaje a otro tamaño (se iguala al mostrarlo; la imagen no se reescala).
+  const SPRITE_CLASE = {
+    mago: { tira: TIRA_MAGA },
+    asesino: { tira: TIRA_ASESINO, cuadros: 80, celda: [312, 314],
+               escala: i => i < 40 ? 1 : i < 55 ? .88 : i < 70 ? .86 : .69,   // ataque y sombra · golpe · carrera · reposo
+               reposo: [70, 71, 72, 73, 74, 75, 76, 77, 78, 79] },
+  };
+  const spriteClase = (clase = jugador.clase) => SPRITE_CLASE[clase];
+  // escala del cuadro i en la tira de la clase (las tiras de 14 poses no la necesitan) y cuadros de su reposo animado
+  const escalaCuadro = (i, clase) => { const s = spriteClase(clase); return s && s.escala ? s.escala(i) : 1; };
+  const reposoClase = clase => { const s = spriteClase(clase); return s && s.reposo; };
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }
   // capas del guerrero en un contenedor (sin registrarlas: las vistas de aliados se pintan con su propio perfil)
   function montarCapas(cont) {
@@ -37,14 +49,19 @@
       capaDe[r].style.backgroundImage = `url(${m.tira || RANURAS[r].tira})`; capaDe[r].style.filter = m.color;
     }
     // Maga y Asesino tienen sprite propio: se dibuja como una skin animada (las skins son del guerrero)
-    const propio = TIRA_CLASE[jugador.clase];
-    const k = propio ? { tira: propio } : skinActual();
+    const sp = spriteClase(), propio = !!sp;
+    const k = sp ? { tira: sp.tira } : skinActual();
     {
       capaDe._cont.classList.toggle('con-skin', !!k);
       capaDe._cont.classList.toggle('con-skin-anim', !!(k && k.tira));
       if (k && k.img) capaDe._skin.src = k.img;
       capaDe._skinAnim.style.backgroundImage = k && k.tira ? `url(${k.tira})` : 'none';
-      capaDe._skinAnim.style.backgroundSize = '4144px 208px';
+      // tira larga: cada celda se muestra a 296 px de ancho (lo que avanza cada cuadro) y crece hacia arriba
+      const alto = sp && sp.cuadros ? Math.round(296 * sp.celda[1] / sp.celda[0]) : 208;
+      capaDe._skinAnim.style.backgroundSize = sp && sp.cuadros ? `${296 * sp.cuadros}px ${alto}px` : '4144px 208px';
+      capaDe._skinAnim.style.top = `${208 - alto}px`;
+      capaDe._skinAnim.style.transformOrigin = '50% 100%';
+      capaDe._skinAnim.style.scale = escalaCuadro(0);
       const brilla = k && !propio && estrellasSkin(k.id) >= 5;   // ★5: brillo del color de la skin, como un buff
       capaDe._cont.classList.toggle('brillo-skin', !!brilla);
       capaDe._cont.style.setProperty('--brillo', brilla ? k.color : 'transparent');   // tira de 14 cuadros (sea de 185 o de 370 px), a la escala del guerrero
