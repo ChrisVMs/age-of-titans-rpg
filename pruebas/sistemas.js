@@ -2,11 +2,11 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
-  'Asesino: Danza de cuchillas solo con su nodo y Paso veloz acorta Paso sombrío': `
+  'Asesino: tres habilidades desde el inicio; Paso veloz y Danza incesante acortan sus recargas': `
     jugador.clase = 'asesino'; jugador.arbol = {};
     const sin = calcularHabilidades().habs.map(h => h.id).join();
-    jugador.arbol = { danza: 1, paso_r: 1 }; const con = calcularHabilidades().habs;
-    [sin === 'punalada,paso', con.some(h => h.id === 'danza'), con.find(h => h.id === 'paso').turnos === 3, ARBOL.asesino.every(r => r.nodos.length === 5)]`,
+    jugador.arbol = { danza_r: 1, paso_r: 1 }; const con = calcularHabilidades().habs;
+    [sin === 'punalada,paso,danza', con.find(h => h.id === 'danza').turnos === 5, con.find(h => h.id === 'paso').turnos === 3, ARBOL.asesino.every(r => r.nodos.length === 5)]`,
   'Barra de actividad: el cofre 1 pide 2 misiones y no se cobra dos veces': `
     const M = revisarMisiones(); M.diaria.enemigos = 30;
     reclamarMision('diaria', 'd_enem'); const antes = reclamarMision('diaria', 'cofre0');

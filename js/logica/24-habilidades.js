@@ -24,7 +24,7 @@
       aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
     { id: 'paso', clase: 'asesino', nombre: 'Paso sombrío', icono: '🌑', turnos: 4, mult: 2.4, animacion: 'paso',
       aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .15 } },
-    { id: 'danza', clase: 'asesino', nombre: 'Danza de cuchillas', icono: '✖️', turnos: 6, mult: 3.5, perfora: true, nodo: 'danza', animacion: 'danza' },
+    { id: 'danza', clase: 'asesino', nombre: 'Danza de cuchillas', icono: '✖️', turnos: 6, mult: 5.25, perfora: true, animacion: 'danza' },
   );
   // Habilidades de la batalla: las de la clase (las de nodo, si están aprendidas), con las mejoras del árbol
   let HABILIDADES = [];

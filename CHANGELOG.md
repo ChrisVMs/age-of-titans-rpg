@@ -11,7 +11,7 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 
 ### 🗡️ Asesino (clase nueva)
 - +12 % ataque, −10 % vida, −15 % defensa; +8 % crítico, +15 % daño crítico, +5 % esquiva.
-- Habilidades: **Puñalada** (×1,6, sangra), **Paso sombrío** (×2,4, envenena) y **Danza de cuchillas** (×3,5, atraviesa armadura; se aprende en el árbol).
+- Habilidades: **Puñalada** (×1,6, sangra), **Paso sombrío** (×2,4, envenena) y **Danza de cuchillas** (×5,25, atraviesa armadura).
 - Árbol de 3 ramas: Filo, Sombras y Venenos.
 - Va cuerpo a cuerpo (también en grupo). Sprite propio de 109 cuadros (`img/asesino/tira.png`) con todas sus hojas (`tools/hojas/asesino_*.jpg`, 109 cuadros):
   reposo animado, ataque, habilidades, retroceso al recibir un golpe y derrota.
