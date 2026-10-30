@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+# Recorta los iconos del menú de tools/hojas/iconos_menu.jpg (5x5) en img/iconos/<nombre>.png con split_sheet.py.
+# Cada icono viene sobre una baldosa verde oscuro: se quita (relleno desde los bordes) y se recorta al dibujo.
+# Uso (desde la raíz): python3 tools/iconos_menu.py
+import subprocess, glob, tempfile, numpy as np
+from PIL import Image
+NOMBRES = ['jefe', 'habilidades', 'titulos', 'arena', 'login', 'inventario', 'ranking', 'coleccion', 'torre', 'grieta',
+           'ruinas', 'reyes', 'misiones', 'heroe', 'mascota', 'batalla', 'herreria', 'tienda', 'oro', 'cristales',
+           'estamina', 'poder']
+tmp = tempfile.mkdtemp()
+subprocess.run(['python3', 'tools/split_sheet.py', 'tools/hojas/iconos_menu.jpg', '--cols', '5', '--rows', '5', '--uniform', '--out', tmp],
+               check=True, capture_output=True)
+for nombre, f in zip(NOMBRES, sorted(glob.glob(f'{tmp}/*.png'))):
+    a = np.array(Image.open(f).convert('RGBA')).astype(int)
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    # baldosa: tras split_sheet queda oscura y algo verdosa (~12,25,18); el contorno negro del dibujo no es verdoso.
+    # Se borra la zona de baldosa conectada con los bordes (relleno desde fuera), así el dibujo no pierde nada.
+    baldosa = ((g - r >= 5) & (g >= b) & (np.maximum(np.maximum(r, g), b) < 70)) | (a[..., 3] == 0)
+    H, W = baldosa.shape; fuera = np.zeros((H, W), bool); pila = [(y, x) for y in (0, H - 1) for x in range(W)] + [(y, x) for x in (0, W - 1) for y in range(H)]
+    while pila:
+        y, x = pila.pop()
+        if 0 <= y < H and 0 <= x < W and baldosa[y, x] and not fuera[y, x]:
+            fuera[y, x] = True; pila += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+    # huecos de baldosa encerrados por el dibujo (asas, cintas, toldos): zonas de baldosa de al menos 25 píxeles
+    visto = fuera.copy()
+    for y0, x0 in zip(*np.nonzero(baldosa & ~visto)):
+        if visto[y0, x0]: continue
+        zona, pila = [], [(y0, x0)]; visto[y0, x0] = True
+        while pila:
+            y, x = pila.pop(); zona.append((y, x))
+            for yy, xx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
+                if 0 <= yy < H and 0 <= xx < W and baldosa[yy, xx] and not visto[yy, xx]: visto[yy, xx] = True; pila.append((yy, xx))
+        if len(zona) >= 25:
+            for y, x in zona: fuera[y, x] = True
+    a[..., 3] = np.where(fuera, 0, a[..., 3])
+    im = Image.fromarray(a.astype('uint8'))
+    im.crop(im.getbbox()).save(f'img/iconos/{nombre}.png')
+    print(nombre, im.getbbox())
