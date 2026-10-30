@@ -39,8 +39,7 @@
     setTimeout(() => e.remove(), 1500);
   }
   // Personajes animados cuadro a cuadro
-  // escala(i): tamaño del cuadro i (tiras hechas con hojas de distinto tamaño); reposo(): cuadros del reposo animado, si tiene
-  const REPOSO_MS = 240;
+  // escala(i): tamaño del cuadro i (tiras hechas con hojas de distinto tamaño); reposo(): [cuadro, ms] del reposo animado, si tiene
   const personajeClase = (el, clase) => personaje(el, 296, i => escalaCuadro(i, clase), () => reposoClase(clase));
   function personaje(slot, ancho, escala = () => 1, reposo = () => null) {
     const frames = slot.querySelector('.frames'), pj = slot.querySelector('.pj');
@@ -53,8 +52,11 @@
     capas = frames.querySelector('.capa') ? [...frames.querySelectorAll('.capa')] : [frames];
     ver(0);   // reposo: cuadro 0 fijo y la respiración del CSS, o el reposo animado de la clase
     let paso = 0;
-    setInterval(() => { const r = reposo();
-      if (r && base === 0 && !frames.classList.contains('quieto')) ver(r[paso++ % r.length]); }, REPOSO_MS);
+    (function latido() {   // un cuadro del reposo cada vez, con su propia duración
+      const r = reposo(); let ms = 250;
+      if (r && base === 0 && !frames.classList.contains('quieto')) { const [c, d] = r[paso++ % r.length]; ver(c); ms = d; }
+      setTimeout(latido, ms);
+    })();
     // pasos: [cuadro, ms, avance(px) | undefined, accion?]; devuelve promesa que se cumple en el impacto
     return { ver, frames, setAncho: a => { ancho = a; }, setBase: b => { base = b; }, get base() { return base; }, async jugar(pasos) {
       frames.classList.add('quieto');

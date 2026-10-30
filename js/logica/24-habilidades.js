@@ -28,6 +28,7 @@
   );
   // Habilidades de la batalla: las de la clase (las de nodo, si están aprendidas), con las mejoras del árbol
   let HABILIDADES = [];
+  let sinRecarga = false;   // pruebas: las habilidades del jugador siempre cargadas
   batalla.carga = {};
   // habilidades de la clase del jugador actual (con conPerfil, de cualquier perfil) con las mejoras de su árbol
   function calcularHabilidades() {
@@ -45,6 +46,6 @@
   function prepararHabilidades() {   // motor: habilidades de la clase y su carga inicial
     const { habs, llenas } = calcularHabilidades(); HABILIDADES = habs;
     for (const id in batalla.carga) delete batalla.carga[id];
-    HABILIDADES.forEach(h => batalla.carga[h.id] = llenas ? h.turnos : 0);
+    HABILIDADES.forEach(h => batalla.carga[h.id] = llenas || sinRecarga ? h.turnos : 0);
   }
   const habLista = () => HABILIDADES.find(h => batalla.carga[h.id] >= h.turnos) || null;

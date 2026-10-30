@@ -105,6 +105,11 @@
   const ponerPruebasBatalla = on => { document.documentElement.classList.toggle('con-pruebas-batalla', on); $('pruebasBatalla').checked = on;
     try { localStorage.setItem('batalla.pruebasBatalla', on ? '1' : ''); } catch {} };
   $('pruebasBatalla').onchange = e => ponerPruebasBatalla(e.target.checked);
+  const ponerSinRecarga = on => { sinRecarga = on; $('sinRecarga').checked = on;
+    if (on) HABILIDADES.forEach(h => batalla.carga[h.id] = h.turnos);
+    try { localStorage.setItem('batalla.sinRecarga', on ? '1' : ''); } catch {} };
+  $('sinRecarga').onchange = e => { ponerSinRecarga(e.target.checked); if (batalla.carga) pintarEspecial(); };
+  try { ponerSinRecarga(!!localStorage.getItem('batalla.sinRecarga')); } catch { ponerSinRecarga(false); }
   const pintarOrientacion = () => { $('btnOrientacion').textContent = ICONO_ORIENTACION[orientacion];
     $('btnOrientacion').setAttribute('aria-label', `Pantalla: ${orientacion}`); };
   $('btnOrientacion').onclick = () => {

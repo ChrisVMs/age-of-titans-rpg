@@ -7,7 +7,8 @@
     mago: { tira: TIRA_MAGA },
     asesino: { tira: TIRA_ASESINO, cuadros: 80, celda: [324, 326],
                escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : .58,   // ataque y sombra · derrota · retroceso · reposo (tamaño como la Maga)
-               reposo: [70, 71, 72, 73, 74, 75, 79] },   // 76-78 cambian de postura de golpe
+               // reposo: [cuadro, ms] de ida y vuelta (sin saltar del último al primero); se detiene más en los extremos. 76-78 cambian de postura de golpe
+               reposo: [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]] },
   };
   const spriteClase = (clase = jugador.clase) => SPRITE_CLASE[clase];
   // escala del cuadro i en la tira de la clase (las tiras de 14 poses no la necesitan) y cuadros de su reposo animado

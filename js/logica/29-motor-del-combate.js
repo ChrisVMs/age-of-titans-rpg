@@ -151,7 +151,7 @@
   function resolverAccionJugador(u, hab, rivales) {
     const R = reglas(), pierde = resolverTick(u);
     if (u.yo) {   // cada turno carga las demás habilidades
-      for (const x of u.habs) u.carga[x.id] = x === hab ? 0 : Math.min(x.turnos, u.carga[x.id] + 1);
+      for (const x of u.habs) u.carga[x.id] = sinRecarga ? x.turnos : x === hab ? 0 : Math.min(x.turnos, u.carga[x.id] + 1);
       emitir('carga');
     } else hab = habAuto(u);
     if (pierde || !vivos(rivales).length) return;
