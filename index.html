@@ -605,9 +605,9 @@
                         background:url(img/jefes/cerbero/cerbero.png) 0 0 / 11520px 420px no-repeat; }
   /* Ataque a distancia: 8 cuadros de carga (240x210 c/u, x2) y bola de fuego de 6 cuadros (130x90 c/u, x2) */
   #s2.cerbero.cargando .frames { visibility:hidden; }
-  .carga { display:none; position:absolute; left:0; bottom:0; width:480px; height:420px;
+  .pj > .carga:not(.frames) { display:none; position:absolute; left:0; bottom:0; width:480px; height:420px;
            background:url(img/jefes/cerbero/carga.png) 0 0 / 3840px 420px no-repeat; image-rendering:pixelated; }
-  #s2.cargando .carga { display:block; }
+  #s2.cargando .pj > .carga:not(.frames) { display:block; }
   .llama { position:absolute; height:182.4px; z-index:3; pointer-events:none; transform-origin:100% 50%; transition:opacity .2s; }
   .llama div { position:absolute; inset:0; transform:scaleX(-1); background:url(img/jefes/cerbero/lanzallamas.png) 0 0 no-repeat; image-rendering:pixelated; }
   .llama.apaga { opacity:0; }
