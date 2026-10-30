@@ -68,7 +68,7 @@
   // Etapas: cada nivel = [nombre, enemigos en orden]; fondo: imagen de la batalla (sin ella, el fondo por defecto);
   // fondoZoom: la amplía anclada abajo para que su suelo llegue hasta la fila de enemigos de arriba
   const ETAPAS = [
-    { id: 1, nombre: 'Etapa 1: El cementerio maldito', fondo: 'img/fondos/etapa1.jpg', fondoZoom: 1.5, niveles: [
+    { id: 1, nombre: 'Etapa 1: El cementerio maldito', fondo: 'img/fondos/etapa1.jpg', niveles: [
       ['Puertas del cementerio',  ['parca', 'parca', 'sombria']],
       ['Tumbas olvidadas',        ['parca', 'sombria', 'sombria']],
       ['Cripta sombría',          ['sombria', 'carmesi', 'sombria']],
