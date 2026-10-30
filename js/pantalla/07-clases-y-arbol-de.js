@@ -7,7 +7,7 @@
     if (sel) {
       const { n, i, rama } = sel, r = rango(n.id, A), abierto = nodoAbierto(rama, i, A);
       const req = i > 0 && !abierto ? `<p class="req">Requiere ${3 * i} puntos en ${rama.nombre} y aprender ${rama.nodos[i - 1].nombre}</p>` : '';
-      ficha = `<h2>${n.icono} ${n.nombre}</h2>
+      ficha = `<h2>${iconoDe(n)} ${n.nombre}</h2>
         <p>Rango <b>${r}/${n.max}</b>${r > rango(n.id) ? ` <span class="pend">(+${r - rango(n.id)} sin guardar)</span>` : ''}</p>
         ${r ? `<p>Actual: ${n.d(r)}</p>` : ''}
         ${r < n.max ? `<p>${r ? 'Siguiente' : 'Efecto'}: ${n.d(r + 1)}</p>` : '<p>Rango máximo</p>'}${req}`;
@@ -17,14 +17,14 @@
         <button id="reiniciarArbol" ${puntosGastados() || pend ? '' : 'disabled'}>Reiniciar ● ${costeReinicio()}</button></div>
         ${pend ? `<div class="arbol-guardar"><span>✏️ ${pend} punto${pend > 1 ? 's' : ''} sin guardar</span>
           <button id="descartarArbol">Descartar</button><button id="guardarArbol">💾 Guardar</button></div>` : ''}` : ''}
-      <div class="ramas">${ramas.map(rama => `<div class="rama"><h3>${rama.icono} ${rama.nombre}<small>${puntosRama(rama, A)} pts</small></h3>
+      <div class="ramas">${ramas.map(rama => `<div class="rama"><h3>${iconoDe(rama)} ${rama.nombre}<small>${puntosRama(rama, A)} pts</small></h3>
         ${rama.nodos.map((n, i) => {
           const r = rango(n.id, A), abierto = nodoAbierto(rama, i, A), nuevo = r > rango(n.id);
           const cls = r >= n.max ? 'aprendido max' : r ? 'aprendido' : abierto && puntosLibres(A) > 0 ? 'disponible' : abierto ? '' : 'bloqueado';
           const elegido = n.id === arbolSel && propia;
           return `<div class="nodo-wrap${r ? ' aprendido' : ''}">
             ${elegido ? `<button class="nodo-pm menos" data-pm="-1" ${puedeQuitar(rama, i) ? '' : 'disabled'} aria-label="Quitar punto">−</button>` : ''}
-            <button class="nodo ${cls}${nuevo ? ' pendiente' : ''}${n.id === arbolSel ? ' sel' : ''}" data-nodo="${n.id}" aria-label="${n.nombre}">${n.icono}<i>${r}/${n.max}</i></button>
+            <button class="nodo ${cls}${nuevo ? ' pendiente' : ''}${n.id === arbolSel ? ' sel' : ''}" data-nodo="${n.id}" aria-label="${n.nombre}">${iconoDe(n, 'ic-nodo')}<i>${r}/${n.max}</i></button>
             ${elegido ? `<button class="nodo-pm mas" data-pm="1" ${abierto && puntosLibres(A) > 0 && r < n.max ? '' : 'disabled'} aria-label="Añadir punto">+</button>` : ''}</div>`;
         }).join('')}</div>`).join('')}</div>
       <div class="caja ficha-nodo">${ficha}</div>`;
