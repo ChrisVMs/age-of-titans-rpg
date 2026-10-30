@@ -6,7 +6,7 @@ const PRUEBAS = {
     jugador.clase = 'asesino'; jugador.arbol = {};
     const sin = calcularHabilidades().habs.map(h => h.id).join();
     jugador.arbol = { danza_r: 1, paso_r: 1 }; const con = calcularHabilidades().habs;
-    [sin === 'punalada,paso,danza', con.find(h => h.id === 'danza').turnos === 5, con.find(h => h.id === 'paso').turnos === 3, ARBOL.asesino.every(r => r.nodos.length === 5)]`,
+    [sin === 'punalada,paso,danza', con.find(h => h.id === 'danza').turnos === 5, con.find(h => h.id === 'paso').turnos === 3, ARBOL.asesino.every(r => r.nodos.length === 5), con.find(h => h.id === 'danza').buff === 'danza']`,
   'Barra de actividad: el cofre 1 pide 2 misiones y no se cobra dos veces': `
     const M = revisarMisiones(); M.diaria.enemigos = 30;
     reclamarMision('diaria', 'd_enem'); const antes = reclamarMision('diaria', 'cofre0');

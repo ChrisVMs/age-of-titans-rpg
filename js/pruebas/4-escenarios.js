@@ -17,6 +17,19 @@
       const a = una(7), b = una(7);
       return a === b || `distintas: ${a} / ${b}`;
     }],
+    ['Danza de cuchillas: buff sin golpear, +50 % de daño 3 ataques', () => {
+      const golpes = buff => {   // daño de 4 ataques normales con la misma semilla, con o sin el buff antes
+        sembrar(3); jugador = Object.assign(jugadorPrueba(30), { clase: 'asesino' }); prepararBatalla(batallaPrueba());
+        const e = enemigoDuelo(), d = [];
+        if (buff) { const v = e.vida; resolverRonda(HABILIDADES.find(h => h.id === 'danza')); if (e.vida !== v) return null; sembrar(3); }
+        for (let i = 0; i < 4; i++) { const v = e.vida; resolverRonda(null); d.push(v - e.vida); }
+        return d;
+      };
+      const sin = golpes(false), con = golpes(true);
+      if (!con) return 'Danza golpeó al enemigo';
+      const r = con.map((x, i) => x / sin[i]);
+      return r.slice(0, 3).every(x => x > 1.4 && x < 1.6) && Math.abs(r[3] - 1) < .02 || `proporción por golpe: ${r.map(x => x.toFixed(2))}`;
+    }],
     ['El veneno se acumula hasta 5 pilas', () => {
       prepararBatalla(batallaPrueba());
       for (let i = 0; i < 7; i++) aplicarEstado(enemigoDuelo(), 'veneno', 3, 10);

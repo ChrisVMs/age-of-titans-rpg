@@ -8,7 +8,10 @@
     sangrado:     { icono: '🩸', nombre: 'Sangrado' },
     congelacion:  { icono: '❄️', nombre: 'Congelación', control: true },
     aturdimiento: { icono: '💫', nombre: 'Aturdimiento', control: true },
+    danza:        { icono: '✖️', nombre: 'Danza de cuchillas', mejora: true },   // buff del Asesino: más daño (BUFF_DANZA)
   };
+  // Buffs propios (habilidades con 'buff'): no hacen daño ni hacen perder el turno; duran sus turnos de ataque.
+  const BUFF_DANZA = { turnos: 3, dano: .5 };   // Danza de cuchillas: +50 % de daño en los 3 ataques siguientes
   // Daño de los estados que ponen los monstruos: FIJO, un % (TOPE_PCT_ESTADO como mucho) de la vida que se espera que tenga
   // el jugador en ese contenido (vidaEsperada, medida con el simulador). Así, al subir de poder, duelen menos. Sin nivel de
   // contenido (jefes mundiales, rivales de arena y Ecos) es un % de tu vida máxima, con el mismo tope.

@@ -94,7 +94,7 @@
         { id: 'punto_debil', nombre: 'Punto débil',       icono: '🎯', max: 5, ef: { critico: 2 }, d: r => `${2 * r} % de prob. de crítico` },
         { id: 'punalada_m',  nombre: 'Puñalada profunda', icono: '🩸', max: 3, poder: 1.5, habMult: ['punalada', .2], d: r => `Puñalada hace +${20 * r} % de daño` },
         { id: 'ejecutor',    nombre: 'Ejecutor',          icono: '💀', max: 3, ef: { danoCritico: 8 }, d: r => `+${8 * r} % de daño crítico` },
-        { id: 'danza_r',     nombre: 'Danza incesante',  icono: '✖️', max: 1, poder: 4, habRecarga: ['danza', 1], d: () => 'Danza de cuchillas se recarga 1 turno antes' },
+        { id: 'danza_r',     nombre: 'Danza incesante',  icono: '✖️', max: 1, poder: 4, habRecarga: ['danza', 1], d: () => 'Danza de cuchillas (+50 % de daño 3 turnos) se recarga 1 turno antes' },
       ] },
       { id: 'sombras', nombre: 'Sombras', icono: '🌑', nodos: [
         { id: 'esquivo',     nombre: 'Esquivo',           icono: '💨', max: 5, ef: { esquiva: 2 }, d: r => `${2 * r} % de prob. de esquivar` },

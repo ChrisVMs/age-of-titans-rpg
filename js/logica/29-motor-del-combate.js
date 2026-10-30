@@ -82,6 +82,13 @@
     else u.estados[id] = { turnos, dano, pilas: 1 };
     verFx(u, 'dano', `${def.icono} ${def.nombre}`, 250, -30); verEstados(u);
   }
+  // Habilidad de buff: se la pone a sí mismo, sin golpear (+1 turno: el tick de su próximo turno no lo gasta antes de atacar)
+  function usarBuff(u, hab) {
+    emitir('animHeroe', u, u, hab);
+    u.estados[hab.buff] = { turnos: BUFF_DANZA.turnos + 1, dano: 0, pilas: 1 };
+    verFx(u, 'num-cura', `${hab.icono} +${Math.round(BUFF_DANZA.dano * 100)} % daño`, 0, -30); verEstados(u);
+    emitir('espera', 250); emitir('volver', u);
+  }
   function regenerar(u) {   // modificador Regeneración
     if (u.e && u.e.regen && u.vida > 0 && u.vida < u.vidaMax) curar(u, Math.min(u.vidaMax - u.vida, Math.round(u.vidaMax * u.e.regen)), '💚 ');
   }
@@ -155,6 +162,7 @@
       emitir('carga');
     } else hab = habAuto(u);
     if (pierde || !vivos(rivales).length) return;
+    if (hab && hab.buff) { usarBuff(u, hab); return; }
     let t;
     if (u.yo && rivales === batalla.grupo.enemigos) { t = elegirObjetivo(); if (!t.duelo) emitir('marcar', t); }
     else t = hab ? objetivoAlAzar(rivales) : objetivoPorPosicion(rivales);
@@ -166,6 +174,7 @@
     // daño: bruto → × habilidad, jefes y remate → × crítico → × defensa del objetivo → × su reducción → fases de jefe
     let dano = danoGuerrero(u.st), critico = false;
     let m = multGolpe(u.ef, hab, esJefe(t.e), t.vida < t.vidaMax / 2);
+    if (u.estados.danza) m *= 1 + BUFF_DANZA.dano;
     if (rnd() < u.ef('critico')) { critico = true; m *= DANO_CRITICO_BASE + u.ef('danoCritico'); }
     const def = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };   // misma defensa para todos
     m *= factorDefensa({ armadura: armaduraEfectiva(def.armadura, u.ef('penetracion'), hab && hab.perfora), defensa: def.defensa }) * (1 - t.ef('reduccion'));
