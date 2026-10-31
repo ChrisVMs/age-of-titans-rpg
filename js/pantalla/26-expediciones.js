@@ -33,14 +33,14 @@
     } else {
       const E = jugador.expedicion, propias = MASCOTAS.filter(m => nivelMascota(m) > 0 && m.id !== jugador.mascota);
       if (E) { const m = MASCOTAS.find(x => x.id === E.mascota), falta = Math.max(0, E.fin - Date.now());
-        cuerpo = `<div class="torre-card"><h3>${m.cara} ${m.nombre} está de expedición (${E.horas} h)</h3>
+        cuerpo = `<div class="torre-card"><h3><img class="ic-txt" src="img/iconos/masc_${m.id}.png" alt="">${m.nombre} está de expedición (${E.horas} h)</h3>
           <small>${falta ? `Vuelve en ${Math.floor(falta / 3600000)} h ${Math.ceil(falta % 3600000 / 60000)} min` : '¡Ha vuelto!'}</small>
           <small>Trae: ${htmlPremio(premioExpedicion(m, E.horas))}</small>
           <button id="recogerExp" ${falta ? 'disabled' : ''}>Recoger</button></div>`;
       } else if (!propias.length) cuerpo = '<small class="nota">Necesitas una mascota que no lleves puesta. Cómprala en la sección Mascota.</small>';
       else { expMasc = propias.some(m => m.id === expMasc) ? expMasc : propias[0].id; const m = MASCOTAS.find(x => x.id === expMasc);
         cuerpo = `<small class="nota">Manda una mascota que no lleves puesta; al volver trae oro y materiales. Mejores mascotas traen más.</small>
-          <div class="tabs">${propias.map(x => `<button data-expm="${x.id}" class="${x.id === expMasc ? 'on' : ''}">${x.cara} ${x.nombre}</button>`).join('')}</div>
+          <div class="tabs">${propias.map(x => `<button data-expm="${x.id}" class="${x.id === expMasc ? 'on' : ''}"><img class="ic-txt" src="img/iconos/masc_${x.id}.png" alt="">${x.nombre}</button>`).join('')}</div>
           <div class="tabs">${HORAS_EXPEDICION.map(h => `<button data-exph="${h}" class="${h === expHoras ? 'on' : ''}">${h} h</button>`).join('')}</div>
           <small>Trae: ${htmlPremio(premioExpedicion(m, expHoras))}</small><button id="mandarExp">Mandar de expedición</button>`; }
     }
