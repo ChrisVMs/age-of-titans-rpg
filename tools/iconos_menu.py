@@ -46,7 +46,8 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
           ('iconos_arbol_mago.jpg', 5, 4, ['rama_fuego', 'rama_hielo', 'rama_arcano', 'nodo_poder_arc', 'nodo_ignicion',
             'nodo_bola_m', 'nodo_combustion', 'nodo_meteoro', 'nodo_escarcha', 'nodo_piel_hielo',
             'nodo_lanza_m', 'nodo_hielo_et', 'nodo_ventisca', 'nodo_sabiduria', 'nodo_mente',
-            'nodo_drenaje', 'nodo_concentra', 'nodo_torrente', '-', '-'], 'gris_texto')]
+            'nodo_drenaje', 'nodo_concentra', 'nodo_torrente', '-', '-'], 'gris_texto'),
+          ('iconos_cofres.jpg', 4, 1, ['cofre_madera', 'cofre_hierro', 'cofre_dorado', 'cofre_mitico'], False)]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:
   tmp = tempfile.mkdtemp()
   # sin verde: celdas tal cual (el texto queda abajo) y un croma que no existe (magenta) para no apagar los verdes del dibujo
@@ -130,6 +131,12 @@ for hoja, cols, filas, nombres, conBaldosa in HOJAS:
                 for y, x in zona: a[y, x, 3] = 0
     if modo is not True:
         a[..., 3] = np.where(a[..., 3] < 40, 0, a[..., 3])   # restos casi transparentes del borde de la celda
+        for _ in range(3 if conBaldosa is False else 0):   # separadores de la hoja: líneas casi llenas en el borde del dibujo (se mira tras recortarlo)
+            bb = Image.fromarray(a.astype('uint8')).getbbox(); a = a[bb[1]:bb[3], bb[0]:bb[2]]; op = a[..., 3] > 40; H, W = op.shape
+            for j in list(range(8)) + list(range(W - 8, W)):
+                if op[:, j].mean() > .7: a[:, j, 3] = 0
+            for i in list(range(8)) + list(range(H - 8, H)):
+                if op[i].mean() > .7: a[i, :, 3] = 0
         im = Image.fromarray(a.astype('uint8')); im.crop(im.getbbox()).save(f'img/iconos/{nombre}.png'); print(nombre, im.getbbox()); continue
     r, g, b = a[..., 0], a[..., 1], a[..., 2]
     # baldosa: tras split_sheet queda oscura y algo verdosa (~12,25,18); el contorno negro del dibujo no es verdoso.

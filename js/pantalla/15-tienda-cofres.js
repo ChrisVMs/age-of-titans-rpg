@@ -21,7 +21,7 @@
     $('cofres').hidden = tiendaTab !== 'cofres'; $('tiendaSkins').hidden = tiendaTab !== 'skins';
     pintarTiendaSkins();
     $('cofres').innerHTML = COFRES.map(c => `
-      <div class="cofre"><h3>${c.nombre}</h3><div class="img" style="filter:${c.filtro || 'none'}"></div>
+      <div class="cofre"><h3>${c.nombre}</h3><div class="img" style="background-image:url(img/iconos/cofre_${c.id}.png)"></div>
         <div class="probs">${Object.entries(c.probs).filter(([, p]) => p).map(([r, p]) =>
           `<div class="r-${r}"><span>${RAREZAS[r].nombre}</span><span>${p}%</span></div>`).join('')}</div>
         <div class="fila-cofre">
