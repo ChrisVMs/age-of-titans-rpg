@@ -47,7 +47,9 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
             'nodo_bola_m', 'nodo_combustion', 'nodo_meteoro', 'nodo_escarcha', 'nodo_piel_hielo',
             'nodo_lanza_m', 'nodo_hielo_et', 'nodo_ventisca', 'nodo_sabiduria', 'nodo_mente',
             'nodo_drenaje', 'nodo_concentra', 'nodo_torrente', '-', '-'], 'gris_texto'),
-          ('iconos_cofres.jpg', 4, 1, ['cofre_madera', 'cofre_hierro', 'cofre_dorado', 'cofre_mitico'], False)]
+          ('iconos_cofres.jpg', 4, 1, ['cofre_madera', 'cofre_hierro', 'cofre_dorado', 'cofre_mitico'], False),
+          ('iconos_mascotas.jpg', 5, 3, [f'masc_{i}' for i in ['rata', 'sapo', 'buho', 'lobo', 'tortuga', 'murcielago', 'fenix', 'pantera',
+            'golem', 'dragon', 'grifo', 'unicornio', 'hidra', 'leviatan', 'can']], False)]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:
   tmp = tempfile.mkdtemp()
   # sin verde: celdas tal cual (el texto queda abajo) y un croma que no existe (magenta) para no apagar los verdes del dibujo

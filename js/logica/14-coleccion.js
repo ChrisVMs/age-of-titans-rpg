@@ -4,7 +4,7 @@
     { id: 'bestiario', img: 'jefe', nombre: 'Bestiario', desc: 'Enemigos derrotados', porEntrada: { ataque: .3 }, completa: { jefes: 3 },
       entradas: () => enemigosColeccion().map(n => ({ nombre: n, icono: '💀', img: 'jefe', ok: !!(jugador.bestiario || {})[n], extra: (jugador.bestiario || {})[n] ? `×${jugador.bestiario[n]}` : '' })) },
     { id: 'mascotas', img: 'mascota', nombre: 'Mascotas', desc: 'Mascotas compradas', porEntrada: { vida: 1 }, completa: { resistencia: 3 },
-      entradas: () => MASCOTAS.map(m => ({ nombre: m.nombre, icono: m.cara, ok: nivelMascota(m) > 0 })) },
+      entradas: () => MASCOTAS.map(m => ({ nombre: m.nombre, icono: m.cara, img: 'masc_' + m.id, ok: nivelMascota(m) > 0 })) },
     { id: 'skins', img: 'heroe', nombre: 'Skins', desc: 'Skins compradas', porEntrada: { defensa: .5 }, completa: { critico: 2 },
       entradas: () => SKINS.map(k => ({ nombre: k.nombre, icono: k.icono, ok: estrellasSkin(k.id) > 0 })) },
     { id: 'reliquias', img: 'rel_corona', nombre: 'Reliquias', desc: 'Reliquias de jefes mundiales', porEntrada: { armadura: .5 }, completa: { penetracion: 5 },

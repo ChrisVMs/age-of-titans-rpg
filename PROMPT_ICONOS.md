@@ -117,7 +117,7 @@ Row 2: 6 solar gold: shining golden helmet with a sun crest · 7 amaranth crysta
 ```
 Destino: `skin_<id>` (ids en `js/logica/08-skins.js`: egida_tormentosa, obsidiana_oscura, guardian_espectral, gendarme_mecanico, druida_verdial, aurico_solar, cristalino_amaranto, infernal, caballero_muerte, necro_guardian).
 
-### Mascotas (1280×768, 5×3) + bloque común — pausado por el usuario
+### Mascotas — `iconos_mascotas.jpg` (1280×768, 5×3) — GENERADA: `masc_<id>` (por ahora solo en la Colección)
 ```
 15 cute companion pet portraits, head and shoulders, front three-quarter view: rat · frog · owl · wolf · turtle / bat · phoenix · panther · stone golem · dragon / lion · unicorn · serpent · whale · dog
 ```
