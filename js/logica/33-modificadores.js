@@ -9,6 +9,7 @@
     { id: 'gelido',   icono: '❄️', nombre: 'Gélido',       desc: 'sus golpes congelan',          ap: e => { e.aplica = [...(e.aplica || []), { estado: 'congelacion', prob: .15, turnos: 1 }]; } },
     { id: 'venenoso', icono: '☠️', nombre: 'Venenoso',     desc: 'sus golpes envenenan',         ap: e => { e.aplica = [...(e.aplica || []), { estado: 'veneno', prob: .35, turnos: 3, pct: .025 }]; } },
   ];
+  for (const m of MODIFICADORES) m.img = 'mod_' + m.id;   // icono HD: img/iconos/mod_<id>.png
   function elegirMods(rnd, n, pool) { const p = [...pool], r = []; while (r.length < n && p.length) r.push(p.splice(Math.floor(rnd() * p.length), 1)[0]); return r; }
   // jefes mundiales: 2 modificadores por semana (la vida máxima no cambia: se comparte entre intentos)
   const modsSemana = () => elegirMods(azarSemilla('jefes' + semana()), 2, MODIFICADORES.filter(md => !md.soloTorre));

@@ -109,7 +109,7 @@ Four treasure chests for the shop of a dark fantasy RPG, matching an existing se
 ```
 Destino: `cofre_madera`, `cofre_hierro`, `cofre_dorado`, `cofre_mitico` (imagen de cada cofre en la Tienda; hoy son SVG).
 
-### Lo que falta (skins, modificadores, bendiciones, Ecos) — `iconos_resto.jpg` (1536×1280, 6×5) + bloque común
+### Skins, modificadores, bendiciones y Ecos — `iconos_resto.jpg` — GENERADA (salió irregular: filas 1-2 de 5 columnas y texto en celdas; se procesa aparte al final de `iconos_menu.py`)
 Sustituye al de skins de abajo. Nombres: `skin_<id>`, `mod_<id>` (33-modificadores), `bend_<id>` (47-grieta), `eco_<id>` (50-ecos).
 ```
 28 icons for a dark fantasy RPG. Absolutely no text, no letters, no labels.

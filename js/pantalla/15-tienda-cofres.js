@@ -2,7 +2,7 @@
   function pintarTiendaSkins() {
     jugador.skinsPropias = jugador.skinsPropias || {};
     $('tiendaSkins').innerHTML = SKINS.map(k => { const n = estrellasSkin(k.id);
-      return `<div class="cofre" style="border-color:${k.color}"><h3 style="color:${k.color}">${k.icono} ${k.nombre}</h3>
+      return `<div class="cofre" style="border-color:${k.color}"><h3 style="color:${k.color}"><img class="ic-txt" src="img/iconos/${k.ic}.png" alt="">${k.nombre}</h3>
         <img src="${k.img}" alt="" style="height:96px;image-rendering:pixelated">
         <small>+${k.base[1]}% ${ATRIBUTOS[k.base[0]]} por ★ · ${k.menos ? '−' : '+'}${k.valor}% ${k.txt}</small>
         ${n ? `<button disabled>Comprada ${textoEstrellas(n)}</button>` : `<button data-comprar-skin="${k.id}" ${jugador.oro < PRECIO_SKIN ? 'disabled' : ''}>Comprar ● ${PRECIO_SKIN}</button>`}</div>`; }).join('');

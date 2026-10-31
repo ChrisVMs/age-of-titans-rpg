@@ -15,7 +15,7 @@
     { id: 'infernal',            nombre: 'Infernal',              icono: '🔥', base: ['ataque', 1.5], esp: 'remate',    valor: 7.5, txt: 'daño a enemigos con <50% de vida', color: '#ff7a1a' },
     { id: 'caballero_muerte',    nombre: 'Caballero de la muerte', icono: '💀', base: ['ataque', 1],   esp: 'robo',      valor: 5,   txt: 'robo de vida',        color: '#b06cff' },
     { id: 'necro_guardian',      nombre: 'Necro-guardián',        icono: '☠️', base: ['vida', 2],     esp: 'resistencia', valor: 10, txt: 'resistencia a efectos negativos', color: '#e8dcae' },
-  ].map(k => ({ ...k, anim: true, img: `img/skins/${k.id}.png?v=${VERSION_IMG}`, tira: `img/skins/anim/${k.id}.png?v=${VERSION_IMG}` }));
+  ].map(k => ({ ...k, ic: 'skin_' + k.id, anim: true, img: `img/skins/${k.id}.png?v=${VERSION_IMG}`, tira: `img/skins/anim/${k.id}.png?v=${VERSION_IMG}` }));
   const PRECIO_SKIN = 5000, COSTE_ESTRELLA = n => 3000 * n;   // compra (★1) y mejora ★n -> ★n+1
   const estrellasSkin = id => (jugador.skinsPropias || {})[id] || 0;
   const skinActual = () => { const k = SKINS.find(x => x.id === jugador.skin); return k && estrellasSkin(k.id) ? k : null; };

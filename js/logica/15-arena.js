@@ -2,7 +2,7 @@
   // Rivales controlados por la IA, creados como copias de un guerrero con un poder parecido al tuyo.
   // 5 entradas al día; ganar da puntos de arena (más contra rivales fuertes) y perder los resta.
   const ARENA_ENTRADAS = 5, COSTE_RIVALES = 200;
-  const LIGAS = [[0, 'Bronce', '🥉'], [1100, 'Plata', '🥈'], [1300, 'Oro', '🥇'], [1600, 'Diamante', '💎'], [2000, 'Leyenda', '👑']];
+  const LIGAS = [[0, 'Bronce', '🥉', 'bronce_3'], [1100, 'Plata', '🥈', 'plata_2'], [1300, 'Oro', '🥇', 'oro_1'], [1600, 'Diamante', '💎', 'cristales'], [2000, 'Leyenda', '👑', 'reyes']];   // [3]: icono HD
   const NOMBRES_RIVAL = ['Aldric', 'Brunhilda', 'Kael', 'Morgana', 'Thorin', 'Isolde', 'Ragnar', 'Seraphine', 'Darius', 'Lyra', 'Gorak', 'Elowen'];
   const FILTROS_RIVAL = ['hue-rotate(90deg) saturate(2)', 'hue-rotate(200deg) saturate(2)', 'sepia(1) saturate(4) hue-rotate(10deg)', 'grayscale(1) brightness(1.4)'];
   const diasFinMes = () => { const d = ahoraJuego(); return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate() - d.getDate() + 1; };
@@ -42,5 +42,5 @@
     a.puntos = Math.max(0, a.puntos + d); if (gano) { a.victorias = (a.victorias || 0) + 1; sumarMaestria(3); contarMision('arenaVict'); }
     generarRivales();
     const l = LIGAS[ligaDe(a.puntos)];
-    return `<br><b>🏆 Arena: ${d > 0 ? '+' : ''}${d} pts (${a.puntos})</b>${ligaDe(a.puntos) > antes ? `<br>¡Ascenso a liga ${l[2]} ${l[1]}!` : ''}`;
+    return `<br><b><img class="ic-txt" src="img/iconos/arena.png" alt="">Arena: ${d > 0 ? '+' : ''}${d} pts (${a.puntos})</b>${ligaDe(a.puntos) > antes ? `<br>¡Ascenso a liga <img class="ic-txt" src="img/iconos/${l[3]}.png" alt="">${l[1]}!` : ''}`;
   }

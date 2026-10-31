@@ -6,7 +6,7 @@
     { id: 'mascotas', img: 'mascota', nombre: 'Mascotas', desc: 'Mascotas compradas', porEntrada: { vida: 1 }, completa: { resistencia: 3 },
       entradas: () => MASCOTAS.map(m => ({ nombre: m.nombre, icono: m.cara, img: 'masc_' + m.id, ok: nivelMascota(m) > 0 })) },
     { id: 'skins', img: 'heroe', nombre: 'Skins', desc: 'Skins compradas', porEntrada: { defensa: .5 }, completa: { critico: 2 },
-      entradas: () => SKINS.map(k => ({ nombre: k.nombre, icono: k.icono, ok: estrellasSkin(k.id) > 0 })) },
+      entradas: () => SKINS.map(k => ({ nombre: k.nombre, icono: k.icono, img: 'skin_' + k.id, ok: estrellasSkin(k.id) > 0 })) },
     { id: 'reliquias', img: 'rel_corona', nombre: 'Reliquias', desc: 'Reliquias de jefes mundiales', porEntrada: { armadura: .5 }, completa: { penetracion: 5 },
       entradas: () => RELIQUIAS.map(r => ({ nombre: r.nombre, icono: r.icono, img: r.img, ok: nivelReliquia(r.id) > 0 })) },
     // Códice (2026-10-29): colecciones largas que hacen volver a contenido viejo

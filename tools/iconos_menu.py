@@ -164,3 +164,34 @@ for hoja, cols, filas, nombres, conBaldosa in HOJAS:
     im = Image.fromarray(a.astype('uint8'))
     im.crop(im.getbbox()).save(f'img/iconos/{nombre}.png')
     print(nombre, im.getbbox())
+
+# ---- iconos_resto.jpg: rejilla irregular (filas 1-2 de 5 columnas, filas 3-5 de 6) y texto en algunas celdas ----
+# Se corta celda a celda desde la hoja original (split_sheet apaga los verdes del dibujo), se quita la franja de texto
+# de las celdas que lo tienen y el fondo verde se borra rellenando desde el borde (los verdes del dibujo, encerrados
+# por su contorno negro, se conservan).
+RESTO = 'tools/hojas/iconos_resto.jpg'
+SKINS = ['egida_tormentosa', 'obsidiana_oscura', 'guardian_espectral', 'gendarme_mecanico', 'druida_verdial',
+         'aurico_solar', 'cristalino_amaranto', 'infernal', 'caballero_muerte', 'necro_guardian']
+T = (.18, .86)  # celda con "BLESSING" arriba y el nombre abajo
+B = (0, .84)   # celda con el nombre abajo
+FILAS_RESTO = [((0, 210), 5, [(f'skin_{k}', None) for k in SKINS[:5]]),
+               ((210, 421), 5, [(f'skin_{k}', None) for k in SKINS[5:]]),
+               ((421, 597), 6, [(n, None) for n in ['mod_frenesi', 'mod_coraza', 'mod_robusto', 'mod_espinas', 'mod_regen', 'mod_igneo']]),
+               ((597, 771), 6, [('mod_gelido', None), ('mod_venenoso', None), ('bend_furia', T), ('bend_muralla', T), ('bend_vigor', T), ('bend_coraza', T)]),
+               ((771, 944), 6, [('bend_respiro', None), ('bend_segunda', B), ('eco_kael', B), ('eco_brunna', B), ('eco_vex', B), ('eco_aldric', B)])]
+OSCURAS = {'mod_coraza', 'bend_furia', 'bend_muralla', 'bend_vigor', 'bend_coraza'}
+hoja_resto = Image.open(RESTO).convert('RGBA')
+for (y0, y1), cols, celdas in FILAS_RESTO:
+    cw = hoja_resto.width / cols
+    for k, (nombre, r) in enumerate(celdas):
+        a = np.array(hoja_resto.crop((round(k * cw) + 3, y0 + 3, round((k + 1) * cw) - 3, y1 - 3))).astype(int)
+        if r: a = a[int(a.shape[0] * r[0]):int(a.shape[0] * r[1])]
+        H, W = a.shape[:2]; dif = a[..., 1] - np.maximum(a[..., 0], a[..., 2]); verde = (dif > 40) & (a[..., 1] > 120)
+        if nombre in OSCURAS: verde |= (dif > 70) & (a[..., 1] > 95)   # baldosa verde oscura (~6,122,7)
+        fuera = np.zeros((H, W), bool); pila = [(y, x) for y in (0, H - 1) for x in range(W)] + [(y, x) for x in (0, W - 1) for y in range(H)]
+        while pila:
+            y, x = pila.pop()
+            if 0 <= y < H and 0 <= x < W and verde[y, x] and not fuera[y, x]:
+                fuera[y, x] = True; pila += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+        a[..., 3] = np.where(fuera, 0, 255)
+        im = Image.fromarray(a.astype('uint8')); im.crop(im.getbbox()).save(f'img/iconos/{nombre}.png')

@@ -1,16 +1,16 @@
   // ---------------- La Grieta (pantalla) ----------------
   function pintarGrieta() {
     const G = revisarGrieta(), n = G.piso + 1, vida = Math.round(G.vida * 100);
-    const bends = G.bend.map(id => BENDICIONES.find(b => b.id === id)).map(b => `<span title="${b.desc}">${b.icono} ${b.nombre}</span>`).join('');
+    const bends = G.bend.map(id => BENDICIONES.find(b => b.id === id)).map(b => `<span title="${b.desc}">${iconoDe(b)} ${b.nombre}</span>`).join('');
     let cuerpo;
     if (G.ofertas) cuerpo = `<h3>Elige una bendición</h3>` + G.ofertas.map(id => BENDICIONES.find(b => b.id === id)).map(b =>
-      `<button class="bendicion-grieta" data-bend="${b.id}"><b>${b.icono} ${b.nombre}</b><small>${b.desc}</small></button>`).join('');
+      `<button class="bendicion-grieta" data-bend="${b.id}"><b>${iconoDe(b)} ${b.nombre}</b><small>${b.desc}</small></button>`).join('');
     else if (G.piso >= GRIETA_PISOS && !G.activa) cuerpo = `<h3><img class="ic-txt" src="img/iconos/grieta.png" alt="">¡Grieta completada!</h3><small>Vuelve el lunes.</small>`;
     else if (!G.activa && !G.intentos) cuerpo = `<h3>Sin intentos</h3><small>Vuelve el lunes.</small>`;
     else {
       const p = pisoGrieta(n, G);
       cuerpo = `<h3>Piso ${n}${p.jefe ? ' · JEFE' : ''}</h3><small>${p.enemigos.map(e => e.nombre).join(' · ')}</small>
-        <div class="mods">${p.mods.map(md => { const d = (md.torre || md).desc; return `<span title="${d}">${md.icono} ${md.nombre}: ${d}</span>`; }).join('')}</div>
+        <div class="mods">${p.mods.map(md => { const d = (md.torre || md).desc; return `<span title="${d}">${iconoDe(md)} ${md.nombre}: ${d}</span>`; }).join('')}</div>
         <small>${n > G.mejor ? `Recompensa: ${htmlPremio(premioPisoGrieta(n, G.nEq))}${PREMIO_JEFE_GRIETA[n] ? ' · ' + htmlPremio(PREMIO_JEFE_GRIETA[n]) : ''}` : 'Ya cobrado esta semana'}</small>
         <button id="entrarGrieta">${G.activa ? `Bajar al piso ${n}` : `Empezar intento (${G.intentos}/${GRIETA_INTENTOS})`}</button>`;
     }

@@ -27,6 +27,7 @@
                 gana: ['Aún te falta, joven.', 'La experiencia pesa.'], pierde: ['Bien luchado. Me has superado.', 'El alumno crece...'] },
       titulo: ['Heredero de Aldric', { ataque: 3, vida: 3 }] },
   ];
+  for (const e of ECOS) e.img = 'eco_' + e.id;   // icono HD: img/iconos/eco_<id>.png
   const PREMIO_RETO = { oro: 1500, xp: 300 }, CRISTALES_RETO = 1, CRISTALES_VENGANZA = 2;
   const PUNTOS_ECO = { victoria: 150, venganza: 50, torre: 5, grieta: 15 };   // tus puntos semanales
   const PREMIO_RANKING_ECOS = [{ cristales: 15, fichas: 100 }, { cristales: 10, fichas: 60 }, { cristales: 6, fichas: 30 }, { cristales: 3, fichas: 15 }, { cristales: 1, fichas: 5 }];

@@ -12,6 +12,7 @@
     { id: 'respiro',  icono: '💚', nombre: 'Respiro',     desc: 'recupera el 40 % de la vida', cura: .4 },
     { id: 'segunda',  icono: '🔥', nombre: 'Segundo aire', desc: 'recupera el 25 % y +6 % de ataque', cura: .25, st: { ataque: 6 } },
   ];
+  for (const b of BENDICIONES) b.img = 'bend_' + b.id;   // icono HD: img/iconos/bend_<id>.png
   // premio de cada piso (n) y de los pisos de jefe; nEq: dificultad de la semana (sale del nivel del jugador)
   const premioPisoGrieta = (n, nEq) => ({ oro: Math.round(120 * nEq * (1 + n / 10)), xp: Math.round(60 * nEq * (1 + n / 10)), piedra: 2 + Math.floor(n / 3) });
   const PREMIO_JEFE_GRIETA = { 5: { almas: 5, polvo: 5 }, 10: { almas: 10, cristales: 5 }, 15: { almas: 20, cristales: 10, esencia: 10 } };
