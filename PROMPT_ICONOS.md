@@ -109,6 +109,16 @@ Four treasure chests for the shop of a dark fantasy RPG, matching an existing se
 ```
 Destino: `cofre_madera`, `cofre_hierro`, `cofre_dorado`, `cofre_mitico` (imagen de cada cofre en la Tienda; hoy son SVG).
 
+### Lo que falta (skins, modificadores, bendiciones, Ecos) — `iconos_resto.jpg` (1536×1280, 6×5) + bloque común
+Sustituye al de skins de abajo. Nombres: `skin_<id>`, `mod_<id>` (33-modificadores), `bend_<id>` (47-grieta), `eco_<id>` (50-ecos).
+```
+28 icons for a dark fantasy RPG. Absolutely no text, no letters, no labels.
+Rows 1-2, ten armored knight helmet portraits, same helmet shape and size, front three-quarter view: blue steel helmet crackling with lightning · glossy black obsidian helmet with purple sheen · translucent pale-blue ghostly helmet with glowing eyes · brass helmet with gears and rivets · wooden helmet covered in leaves and vines · shining golden helmet with a sun crest · helmet made of pink-magenta crystals · black and red horned helmet with flames · dark iron helmet with a skull visor and blue glow · bone-white helmet with teal necrotic runes
+Row 3, enemy modifiers: an angry red face with steam (frenzy) · a thick iron shell plate (armored) · a bulging muscular arm (robust) · a spiky cactus (thorns) · an emerald heart with a plus sign (regeneration) · a flame
+Row 4: a snowflake with ice shards (frozen) · a skull dripping teal poison (venomous) · BLESSINGS: a sword with a golden aura (fury) · a stone wall with a shield (bulwark) · a big red heart with a golden glow (vigor) · a mechanical steel arm (armor)
+Row 5: a small emerald leaf with a breeze swirl (respite) · a flame rising from a heart (second wind) · ECHO RIVALS, hooded portraits: a swift rogue with twin daggers · a stout shieldmaiden with a round shield · a shadow assassin with a dark crescent · an old veteran knight with a crown
+```
+
 ### Skins (1280×512, 5×2) + bloque común
 ```
 Ten armored knight helmet portraits (head and shoulders, front three-quarter view), same helmet shape and size, each a different themed armor. Absolutely no text.
