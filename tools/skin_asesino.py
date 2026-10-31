@@ -7,7 +7,7 @@ del mismo tamaño, centrados y con los pies en la misma línea. Además deja <an
 Uso (desde la raíz):  python3 tools/skin_asesino.py espectro ataque tools/hojas/asesino_espectro_ataque.jpg 5 2 [ms]
 Desvanecimiento (el generador dibuja opaco lo que en el original es semitransparente): variable DESVANECER=3,4,5
 (cuadros, desde 0) y COLOR_SKIN=r,g,b (tinte del efecto). Lista por animación del Asesino:
-  paso: 3,4,5
+  paso: 3,4,5 · danza: sale de paso_00..04 (mismos cuadros 35-39), no necesita hoja propia
 """
 import glob, os, subprocess, sys, tempfile
 from collections import deque
