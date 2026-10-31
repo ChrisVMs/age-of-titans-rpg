@@ -5,7 +5,7 @@ const PRUEBAS = {
   'Skins por clase: el Asesino solo ve las suyas y cada clase guarda su skin equipada': `
     jugador.clase = 'asesino'; jugador.oro = 1e6; const k = SKINS.find(x => x.id === 'espectro');
     const solo = skinsClase().map(x => x.id).join(); comprarSkin(k); ponerSkin('espectro');
-    const conSkin = !!skinActual() && spriteClase().tira.includes('espectro');
+    const conSkin = !!skinActual() && skinActual().sprite.tira.includes('espectro');
     jugador.clase = 'guerrero'; const g = skinActual(); jugador.clase = 'asesino';
     [solo === 'espectro', conSkin, g === null, skinPuesta('asesino') === 'espectro']`,
   'Títulos: los bonos de todos los desbloqueados se suman; el elegido solo se muestra': `
