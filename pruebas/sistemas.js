@@ -2,6 +2,11 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Títulos: los bonos de todos los desbloqueados se suman; el elegido solo se muestra': `
+    jugador.titulos = {}; const p0 = poder();
+    const [a, b] = TITULOS.filter(t => Object.keys(t.bono).length).slice(0, 2); jugador.titulos[a.id] = jugador.titulos[b.id] = true;
+    const s = statsTitulos(), p1 = poder(); jugador.titulo = a.id; const p2 = poder();
+    [Object.entries(a.bono).every(([k, v]) => s[k] >= v), Object.entries(b.bono).every(([k, v]) => s[k] >= v), p1 > p0, p2 === p1]`,
   'Asesino: tres habilidades desde el inicio; Paso veloz y Danza incesante acortan sus recargas': `
     jugador.clase = 'asesino'; jugador.arbol = {};
     const sin = calcularHabilidades().habs.map(h => h.id).join();

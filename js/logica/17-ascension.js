@@ -18,8 +18,7 @@
     const k = skinActual();
     if (k) sumar({ [k.base[0]]: bonoSkinBase(k) });
     for (const fuente of [statsArbol(), statsRunas(), statsMaestria(), statsColeccion(), statsAscension(), statsAura(), statsRuinas()]) sumar(fuente);
-    const ti = tituloActual();
-    if (ti) sumar(ti.bono);
+    sumar(statsTitulos());
     for (const a in t) t[a] = Math.round(t[a] * (1 + pct[a] / 100));
     return t;
   }

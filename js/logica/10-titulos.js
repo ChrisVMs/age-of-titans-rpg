@@ -1,5 +1,5 @@
   // ---------------- Títulos ----------------
-  // Se desbloquean con logros y quedan para siempre. Solo el título equipado da su bono (en %).
+  // Se desbloquean con logros y quedan para siempre. Los bonos (en %) de todos los desbloqueados se suman; el equipado solo se muestra.
   const RAREZA_TITULO = { comun: '#cfcfcf', raro: '#5cf', epico: '#b48cff', legendario: '#ffb02e', mitico: '#ff4d6d' };
   const logro = k => (jugador.logros || {})[k] || 0;
   const jefeVencido = id => ((jugador.logros || {}).jefes || {})[id] ? 1 : 0;
@@ -26,6 +26,12 @@
     T('senor',          'Señor de la guerra',  'mitico',     'Gasta 40 puntos de habilidad (todos los del nivel 80)', () => [puntosGastados(), Math.floor(NIVEL_MAX / 2)], { ataque: 6, defensa: 6 }),
   ];
   const tituloActual = () => (jugador.titulos || {})[jugador.titulo] ? TITULOS.find(t => t.id === jugador.titulo) : null;
+  // bonos de títulos: se suman los de TODOS los desbloqueados; el equipado solo elige cuál se muestra junto al nombre
+  function statsTitulos() {
+    const t = {};
+    for (const ti of TITULOS) if ((jugador.titulos || {})[ti.id]) for (const [a, v] of Object.entries(ti.bono)) t[a] = (t[a] || 0) + v;
+    return t;
+  }
   const textoBono = b => Object.entries(b).map(([a, v]) => `+${v} % ${ATRIBUTOS[a].toLowerCase()}`).join(', ');
   const etiquetaTitulo = t => t ? `<span class="titulo-tag" style="--tc:${RAREZA_TITULO[t.rareza]}">«${t.nombre}»</span>` : '';
   function revisarTitulos(avisos = true) {   // desbloquea los títulos cuyos logros ya se cumplen
