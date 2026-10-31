@@ -30,13 +30,18 @@
       <div class="caja ficha-nodo">${ficha}</div>`;
     if (campListo) pintarCampamento();   // avisos rojos de puntos libres
   }
-  $('arbol').addEventListener('click', e => {
+  $('arbol').addEventListener('click', async e => {
     const b = e.target.closest('button'); if (!b || b.disabled) return;
     if (b.dataset.nodo) { arbolSel = b.dataset.nodo; pintarArbol(); return; }
     if (b.dataset.clase) { claseVista = b.dataset.clase; arbolSel = null; pintarArbol(); return; }
     if (b.id === 'ascender') { ascender(); return; }
     if (b.dataset.especial) {   // especialización de maestría: gratis la primera vez, luego cuesta oro
       const id = b.dataset.especial; if (especialidad() === id) return;
+      if (especialidad()) {   // cambiar una ya elegida: cuesta oro y se confirma (antes un toque cambiaba y cobraba al instante)
+        if (jugador.oro < COSTE_ESPECIAL) return avisar(`Cambiar de especialización cuesta ● ${COSTE_ESPECIAL}`);
+        if (!await confirmar(`¿Cambiar a ${ESPECIALIDADES[id].nombre} por ● ${COSTE_ESPECIAL}?`, 'Cambiar', 'Cancelar')) return;
+        jugador.oro -= COSTE_ESPECIAL;
+      }
       (jugador.especialidad ||= {})[jugador.clase] = id; guardar(); aplicarEquipo(); pintarHud(); pintarArbol(); avisar(`${ESPECIALIDADES[id].icono} ${ESPECIALIDADES[id].nombre}`); return;
     }
     if (b.id === 'cambiarClase') {   // cambio de clase: gratis fuera de batalla; cada clase conserva sus puntos y su maestría

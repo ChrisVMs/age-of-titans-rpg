@@ -21,7 +21,7 @@
     bastion:    { nombre: 'Bastión',    img: 'esp_bastion', icono: '🛡️', desc: 'supervivencia', ef: { reduccion: .05, curacion: .10 } },
     gladiador:  { nombre: 'Gladiador',  img: 'esp_gladiador', icono: '⚔️', desc: 'crítico y contraataque', ef: { critico: .04, contra: .06 } },
   };
-  const MAESTRIA_ESPECIAL = 10;   // la especialización se cambia gratis
+  const MAESTRIA_ESPECIAL = 10, COSTE_ESPECIAL = 3000;
   const especialidad = () => { const id = (jugador.especialidad || {})[jugador.clase]; return maestria().n >= MAESTRIA_ESPECIAL && ESPECIALIDADES[id] ? id : null; };
   const factorEspecial = () => maestria().n >= 50 ? 2 : maestria().n >= 30 ? 1.5 : 1;
   function efectoMaestria(esp) {
@@ -35,5 +35,5 @@
       <br><small>${m.n ? textoBonos(statsMaestria(), Math.floor(m.n / 10) ? { habilidad: Math.floor(m.n / 10) * 2 } : {}) : 'Sin bonos todavía'}</small>
       <div class="especialidades">${m.n < MAESTRIA_ESPECIAL ? `<small><img class="ic-txt" src="img/iconos/candado.png" alt="">Especialización en maestría Nv ${MAESTRIA_ESPECIAL}</small>`
         : Object.entries(ESPECIALIDADES).map(([id, x]) => { const on = especialidad() === id;
-            return `<button data-especial="${id}" class="${on ? 'on' : ''}">${iconoDe(x)} ${x.nombre}<small>${textoBonos({}, Object.fromEntries(Object.entries(x.ef).map(([a, v]) => [a, Math.round(v * factorEspecial() * 100)])))}</small></button>`; }).join('')}</div></div>`;
+            return `<button data-especial="${id}" class="${on ? 'on' : ''}">${iconoDe(x)} ${x.nombre}<small>${textoBonos({}, Object.fromEntries(Object.entries(x.ef).map(([a, v]) => [a, Math.round(v * factorEspecial() * 100)])))}</small>${!on && especialidad() ? `<small>● ${COSTE_ESPECIAL}</small>` : ''}</button>`; }).join('')}</div></div>`;
   }
