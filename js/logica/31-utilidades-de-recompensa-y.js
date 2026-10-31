@@ -1,7 +1,7 @@
   // ---------------- Utilidades de recompensa y calendario ----------------
   const ICONO_PREMIO = { oro: '●', xp: 'XP', piedra: '🔷', polvo: '✨', almas: '💠', estamina: '⚡', esencia: '🌟', cristales: '💎', fichas: '🎟️' };
   // en pantallas HTML: icono HD del recurso (textoPremio queda para avisos y diálogos, que son solo texto)
-  const IMG_PREMIO = { oro: 'oro', piedra: 'mat_piedra', polvo: 'mat_polvo', almas: 'mat_almas', esencia: 'mat_esencia', cristales: 'cristales', estamina: 'estamina' };
+  const IMG_PREMIO = { oro: 'oro', piedra: 'mat_piedra', polvo: 'mat_polvo', almas: 'mat_almas', esencia: 'mat_esencia', cristales: 'cristales', estamina: 'estamina', fichas: 'ficha' };
   const icPremio = k => IMG_PREMIO[k] ? `<img class="ic-txt" src="img/iconos/${IMG_PREMIO[k]}.png" alt="">` : ICONO_PREMIO[k] + ' ';
   const htmlPremio = pr => Object.entries(pr).filter(([, v]) => v).map(([k, v]) => `${icPremio(k)}${Math.round(v).toLocaleString('es')}`).join(' · ');
   const textoPremio = pr => Object.entries(pr).filter(([, v]) => v).map(([k, v]) => `${ICONO_PREMIO[k]} ${Math.round(v).toLocaleString('es')}`).join(' · ');
