@@ -21,7 +21,7 @@
   // El encantamiento cuenta su probabilidad; la runa nueva, la ganancia media de los tipos.
   function simMejorar() {
     const ponerMascota = () => simMejor(MASCOTAS.filter(m => nivelMascota(m) > 0).map(m => m.id), id => { jugador.mascota = id; });
-    const ponerSkin = () => simMejor([null, ...SKINS.filter(k => estrellasSkin(k.id) > 0).map(k => k.id)], id => { jugador.skin = id; });
+    const elegirSkin = () => simMejor([null, ...skinsDisponibles().map(k => k.id)], id => ponerSkin(id));
     const prueba = (cambiar, deshacer) => { const base = poder(); cambiar(); const g = poder() - base; deshacer(); return g; };
     const cands = [];   // { valor(): poder por oro (0 si no se puede), hacer(): true si compró }
     for (const uid of Object.values(jugador.equipado)) { const o = objeto(uid);
@@ -41,11 +41,11 @@
         valor: () => { if (!puedeDespertar(tipo, id) || !tieneCoste(costeDespertar(tipo, id))) return 0; const n = nivelDespertar(tipo, id), D = ((jugador.despertar ||= {})[tipo] ||= {});
           return prueba(() => { D[id] = n + 1; }, () => { D[id] = n; }) / costeDespertar(tipo, id).oro; },
         hacer: () => despertar(tipo, id) });
-    if (desbloqueado('skins')) for (const k of SKINS) cands.push({
-      valor: () => { const n = estrellasSkin(k.id), oro = n ? COSTE_ESTRELLA(n) : PRECIO_SKIN, puesta = jugador.skin;
+    if (desbloqueado('skins')) for (const k of skinsClase()) cands.push({
+      valor: () => { const n = estrellasSkin(k.id), oro = n ? COSTE_ESTRELLA(n) : PRECIO_SKIN, puesta = skinPuesta();
         if (n >= 5 || jugador.oro < oro) return 0;
-        return prueba(() => { (jugador.skinsPropias ||= {})[k.id] = n + 1; jugador.skin = k.id; }, () => { if (n) jugador.skinsPropias[k.id] = n; else delete jugador.skinsPropias[k.id]; jugador.skin = puesta; }) / oro; },
-      hacer: () => { const ok = estrellasSkin(k.id) ? mejorarSkin(k) : comprarSkin(k); if (ok) ponerSkin(); return ok; } });
+        return prueba(() => { (jugador.skinsPropias ||= {})[k.id] = n + 1; ponerSkin(k.id); }, () => { if (n) jugador.skinsPropias[k.id] = n; else delete jugador.skinsPropias[k.id]; ponerSkin(puesta); }) / oro; },
+      hacer: () => { const ok = estrellasSkin(k.id) ? mejorarSkin(k) : comprarSkin(k); if (ok) elegirSkin(); return ok; } });
     if (desbloqueado('pRunas')) {
       const puestas = (jugador.runasPuestas ||= Array(RANURAS_RUNA).fill(null));
       for (let i = 0; i < RANURAS_RUNA; i++) cands.push({   // la runa de la ranura i: subirla, o crear una si está vacía

@@ -2,6 +2,12 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Skins por clase: el Asesino solo ve las suyas y cada clase guarda su skin equipada': `
+    jugador.clase = 'asesino'; jugador.oro = 1e6; const k = SKINS.find(x => x.id === 'espectro');
+    const solo = skinsClase().map(x => x.id).join(); comprarSkin(k); ponerSkin('espectro');
+    const conSkin = !!skinActual() && spriteClase().tira.includes('espectro');
+    jugador.clase = 'guerrero'; const g = skinActual(); jugador.clase = 'asesino';
+    [solo === 'espectro', conSkin, g === null, skinPuesta('asesino') === 'espectro']`,
   'Títulos: los bonos de todos los desbloqueados se suman; el elegido solo se muestra': `
     jugador.titulos = {}; const p0 = poder();
     const [a, b] = TITULOS.filter(t => Object.keys(t.bono).length).slice(0, 2); jugador.titulos[a.id] = jugador.titulos[b.id] = true;

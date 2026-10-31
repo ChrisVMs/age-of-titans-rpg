@@ -10,9 +10,9 @@
                // reposo: [cuadro, ms] de ida y vuelta (sin saltar del último al primero); se detiene más en los extremos. 76-78 cambian de postura de golpe
                reposo: [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]] },
   };
-  const spriteClase = (clase = jugador.clase) => SPRITE_CLASE[clase];
+  const spriteClase = (clase = jugador.clase) => { const k = clase === jugador.clase && skinActual(); return (k && k.sprite) || SPRITE_CLASE[clase]; };
   // escala del cuadro i en la tira de la clase (las tiras de 14 poses no la necesitan) y cuadros de su reposo animado
-  const escalaCuadro = (i, clase) => { const s = spriteClase(clase); return s && s.escala ? s.escala(i) : 1; };
+  const escalaCuadro = (i, clase) => { const s = spriteClase(clase); return !s ? 1 : s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1; };
   const reposoClase = clase => { const s = spriteClase(clase); return s && s.reposo; };
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }
   // capas del guerrero en un contenedor (sin registrarlas: las vistas de aliados se pintan con su propio perfil)

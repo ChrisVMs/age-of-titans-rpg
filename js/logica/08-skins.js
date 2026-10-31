@@ -1,7 +1,7 @@
   // ---------------- Skins ----------------
   // Una skin solo cambia el aspecto del guerrero: tapa las capas del equipo (casco, armadura, espada, capa)
   // pero los stats siguen siendo los del equipo. Cada skin puede tener un bono propio en % (por definir).
-  const VERSION_IMG = 17;   // súbelo al regenerar imágenes de skins: obliga al navegador a no usar la copia vieja
+  const VERSION_IMG = 18;   // súbelo al regenerar imágenes de skins: obliga al navegador a no usar la copia vieja
   // Cada skin: bono base por estrella (atributo, % por ★) + efecto especial (siempre activo) + color de su brillo.
   // Se compra en la Tienda (empieza en ★1) y se mejora hasta ★5; a ★5 el guerrero brilla con su color.
   const SKINS = [
@@ -16,9 +16,23 @@
     { id: 'caballero_muerte',    nombre: 'Caballero de la muerte', icono: '💀', base: ['ataque', 1],   esp: 'robo',      valor: 5,   txt: 'robo de vida',        color: '#b06cff' },
     { id: 'necro_guardian',      nombre: 'Necro-guardián',        icono: '☠️', base: ['vida', 2],     esp: 'resistencia', valor: 10, txt: 'resistencia a efectos negativos', color: '#e8dcae' },
   ].map(k => ({ ...k, ic: 'skin_' + k.id, anim: true, img: `img/skins/${k.id}.png?v=${VERSION_IMG}`, tira: `img/skins/anim/${k.id}.png?v=${VERSION_IMG}` }));
+  // Skins de otras clases: sprite propio con la misma distribución de casillas que el de su clase (tools/tira_skin_asesino.py
+  // imprime celda y escala por casilla). Solo las ve y equipa esa clase.
+  SKINS.push(
+    { id: 'espectro', clase: 'asesino', nombre: 'Espectro', icono: '👻', base: ['defensa', 1], esp: 'esquiva', valor: 4, txt: 'prob. de esquivar', color: '#9fd8ff',
+      ic: 'skin_espectro', img: `img/asesino/skins/espectro/reposo_00.png?v=${VERSION_IMG}`,
+      sprite: { tira: `img/asesino/skins/espectro/tira.png?v=${VERSION_IMG}`, cuadros: 109, celda: [319, 335],
+                escalas: [0.722, 0.722, 0.722, 1, 1, 0.907, 0.907, 0.907, 0.914, 0.914, 0.914, 0.874, 0.874, 0.874, 0.874, 0.874, 0.874, 0.874, 0.874, 0.874, 0.791, 0.791, 0.791, 0.791, 0.791, 1, 1, 0.721, 0.791, 0.791, 1, 1, 1, 1, 1, 0.791, 0.791, 0.791, 0.791, 0.791, 1, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 0.741, 1, 0.511, 0.511, 1, 1, 1, 1, 0.511, 1, 0.511, 0.511, 1, 1, 1, 1, 0.722, 0.722, 0.722, 0.722, 0.722, 0.722, 0.722, 0.722, 0.722, 0.722, 1, 0.721, 1, 0.721, 0.721, 1, 0.721, 1, 1, 0.914, 0.914, 0.914, 0.914, 0.914, 1, 0.914, 0.914, 0.914, 0.721, 1, 0.907, 0.907, 0.907, 0.907, 0.907, 0.907, 0.907, 0.907, 0.907],
+                reposo: [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 0, 1, 2].map(c => [c, 200]) } },
+  );
+  for (const k of SKINS) k.clase ||= 'guerrero';
   const PRECIO_SKIN = 5000, COSTE_ESTRELLA = n => 3000 * n;   // compra (★1) y mejora ★n -> ★n+1
   const estrellasSkin = id => (jugador.skinsPropias || {})[id] || 0;
-  const skinActual = () => { const k = SKINS.find(x => x.id === jugador.skin); return k && estrellasSkin(k.id) ? k : null; };
+  // skin equipada de cada clase (jugador.skins[clase]); las partidas viejas guardaban la del guerrero en jugador.skin
+  const skinPuesta = (clase = jugador.clase) => (jugador.skins || {})[clase] ?? (clase === 'guerrero' ? jugador.skin : null) ?? null;
+  const ponerSkin = id => { (jugador.skins ||= {})[jugador.clase] = id; if (jugador.clase === 'guerrero') jugador.skin = id; };
+  const skinsClase = (clase = jugador.clase) => SKINS.filter(k => k.clase === clase);
+  const skinActual = () => { const k = SKINS.find(x => x.id === skinPuesta() && x.clase === jugador.clase); return k && estrellasSkin(k.id) ? k : null; };
   const bonoSkinBase = k => Math.round(k.base[1] * estrellasSkin(k.id) * multDespertar('skin', k.id) * 10) / 10;           // % del atributo base
   // efecto especial de la skin equipada (0 si no lo tiene)
   // El efecto especial crece con las estrellas: ★1 60 %, ★2 70 %, ★3 80 %, ★4 90 %, ★5 100 % (y brillo). Bonos pequeños:
@@ -45,11 +59,11 @@
   const topeExtraSkin = esp => { const k = skinActual(); return k && k.esp === esp && pasivaDespertar('skin', k.id) ? PASIVA_SKIN.tope : 0; };
   const efecto = esp => Math.min((TOPE_SEC[esp] ?? Infinity) + topeExtraSkin(esp), (BASE_SEC[esp] || 0) + efectoSkin(esp) + efectoArbol(esp) + (secEquipo()[esp] || 0) / 100
     + efectoReliquias(esp) + efectoRunas(esp) + efectoColeccion(esp) + efectoMaestria(esp) + efectoMascota(esp) + (CLASES[jugador.clase].ef[esp] || 0) + efectoConjuntos(esp));
-  const skinsDisponibles = () => SKINS.filter(k => estrellasSkin(k.id) > 0);
+  const skinsDisponibles = () => skinsClase().filter(k => estrellasSkin(k.id) > 0);
   let skinSel = null;   // skin seleccionada en la pestaña (tocar una no la equipa)
   const textoEstrellas = n => `<span class="est">${'★'.repeat(n)}<i>${'★'.repeat(5 - n)}</i></span>`;
   function fichaSkin(k) {
-    const n = estrellasSkin(k.id), puesta = jugador.skin === k.id;
+    const n = estrellasSkin(k.id), puesta = skinPuesta() === k.id;
     return `<div class="masc-actual" style="border-color:${k.color}">
       <img src="${k.img}" alt="" style="height:110px;image-rendering:pixelated">
       <h3 style="margin:0;color:${k.color}">${k.icono} ${k.nombre} ${textoEstrellas(n)}</h3>
