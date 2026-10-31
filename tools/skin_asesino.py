@@ -5,6 +5,9 @@ Usa split_sheet.py (sin reescalar); quita separadores y motas sueltas, descarta 
 del mismo tamaño, centrados y con los pies en la misma línea. Además deja <animacion>.gif para revisarla.
 
 Uso (desde la raíz):  python3 tools/skin_asesino.py espectro ataque tools/hojas/asesino_espectro_ataque.jpg 5 2 [ms]
+Desvanecimiento (el generador dibuja opaco lo que en el original es semitransparente): variable DESVANECER=3,4,5
+(cuadros, desde 0) y COLOR_SKIN=r,g,b (tinte del efecto). Lista por animación del Asesino:
+  paso: 3,4,5
 """
 import glob, os, subprocess, sys, tempfile
 from collections import deque
@@ -45,6 +48,14 @@ for f in sorted(glob.glob(f'{tmp}/*.png')):
     a = sin_motas(a)
     if (a[..., 3] > 40).sum() < 2000: continue   # celda vacía
     im = Image.fromarray(a); cuadros.append(im.crop(im.getbbox()))
+DES = [int(x) for x in os.environ.get('DESVANECER', '').split(',') if x]
+tinte = np.array([int(x) for x in os.environ.get('COLOR_SKIN', '170,210,255').split(',')], float)
+for k in DES:   # se disuelve en sombras: semitransparente, teñido del color de la skin y con brillo en el borde
+    a = np.array(cuadros[k]).astype(float); al = a[..., 3] / 255
+    a[..., :3] = a[..., :3] * .45 + tinte * .55; a[..., 3] = al * 150
+    m = al > .2; borde = m & ~(np.roll(m, 1, 0) & np.roll(m, -1, 0) & np.roll(m, 1, 1) & np.roll(m, -1, 1))
+    a[borde, :3] = tinte * .4 + 255 * .6; a[borde, 3] = 230
+    cuadros[k] = Image.fromarray(a.clip(0, 255).astype('uint8'))
 mw = max(c.width for c in cuadros); mh = max(c.height for c in cuadros); gif = []
 for k, c in enumerate(cuadros):
     lienzo = Image.new('RGBA', (mw, mh)); lienzo.paste(c, ((mw - c.width) // 2, mh - c.height)); lienzo.save(f'{dest}/{anim}_{k:02d}.png')
