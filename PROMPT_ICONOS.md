@@ -109,6 +109,14 @@ Four treasure chests for the shop of a dark fantasy RPG, matching an existing se
 ```
 Destino: `cofre_madera`, `cofre_hierro`, `cofre_dorado`, `cofre_mitico` (imagen de cada cofre en la Tienda; hoy son SVG).
 
+### Skins (1280×512, 5×2) + bloque común
+```
+Ten armored knight helmet portraits (head and shoulders, front three-quarter view), same helmet shape and size, each a different themed armor. Absolutely no text.
+Row 1: 1 storm aegis: blue steel helmet crackling with lightning · 2 dark obsidian: glossy black volcanic-glass helmet with purple sheen · 3 spectral guardian: translucent pale-blue ghostly helmet with glowing eyes · 4 clockwork gendarme: brass helmet with gears and rivets · 5 verdant druid: wooden helmet covered in leaves and vines
+Row 2: 6 solar gold: shining golden helmet with a sun crest · 7 amaranth crystal: helmet made of pink-magenta crystals · 8 infernal: black and red helmet with horns and flames · 9 death knight: dark iron helmet with a skull visor and blue glow · 10 necro guardian: bone-white helmet with green necrotic runes
+```
+Destino: `skin_<id>` (ids en `js/logica/08-skins.js`: egida_tormentosa, obsidiana_oscura, guardian_espectral, gendarme_mecanico, druida_verdial, aurico_solar, cristalino_amaranto, infernal, caballero_muerte, necro_guardian).
+
 ### Mascotas (1280×768, 5×3) + bloque común — pausado por el usuario
 ```
 15 cute companion pet portraits, head and shoulders, front three-quarter view: rat · frog · owl · wolf · turtle / bat · phoenix · panther · stone golem · dragon / lion · unicorn · serpent · whale · dog
