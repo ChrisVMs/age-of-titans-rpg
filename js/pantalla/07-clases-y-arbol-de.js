@@ -37,8 +37,6 @@
     if (b.id === 'ascender') { ascender(); return; }
     if (b.dataset.especial) {   // especialización de maestría: gratis la primera vez, luego cuesta oro
       const id = b.dataset.especial; if (especialidad() === id) return;
-      if (especialidad() && jugador.oro < COSTE_ESPECIAL) return avisar(`Cambiar de especialización cuesta ● ${COSTE_ESPECIAL}`);
-      if (especialidad()) jugador.oro -= COSTE_ESPECIAL;
       (jugador.especialidad ||= {})[jugador.clase] = id; guardar(); aplicarEquipo(); pintarHud(); pintarArbol(); avisar(`${ESPECIALIDADES[id].icono} ${ESPECIALIDADES[id].nombre}`); return;
     }
     if (b.id === 'cambiarClase') {   // cambio de clase: gratis fuera de batalla; cada clase conserva sus puntos y su maestría

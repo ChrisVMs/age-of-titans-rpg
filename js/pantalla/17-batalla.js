@@ -103,8 +103,11 @@
   // Música fuera de batalla, en bucle: el navegador solo deja iniciarla tras el primer toque; se pausa si la app queda en segundo plano
   const musicaMenu = new Audio('audio/musica/main_menu.mp3');
   musicaMenu.loop = true; musicaMenu.volume = .3;
-  const sonarMusicaMenu = () => { if (pantallaActual !== 'pBatalla' && !pestanaBloqueada && !document.hidden) musicaMenu.play(); };
-  document.addEventListener('pointerdown', sonarMusicaMenu, { once: true });
+  const sonarMusicaMenu = () => { if (pantallaActual !== 'pBatalla' && !pestanaBloqueada && !document.hidden) return musicaMenu.play(); };
+  // se intenta al abrir (la app Android o el navegador pueden permitirlo); si se bloquea, empieza con el primer toque o tecla
+  const alPrimerGesto = () => { ['pointerdown', 'keydown', 'touchstart'].forEach(t => document.removeEventListener(t, alPrimerGesto)); if (musicaMenu.paused) sonarMusicaMenu(); };
+  ['pointerdown', 'keydown', 'touchstart'].forEach(t => document.addEventListener(t, alPrimerGesto));
+  setTimeout(() => { const p = sonarMusicaMenu(); if (p && p.catch) p.catch(() => {}); }, 0);
   document.addEventListener('visibilitychange', () => { if (document.hidden) musicaMenu.pause(); else if (musicaMenu.currentTime) sonarMusicaMenu(); });
   // Sonido sí/no (botón 🔊 en el Campamento y en la batalla; se recuerda): todo sonido pasa por play(), que lo silencia
   let silencio = false; try { silencio = localStorage.getItem('batalla.silencio') === '1'; } catch {}
