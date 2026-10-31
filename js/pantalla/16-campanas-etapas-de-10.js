@@ -2,7 +2,7 @@
   ui.pintarCampanas = () => pintarCampanas();
   function pintarCampanas() {
     const actual = CAMPANAS.find(c => desbloqueada(c, 'normal') && !superada(c.id, 'normal'));   // el siguiente nivel por jugar
-    $('listaCampanas').innerHTML = `<div class="formacion-resumen etapa">${textoFormacion()} <button data-ir-formacion="pCampana">🛡 Formación</button></div>` + ETAPAS.map(e => {
+    $('listaCampanas').innerHTML = `<div class="formacion-resumen etapa">${textoFormacion()} <button data-ir-formacion="pCampana"><img class="ic-txt" src="img/iconos/defensa.png" alt="">Formación</button></div>` + ETAPAS.map(e => {
       if (e.bloqueada || !etapaDisponible(e)) return `<div class="campana bloqueada"><h3>${e.nombre}</h3><small><img class="ic-txt" src="img/iconos/candado.png" alt="">Próximamente</small></div>`;
       const niveles = CAMPANAS.filter(c => c.etapa === e.id), hechos = niveles.filter(c => superada(c.id, 'normal')).length;
       return `<h3 class="etapa">${e.nombre} <small>${hechos}/${niveles.length}</small></h3>` + niveles.map(c => {

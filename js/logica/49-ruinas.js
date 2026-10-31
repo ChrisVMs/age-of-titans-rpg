@@ -5,12 +5,12 @@
   const EDIFICIO_MAX = 10, HORAS_ALMACEN = 8;
   // prod: por hora y nivel (oro escala con tu nivel) · bono: { st: atributo } o { oro } o { encantar } o { almacen }, por nivel
   const EDIFICIOS = [
-    { id: 'tesoreria', icono: '💰', nombre: 'Tesorería',         nivel: 5,  prod: { oro: n => 3 * jugador.nivel * n }, bono: { oro: .005 }, txt: 'oro de las batallas' },
-    { id: 'almacen',   icono: '📦', nombre: 'Almacén',           nivel: 10, prod: {}, bono: { almacen: .8 }, txt: 'horas de almacén' },
-    { id: 'forja',     icono: '🔨', nombre: 'Forja',             nivel: 8,  prod: { piedra: n => .5 * n }, bono: { encantar: .01 }, txt: 'menos oro al encantar' },
-    { id: 'alquimia',  icono: '⚗️', nombre: 'Laboratorio',       nivel: 15, prod: { polvo: n => .1 * n }, bono: { st: 'defensa', pct: .3 }, txt: 'defensa' },
-    { id: 'altar',     icono: '🕯️', nombre: 'Altar de almas',    nivel: 25, prod: { almas: n => .04 * n }, bono: { st: 'vida', pct: .3 }, txt: 'vida' },
-    { id: 'pozo',      icono: '🌟', nombre: 'Pozo de Esencia',   nivel: 50, prod: { esencia: n => .02 * n }, bono: {}, txt: '' },
+    { id: 'tesoreria', img: 'oro', icono: '💰', nombre: 'Tesorería',         nivel: 5,  prod: { oro: n => 3 * jugador.nivel * n }, bono: { oro: .005 }, txt: 'oro de las batallas' },
+    { id: 'almacen', img: 'inventario',   icono: '📦', nombre: 'Almacén',           nivel: 10, prod: {}, bono: { almacen: .8 }, txt: 'horas de almacén' },
+    { id: 'forja', img: 'herreria',     icono: '🔨', nombre: 'Forja',             nivel: 8,  prod: { piedra: n => .5 * n }, bono: { encantar: .01 }, txt: 'menos oro al encantar' },
+    { id: 'alquimia', img: 'mat_polvo',  icono: '⚗️', nombre: 'Laboratorio',       nivel: 15, prod: { polvo: n => .1 * n }, bono: { st: 'defensa', pct: .3 }, txt: 'defensa' },
+    { id: 'altar', img: 'mat_almas',     icono: '🕯️', nombre: 'Altar de almas',    nivel: 25, prod: { almas: n => .04 * n }, bono: { st: 'vida', pct: .3 }, txt: 'vida' },
+    { id: 'pozo', img: 'mat_esencia',      icono: '🌟', nombre: 'Pozo de Esencia',   nivel: 50, prod: { esencia: n => .02 * n }, bono: {}, txt: '' },
   ];
   const costeEdificio = n => ({ oro: 20000 * (n + 1) ** 2, piedra: 20 * (n + 1) });   // de n a n + 1
   const ruinas = () => jugador.ruinas ||= { niveles: {}, ultimo: ahoraJuego().getTime(), resto: {} };
