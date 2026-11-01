@@ -460,7 +460,7 @@
   .item b { font-size:12px; color:#e8b830; }
   .item small { font-size:11px; text-align:center; }
   .item.puesto { background:#3d3520; box-shadow:0 0 0 2px #e8b830 inset; }
-  .icono { width:56px; height:56px; background:#0004 center / 46px 46px no-repeat; border-radius:6px; }
+  .icono { width:56px; height:56px; background:#0004 center / 82% 82% no-repeat; background-size:contain; background-origin:content-box; padding:5px; box-sizing:border-box; border-radius:6px; }
   .tienda-tabs { width:100%; max-width:900px; padding:10px 16px 0; }
   #pTienda .cofres { flex:1; min-height:0; }
   .cofres[hidden] { display:none; }
@@ -530,7 +530,7 @@
   .ficha-nodo { width:100%; }
   .caja h2 { margin:0; font-size:24px; color:var(--rc, #e8b830); }
   .caja .rareza { font-size:13px; color:var(--rc); text-transform:uppercase; letter-spacing:2px; }
-  .caja .icono { width:96px; height:96px; background-size:80px 80px; margin:0 auto; }
+  .caja .icono { width:96px; height:96px; background-size:contain; margin:0 auto; }
   .atributos { text-align:left; font-size:15px; background:#2e2a38; border-radius:8px; padding:8px 12px; }
   .atributos div { display:flex; justify-content:space-between; padding:2px 0; }
   .mas { color:#7f7; } .menos { color:#f77; }
@@ -821,7 +821,7 @@
     /* herrería: el panel izquierdo un poco más ancho y su caja ajustada a él (antes se salía) */
     #pHerreria .lado { width:270px; }
     .lado .caja { width:100%; padding:10px; }
-    .lado .caja h2 { font-size:17px; } .lado .caja .icono { width:60px; height:60px; background-size:48px 48px; }
+    .lado .caja h2 { font-size:17px; } .lado .caja .icono { width:60px; height:60px; background-size:contain; }
     .lado .caja .atributos { font-size:12px; padding:5px 8px; }
     .bolsa-filtros button { min-height:32px; padding:4px 6px; font-size:12px; white-space:nowrap; }
     /* batalla: combatientes más juntos y barra compacta (habilidades y ataque más pequeños) para que los personajes ganen tamaño */
@@ -842,7 +842,7 @@
     .vitrina { width:100%; height:150px; } .vitrina .frames { transform:scale(.75); transform-origin:40% 100%; left:-45px; }
     .stats { width:100%; } .lado { overflow-x:hidden; }
     .ranuras, .bolsa { grid-template-columns:repeat(auto-fill, minmax(76px, 1fr)); gap:6px; }
-    .item { padding:4px 3px; } .icono { width:44px; height:44px; background-size:36px 36px; }
+    .item { padding:4px 3px; } .icono { width:44px; height:44px; background-size:contain; }
     /* tienda y cofres */
     .cofres { padding:10px 12px; gap:10px; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); }
     .cofre { padding:10px; gap:6px; } .cofre .img { width:64px; height:64px; }

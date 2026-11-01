@@ -48,6 +48,7 @@ HOJAS += [('iconos_menu.jpg', 5, 5, NOMBRES, True),
             'nodo_lanza_m', 'nodo_hielo_et', 'nodo_ventisca', 'nodo_sabiduria', 'nodo_mente',
             'nodo_drenaje', 'nodo_concentra', 'nodo_torrente', '-', '-'], 'gris_texto'),
           ('iconos_cofres.jpg', 4, 1, ['cofre_madera', 'cofre_hierro', 'cofre_dorado', 'cofre_mitico'], False),
+          ('iconos_equipo.jpg', 4, 1, ['eq_espada', 'eq_casco', 'eq_armadura', 'eq_capa'], False),   # gris neutro: se tiñen por CSS
           ('iconos_mascotas.jpg', 5, 3, [f'masc_{i}' for i in ['rata', 'sapo', 'buho', 'lobo', 'tortuga', 'murcielago', 'fenix', 'pantera',
             'golem', 'dragon', 'grifo', 'unicornio', 'hidra', 'leviatan', 'can']], False)]
 for hoja, cols, filas, nombres, conBaldosa in HOJAS:

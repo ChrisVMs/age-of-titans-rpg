@@ -102,7 +102,7 @@ Row 3: an empty dark socket ring · gold medal · silver medal · bronze medal �
 
 ## Pendientes (prompt listo, aún sin generar)
 
-### Equipo (inventario y herrería) — `iconos_equipo.jpg` (1024×256, 4×1) + bloque común
+### Equipo (inventario y herrería) — `iconos_equipo.jpg` (1024×256, 4×1) — GENERADA
 Van teñidos por CSS según el material del objeto (`modelo[..].color`): deben ser de **gris acero neutro**, sin colores.
 ```
 Four equipment icons for a cartoon fantasy RPG inventory, in EXACTLY the same style as the attached reference icons (thick black outlines, bold simple shapes, flat cel shading with one soft highlight, chunky slightly stylized proportions, hand-painted cartoon look). NOT realistic, NOT detailed metal rendering, NOT painterly.

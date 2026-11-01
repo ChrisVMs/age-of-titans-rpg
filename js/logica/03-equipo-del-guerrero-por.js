@@ -4,11 +4,11 @@
   // nuevos son solo una línea de datos. Un objeto con otra forma solo necesita su propia tira.
   const G = 'img/guerrero/';
   const RANURAS = {   // orden de dibujo = orden aquí. Toda ranura lleva siempre un objeto
-    capa:     { nombre: 'Capa',     tira: G + 'tela.png',     icono: 'img/iconos/capa.svg' },
-    armadura: { nombre: 'Armadura', tira: G + 'armadura.png', icono: 'img/iconos/armadura.svg' },
+    capa:     { nombre: 'Capa',     tira: G + 'tela.png',     icono: 'img/iconos/eq_capa.png' },
+    armadura: { nombre: 'Armadura', tira: G + 'armadura.png', icono: 'img/iconos/eq_armadura.png' },
     adornos:  { nombre: '',         tira: G + 'adornos.png', interna: true },   // ribetes: siempre visibles
-    casco:    { nombre: 'Casco',    tira: G + 'casco.png',    icono: 'img/iconos/casco.svg' },
-    espada:   { nombre: 'Espada',   tira: G + 'espada.png',   icono: 'img/iconos/espada.svg' },
+    casco:    { nombre: 'Casco',    tira: G + 'casco.png',    icono: 'img/iconos/eq_casco.png' },
+    espada:   { nombre: 'Espada',   tira: G + 'espada.png',   icono: 'img/iconos/eq_espada.png' },
   };
   // filtros de objetos por ranura: solo el icono (el nombre va en el title)
   const iconoFiltro = r => r === 'todos' ? '<img class="ic-filtro" src="img/iconos/inventario.png" alt="Todo">' : `<img class="ic-filtro" src="${RANURAS[r].icono}" alt="${RANURAS[r].nombre}">`;
