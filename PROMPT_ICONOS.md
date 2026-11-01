@@ -102,6 +102,14 @@ Row 3: an empty dark socket ring · gold medal · silver medal · bronze medal �
 
 ## Pendientes (prompt listo, aún sin generar)
 
+### Equipo (inventario y herrería) — `iconos_equipo.jpg` (1024×256, 4×1) + bloque común
+Van teñidos por CSS según el material del objeto (`modelo[..].color`): deben ser de **gris acero neutro**, sin colores.
+```
+Four equipment icons for an RPG inventory, all in neutral grey steel tones only (no colors, no gold, no red, no blue), so they can be recolored later. Absolutely no text.
+1 a straight one-handed sword pointing up, plain steel blade, simple crossguard · 2 a closed knight helmet with a visor slit · 3 a steel chest plate armor with shoulder pads · 4 a long cloak/cape seen from the front, light grey fabric
+```
+Destino: `eq_espada`, `eq_casco`, `eq_armadura`, `eq_capa` (campo `icono` de `RANURAS` en `js/logica/03-equipo-del-guerrero-por.js`).
+
 ### Tienda — cofres (1024×256, 4×1) + bloque común
 ```
 Four treasure chests for the shop of a dark fantasy RPG, matching an existing set of hand-painted cartoon menu icons (trophy, backpack, crown, gift box, anvil). All four have exactly the same chest shape, size and angle: front three-quarter view, lid closed, a keyhole plate in front. Only the material changes. Absolutely no text, no letters.
