@@ -105,8 +105,10 @@ Row 3: an empty dark socket ring · gold medal · silver medal · bronze medal �
 ### Equipo (inventario y herrería) — `iconos_equipo.jpg` (1024×256, 4×1) + bloque común
 Van teñidos por CSS según el material del objeto (`modelo[..].color`): deben ser de **gris acero neutro**, sin colores.
 ```
-Four equipment icons for an RPG inventory, all in neutral grey steel tones only (no colors, no gold, no red, no blue), so they can be recolored later. Absolutely no text.
-1 a straight one-handed sword pointing up, plain steel blade, simple crossguard · 2 a closed knight helmet with a visor slit · 3 a steel chest plate armor with shoulder pads · 4 a long cloak/cape seen from the front, light grey fabric
+Four equipment icons for a cartoon fantasy RPG inventory, in EXACTLY the same style as the attached reference icons (thick black outlines, bold simple shapes, flat cel shading with one soft highlight, chunky slightly stylized proportions, hand-painted cartoon look). NOT realistic, NOT detailed metal rendering, NOT painterly.
+Colors: neutral grey steel tones only (light grey, mid grey, dark grey and the black outline), no gold, no red, no blue, no brown, so they can be recolored later. Absolutely no text.
+1 a short straight one-handed sword pointing up, simple crossguard and wrapped grip · 2 a closed knight helmet with a visor slit, rounded and chunky · 3 a steel chest plate armor with round shoulder pads · 4 a cape seen from the front with a round clasp, light grey cloth with simple folds
+(Adjuntar como referencia tools/hojas/iconos_clases.jpg. Un primer intento sin esto salió realista y sobre baldosas.)
 ```
 Destino: `eq_espada`, `eq_casco`, `eq_armadura`, `eq_capa` (campo `icono` de `RANURAS` en `js/logica/03-equipo-del-guerrero-por.js`).
 
