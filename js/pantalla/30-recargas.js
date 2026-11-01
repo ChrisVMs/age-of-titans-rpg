@@ -8,8 +8,23 @@
       <button id="recCristales" ${puedeRecargaCristales() ? '' : 'disabled'}><img class="ic-txt" src="img/iconos/cristales.png" alt="">${RECARGA_CRISTALES.coste}: +${RECARGA_CRISTALES.estamina} <img class="ic-txt" src="img/iconos/estamina.png" alt="">${revisarRecargas().cristales ? ' (mañana)' : ''}</button>
       <button id="recCerrar">Cerrar</button>`);
   }
+  function pintarCompraOro() {
+    abrirModal('comun', `<h2><img class="ic-txt" src="img/iconos/oro.png" alt="">Oro ${jugador.oro.toLocaleString('es')}</h2>
+      ${CAMBIO_ORO.map((c, i) => `<button data-cambio-oro="${i}" ${(jugador.cristales || 0) < c.cristales ? 'disabled' : ''}><img class="ic-txt" src="img/iconos/cristales.png" alt="">${c.cristales} → <img class="ic-txt" src="img/iconos/oro.png" alt="">${oroDeCambio(c).toLocaleString('es')}</button>`).join('')}
+      <button id="recCerrar">Cerrar</button>`);
+  }
+  function pintarCompraCristales() {
+    abrirModal('comun', `<h2><img class="ic-txt" src="img/iconos/cristales.png" alt="">Cristales ${jugador.cristales || 0}</h2>
+      ${PAQUETES_CRISTALES.map(p => `<button disabled><img class="ic-txt" src="img/iconos/cristales.png" alt="">${p.cristales} · ${p.precio}</button>`).join('')}
+      <small class="nota">Compra próximamente. Se consiguen con misiones, login, Ecos, colección y recompensas de ranking.</small>
+      <button id="recCerrar">Cerrar</button>`);
+  }
   document.addEventListener('click', async e => {
     if (e.target.closest('.hud .estamina, .recurso.estamina')) return pintarRecargas();
+    if (e.target.closest('.hud .oro, .recurso.oro')) return pintarCompraOro();
+    if (e.target.closest('.hud .cristales, .recurso.cristales')) return pintarCompraCristales();
+    const co = e.target.closest('[data-cambio-oro]');
+    if (co && !co.disabled) { if (cambiarOro(+co.dataset.cambioOro)) { avisar('Oro comprado'); guardar(); pintarHud(); } return pintarCompraOro(); }
     const b = e.target.closest('#recAnuncio, #recCristales, #recCerrar'); if (!b || b.disabled) return;
     if (b.id === 'recCerrar') return cerrarModal();
     if (b.id === 'recAnuncio') { b.disabled = true; if (await ui.verAnuncio()) cobrarAnuncio(); }

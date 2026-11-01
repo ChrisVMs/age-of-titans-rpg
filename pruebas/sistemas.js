@@ -2,6 +2,10 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Cambio de cristales por oro: cobra cristales, da oro según el nivel y no deja comprar sin cristales': `
+    jugador.nivel = 10; jugador.cristales = 25; const o = jugador.oro;
+    const ok = cambiarOro(0), sin = cambiarOro(0);
+    [ok, !sin, jugador.cristales === 5, jugador.oro === o + 3000]`,
   'Skins por clase: el Asesino solo ve las suyas y cada clase guarda su skin equipada': `
     jugador.clase = 'asesino'; jugador.oro = 1e6; const k = SKINS.find(x => x.id === 'espectro');
     const solo = skinsClase().map(x => x.id).join(); comprarSkin(k); ponerSkin('espectro');

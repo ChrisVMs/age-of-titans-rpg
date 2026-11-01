@@ -24,3 +24,13 @@
     if (C[k] || !CAMPANAS.filter(c => c.id.startsWith(etapa + '-')).every(c => superada(c.id, dif))) return null;
     C[k] = true; jugador.cristales += CRISTALES_CAPITULO[dif]; return { cristales: CRISTALES_CAPITULO[dif] };
   }
+
+  // Cambio de cristales por oro (tocar el oro del HUD). El oro crece con el nivel para que siga valiendo la pena.
+  const CAMBIO_ORO = [{ cristales: 20, oroNivel: 300 }, { cristales: 100, oroNivel: 1700 }, { cristales: 300, oroNivel: 5500 }];
+  const oroDeCambio = c => c.oroNivel * Math.max(1, jugador.nivel);
+  function cambiarOro(i) {
+    const c = CAMBIO_ORO[i]; if (!c || (jugador.cristales || 0) < c.cristales) return false;
+    jugador.cristales -= c.cristales; jugador.oro += oroDeCambio(c); return true;
+  }
+  // Paquetes de cristales con dinero real: aún sin pagos en la app (se muestran como próximamente)
+  const PAQUETES_CRISTALES = [{ cristales: 100, precio: '0,99 €' }, { cristales: 550, precio: '4,99 €' }, { cristales: 1200, precio: '9,99 €' }];
