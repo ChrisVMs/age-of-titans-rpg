@@ -328,7 +328,7 @@
     $('resTexto').innerHTML = (batalla.campana.mundial ? (gano ? `¡Has derrotado a ${batalla.enemigo.nombre}!<br><br>` : `Daño causado: <b>${danoHecho}</b>. A ${batalla.enemigo.nombre} le quedan ${Math.max(0, enemigoDuelo().vida)} de vida.<br><br>`) :
       gano ? '' : `Caíste ante ${batalla.enemigo.nombre}.<br><br>`) +
       `<span class="recompensa">Total ganado: <img class="ic-txt" src="img/iconos/oro.png" alt="">${batalla.ganado.oro} oro · ${batalla.ganado.xp} XP<br><img class="ic-txt" src="img/iconos/mat_piedra.png" alt="">${batalla.ganado.piedra} piedras · <img class="ic-txt" src="img/iconos/mat_polvo.png" alt="">${batalla.ganado.polvo} polvo${batalla.ganado.almas ? ` · 💠 ${batalla.ganado.almas} almas` : ''}</span>`;
-    $('resTexto').innerHTML += extraRes + (sinBotin ? '<br><small>En la Torre el botín solo se cobra al superar el piso.</small>' : '')
+    $('resTexto').innerHTML += extraRes + (!gano && !batalla.campana.mundial ? '<br><small>El botín solo se cobra al ganar la batalla.</small>' : '')
       + (obtenidos.length ? `<div class="obtenidos">Obtenido: ${obtenidos.map(o => `<button class="item r-${modelo[o.modelo].rareza}" data-uid="${o.uid}">${icono(modelo[o.modelo])}</button>`).join('')}</div>` : '');
     $('resOtra').textContent = batalla.campana.torre ? (gano ? `Subir al piso ${batalla.campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
     $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo || batalla.campana.grieta ? 'none' : '';

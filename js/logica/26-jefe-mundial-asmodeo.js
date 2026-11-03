@@ -2,7 +2,8 @@
   // Hoja img/jefes/asmodeo/asmodeo.png (150x200 por cuadro): 0 reposo, 4 preparar, 5 barrido, 6 garras, 7 onda de alas,
   // 8-12 muerte (acaba en cristal), 13 daño, 14 retroceso, 15 curación, 16 victoria.
   // Habilidades: onda de alas cada 3 turnos (a distancia, x1.5); por debajo del 50 % se cura un 4 % cada 5 turnos.
-  const ASMODEO = { nombre: 'Asmodeo', asmodeo: true, armadura: 80, vida: 20000, dano: [320, 430], avance: 330, oro: 0, xp: 0 };
+  const ASMODEO = { nombre: 'Asmodeo', asmodeo: true, armadura: 80, vida: 28000, dano: [370, 495],   // 2026-11-03: con 20 000 / 320-430 era el más fácil (caía antes que los otros, también en Pesadilla)
+                    avance: 330, oro: 0, xp: 0 };
   const ONDA_ALAS = { turnos: 3, mult: 1.5 }, CURACION = { turnos: 5, pct: .04 };   // 4 % (el 10 % anterior anulaba casi todo el daño con su vida actual)
   // escudo: solo por debajo del 50 %, cada 5 turnos suyos; reduce un 80 % el daño recibido durante 3 golpes del guerrero
   const ESCUDO = { turnos: 5, reduce: .8, dura: 3 };

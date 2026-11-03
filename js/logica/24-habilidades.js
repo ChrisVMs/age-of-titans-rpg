@@ -20,7 +20,7 @@
       aplica: { estado: 'congelacion', prob: .3, turnos: 1 } },
     { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', animacion: 'meteoro',
       aplica: { estado: 'quemadura', prob: .8, turnos: 3, pct: .3 } },
-    { id: 'punalada', clase: 'asesino', nombre: 'Puñalada', icono: '🔪', turnos: 3, mult: 1.6, animacion: 'punalada',
+    { id: 'punalada', clase: 'asesino', nombre: 'Puñalada', icono: '🔪', turnos: 3, mult: 1.4, animacion: 'punalada',
       aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
     { id: 'paso', clase: 'asesino', nombre: 'Paso sombrío', icono: '🌑', turnos: 4, mult: 2, perfora: true, animacion: 'paso',   // por la espalda: ignora la armadura
       aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .05 } },   // 2026-11-03: .15 (y sangrado .15) rendía muy por encima; el veneno se apila en monstruos

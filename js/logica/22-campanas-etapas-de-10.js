@@ -112,7 +112,7 @@
   const etapaDisponible = e => !!e.niveles && (e.arte !== false || MODO_PRUEBAS);
   // Escalado de cada etapa: dificultad a la que empieza (n equivalente de la Etapa 1) y cuánto sube por nivel. La Etapa 1
   // sube +23 % por nivel; en las siguientes el jugador apenas crece en poder, así que suben más despacio.
-  let ESCALA_ETAPA = { 1: { desde: 1, paso: 1 }, 2: { desde: 15, paso: .55 }, 3: { desde: 19, paso: .4 } };
+  let ESCALA_ETAPA = { 1: { desde: 1, paso: 1 }, 2: { desde: 18, paso: .55 }, 3: { desde: 23, paso: .4 } };
   // Premio propio de las etapas altas: Esencia (aura) y, en el último jefe, equipo Ancestral
   const ESENCIA_ETAPA = { 2: 2, 3: 3 };   // por batalla ganada en Normal; las demás dificultades, × su premio
   // n = dificultad del nivel (en la Etapa 1, su número: 1-1 = 1 ... 1-10 = 10; las etapas altas usan ESCALA_ETAPA): la base

@@ -85,10 +85,18 @@
     for (;;) { const e = EDIFICIOS.filter(x => edificioAbierto(x) && nivelEdificio(x.id) < EDIFICIO_MAX).sort((a, b) => nivelEdificio(a.id) - nivelEdificio(b.id))[0];
       if (!e || jugador.oro < 3 * costeEdificio(nivelEdificio(e.id)).oro || !mejorarEdificio(e.id)) return; }
   }
+  // como un jugador: primero los jefes que nunca ha vencido, luego las Pesadillas abiertas y luego el resto
+  function opcionJefeSim(pocos = () => true) {
+    const prio = ([m, d]) => d === 'normal' && !jefeVencido(m) ? 0 : d === 'pesadilla' ? 1 : 2;
+    return Object.keys(MUNDIALES).flatMap(m => ['normal', 'pesadilla'].map(d => [m, d]))
+      .filter(([m, d]) => jefeAbierto(m, d) && estadoMundial(m, d).vida > 0 && pocos('jefe' + m + d)).sort((a, b) => prio(a) - prio(b))[0];
+  }
   function simCobrar() {   // misiones y bonus hechos
     for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); BONUS_MISIONES[tipo].forEach((_, i) => reclamarMision(tipo, 'cofre' + i)); }
     for (const [id, p] of hitosPendientes()) reclamarHito(id, p);   // hitos del Códice
-    comprarEvento('titulo'); for (const it of [...TIENDA_EVENTO].reverse()) while (comprarEvento(it.id));   // el título primero; luego lo más caro
+    comprarEvento('titulo');   // el título primero; mientras no lo tenga, ahorra para él (la tienda, solo con lo que sobre)
+    const tieneTitulo = () => (jugador.titulos || {})[idTituloTema(temaSemana())], E = revisarEvento();
+    for (const it of [...TIENDA_EVENTO].reverse()) while ((tieneTitulo() || E.fichas - it.coste >= PRECIO_TITULO_EVENTO) && comprarEvento(it.id));
   }
   // Un jugador gratuito juega días seguidos sin pantalla, con las decisiones del bot: cada día recoge el login y las
   // expediciones, gasta la estamina, sube la Torre, usa las entradas de arena, jefes, calabozo y Torre de reyes, cobra las
@@ -156,8 +164,7 @@
               a.entradas--; a.rivalActual = i; k = 'arena'; c = batallaArena(i);
             }
             if (!c && desbloqueado('pEvento') && entradasJefe() > 0) {
-              const op = Object.keys(MUNDIALES).flatMap(m => ['pesadilla', 'normal'].map(d => [m, d]))   // Pesadilla primero, si está abierta
-                .find(([m, d]) => jefeAbierto(m, d) && estadoMundial(m, d).vida > 0 && pocos('jefe' + m + d));
+              const op = opcionJefeSim(pocos);
               if (op) { jugador.entradasJefe--; k = 'jefe' + op[0] + op[1]; c = batallaMundial(op[0], op[1]); }
             }
             if (!c && desbloqueado('pCalabozo') && revisarCalabozo().entradas > 0) {   // el siguiente sin superar; si no, el mejor superado
@@ -197,6 +204,7 @@
             }
           }
           for (let n = nivel0 + 1; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
+          revisarTitulos();   // igual con pantalla y sin ella (la pantalla guarda más a menudo, y guardar revisa los títulos)
           if (alDia) alDia(d);
           dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
             despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),

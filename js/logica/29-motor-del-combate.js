@@ -342,12 +342,12 @@
     const mat = { piedra: azar(...b.piedra) * x, polvo: (rnd() < b.polvo * (1 + efecto('fortuna')) * dropEv ? 1 : 0) * x };
     if (b.cofre && rnd() < (e.jefe ? .3 : .06) * (b.drop || 1) * (1 + efecto('fortuna')) * dropEv) {   // objeto de equipo
       const o = objetoAzar(COFRES.find(k => k.id === b.cofre).probs, efecto('fortuna') / 3 + ((eventoHoy() || {}).caza || 0));   // Fortuna: 1/3 de prob. de subir rareza; Cacería: +15 %
-      batalla.ganado.objetos.push(o); verFx(u, 'premio', `🎁 ${modelo[o.modelo].nombre}`, 700, 30);
+      batalla.pendiente.objetos.push(o);
     }
     if (!e.rival) { jugador.bestiario ||= {}; jugador.bestiario[e.nombre] = (jugador.bestiario[e.nombre] || 0) + 1; }
     sumarMaestria(esJefe(e) ? 5 : 1);
-    batalla.ganado.oro += e.oro; batalla.ganado.xp += e.xp; batalla.ganado.piedra += mat.piedra; batalla.ganado.polvo += mat.polvo;
-    verFx(u, 'premio', u.duelo ? `+${e.oro} oro  +${e.xp} XP  🔷${mat.piedra}${mat.polvo ? ' ✨' + mat.polvo : ''}` : `+${e.oro} oro +${e.xp} XP`);
+    // su botín queda pendiente: solo se cobra si ganas la batalla completa (cobrarResultado), nunca por monstruo
+    const P = batalla.pendiente; P.oro += e.oro; P.xp += e.xp; P.piedra += mat.piedra; P.polvo += mat.polvo;
   }
 
   // ---- ronda ----

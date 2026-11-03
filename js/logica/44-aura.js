@@ -4,7 +4,7 @@
   // las mascotas y las runas ya están al máximo. En la pantalla brilla más cuanto más nivel (fuerte desde el 5).
   const AURA_MAX = 10, AURA_PCT = 2;
   const nivelAura = (p = jugador) => p.aura || 0;
-  const costeAura = n => ({ esencia: 10 * (n + 1), oro: 15000 * (n + 1) });   // de n a n + 1
+  const costeAura = n => ({ esencia: 30 * (n + 1), oro: 15000 * (n + 1) });   // 2026-11-03: con 10 se llenaba hacia el día 20-35   // de n a n + 1
   function subirAura() {
     const n = nivelAura();
     if (!desbloqueado('aura') || n >= AURA_MAX || !tieneCoste(costeAura(n))) return false;

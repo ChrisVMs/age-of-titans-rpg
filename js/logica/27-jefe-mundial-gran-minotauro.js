@@ -20,7 +20,7 @@
   // de set con todas sus líneas a ★estrellasMin o más. reliquia/equipo: [prob. si lo vences, prob. máxima por daño sin vencerlo].
   const DIF_JEFE = {
     normal:    { nombre: 'Normal',    vida: 1, dano: 1,   premio: 1,   reliquia: [.25, .08], equipo: [.12, .03], garantia: 20, estrellasMin: 0 },
-    pesadilla: { nombre: 'Pesadilla', vida: 3, dano: 2.2, premio: 2.5, reliquia: [.45, .12], equipo: [.25, .06], garantia: 12, estrellasMin: 4 },
+    pesadilla: { nombre: 'Pesadilla', vida: 7, dano: 2.6, premio: 2.5, reliquia: [.45, .12], equipo: [.25, .06], garantia: 12, estrellasMin: 4 },
   };
   let mundialSel = 'cerbero', difJefeSel = 'normal';
   const claveJefe = (id, dif) => dif === 'pesadilla' ? id + ':pesadilla' : id;
@@ -86,11 +86,13 @@
 
   // Motor: deja `batalla` lista para empezar la batalla c, sin dibujar nada ni gastar estamina
   function prepararBatalla(c) {
+    revisarTitulos();   // los títulos (y su bono del Códice) cuentan desde la batalla siguiente, guarde o no la pantalla antes
     batalla.id = (batalla.id || 0) + 1; secEquipoBatalla = new WeakMap();   // identifica la batalla: lo que quede por dibujar de otra anterior se descarta
     batalla.danoHecho = 0; batalla.especialCerbero = null; batalla.turnoBola = 0; batalla.turnoLanza = 0; batalla.turnoOnda = 0; batalla.turnoCura = 0; batalla.turnoEscudo = 0; batalla.escudoRestante = 0; batalla.turnoFuria = FURIA.turnos - 1; batalla.furiaRestante = 0; batalla.especialMinotauro = null; batalla.turnoTajo = 0; batalla.especialAsmodeo = null;
     c.grupo = !!(c.idCampana || c.torre || c.reyes || c.calabozo || c.grieta);   // campaña, Torre y Torre de reyes: batalla por grupos en rombo
     batalla.campana = c; batalla.reglas = c.grupo ? REGLAS.grupo : REGLAS.duelo;
     prepararHabilidades(); batalla.st = estadisticas(); batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] }; batalla.terminada = false;
+    batalla.pendiente = { oro: 0, xp: 0, piedra: 0, polvo: 0, objetos: [] };   // botín de los monstruos: solo si ganas la batalla
     for (const [a, v] of Object.entries(c.stPct || {})) batalla.st[a] = Math.round(batalla.st[a] * (1 + v / 100));   // bonos solo de esta batalla (Grieta)
     if (c.grupo) armarGrupo(c); else armarDuelo();
     if (c.vidaYo && c.grupo) { const u = heroeYo(); u.vida = Math.max(1, Math.round(u.vidaMax * c.vidaYo)); }   // vida que arrastra (Grieta)
@@ -104,6 +106,8 @@
     // las recompensas se cobran al terminar (victoria o derrota); abandonando no se cobra nada.
     // Torre: no cuesta estamina, así que el botín de los enemigos solo se cobra si superas el piso (si no, perder a
     // propósito sería farmeo infinito).
+    // botín de los monstruos (pendiente): solo con la batalla completa ganada
+    if (gano) { const P = batalla.pendiente || {}; for (const k of ['oro', 'xp', 'piedra', 'polvo']) batalla.ganado[k] += P[k] || 0; batalla.ganado.objetos.push(...(P.objetos || [])); }
     const sinBotin = batalla.campana.torre && !gano;
     if (sinBotin || batalla.campana.ayuda) batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };   // ayuda: sin recompensa
     if (gano && !batalla.campana.ayuda) for (const k in batalla.campana.premio) batalla.ganado[k] = (batalla.ganado[k] || 0) + batalla.campana.premio[k];

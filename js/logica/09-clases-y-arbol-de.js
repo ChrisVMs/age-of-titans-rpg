@@ -16,7 +16,7 @@
     mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
                 mod: { ataque: 6, vida: -10, armadura: -25 }, ef: { habilidad: .15, resistencia: .05, penetracion: .15 }, distancia: true },   // penetración: el daño mágico atraviesa la armadura
     asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
-                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .07, danoCritico: .15, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
+                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .07, danoCritico: .1, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
   };
   // Cadena de clases (entre personajes: reyes, bots, arena con perfiles): guerrero > asesino y arquero (vida y resistencia
   // contra el daño físico) · maga > guerrero (el daño mágico atraviesa su resistencia) · asesino y arquero > maga (daño

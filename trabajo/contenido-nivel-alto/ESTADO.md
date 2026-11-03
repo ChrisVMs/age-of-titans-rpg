@@ -26,6 +26,26 @@ pendiente**) y se prueba en el navegador; con todas, quitar `arte: false` de las
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-11-03 · Claude (informe del Asesino casual y recalibración; pedido del usuario)**
+- Botín: ya no hay recompensa por monstruo. Su oro, XP, materiales y objetos quedan en `batalla.pendiente` y solo se
+  cobran si ganas la batalla completa (`cobrarResultado`); al perder o abandonar, nada. Los jefes siguen pagando por daño.
+- Jefes: "jefe mundial" → "Jefe" (evento individual, sin ranking). `DIF_JEFE` (normal / pesadilla: ×7 vida, ×2,6 daño,
+  ×2,5 premio, se abre al vencer al normal); drops raros: reliquia 25 % / 45 % al vencer, pieza de set 12 % / 25 %,
+  garantía 20 / 12 intentos, en Pesadilla líneas ★4+. Asmodeo base 20 000 → 28 000 de vida y +15 % de daño (era el más fácil).
+- Arreglo de fondo: los títulos se desbloqueaban solo al guardar; con pantalla (que guarda a menudo) llegaban antes que
+  en el simulador → `sin-pantalla` fallaba y TODAS las calibraciones anteriores subestimaban al jugador real (títulos +
+  Códice). Ahora `prepararBatalla` y el fin de cada día simulado revisan los títulos.
+- Simulador: prueba primero los jefes no vencidos (antes nunca llegaba al Minotauro) y ahorra para el título del evento.
+- Endurecido (con el jugador real): `ESCALA_ETAPA` 2: 18, 3: 23 · `TORRE_PASO` 3,2 (antes 3,5), `TORRE_SUAVE.pisos` 7 ·
+  `CALABOZO_ALTO_EXTRA` 1,5 · `GRIETA_ESCALA.base` -1,5 · `ECO_BASE` 1,85 · `costeAura` ×3 de Esencia · `CURVA_XP` 1,097.
+  Asesino: Danza +20 %, daño crítico .1, Puñalada ×1,4.
+- Medición Asesino casual con anuncios (60 días, 40 jugados): poder 26 k día 15 → 75 k día 60 · Etapa 2 Normal día 24,
+  Pesadilla 37 · Etapa 3 Normal 49 · calabozos 5-8 Normal 27 · jefes normales días 12-20, Pesadilla de Asmodeo 35,
+  Cerbero en Pesadilla 51 → 74 % · Torre 109 · Grieta 3-13 · Ecos 71 % · aura 5.
+- Clases (activo, 90 días): el Asesino sigue algo por delante (Nv 80 en 3/3, días 54-83; las demás 1/3, días 77-86);
+  la cadena entre personajes se mantiene. Mucha varianza por suerte de equipo.
+- Verificación: 40/40 sistemas (1 nueva: botín solo con victoria), 15/15 escenarios, igual con pantalla y sin ella.
+
 **2026-11-03 · Claude (arte enchufable como dato)**
 - `TIPOS_ENEMIGO.<id>.hoja` (opcional): `crearDificultad` la pasa al enemigo y la pantalla (`pintarHojaEnemigo`, en
   27-ascension.js; duelo y grupo) dibuja esa hoja sin filtro; sin ella, la parca teñida como hasta ahora.

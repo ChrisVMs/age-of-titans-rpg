@@ -216,6 +216,11 @@ const PRUEBAS = {
     batalla.danoHecho = 0; jugador.pityJefe = { 'cerbero:pesadilla': DIF_JEFE.pesadilla.garantia - 1 }; obtenidos = [];
     const n0 = jugador.objetos.length; botinEquipoJefe('cerbero', false, 'pesadilla'); const o = jugador.objetos.at(-1);
     [jugador.objetos.length === n0 + 1, o.lineas.every(l => l.e >= DIF_JEFE.pesadilla.estrellasMin), jugador.pityJefe['cerbero:pesadilla'] === 0, !jugador.pityJefe.cerbero]`,
+  'Botín: solo por batalla completa ganada, nunca por monstruo': `
+    jugador.nivel = 10; const c = batallaCampana(CAMPANAS[3], 'normal');
+    prepararBatalla(c); const u = batalla.grupo.enemigos[0]; cobrar(u); const tras1 = batalla.ganado.oro; cobrarResultado(false); const perdio = batalla.ganado.oro;
+    prepararBatalla(batallaCampana(CAMPANAS[3], 'normal')); const u2 = batalla.grupo.enemigos[0]; cobrar(u2); cobrarResultado(true);
+    [tras1 === 0, perdio === 0, batalla.ganado.oro >= u2.e.oro + (c.premio.oro || 0)]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

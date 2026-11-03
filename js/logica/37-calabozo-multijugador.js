@@ -25,7 +25,7 @@
   // Dificultades: Normal abierta; cada una se desbloquea al superar la anterior en ese calabozo
   jugador.calabozosDif ||= {};
   const difAbierta = (id, d) => d === 'normal' || !!jugador.calabozosDif[`${id}:${ORDEN_DIF[ORDEN_DIF.indexOf(d) - 1]}`];
-  let CALABOZO_ALTO_EXTRA = .5;    // niveles de más para los calabozos 5-8 (let: lo ajusta el simulador)
+  let CALABOZO_ALTO_EXTRA = 1.5;   // niveles de más para los calabozos 5-8 (let: lo ajusta el simulador)
   const modsCalabozo = c => c.alto ? MOD_DIF_ALTO : MOD_DIF;
   const nCalabozo = c => c.n + (c.alto ? CALABOZO_ALTO_EXTRA : 0);
   const premioCalabozo = (id, dif) => { const c = calabozo(id), p = Object.fromEntries(Object.entries(crearDificultad(nCalabozo(c), dif, [], modsCalabozo(c)).premio).map(([k, v]) => [k, Math.round(v * 1.5)]));
