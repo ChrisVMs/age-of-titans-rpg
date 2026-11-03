@@ -41,3 +41,21 @@
       return { ...r, veces, pctVictoria: Math.round(r.victorias / veces * 100), rondasMedia: Math.round(r.rondas / veces * 10) / 10, vidaMedia: Math.round(r.vida / veces * 100) };
     });
   }
+  // ---- Enfrentamientos entre clases (pruebas) ----
+  // Mismo equipo y nivel (el del primer bot del servidor) y solo cambia la clase; el árbol se reparte por las ramas de su clase.
+  function perfilClase(clase, nivel = 60) {
+    return construirBot({ ...DEF_BOTS[0], nombre: 'Clase ' + clase, clase, nivel, prioridad: ARBOL[clase].map(r => r.id) }, 0);
+  }
+  // % de victorias de la clase a contra la b en duelos 1 contra 1 (la mitad atacando cada uno, para no favorecer a nadie)
+  function duelosClase(a, b, { veces = 40, nivel = 60 } = {}) {
+    return aislado(() => {
+      const pelea = (x, y, s) => { sembrar(s); jugador = Object.assign(perfilClase(x, nivel), { formacion: { pos: 'frente', aliados: [] } });
+        const c = { nombre: 'Duelo de clases', reyes: 'pvp', aliados: [], premio: {}, botin: { piedra: [0, 0], polvo: 0 },
+          enemigos: [{ nombre: 'Rival', rey: true, rival: true, perfil: perfilClase(y, nivel), pct: 1, oro: 0, xp: 0 }] };
+        return jugarHastaFin(c, habLista, 300).fin; };
+      let g = 0;
+      const pts = r => r === true ? 1 : r === false ? 0 : .5;   // sin terminar: medio punto
+      for (let i = 0; i < veces; i++) g += pts(pelea(a, b, 500 + i)) + 1 - pts(pelea(b, a, 500 + i));
+      return g / (2 * veces);
+    });
+  }

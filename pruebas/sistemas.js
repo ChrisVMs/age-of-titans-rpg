@@ -196,6 +196,11 @@ const PRUEBAS = {
     let p0 = null; const r = simularProgresion; simularProgresion = o => { p0 = structuredClone(o.perfil); return null; };
     try { avanzarBot(b, null, 0, 1, 0); } finally { simularProgresion = r; }
     [!p0 || (p0.oro === INICIO_REAL_BOT.oro && p0.mat.piedra === INICIO_REAL_BOT.mat.piedra && p0.mat.esencia === 0 && p0.cristales === 0)]`,
+  'Clases: cadena guerrero > asesino/arquero > maga > guerrero (entre personajes; contra monstruos no cuenta)': `
+    const v = (a, b) => duelosClase(a, b, { veces: 30 });
+    [ventajaClase('mago', 'guerrero') > 1, ventajaClase('guerrero', 'mago') === 1, ventajaClase('asesino', undefined) === 1,
+     v('guerrero', 'asesino') > .55, v('guerrero', 'arquero') > .55, v('mago', 'guerrero') > .55, v('asesino', 'mago') > .52, v('arquero', 'mago') > .55,
+     Math.abs(v('asesino', 'arquero') - .5) < .15]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

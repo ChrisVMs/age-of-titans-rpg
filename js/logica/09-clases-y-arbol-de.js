@@ -10,14 +10,21 @@
   // Se puede cambiar de clase gratis fuera de batalla; los puntos del árbol y la maestría son de cada clase.
   // El Arquero usa por ahora el sprite del guerrero; la Maga y el Asesino tienen el suyo (img/<clase>/tira.png, mismas 14 poses).
   const CLASES = {
-    guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: {}, ef: {} },
+    guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: { vida: 10, defensa: 10 }, ef: {} },
     arquero:  { nombre: 'Arquero',  icono: '🏹', desc: 'Daño alto y críticos; menos vida y defensa. Hace sangrar y envenena.',
-                mod: { ataque: 10, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 }, distancia: true },
+                mod: { ataque: 8, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 }, distancia: true },
     mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
-                mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 }, distancia: true },
+                mod: { ataque: 6, vida: -10, armadura: -25 }, ef: { habilidad: .15, resistencia: .05, penetracion: .15 }, distancia: true },   // penetración: el daño mágico atraviesa la armadura
     asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
-                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .05, danoCritico: .1, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
+                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .07, danoCritico: .15, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
   };
+  // Cadena de clases (entre personajes: reyes, bots, arena con perfiles): guerrero > asesino y arquero (vida y resistencia
+  // contra el daño físico) · maga > guerrero (el daño mágico atraviesa su resistencia) · asesino y arquero > maga (daño
+  // físico y críticos contra un cuerpo frágil). Quien tiene ventaja hace BONO_VENTAJA_CLASE más de daño. Contra monstruos
+  // no cuenta (no tienen clase). Debilidad, no victoria segura.
+  let BONO_VENTAJA_CLASE = .2;
+  const VENTAJA_CLASE = { guerrero: ['asesino', 'arquero'], mago: ['guerrero'], asesino: ['mago'], arquero: ['mago'] };
+  const ventajaClase = (atacante, objetivo) => atacante && objetivo && (VENTAJA_CLASE[atacante] || []).includes(objetivo) ? 1 + BONO_VENTAJA_CLASE : 1;
   // icono HD de la clase para la pantalla (el emoji 'icono' queda para textos como avisos y nombres de enemigos)
   const iconoClase = id => `<img class="ic-txt" src="img/iconos/clase_${id}.png" alt="${CLASES[id].nombre}">`;
   const ARBOL = {

@@ -1,4 +1,4 @@
-# Balance del Asesino
+# Balance de clases (Asesino y cadena de clases)
 
 **Estado:** en curso · **Prioridad: ALTA** · **Rama:** qa · **Actualizado:** 2026-11-03
 
@@ -6,10 +6,27 @@
 Verificar con el simulador que el Asesino rinde parecido a las otras clases (daño, supervivencia, progresión por días).
 
 ## Próximo paso
-Asesino ajustado (en el rango del guerrero, algo por encima en la Grieta). Pendiente aparte: el Arquero y la Maga rinden por
-debajo del guerrero (Nv 80 en 1 de 3 semillas): proponer al usuario subirlos.
+Que el usuario lo juegue. Si el Asesino se nota algo rápido contra monstruos (llega antes al Infierno de la Etapa 3),
+afinar Puñalada o la Danza vigilando la matriz (`duelosClase`) para no romper la cadena.
 
 ## Última sesión
+**2026-11-03 · Claude (cadena de clases y balance de las 4)**
+- Pedido: guerrero > asesino/arquero (vida y resistencia), maga > guerrero (daño mágico atraviesa la resistencia),
+  asesino/arquero > maga (daño físico y críticos); debilidad, no victoria segura.
+- `VENTAJA_CLASE` + `BONO_VENTAJA_CLASE` (.2) + `ventajaClase` (09-clases-y-arbol-de.js), aplicado en
+  `resolverAccionJugador` (sirve para tus golpes y los de reyes/bots; los monstruos no tienen clase).
+- Herramienta de pruebas `duelosClase(a, b)` (2-simulador-de-batallas.js): mismo equipo y nivel, solo cambia la clase,
+  mismas semillas con los lados cambiados (empates = medio punto). Matriz inicial: el arquero dominaba y el asesino era
+  el más débil entre personajes.
+- Ajustes: guerrero `mod` vida +10, defensa +10 · maga vida -15 → -10 y `penetracion` .15 · arquero ataque 10 → 8,
+  Disparo ×2,2 → ×2,4, Perforante ×3,2 → ×2,6 · asesino crítico .07, daño crítico .15, Puñalada sangrado .15, Paso sombrío
+  ×2,0 que ignora la armadura (`perfora`) y veneno .05.
+- Matriz final (fila gana a columna): guerrero 77 % a asesino y 66 % a arquero · maga 71 % a guerrero · asesino 57 % y
+  arquero 63 % a maga · asesino-arquero 46/54.
+- Contra monstruos (3 semillas, 120 días, Nv 80): guerrero 114-120, arquero 112-118, maga 79-116 (1 no llega), asesino
+  84-94 (algo más rápido; único que llega siempre al Infierno de la Etapa 3).
+- Prueba nueva: la cadena (sistemas.js). 36/36 sistemas, 15/15 escenarios, igual con pantalla y sin ella.
+
 **2026-11-03 · Claude**
 - `simularProgresion` acepta `clase` (y `pruebas/progresion.js`, `"clase"` en la configuración).
 - Medición inicial (mismas 3 semillas, 120 días): el Asesino muy por encima (Nv 80 días 54-94 en las 3; Etapa 3 Infierno

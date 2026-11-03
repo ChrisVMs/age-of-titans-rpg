@@ -175,6 +175,7 @@
     let dano = danoGuerrero(u.st), critico = false;
     let m = multGolpe(u.ef, hab, esJefe(t.e), t.vida < t.vidaMax / 2);
     if (u.estados.danza) m *= 1 + BUFF_DANZA.dano;
+    m *= ventajaClase(u.clase, t.clase);   // cadena de clases (solo entre personajes)
     if (rnd() < u.ef('critico')) { critico = true; m *= DANO_CRITICO_BASE + u.ef('danoCritico'); }
     const def = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };   // misma defensa para todos
     m *= factorDefensa({ armadura: armaduraEfectiva(def.armadura, u.ef('penetracion'), hab && hab.perfora), defensa: def.defensa }) * (1 - t.ef('reduccion'));

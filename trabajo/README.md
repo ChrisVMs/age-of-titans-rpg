@@ -7,7 +7,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 
 | Tema | Estado | Próximo paso | Última sesión |
 |---|---|---|---|
-| [Balance del Asesino](balance-asesino/ESTADO.md) | en curso · **prioridad alta** | Asesino ajustado; Arquero y Maga rinden por debajo: proponer subirlos. | 2026-11-03 · Claude |
+| [Balance de clases](balance-asesino/ESTADO.md) | en curso · **prioridad alta** | Cadena de clases hecha y 4 clases parejas contra monstruos; que el usuario lo juegue. | 2026-11-03 · Claude |
 | [Asesino personalizable (piezas y skins)](asesino-personalizable/ESTADO.md) | en curso · **prioridad alta** | Elegir propuesta con el usuario (capas por regiones, accesorios, skins completas). | 2026-10-31 · Claude |
 | [Generador de jugadores bot](bots-servidor/ESTADO.md) | en curso · **prioridad alta** | Hecho: 99 bots automáticos (hilos, incremental). Que el usuario lo pruebe y ajuste. | 2026-11-03 · Claude |
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |

@@ -10,10 +10,10 @@
   ];
   // Arquero: mismas animaciones del guerrero hasta tener su sprite; la Maga lanza desde su sitio. aplica: estado que puede dejar el golpe.
   HAB_TODAS.push(
-    { id: 'disparo', clase: 'arquero', nombre: 'Disparo certero', icono: '🏹', turnos: 3, mult: 2.2, animacion: 'estocada' },
+    { id: 'disparo', clase: 'arquero', nombre: 'Disparo certero', icono: '🏹', turnos: 3, mult: 2.4, animacion: 'estocada' },
     { id: 'lluvia', clase: 'arquero', nombre: 'Lluvia de flechas', icono: '🌧️', turnos: 4, mult: 1.6, animacion: 'tajo',
       aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
-    { id: 'perforante', clase: 'arquero', nombre: 'Flecha perforante', icono: '🗡️', turnos: 5, mult: 3.2, perfora: true, nodo: 'perforante', animacion: 'aplastante' },
+    { id: 'perforante', clase: 'arquero', nombre: 'Flecha perforante', icono: '🗡️', turnos: 5, mult: 2.6, perfora: true, nodo: 'perforante', animacion: 'aplastante' },
     { id: 'bola', clase: 'mago', nombre: 'Bola de fuego', icono: '🔥', turnos: 3, mult: 2, animacion: 'bola',
       aplica: { estado: 'quemadura', prob: .5, turnos: 2, pct: .2 } },
     { id: 'lanza', clase: 'mago', nombre: 'Lanza de hielo', icono: '❄️', turnos: 4, mult: 1.7, animacion: 'lanza',
@@ -21,9 +21,9 @@
     { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', animacion: 'meteoro',
       aplica: { estado: 'quemadura', prob: .8, turnos: 3, pct: .3 } },
     { id: 'punalada', clase: 'asesino', nombre: 'Puñalada', icono: '🔪', turnos: 3, mult: 1.6, animacion: 'punalada',
-      aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .1 } },
-    { id: 'paso', clase: 'asesino', nombre: 'Paso sombrío', icono: '🌑', turnos: 4, mult: 2.4, animacion: 'paso',
-      aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .08 } },   // 2026-11-03: .15 (y sangrado .15) rendía muy por encima; el veneno se apila en monstruos
+      aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
+    { id: 'paso', clase: 'asesino', nombre: 'Paso sombrío', icono: '🌑', turnos: 4, mult: 2, perfora: true, animacion: 'paso',   // por la espalda: ignora la armadura
+      aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .05 } },   // 2026-11-03: .15 (y sangrado .15) rendía muy por encima; el veneno se apila en monstruos
     { id: 'danza', clase: 'asesino', nombre: 'Danza de cuchillas', icono: '✖️', turnos: 6, mult: 0, buff: 'danza', animacion: 'danza' },   // buff: no golpea
   );
   for (const h of HAB_TODAS) h.img = 'hab_' + h.id;   // icono HD: img/iconos/hab_<id>.png
