@@ -34,3 +34,5 @@
   }
   // Paquetes de cristales con dinero real: aún sin pagos en la app (se muestran como próximamente)
   const PAQUETES_CRISTALES = [{ cristales: 100, precio: '0,99 €' }, { cristales: 550, precio: '4,99 €' }, { cristales: 1200, precio: '9,99 €' }];
+  // El pago lo pone la pantalla (ui.comprarPaquete: promesa true si se pagó); esto solo entrega los cristales.
+  function cobrarPaquete(i) { const p = PAQUETES_CRISTALES[i]; if (!p) return false; jugador.cristales = (jugador.cristales || 0) + p.cristales; return true; }

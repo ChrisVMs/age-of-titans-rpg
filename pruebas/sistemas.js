@@ -176,6 +176,9 @@ const PRUEBAS = {
     mob.e.jefe = false; aplicarEstado(mob, 'veneno', 3, 10); aplicarEstado(mob, 'veneno', 3, 10);
     const jefe = { heroe: false, e: { jefe: true }, estados: {}, conEfectos: false }; aplicarEstado(jefe, 'veneno', 3, 10); aplicarEstado(jefe, 'veneno', 3, 10);
     [yo.estados.veneno.pilas === 1, yo.estados.veneno.turnos === 3, !!yo.estados.quemadura, mob.estados.veneno.pilas === 2, jefe.estados.veneno.pilas === 1]`,
+  'Cristales: un paquete comprado entrega sus cristales': `
+    const c0 = jugador.cristales || 0; const ok = cobrarPaquete(1), mal = cobrarPaquete(99);
+    [ok, mal === false, jugador.cristales === c0 + PAQUETES_CRISTALES[1].cristales]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };
