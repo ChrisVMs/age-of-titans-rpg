@@ -31,6 +31,10 @@
   // (sus datos). conEfectos: tiene efectos defensivos propios (esquiva, resistencia, contraataque...): jugadores y rivales de arena.
   // duelo: es del 1 contra 1 (los dos en la casilla del frente), se dibuja en su lado de la escena (slots) en vez de en el rombo.
   // el: el elemento donde se dibuja (lo pone la pantalla).
+  // PvP (arena y Torre de reyes): con la vida normal, dos jugadores de igual poder se mataban en ~6 rondas. Con más vida
+  // la pelea dura más y se decide con las habilidades cargadas (el golpe fuerte), no con los primeros ataques.
+  const VIDA_PVP = 2.5;
+  const multVida = (rival = true) => { const c = batalla.campana || {}; return rival && (c.arena || c.reyes) ? VIDA_PVP : 1; };
   function crearUnidad(lado, pos, nombre) {   // motor: datos de la unidad (dibujarUnidad le pone su elemento)
     const [x, y] = pos ? (lado === 0 ? XY_HEROE : XY_ENEMIGO)[pos] : [];
     return { lado, pos, nombre, x, y, estados: {}, inmune: 0 };
@@ -44,12 +48,12 @@
     u.s4 = u.yo ? set4 : j => conPerfil(m.perfil, () => set4(j));   // sets de 4 piezas de cada jugador
     if (u.yo) { u.habs = HABILIDADES; u.carga = batalla.carga; }
     else { const h = conPerfil(m.perfil, calcularHabilidades); u.habs = h.habs; u.carga = Object.fromEntries(h.habs.map(x => [x.id, h.llenas ? x.turnos : 0])); }
-    u.vida = u.vidaMax = u.st.vida;
+    u.vida = u.vidaMax = Math.round(u.st.vida * multVida());
     return u;
   }
   function unidadMonstruo(e, pos) {   // un monstruo, un jefe o un rival de la arena (sus efectos defensivos van en e.ef)
     const u = crearUnidad(1, pos, e.nombre);
-    u.e = e; u.st = { ataque: 0, defensa: 0, vida: e.vida, armadura: e.armadura || 0 }; u.vida = u.vidaMax = e.vida;
+    u.e = e; u.st = { ataque: 0, defensa: 0, vida: e.vida, armadura: e.armadura || 0 }; u.vida = u.vidaMax = Math.round(e.vida * multVida(e.rival));
     u.ef = k => e.ef ? e.ef[k] || 0 : 0; u.conEfectos = !!e.ef; u.turnoRival = 0;
     return u;
   }

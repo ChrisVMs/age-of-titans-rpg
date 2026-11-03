@@ -55,7 +55,7 @@
     u.st = Object.fromEntries(Object.entries(s0).map(([k, v]) => [k, Math.round(v * e.pct)]));
     u.ef = k => conPerfil(p, () => efecto(k)); u.conEfectos = true; u.golpes = conPerfil(p, golpesEstado); u.s4 = j => conPerfil(p, () => set4(j));
     const h = conPerfil(p, calcularHabilidades); u.habs = h.habs; u.carga = Object.fromEntries(h.habs.map(x => [x.id, 0]));
-    u.vida = u.vidaMax = u.st.vida;
+    u.vida = u.vidaMax = Math.round(u.st.vida * multVida());
     return u;
   }
 

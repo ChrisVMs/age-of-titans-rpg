@@ -10,6 +10,12 @@ Que el usuario lo juegue. Si el Asesino se nota algo rápido contra monstruos (l
 afinar Puñalada o la Danza vigilando la matriz (`duelosClase`) para no romper la cadena.
 
 ## Última sesión
+**2026-11-03 · Claude (vida en PvP)**
+- Arena y Torre de reyes: todos los combatientes tienen `VIDA_PVP = 2.5` × vida (`js/logica/29-motor-del-combate.js`,
+  `unidadRey` en `41-ascension-2.js`). Duelos de igual poder: de ~6 rondas a ~10-20 (más el guerrero, menos el mago).
+- Con peleas largas el asesino ya no ganaba a la maga (.50): `BONO_VENTAJA_CLASE` .2 → .27 (solo entre personajes).
+  Cadena: guerrero>asesino .82, guerrero>arquero .80, maga>guerrero .83, asesino>maga .57, arquero>maga .65.
+
 **2026-11-03 · Claude (cadena de clases y balance de las 4)**
 - Pedido: guerrero > asesino/arquero (vida y resistencia), maga > guerrero (daño mágico atraviesa la resistencia),
   asesino/arquero > maga (daño físico y críticos); debilidad, no victoria segura.

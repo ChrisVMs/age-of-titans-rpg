@@ -22,7 +22,7 @@
   // contra el daño físico) · maga > guerrero (el daño mágico atraviesa su resistencia) · asesino y arquero > maga (daño
   // físico y críticos contra un cuerpo frágil). Quien tiene ventaja hace BONO_VENTAJA_CLASE más de daño. Contra monstruos
   // no cuenta (no tienen clase). Debilidad, no victoria segura.
-  let BONO_VENTAJA_CLASE = .2;
+  let BONO_VENTAJA_CLASE = .27;
   const VENTAJA_CLASE = { guerrero: ['asesino', 'arquero'], mago: ['guerrero'], asesino: ['mago'], arquero: ['mago'] };
   const ventajaClase = (atacante, objetivo) => atacante && objetivo && (VENTAJA_CLASE[atacante] || []).includes(objetivo) ? 1 + BONO_VENTAJA_CLASE : 1;
   // icono HD de la clase para la pantalla (el emoji 'icono' queda para textos como avisos y nombres de enemigos)
