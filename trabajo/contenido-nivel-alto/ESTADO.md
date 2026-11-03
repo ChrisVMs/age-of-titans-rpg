@@ -25,6 +25,16 @@ calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, 
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-11-03 · Claude (vida de los objetos; pedido del usuario)**
+- Los objetos morados "no hacían diferencia": una línea de vida rendía, frente a la vida base (10 por nivel; el ataque 2),
+  la mitad que una de ataque (épico Nv 20: +24 de vida ≈ 8 %, ataque ≈ 25-40 %), y el poder la contaba igual (~40).
+- `UNIDAD.vida` 10 → 20 y `PESO_PODER.vida` 4 → 2 (cada línea sigue sumando ~40 de poder).
+- Armadura: NO se dobló. Es una curva (K_ARMADURA 400) y al final ya quita ~81 % del daño (Nv 80 ~1700); doblarla dejaría
+  al jugador en el mínimo de daño (15 %).
+- Medición (6 semillas, 150 días): típicas Nv 80 días 116-132 (antes 122-148), Grieta 6-15, Ecos ~60 %; una semilla muy
+  fuerte (Nv 80 día 67, Etapa 3 Infierno día 17) y una débil (no llega). Sin recalibrar: dispersión algo mayor.
+- Verificación: 35/35 sistemas, 15/15 escenarios, igual con pantalla y sin ella.
+
 **2026-10-29 · Claude (recalibrar tras los estados de daño fijo)**
 - Con los estados nuevos todo quedó fácil: Grieta al 15 casi siempre, Ecos ~92 %, calabozos 5-8 Infierno días 41-59.
 - Ajustes: `ECO_BASE` 1,7 → 1,85 · `GRIETA_ESCALA.base` -2 → -1 · `CALABOZO_ALTO_EXTRA` 0 → 0,5 (nuevo: niveles de más para

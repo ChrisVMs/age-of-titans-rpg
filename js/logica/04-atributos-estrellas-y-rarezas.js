@@ -11,7 +11,8 @@
   const DANO_CRITICO_BASE = 1.5;                           // un crítico hace ×1,5 (+ daño crítico)
   const TOPE_SEC = { experiencia: .5, critico: .5, danoCritico: 1.5, penetracion: .6, reduccion: .6, resistencia: .75, habilidad: 1, jefes: 1, esquiva: .4, fortuna: .3,
                      robo: .25, contra: .35, remate: .5, curacion: 1 };   // sin tope, robo y contraataque apilados volvían inmortal al personaje
-  const UNIDAD = { ataque: 4, defensa: 1.5, vida: 10, armadura: 10,
+  // vida 20 (antes 10): frente a tu vida base (10 por nivel, el ataque 2) una línea de vida rendía la mitad que una de ataque
+  const UNIDAD = { ataque: 4, defensa: 1.5, vida: 20, armadura: 10,
                    critico: .8, danoCritico: 3, penetracion: 1.5, reduccion: .6, resistencia: 2, habilidad: 1.5, jefes: 1.5, experiencia: 1 };
   // Líneas extra al azar: los atributos base salen el doble que cada secundario
   const POOL_EXTRAS = ['ataque', 'defensa', 'vida', 'armadura', 'ataque', 'defensa', 'vida', 'armadura', ...Object.keys(SECUNDARIOS)];

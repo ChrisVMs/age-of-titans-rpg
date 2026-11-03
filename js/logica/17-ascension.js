@@ -25,7 +25,7 @@
 
   // Poder total: suma ponderada de las estadísticas finales. Los pesos son inversos a UNIDAD para que
   // una línea de cualquier atributo (misma rareza y estrellas) aporte el mismo poder (~40).
-  const PESO_PODER = { ataque: 10, defensa: 27, vida: 4, armadura: 4 };
+  const PESO_PODER = { ataque: 10, defensa: 27, vida: 2, armadura: 4 };   // vida 2: la línea de vida vale el doble (UNIDAD) y sigue sumando ~40
   // Efecto especial de la skin: suma valor × peso en % del poder (el peso refleja cuánto se activa en combate)
   const PESO_EFECTO = { habilidad: .5, jefes: .5, reduccion: 1, contra: .6, curacion: .3, oro: 0,
                         critico: .5, remate: .5, robo: .6, resistencia: .3, esquiva: 1, danoCritico: .1, penetracion: .3, fortuna: 0 };
