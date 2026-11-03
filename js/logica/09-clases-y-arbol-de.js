@@ -16,7 +16,7 @@
     mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
                 mod: { ataque: 6, vida: -15, armadura: -25 }, ef: { habilidad: .15, resistencia: .05 }, distancia: true },
     asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
-                mod: { ataque: 12, vida: -10, defensa: -15 }, ef: { critico: .08, danoCritico: .15, esquiva: .05 } },
+                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .05, danoCritico: .1, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
   };
   // icono HD de la clase para la pantalla (el emoji 'icono' queda para textos como avisos y nombres de enemigos)
   const iconoClase = id => `<img class="ic-txt" src="img/iconos/clase_${id}.png" alt="${CLASES[id].nombre}">`;
@@ -96,7 +96,7 @@
         { id: 'punto_debil', nombre: 'Punto débil',       icono: '🎯', max: 5, ef: { critico: 2 }, d: r => `${2 * r} % de prob. de crítico` },
         { id: 'punalada_m',  nombre: 'Puñalada profunda', icono: '🩸', max: 3, poder: 1.5, habMult: ['punalada', .2], d: r => `Puñalada hace +${20 * r} % de daño` },
         { id: 'ejecutor',    nombre: 'Ejecutor',          icono: '💀', max: 3, ef: { danoCritico: 8 }, d: r => `+${8 * r} % de daño crítico` },
-        { id: 'danza_r',     nombre: 'Danza incesante',  icono: '✖️', max: 1, poder: 4, habRecarga: ['danza', 1], d: () => 'Danza de cuchillas (+50 % de daño 3 turnos) se recarga 1 turno antes' },
+        { id: 'danza_r',     nombre: 'Danza incesante',  icono: '✖️', max: 1, poder: 4, habRecarga: ['danza', 1], d: () => `Danza de cuchillas (+${Math.round(BUFF_DANZA.dano * 100)} % de daño ${BUFF_DANZA.turnos} turnos) se recarga 1 turno antes` },
       ] },
       { id: 'sombras', nombre: 'Sombras', icono: '🌑', nodos: [
         { id: 'esquivo',     nombre: 'Esquivo',           icono: '💨', max: 5, ef: { esquiva: 2 }, d: r => `${2 * r} % de prob. de esquivar` },

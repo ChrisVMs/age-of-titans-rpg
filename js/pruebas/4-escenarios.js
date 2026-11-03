@@ -17,7 +17,7 @@
       const a = una(7), b = una(7);
       return a === b || `distintas: ${a} / ${b}`;
     }],
-    ['Danza de cuchillas: buff sin golpear, +50 % de daño 3 ataques', () => {
+    ['Danza de cuchillas: buff sin golpear, +BUFF_DANZA de daño 3 ataques', () => {
       const golpes = buff => {   // daño de 4 ataques normales con la misma semilla, con o sin el buff antes
         sembrar(3); jugador = Object.assign(jugadorPrueba(30), { clase: 'asesino' }); prepararBatalla(batallaPrueba());
         const e = enemigoDuelo(), d = [];
@@ -28,7 +28,7 @@
       const sin = golpes(false), con = golpes(true);
       if (!con) return 'Danza golpeó al enemigo';
       const r = con.map((x, i) => x / sin[i]);
-      return r.slice(0, 3).every(x => x > 1.4 && x < 1.6) && Math.abs(r[3] - 1) < .02 || `proporción por golpe: ${r.map(x => x.toFixed(2))}`;
+      return r.slice(0, 3).every(x => Math.abs(x - 1 - BUFF_DANZA.dano) < .1) && Math.abs(r[3] - 1) < .02 || `proporción por golpe: ${r.map(x => x.toFixed(2))}`;
     }],
     ['El veneno se acumula hasta 5 pilas', () => {
       prepararBatalla(batallaPrueba());

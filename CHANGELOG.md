@@ -30,6 +30,9 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - En vertical la batalla en grupo va en diagonal (tu grupo abajo, los enemigos arriba) y sale ~1,7 veces más grande; en los duelos los dos luchan más juntos y se ven más grandes.
 - Los botones de huir, velocidad, sonido y auto van en 2×2 y la barra superior ya no se corta.
 
+### 🗡️ Asesino
+- Equilibrado con las demás clases: Puñalada cada 3 turnos, Danza +30 % de daño, venenos y sangrados más suaves y menos ataque y crítico de clase.
+
 ### 🛡️ Objetos
 - La vida de los objetos vale el doble (antes casi no se notaba frente a la vida base).
 

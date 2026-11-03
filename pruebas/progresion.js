@@ -25,5 +25,5 @@ if (isMainThread) {
   const c = workerData, juego = require('./cargar')();
   for (const [k, v] of Object.entries(c.ajustes || {})) juego.correr(`${k} = ${JSON.stringify(v)}`);
   if (c.ajustes && c.ajustes.ESCALA_ETAPA) juego.correr('armarCampanas()');
-  parentPort.postMessage(juego.correr(`${resumen}(simularProgresion(${JSON.stringify({ dias: c.dias || 90, semilla: c.semilla || 1, estaminaExtra: c.estaminaExtra || 0, grupo: c.grupo || 3 })}))`));
+  parentPort.postMessage(juego.correr(`${resumen}(simularProgresion(${JSON.stringify({ dias: c.dias || 90, semilla: c.semilla || 1, estaminaExtra: c.estaminaExtra || 0, grupo: c.grupo || 3, clase: c.clase || 'guerrero' })}))`));
 }

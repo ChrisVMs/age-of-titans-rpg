@@ -20,10 +20,10 @@
       aplica: { estado: 'congelacion', prob: .3, turnos: 1 } },
     { id: 'meteoro', clase: 'mago', nombre: 'Meteoro', icono: '☄️', turnos: 6, mult: 4, nodo: 'meteoro', animacion: 'meteoro',
       aplica: { estado: 'quemadura', prob: .8, turnos: 3, pct: .3 } },
-    { id: 'punalada', clase: 'asesino', nombre: 'Puñalada', icono: '🔪', turnos: 2, mult: 1.6, animacion: 'punalada',
-      aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
+    { id: 'punalada', clase: 'asesino', nombre: 'Puñalada', icono: '🔪', turnos: 3, mult: 1.6, animacion: 'punalada',
+      aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .1 } },
     { id: 'paso', clase: 'asesino', nombre: 'Paso sombrío', icono: '🌑', turnos: 4, mult: 2.4, animacion: 'paso',
-      aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .15 } },
+      aplica: { estado: 'veneno', prob: .6, turnos: 3, pct: .08 } },   // 2026-11-03: .15 (y sangrado .15) rendía muy por encima; el veneno se apila en monstruos
     { id: 'danza', clase: 'asesino', nombre: 'Danza de cuchillas', icono: '✖️', turnos: 6, mult: 0, buff: 'danza', animacion: 'danza' },   // buff: no golpea
   );
   for (const h of HAB_TODAS) h.img = 'hab_' + h.id;   // icono HD: img/iconos/hab_<id>.png

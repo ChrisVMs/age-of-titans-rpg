@@ -99,7 +99,7 @@
   //   día · grupo: jugadores en calabozo y reyes (los aliados son copias del simulado: gente de su mismo nivel) ·
   //   estaminaExtra: recargas al día además de la gratis (anuncios, diamantes) · alDia(d): aviso al terminar cada día (progreso)
   //   Devuelve también la partida simulada (jugador), para poder seguir jugándola.
-  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null } = {}) {
+  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null, clase = 'guerrero' } = {}) {
     const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()], relojReal = Date.now, ahora0 = Date.now();
     window.setTimeout = () => 0;
     Date.now = () => ahora0;   // reloj quieto: lo que depende de la hora (ruinas) no cambia según lo rápido que simule   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
@@ -108,7 +108,7 @@
         sembrar(semilla);
         // los campos que el juego rellena al cargar o al abrir sus pantallas (una partida recién reiniciada aún no los tiene)
         const campos = { arbol: {}, torre: { mejor: 0 }, calabozos: {}, calabozosDif: {}, mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } };
-        jugador = perfil ? Object.assign(campos, structuredClone(perfil)) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase: 'guerrero' }, campos);
+        jugador = perfil ? Object.assign(campos, structuredClone(perfil)) : Object.assign(partidaNueva(), { nombre: 'Simulado', clase }, campos);
         if (perfil) sigUid = Math.max(sigUid, perfil.sigUid || 0);   // seguir una partida: sus objetos ya usan esos números
         const nivel0 = jugador.nivel;   // los niveles que ya tenía no son hitos de esta simulación
         const hitos = { nivel: {}, campana: {}, torre: {}, jefes: {}, calabozo: {}, reyes: {}, grieta: {}, ecos: {}, ecosJugados: {} }, dia = [], fuentes = {};
