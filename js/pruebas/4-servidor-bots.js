@@ -6,7 +6,8 @@
   // (este, servidor-hilo.js y 8-servidor-bots-pantalla.js) y sus líneas en js/orden.json. El juego no depende de ellos.
   const BOTS_SERVIDOR = 99;
   // ritmo: estamina extra al día (anuncios/cristales) y probabilidad de jugar cada día
-  const RITMOS_BOT = { casual: { estaminaExtra: 0, juega: .7, peso: 3 }, normal: { estaminaExtra: 150, juega: .95, peso: 5 }, intenso: { estaminaExtra: 300, juega: 1, peso: 2 } };
+  // tipo: cómo juega cada día que juega (TIPOS_JUGADOR: estamina extra, cuánta gasta, reintentos, rival de arena)
+  const RITMOS_BOT = { casual: { tipo: 'casual', juega: .7, peso: 3 }, normal: { tipo: 'constante', juega: .95, peso: 5 }, intenso: { tipo: 'pago', juega: 1, peso: 2 } };
   const INICIO_BOT = [-2, 20];   // día del servidor en que empieza cada bot (negativo: ya jugaba antes; como mucho 2 días)
   // Jugadores reales, sin ventajas: empiezan con lo del juego publicado (ORO_INICIAL y MAT_INICIAL fuera del modo pruebas,
   // en 06-progreso-del-jugador.js). Aquí van copiados porque el simulador corre en modo pruebas, que da más.
@@ -35,7 +36,8 @@
       for (let d = hechos + 1; d <= hechos + dias; d++) {
         if (!juegaBot(b, d)) continue;
         offsetDias = offset + (d - hechos - 1);
-        const r = simularProgresion({ dias: 1, perfil: p, semilla: b.semilla * 1000 + d, estaminaExtra: RITMOS_BOT[b.ritmo].estaminaExtra, expediciones: 2 });
+        const r = simularProgresion({ dias: 1, perfil: p, semilla: b.semilla * 1000 + d, expediciones: 2,
+          tipo: { ...TIPOS_JUGADOR[RITMOS_BOT[b.ritmo].tipo], juega: 1 } });   // si juega este día ya lo decidió juegaBot
         if (r) p = r.jugador;
       }
     } finally { offsetDias = o0; }

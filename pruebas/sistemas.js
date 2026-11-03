@@ -2,6 +2,12 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Tipos de jugador: sin tipo es el bot de siempre; el casual se salta días y gasta menos estamina que el constante': `
+    const base = simularProgresion({ dias: 3, semilla: 5, estaminaExtra: 150 }).dia, cte = simularProgresion({ dias: 3, semilla: 5, tipo: 'constante' }).dia;
+    const cas = simularProgresion({ dias: 10, semilla: 5, tipo: 'casual' }).dia, ctl = simularProgresion({ dias: 10, semilla: 5, tipo: 'constante' }).dia;
+    const libres = cas.filter(x => x.batallas === 0).length;
+    [JSON.stringify(base) === JSON.stringify(cte), libres >= 1 && libres <= 6, cas.at(-1).nivel <= ctl.at(-1).nivel,
+     cas.reduce((t, x) => t + x.batallas, 0) < ctl.reduce((t, x) => t + x.batallas, 0)]`,
   'Varios Auto (bot): hace los barridos que permite la estamina y no barre niveles sin superar': `
     const c = CAMPANAS[0]; (jugador.superadas ||= {})[c.id + ':normal'] = true;
     jugador.estamina = ESTAMINA_CAMPANA * 3; const n = barridos(c, 'normal', 10);

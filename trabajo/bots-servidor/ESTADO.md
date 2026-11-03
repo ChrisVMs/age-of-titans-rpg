@@ -11,6 +11,9 @@ Que el usuario lo pruebe (ranking, arena, Ecos, reyes, aliados con los bots nuev
 ritmos, días de inicio. Opcional: modo rápido (sin combate golpe a golpe) si en móvil va lento.
 
 ## Última sesión
+**2026-11-03 · Claude (tipos de jugador)**
+- `RITMOS_BOT` ahora usa `TIPOS_JUGADOR` (casual/constante/pago: estamina extra, gasto, reintentos, rival de arena); `VERSION_SERVIDOR` 3. Ver `trabajo/tipos-jugador/`.
+
 **2026-11-03 · Claude (jugadores reales)**
 - Los bots empezaban con el botín del modo pruebas (10 000 oro, 300 piedras…) y hasta 5 días antes del día 1: el día 1
   había bots de 30 k. Ahora empiezan con lo del juego publicado (`INICIO_REAL_BOT`: 3000 oro, 20 piedras, 5 polvo, 0 almas,

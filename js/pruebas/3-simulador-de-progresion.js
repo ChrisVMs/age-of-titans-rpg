@@ -98,6 +98,18 @@
     const tieneTitulo = () => (jugador.titulos || {})[idTituloTema(temaSemana())], E = revisarEvento();
     for (const it of [...TIENDA_EVENTO].reverse()) while ((tieneTitulo() || E.fichas - it.coste >= PRECIO_TITULO_EVENTO) && comprarEvento(it.id));
   }
+  // Tipos de jugador que puede simular simularProgresion (tipo): cuánto se parece a una persona real.
+  //   juega: probabilidad de jugar cada día (los días que no juega solo pasa el tiempo) · estaminaExtra: recargas al día
+  //   (anuncios, diamantes) · gasto: parte de la estamina del día que gasta (el resto se pierde) · reintentos: derrotas en
+  //   una batalla antes de dejarla para otro día · arena: a qué rival ataca (facil, azar o fuerte).
+  // 'constante' es el bot de siempre (todo, cada día): sin tipo, simularProgresion se comporta igual que antes.
+  const TIPOS_JUGADOR = {
+    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, reintentos: 1, arena: 'azar' },
+    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  reintentos: 2, arena: 'facil' },
+    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  reintentos: 3, arena: 'fuerte' },
+  };
+  const rivalArenaSim = (rivales, modo, r) => modo === 'azar' ? Math.floor(r() * rivales.length)
+    : rivales.reduce((m, x, k) => (modo === 'fuerte' ? x.f > rivales[m].f : x.f < rivales[m].f) ? k : m, 0);
   // Un jugador gratuito juega días seguidos sin pantalla, con las decisiones del bot: cada día recoge el login y las
   // expediciones, gasta la estamina, sube la Torre, usa las entradas de arena, jefes, calabozo y Torre de reyes, cobra las
   // misiones, abre cofres, se equipa lo mejor (y desguaza el resto), reparte el árbol, refina y gasta el oro en lo que más
@@ -106,8 +118,10 @@
   //   perfil: partida de la que parte (por defecto, una nueva) · dias · semilla: azar reproducible · expediciones: de 8 h al
   //   día · grupo: jugadores en calabozo y reyes (los aliados son copias del simulado: gente de su mismo nivel) ·
   //   estaminaExtra: recargas al día además de la gratis (anuncios, diamantes) · alDia(d): aviso al terminar cada día (progreso)
+  //   tipo: clave de TIPOS_JUGADOR u objeto con sus campos (su estaminaExtra manda sobre la del parámetro)
   //   Devuelve también la partida simulada (jugador), para poder seguir jugándola.
-  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null, clase = 'guerrero' } = {}) {
+  function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null, clase = 'guerrero', tipo = null } = {}) {
+    const T = { juega: 1, gasto: 1, reintentos: 2, arena: 'facil', estaminaExtra, ...(typeof tipo === 'string' ? TIPOS_JUGADOR[tipo] : tipo) };
     const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()], relojReal = Date.now, ahora0 = Date.now();
     window.setTimeout = () => 0;
     Date.now = () => ahora0;   // reloj quieto: lo que depende de la hora (ruinas) no cambia según lo rápido que simule   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
@@ -137,8 +151,18 @@
           cacheBots.splice(botsAntes.length);
           cobrarResultado(fin === true); return fin === true;
         };
+        const fila = (d, batallas) => ({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
+          despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),
+          ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0), codice: Object.keys((jugador.codice || {}).hitos || {}).length });
+        const azarArena = azarSemilla('arena ' + semilla);
         for (let d = 1; d <= dias; d++) {
-          offsetDias = offset0 + d - 1; revisarEstamina(); jugador.estamina += estaminaExtra;   // recargas extra del día (anuncios, diamantes)
+          offsetDias = offset0 + d - 1;
+          if (T.juega < 1 && azarSemilla(`juega ${semilla} ${d}`)() >= T.juega) {   // hoy no juega: solo pasa el tiempo
+            if (alDia) alDia(d); dia.push(fila(d, 0)); continue;
+          }
+          revisarEstamina(); jugador.estamina += T.estaminaExtra;   // recargas extra del día (anuncios, diamantes)
+          const reserva = Math.floor(jugador.estamina * (1 - T.gasto));   // lo que no llega a gastar hoy
+          const hayEstamina = () => jugador.estamina - reserva >= ESTAMINA_CAMPANA;
           revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); entradasJefe();   // lo que se renueva cada día, como al abrir el juego (el Campamento lo revisa al pintarse)
           if (loginDisponible()) medir('login', reclamarLogin);
           if (desbloqueado('pRuinas')) medir('ruinas', recogerRuinas);   // una vez al día (lo que quepa en el almacén)
@@ -146,7 +170,7 @@
             const m = MASCOTAS.filter(x => nivelMascota(x) > 0 && x.id !== jugador.mascota).sort((a, b) => Object.keys(CAT_MASCOTA).indexOf(b.cat) - Object.keys(CAT_MASCOTA).indexOf(a.cat))[0];
             if (m) for (let i = 0; i < expediciones; i++) medir('expedición', () => darPremio(premioExpedicion(m, 8)));
           }
-          const fallos = {}, pocos = k => (fallos[k] || 0) < 2;   // como el bot: tras 2 derrotas, eso se deja para otro día
+          const fallos = {}, pocos = k => (fallos[k] || 0) < T.reintentos;   // como el bot: tras sus derrotas, eso se deja para otro día
           let batallas = 0;
           while (batallas < 200) {
             medir('misiones', simCobrar);
@@ -156,11 +180,11 @@
               simMejorar(); simRunas(); simRefinar(); simRuinas();
             }
             let k = null, c = null;
-            if (jugador.estamina >= ESTAMINA_CAMPANA)
+            if (hayEstamina())
               for (const x of CAMPANAS) { for (const df of ORDEN_DIF) if (desbloqueada(x, df) && !superada(x.id, df) && pocos(`${x.id}:${df}`)) { k = `${x.id}:${df}`; c = batallaCampana(x, df); break; } if (c) break; }
             if (!c && desbloqueado('pTorre') && pocos('torre')) { k = 'torre'; c = batallaTorre(); }
             if (!c && desbloqueado('pArena') && revisarArena().entradas > 0) {
-              const a = revisarArena(), i = a.rivales.reduce((m, r, j) => r.f < a.rivales[m].f ? j : m, 0);
+              const a = revisarArena(), i = rivalArenaSim(a.rivales, T.arena, azarArena);
               a.entradas--; a.rivalActual = i; k = 'arena'; c = batallaArena(i);
             }
             if (!c && desbloqueado('pEvento') && entradasJefe() > 0) {
@@ -184,7 +208,7 @@
             if (!c) {   // farmeo: el barrido que más rinde (XP, oro y Esencia) entre los niveles ya superados
               const rinde = ([y, df]) => { const D = y.dificultades[df], s = k => (D.premio[k] || 0) + D.enemigos.reduce((t, e) => t + (e[k] || 0), 0);
                 return s('xp') * XP_BARRIDO + s('oro') + (D.premio.esencia || 0) * ESENCIA_BARRIDO * 300; };
-              const x = jugador.estamina >= ESTAMINA_CAMPANA && CAMPANAS.flatMap(y => ORDEN_DIF.map(df => [y, df])).filter(([y, df]) => superada(y.id, df)).sort((a, b) => rinde(b) - rinde(a))[0];
+              const x = hayEstamina() && CAMPANAS.flatMap(y => ORDEN_DIF.map(df => [y, df])).filter(([y, df]) => superada(y.id, df)).sort((a, b) => rinde(b) - rinde(a))[0];
               if (!x) break;
               medir('barrido', () => barrido(...x)); batallas++; continue;
             }
@@ -206,9 +230,7 @@
           for (let n = nivel0 + 1; n <= jugador.nivel; n++) hitos.nivel[n] ||= d;
           revisarTitulos();   // igual con pantalla y sin ella (la pantalla guarda más a menudo, y guardar revisa los títulos)
           if (alDia) alDia(d);
-          dia.push({ dia: d, nivel: jugador.nivel, poder: poder(), torre: jugador.torre.mejor, oro: jugador.oro, aura: nivelAura(), batallas,
-            despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),
-            ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0), codice: Object.keys((jugador.codice || {}).hitos || {}).length });
+          dia.push(fila(d, batallas));
         }
         jugador.sigUid = sigUid;   // la partida simulada, lista para guardarse como la tuya
         return { hitos, dia, fuentes, final: dia.at(-1), jugador: structuredClone(jugador) };

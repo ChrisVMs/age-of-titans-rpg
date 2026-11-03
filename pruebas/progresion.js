@@ -1,6 +1,7 @@
 // Simula partidas nuevas con simularProgresion, sin navegador y en paralelo (un hilo por núcleo).
 // Uso: node pruebas/progresion.js [configuraciones.json]
-//   cada configuración: { "nombre": "...", "dias": 90, "semilla": 1, "estaminaExtra": 0, "ajustes": { "XP_BARRIDO": 0.5 } }
+//   cada configuración: { "nombre": "...", "dias": 90, "semilla": 1, "estaminaExtra": 0, "tipo": "casual", "ajustes": { "XP_BARRIDO": 0.5 } }
+//   (tipo: casual, constante o pago; ver TIPOS_JUGADOR. Sin tipo: juega todo cada día con estaminaExtra)
 //   sin archivo: 90 días con las semillas 1, 2 y 3 y los valores actuales del juego.
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads'), os = require('os'), fs = require('fs');
 const resumen = `(r => { const H = r.hitos, f = o => Object.entries(o).map(([k, d]) => k + ':' + d).join(' ');
@@ -25,5 +26,5 @@ if (isMainThread) {
   const c = workerData, juego = require('./cargar')();
   for (const [k, v] of Object.entries(c.ajustes || {})) juego.correr(`${k} = ${JSON.stringify(v)}`);
   if (c.ajustes && c.ajustes.ESCALA_ETAPA) juego.correr('armarCampanas()');
-  parentPort.postMessage(juego.correr(`${resumen}(simularProgresion(${JSON.stringify({ dias: c.dias || 90, semilla: c.semilla || 1, estaminaExtra: c.estaminaExtra || 0, grupo: c.grupo || 3, clase: c.clase || 'guerrero' })}))`));
+  parentPort.postMessage(juego.correr(`${resumen}(simularProgresion(${JSON.stringify({ dias: c.dias || 90, semilla: c.semilla || 1, estaminaExtra: c.estaminaExtra || 0, grupo: c.grupo || 3, clase: c.clase || 'guerrero', tipo: c.tipo || null })}))`));
 }

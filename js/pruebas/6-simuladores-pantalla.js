@@ -17,16 +17,22 @@
   // un hilo aparte con barra de avance. Al terminar puedes simular más días sobre el mismo personaje (se suman los hitos) o
   // quedarte con él (reemplaza tu partida de pruebas). sim: la simulación en curso { inicio, dias, hitos, r, desde }.
   const DIAS_SIM_MAX = 180;
-  let hiloSim = null, cancelarSim = null, sim = null;
+  let hiloSim = null, cancelarSim = null, sim = null, tipoSim = 'constante';   // tipo de jugador (TIPOS_JUGADOR)
   const diasPedidos = def => Math.max(1, Math.min(DIAS_SIM_MAX, Math.round(+$('simDias').value || def)));
   const campoDias = def => `<label class="prueba-check">Días <input id="simDias" type="number" min="1" max="${DIAS_SIM_MAX}" value="${def}" style="width:70px"></label>`;
   $('progPrueba').onclick = () => {
     if (!MODO_PRUEBAS) return;
-    abrirModal('comun', `<h2>Simular progresión</h2><small>Juega todo lo que puede cada día (300 de estamina con anuncios).</small>
+    const tipos = () => Object.entries(TIPOS_JUGADOR).map(([k, t]) => `<button data-tipo="${k}" class="${k === tipoSim ? 'on' : ''}">${t.nombre}</button>`).join('');
+    const nota = () => { const t = TIPOS_JUGADOR[tipoSim];
+      return `Juega ${Math.round(t.juega * 100)} % de los días, gasta ${Math.round(t.gasto * 100)} % de la estamina (+${t.estaminaExtra} de recargas), deja una batalla tras ${t.reintentos} derrota${t.reintentos > 1 ? 's' : ''}.`; };
+    abrirModal('comun', `<h2>Simular progresión</h2>
+      <div class="fila" id="simTipos">${tipos()}</div><small id="simNota">${nota()}</small>
       ${campoDias(90)}
       <div class="fila"><button data-acc="nueva">Partida nueva</button><button data-acc="yo">Mi personaje (Nv ${jugador.nivel})</button></div>
       <div class="fila"><button data-acc="cerrar">Cerrar</button></div>`);
     $('detCaja').onclick = e => {
+      const t = e.target.closest('[data-tipo]');
+      if (t) { tipoSim = t.dataset.tipo; $('simTipos').innerHTML = tipos(); $('simNota').textContent = nota(); return; }
       const acc = e.target.closest('[data-acc]')?.dataset.acc;
       if (acc === 'cerrar') cerrarModal();
       if (acc === 'nueva' || acc === 'yo') simularConAvance(diasPedidos(90), { inicio: offsetDias + (acc === 'yo' ? 1 : 0), previos: 0, perfil: acc === 'yo' ? structuredClone(jugador) : null, desde: acc });
@@ -43,7 +49,7 @@
   }
   // tramo: { inicio (día de juego del primer día simulado; con tu personaje, mañana), previos (días ya simulados), perfil, desde }
   async function simularConAvance(dias, tramo) {
-    const total = tramo.previos + dias, opciones = { dias, semilla: 1 + tramo.previos, estaminaExtra: 150, perfil: tramo.perfil }, avance = d => {
+    const total = tramo.previos + dias, opciones = { dias, semilla: 1 + tramo.previos, tipo: tipoSim, perfil: tramo.perfil }, avance = d => {
       const pct = Math.round(d / dias * 100);
       abrirModal('comun', `<h2>Simulando ${dias} días… ${pct} %</h2><div class="grieta-vida"><div class="prog"><i style="width:${pct}%"></i></div><small>día ${tramo.previos + d}</small></div>
         <div class="fila"><button data-acc="cancelar">Cancelar</button></div>`);
@@ -79,7 +85,7 @@
   }
   function mostrarSimulacion() {
     const { r, dias } = sim, H = sim.hitos, fila = (t, l) => `<p><b>${t}</b><br>${l.join(' · ') || '—'}</p>`;
-    abrirModal('comun', `<h2>${sim.desde === 'yo' ? 'Tu personaje' : 'Partida nueva'}: ${dias} días</h2><small>Juega todo lo que puede cada día, como el bot; calabozo y reyes en grupo de 3 de su nivel.</small>
+    abrirModal('comun', `<h2>${sim.desde === 'yo' ? 'Tu personaje' : 'Partida nueva'}: ${dias} días · ${TIPOS_JUGADOR[tipoSim].nombre}</h2><small>Calabozo y reyes en grupo de 3 de su nivel.</small>
       ${fila('Nivel (día)', [10, 20, 30, 40, 50, 60, 70, 80].filter(n => H.nivel[n]).map(n => `Nv ${n}: ${H.nivel[n]}`))}
       ${fila('Campaña: último nivel de cada etapa (día)', ETAPAS.filter(e => CAMPANAS.some(c => c.etapa === e.id)).map(e => { const id = `${e.id}-10`, l = ORDEN_DIF.filter(d => H.campana[`${id} ${d}`]);
         return l.length ? `${id} ${DIFICULTADES[l.at(-1)]}: ${H.campana[`${id} ${l.at(-1)}`]}` : ''; }).filter(Boolean))}
