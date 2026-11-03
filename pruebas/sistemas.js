@@ -2,6 +2,12 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Reintentar: campaña solo con más poder; lo demás 2 veces al día; jefes mundiales, siempre': `
+    const p = poder(), f = { '1-2:normal': { poder: p, n: 1 }, 'jefecerbero': { poder: p * 10, n: 1 }, '1-3:normal': { poder: p / (1 + MEJORA_REINTENTO) - 1, n: 1 },
+      '1-4:normal': { poder: p, cerca: true, n: 1 }, '1-5:normal': { poder: p, cerca: true, n: REINTENTOS_GRATIS } }, hoy = {};
+    anotarDerrota(f, 'torre', hoy); const unaTorre = puedeReintentar(f, 'torre', hoy); anotarDerrota(f, 'torre', hoy);
+    [puedeReintentar(f, '2-1:normal', hoy), !puedeReintentar(f, '1-2:normal', hoy), puedeReintentar(f, 'jefecerbero', hoy), puedeReintentar(f, '1-3:normal', hoy),
+     unaTorre, !puedeReintentar(f, 'torre', hoy), !f.torre, puedeReintentar(f, '1-4:normal', hoy), !puedeReintentar(f, '1-5:normal', hoy)]`,
   'Bot en grupo: elige el calabozo sin superar más bajo (o el mejor superado) y la primera Torre de reyes sin vencer': `
     const c = CALABOZOS[0]; jugador.calabozos = {}; jugador.calabozosDif = {};
     const abierto = calabozoAbierto(c.id), primero = opcionCalabozoSim();

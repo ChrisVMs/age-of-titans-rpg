@@ -8,10 +8,25 @@ casual / constante / de pago, y más adelante decisiones de batalla y multijugad
 
 ## Próximo paso
 Las 4 fases están hechas. Cuando haya datos de jugadores reales (o el usuario diga cómo juega la gente), ajustar los
-números de `TIPOS_JUGADOR` (días que juega, gasto, recargas, reintentos). Antes: que el usuario pruebe el bot de pantalla
+números de `TIPOS_JUGADOR` (días que juega, gasto, recargas) y de los reintentos (`MEJORA_REINTENTO`, `DERROTA_AJUSTADA`).
+Investigar por qué el De pago no supera al Constante (pasa con la regla vieja y con la nueva; muro en el piso 99-100 de la Torre). Antes: que el usuario pruebe el bot de pantalla
 (🎭 tipo, habilidades con criterio, calabozo y reyes).
 
 ## Última sesión
+**2026-11-03 · Claude (reintentos)**
+- Pedido del usuario: repetir una batalla perdida sin mejorar es absurdo y gasta estamina.
+- `js/pruebas/3-simulador-de-progresion.js` · `MEJORA_REINTENTO` (.05), `REINTENTOS_GRATIS` (2), `DERROTA_AJUSTADA` (.3),
+  `esGratis`, `puedeReintentar`, `vidaEnemigos`, `anotarDerrota`. Campaña (gasta estamina): si perdió por poco (a los
+  enemigos les queda < 30 % de vida) reintenta hasta 2 veces; si lo aplastaron, mejora y solo vuelve con +5 % de poder.
+  Lo demás (Torre, Grieta, Eco, y arena/calabozo/reyes, cuyas entradas se pierden al acabar el día): 2 veces al día.
+  Jefes mundiales: siempre. Tras perder, el simulador mejora en el acto. Las derrotas siguen de un día a otro
+  (`jugador.simFallos`). Se quita `reintentos` de los tipos.
+- `js/pruebas/1-bot.js`, `5-bot-pantalla.js` · el bot de pantalla usa la misma regla y mejora tras perder.
+- Verificación: 46/46 sistemas, 15/15 escenarios, igual con pantalla y sin ella.
+- Medición (60 días, semillas 1-3, media): regla vieja → nueva: casual Nv 54 / 43 k → Nv 61 / 51 k; constante Nv 75 / 75 k
+  → Nv 78 / 90 k; de pago Nv 73 / 77 k → Nv 75 / 79 k. Primer intento (bloquear todo reintento sin +5 % de poder)
+  empeoraba: las batallas tienen mucho azar y una derrota ajustada se gana al reintentar.
+
 **2026-11-03 · Claude (fase 4)**
 - `js/pruebas/3-simulador-de-progresion.js` · `opcionCalabozoSim` y `opcionReyesSim` (antes dentro de `simularProgresion`,
   sin cambios de comportamiento).
@@ -50,6 +65,7 @@ números de `TIPOS_JUGADOR` (días que juega, gasto, recargas, reintentos). Ante
 - Quedó a medias: fases 2-4 (ver Pendiente).
 
 ## Decisiones
+- 2026-11-03 · Tras perder en campaña: reintentar solo si fue ajustada o con +5 % de poder; las entradas diarias y lo gratis, 2 veces al día · usuario (no repetir por repetir) + medición.
 - 2026-11-03 · Un solo catálogo de tipos para simulador y bots del servidor · propuesta aceptada por el usuario.
 - 2026-11-03 · Sin tipo = comportamiento anterior (autoataque), para no mover las mediciones de balance ya hechas · Claude.
 
@@ -84,6 +100,7 @@ números de `TIPOS_JUGADOR` (días que juega, gasto, recargas, reintentos). Ante
 - Cambiar los tipos cambia los bots del servidor: subir `VERSION_SERVIDOR`.
 
 ## Bitácora
+- 2026-11-03 · Claude · Reintentos: solo tras derrota ajustada o con más poder.
 - 2026-11-03 · Claude · Fase 4: calabozo y reyes en el bot de pantalla.
 - 2026-11-03 · Claude · Fase 3: habilidades con criterio.
 - 2026-11-03 · Claude · Fase 2: bot de pantalla con tipo.

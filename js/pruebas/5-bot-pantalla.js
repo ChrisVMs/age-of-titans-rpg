@@ -14,7 +14,7 @@
   // siguiente cosa por jugar: { clave, iniciar } o { barrido: [c, d] }
   function botSiguiente() {
     revisarEstamina();
-    const pocos = k => (botFallos[k] || 0) < tipoBot().reintentos;
+    const pocos = k => puedeReintentar(botFallos, k, botFallosHoy);
     if (botHayEstamina()) {
       for (const c of CAMPANAS) for (const d of ORDEN_DIF) {
         const k = `${c.id}:${d}`, b = $('listaCampanas').querySelector(`[data-campana="${c.id}"][data-dif="${d}"]`);
@@ -100,7 +100,7 @@
     if (desbloqueado('pRuinas')) recogerRuinas();
     simRuinas();
     botFijarReserva();
-    for (const k in botFallos) delete botFallos[k];
+    for (const k in botFallosHoy) delete botFallosHoy[k];
     $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
     return `Bot: día ${offsetDias + 1}`;
   }
@@ -114,7 +114,7 @@
       ponerVelocidad(VELOCIDADES.at(-1)); if (acc.iniciar() === 'auto') { await esperar(400); continue; } await esperar(100);
       const gano = await botBatalla();
       if (!botModo) break;
-      if (!gano) botFallos[acc.clave] = (botFallos[acc.clave] || 0) + 1;   // derrota o no pudo empezar
+      if (!gano) { anotarDerrota(botFallos, acc.clave, botFallosHoy); simMejorar(); simRunas(); simRefinar(); botPreparar(); }   // derrota: mejora antes de nada
       if (pantallaActual === 'pBatalla') { await esperar(600); $('resSalir').click(); }
       await esperar(400);
     }

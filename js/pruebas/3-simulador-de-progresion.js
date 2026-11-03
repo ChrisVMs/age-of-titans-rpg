@@ -108,15 +108,33 @@
   }
   // Tipos de jugador que puede simular simularProgresion (tipo): cuánto se parece a una persona real.
   //   juega: probabilidad de jugar cada día (los días que no juega solo pasa el tiempo) · estaminaExtra: recargas al día
-  //   (anuncios, diamantes) · gasto: parte de la estamina del día que gasta (el resto se pierde) · reintentos: derrotas en
-  //   una batalla antes de dejarla para otro día · arena: a qué rival ataca (facil, azar o fuerte) · anuncios y cristales:
+  //   (anuncios, diamantes) · gasto: parte de la estamina del día que gasta (el resto se pierde) · arena: a qué rival ataca (facil, azar o fuerte) · anuncios y cristales:
   //   si el bot de pantalla recarga estamina viendo anuncios o con cristales (el simulador lo resume en estaminaExtra) ·
   //   habilidades: 'auto' (la primera lista, como el autoataque) o 'criterio' (habCriterio: guarda la fuerte para el jefe).
   // Sin tipo, simularProgresion es el bot de siempre (todo cada día, autoataque); 'constante' es eso con habilidades con criterio.
   const TIPOS_JUGADOR = {
-    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, reintentos: 1, arena: 'azar',   anuncios: false, cristales: false, habilidades: 'auto' },
-    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  reintentos: 2, arena: 'facil',  anuncios: true,  cristales: false, habilidades: 'criterio' },
-    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  reintentos: 3, arena: 'fuerte', anuncios: true,  cristales: true,  habilidades: 'criterio' },
+    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, arena: 'azar',   anuncios: false, cristales: false, habilidades: 'auto' },
+    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  arena: 'facil',  anuncios: true,  cristales: false, habilidades: 'criterio' },
+    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  arena: 'fuerte', anuncios: true,  cristales: true,  habilidades: 'criterio' },
+  };
+  // Tras perder un nivel de campaña (gasta estamina) se hace como un jugador: si perdió por poco (a los enemigos les quedaba
+  // menos de DERROTA_AJUSTADA de su vida) lo reintenta hasta REINTENTOS_GRATIS veces; si lo aplastaron, primero mejora
+  // (equipo, oro, runas) y solo vuelve con un MEJORA_REINTENTO más de poder que cuando perdió. Lo demás no gasta estamina (Torre, Grieta, Eco)
+  // o usa entradas que se pierden al acabar el día (arena, calabozo, reyes): se reintenta hasta REINTENTOS_GRATIS veces al
+  // día. Los jefes mundiales, siempre: cada intento les quita vida.
+  // fallos: { clave: { poder, cerca, n } } (sigue de un día a otro) · dia: { clave: derrotas hoy }
+  const MEJORA_REINTENTO = .05, REINTENTOS_GRATIS = 2, DERROTA_AJUSTADA = .3;
+  const esGratis = k => !/^\d+-\d+:/.test(k);   // claves de campaña: 'etapa-nivel:dificultad'
+  const puedeReintentar = (fallos, k, dia = {}) => k.startsWith('jefe') ? true : esGratis(k) ? (dia[k] || 0) < REINTENTOS_GRATIS
+    : !fallos[k] || poder() >= fallos[k].poder * (1 + MEJORA_REINTENTO) || (fallos[k].cerca && fallos[k].n < REINTENTOS_GRATIS);
+  // vida que les queda a los enemigos (0-1) en la batalla que acaba de terminar
+  const vidaEnemigos = () => { const E = (batalla.grupo || {}).enemigos || [], m = E.reduce((t, u) => t + u.vidaMax, 0);
+    const resto = batalla.grupo && batalla.grupo.duelo ? (batalla.campana.enemigos || []).length - batalla.iEnemigo - 1 : 0;   // 1 contra 1: los que no salieron
+    return m ? Math.min(1, (E.reduce((t, u) => t + Math.max(0, u.vida), 0) / m + resto) / (1 + resto)) : 1; };
+  const anotarDerrota = (fallos, k, dia) => {
+    if (esGratis(k)) { dia[k] = (dia[k] || 0) + 1; return; }
+    const p = poder(), f = fallos[k], igual = f && p < f.poder * (1 + MEJORA_REINTENTO);   // sin mejorar desde la anterior
+    fallos[k] = { poder: igual ? f.poder : p, cerca: vidaEnemigos() < DERROTA_AJUSTADA, n: igual ? f.n + 1 : 1 };
   };
   const rivalArenaSim = (rivales, modo, r) => modo === 'azar' ? Math.floor(r() * rivales.length)
     : rivales.reduce((m, x, k) => (modo === 'fuerte' ? x.f > rivales[m].f : x.f < rivales[m].f) ? k : m, 0);
@@ -131,7 +149,7 @@
   //   tipo: clave de TIPOS_JUGADOR u objeto con sus campos (su estaminaExtra manda sobre la del parámetro)
   //   Devuelve también la partida simulada (jugador), para poder seguir jugándola.
   function simularProgresion({ dias = 60, perfil = null, semilla = 1, expediciones = 2, grupo = 3, estaminaExtra = 0, alDia = null, clase = 'guerrero', tipo = null } = {}) {
-    const T = { juega: 1, gasto: 1, reintentos: 2, arena: 'facil', estaminaExtra, ...(typeof tipo === 'string' ? TIPOS_JUGADOR[tipo] : tipo) };
+    const T = { juega: 1, gasto: 1, arena: 'facil', estaminaExtra, ...(typeof tipo === 'string' ? TIPOS_JUGADOR[tipo] : tipo) };
     const offset0 = offsetDias, temporizador = window.setTimeout, botsAntes = [...bots()], relojReal = Date.now, ahora0 = Date.now();
     window.setTimeout = () => 0;
     Date.now = () => ahora0;   // reloj quieto: lo que depende de la hora (ruinas) no cambia según lo rápido que simule   // los avisos diferidos (desbloqueos, títulos) no deben salir al terminar
@@ -165,6 +183,7 @@
           despertar: Object.values(jugador.despertar || {}).reduce((s, o) => s + Object.values(o).reduce((a, b) => a + b, 0), 0),
           ruinas: Object.values((jugador.ruinas || {}).niveles || {}).reduce((a, b) => a + b, 0), codice: Object.keys((jugador.codice || {}).hitos || {}).length });
         const azarArena = azarSemilla('arena ' + semilla);
+        const fallos = jugador.simFallos ||= {};   // derrotas (clave → poder al perder): siguen en la partida de un día (y una llamada) a otro
         for (let d = 1; d <= dias; d++) {
           offsetDias = offset0 + d - 1;
           if (T.juega < 1 && azarSemilla(`juega ${semilla} ${d}`)() >= T.juega) {   // hoy no juega: solo pasa el tiempo
@@ -180,11 +199,12 @@
             const m = MASCOTAS.filter(x => nivelMascota(x) > 0 && x.id !== jugador.mascota).sort((a, b) => Object.keys(CAT_MASCOTA).indexOf(b.cat) - Object.keys(CAT_MASCOTA).indexOf(a.cat))[0];
             if (m) for (let i = 0; i < expediciones; i++) medir('expedición', () => darPremio(premioExpedicion(m, 8)));
           }
-          const fallos = {}, pocos = k => (fallos[k] || 0) < T.reintentos;   // como el bot: tras sus derrotas, eso se deja para otro día
-          let batallas = 0;
+          const hoyF = {}, pocos = k => puedeReintentar(fallos, k, hoyF);
+          let batallas = 0, mejorar = false;
           while (batallas < 200) {
             medir('misiones', simCobrar);
-            if (batallas % 5 === 0) {   // cada 5 batallas (y al empezar el día) organiza el equipo y gasta
+            if (batallas % 5 === 0 || mejorar) {   // cada 5 batallas, al empezar el día y tras perder: organiza el equipo y gasta
+              mejorar = false;
               botCofres(); botEquipar(); botArbol();
               desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));   // lo que no lleva puesto, a almas
               simMejorar(); simRunas(); simRefinar(); simRuinas();
@@ -225,7 +245,7 @@
             const gano = medir(fuente, () => jugar(c)); batallas++;
             if (c.eco) hitos.ecosJugados[c.eco] = (hitos.ecosJugados[c.eco] || 0) + 1;
             if (gano === null) break;
-            if (!gano) fallos[k] = (fallos[k] || 0) + 1;
+            if (!gano) { anotarDerrota(fallos, k, hoyF); mejorar = true; }
             else {
               if (c.idCampana) hitos.campana[`${c.idCampana} ${c.dif}`] ||= d;
               if (c.torre && c.torre % 10 === 0) hitos.torre[c.torre] ||= d;

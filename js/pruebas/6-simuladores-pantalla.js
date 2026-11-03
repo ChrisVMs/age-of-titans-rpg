@@ -24,7 +24,7 @@
     if (!MODO_PRUEBAS) return;
     const tipos = () => Object.entries(TIPOS_JUGADOR).map(([k, t]) => `<button data-tipo="${k}" class="${k === tipoSim ? 'on' : ''}">${t.nombre}</button>`).join('');
     const nota = () => { const t = TIPOS_JUGADOR[tipoSim];
-      return `Juega ${Math.round(t.juega * 100)} % de los días, gasta ${Math.round(t.gasto * 100)} % de la estamina (+${t.estaminaExtra} de recargas), deja una batalla tras ${t.reintentos} derrota${t.reintentos > 1 ? 's' : ''}.`; };
+      return `Juega ${Math.round(t.juega * 100)} % de los días, gasta ${Math.round(t.gasto * 100)} % de la estamina (+${t.estaminaExtra} de recargas). Tras perder, mejora y solo reintenta con +${Math.round(MEJORA_REINTENTO * 100)} % de poder en campaña (lo demás, ${REINTENTOS_GRATIS} veces al día).`; };
     abrirModal('comun', `<h2>Simular progresión</h2>
       <div class="fila" id="simTipos">${tipos()}</div><small id="simNota">${nota()}</small>
       ${campoDias(90)}

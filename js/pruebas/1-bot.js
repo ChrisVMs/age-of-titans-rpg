@@ -7,7 +7,7 @@
   const tipoBot = () => TIPOS_JUGADOR[botTipo] || TIPOS_JUGADOR.constante;   // TIPOS_JUGADOR: 3-simulador-de-progresion.js
   const botHayEstamina = () => jugador.estamina - botReserva >= ESTAMINA_CAMPANA;
   const botFijarReserva = () => { revisarEstamina(); botReserva = Math.floor(jugador.estamina * (1 - tipoBot().gasto)); };
-  const botFallos = {};   // derrotas por batalla (clave): a las 2 el bot deja de intentarla
+  const botFallos = {}, botFallosHoy = {};   // derrotas: poder al perder (las que cuestan) y cuántas hoy (las gratis); ver puedeReintentar
   const esperar = ms => new Promise(r => setTimeout(r, ms));
   function botEquipar() {
     for (const r of Object.keys(RANURAS)) {

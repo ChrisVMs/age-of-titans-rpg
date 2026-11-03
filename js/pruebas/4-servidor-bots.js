@@ -6,7 +6,7 @@
   // (este, servidor-hilo.js y 8-servidor-bots-pantalla.js) y sus líneas en js/orden.json. El juego no depende de ellos.
   const BOTS_SERVIDOR = 99;
   // ritmo: estamina extra al día (anuncios/cristales) y probabilidad de jugar cada día
-  // tipo: cómo juega cada día que juega (TIPOS_JUGADOR: estamina extra, cuánta gasta, reintentos, rival de arena)
+  // tipo: cómo juega cada día que juega (TIPOS_JUGADOR: estamina extra, cuánta gasta, rival de arena, habilidades)
   const RITMOS_BOT = { casual: { tipo: 'casual', juega: .7, peso: 3 }, normal: { tipo: 'constante', juega: .95, peso: 5 }, intenso: { tipo: 'pago', juega: 1, peso: 2 } };
   const INICIO_BOT = [-2, 20];   // día del servidor en que empieza cada bot (negativo: ya jugaba antes; como mucho 2 días)
   // Jugadores reales, sin ventajas: empiezan con lo del juego publicado (ORO_INICIAL y MAT_INICIAL fuera del modo pruebas,
