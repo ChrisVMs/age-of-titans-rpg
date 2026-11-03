@@ -2,7 +2,11 @@
   // "repetir": en batalla activa el autoataque y, al terminar, pulsa Jugar de nuevo / Reintentar / Subir piso.
   // "jugar": además elige qué jugar (campaña, Torre, Arena, jefes mundiales; nada multijugador), se equipa lo de más
   // poder, reparte los puntos de habilidad y compra cofres con el oro que sobra. Para cuando no queda nada que jugar hoy.
-  let botModo = null, botVel = 1;
+  let botModo = null, botVel = 1, botReserva = 0;   // botReserva: estamina que el tipo de jugador no gasta hoy
+  let botTipo = 'constante'; try { botTipo = localStorage.getItem('batalla.botTipo') || botTipo; } catch {}
+  const tipoBot = () => TIPOS_JUGADOR[botTipo] || TIPOS_JUGADOR.constante;   // TIPOS_JUGADOR: 3-simulador-de-progresion.js
+  const botHayEstamina = () => jugador.estamina - botReserva >= ESTAMINA_CAMPANA;
+  const botFijarReserva = () => { revisarEstamina(); botReserva = Math.floor(jugador.estamina * (1 - tipoBot().gasto)); };
   const botFallos = {};   // derrotas por batalla (clave): a las 2 el bot deja de intentarla
   const esperar = ms => new Promise(r => setTimeout(r, ms));
   function botEquipar() {

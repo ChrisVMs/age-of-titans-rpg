@@ -101,12 +101,13 @@
   // Tipos de jugador que puede simular simularProgresion (tipo): cuánto se parece a una persona real.
   //   juega: probabilidad de jugar cada día (los días que no juega solo pasa el tiempo) · estaminaExtra: recargas al día
   //   (anuncios, diamantes) · gasto: parte de la estamina del día que gasta (el resto se pierde) · reintentos: derrotas en
-  //   una batalla antes de dejarla para otro día · arena: a qué rival ataca (facil, azar o fuerte).
+  //   una batalla antes de dejarla para otro día · arena: a qué rival ataca (facil, azar o fuerte) · anuncios y cristales:
+  //   si el bot de pantalla recarga estamina viendo anuncios o con cristales (el simulador lo resume en estaminaExtra).
   // 'constante' es el bot de siempre (todo, cada día): sin tipo, simularProgresion se comporta igual que antes.
   const TIPOS_JUGADOR = {
-    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, reintentos: 1, arena: 'azar' },
-    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  reintentos: 2, arena: 'facil' },
-    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  reintentos: 3, arena: 'fuerte' },
+    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, reintentos: 1, arena: 'azar',   anuncios: false, cristales: false },
+    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  reintentos: 2, arena: 'facil',  anuncios: true,  cristales: false },
+    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  reintentos: 3, arena: 'fuerte', anuncios: true,  cristales: true },
   };
   const rivalArenaSim = (rivales, modo, r) => modo === 'azar' ? Math.floor(r() * rivales.length)
     : rivales.reduce((m, x, k) => (modo === 'fuerte' ? x.f > rivales[m].f : x.f < rivales[m].f) ? k : m, 0);

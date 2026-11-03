@@ -8,8 +8,8 @@
   // siguiente cosa por jugar: { clave, iniciar } o { barrido: [c, d] }
   function botSiguiente() {
     revisarEstamina();
-    const pocos = k => (botFallos[k] || 0) < 2;
-    if (jugador.estamina >= ESTAMINA_CAMPANA) {
+    const pocos = k => (botFallos[k] || 0) < tipoBot().reintentos;
+    if (botHayEstamina()) {
       for (const c of CAMPANAS) for (const d of ORDEN_DIF) {
         const k = `${c.id}:${d}`, b = $('listaCampanas').querySelector(`[data-campana="${c.id}"][data-dif="${d}"]`);
         if (b && !b.disabled && !superada(c.id, d) && pocos(k)) return { clave: k, iniciar: () => botEntrar(c, d, b) };
@@ -18,7 +18,7 @@
     const piso = 'torre' + (jugador.torre.mejor + 1);
     if (desbloqueado('pTorre') && pocos(piso)) return { clave: piso, iniciar: iniciarTorre };
     if (desbloqueado('pArena') && revisarArena().entradas > 0) {
-      const a = revisarArena(), i = a.rivales.reduce((m, r, k) => r.f < a.rivales[m].f ? k : m, 0);   // el rival más fácil
+      const a = revisarArena(), i = rivalArenaSim(a.rivales, tipoBot().arena, rnd);   // según el tipo: el más fácil, al azar o el más fuerte
       return { clave: 'arena', iniciar: () => { pintarArena(); $('arenaPvp').querySelector(`[data-rival="${i}"]`).click(); } };
     }
     if (desbloqueado('pEvento') && entradasJefe() > 0) {
@@ -30,7 +30,7 @@
       elegirBendicion(bendicionSugerida());
       if (puedeEntrarGrieta()) return { clave: 'grieta', iniciar: () => iniciarCampana(batallaGrieta()) };
     }
-    if (jugador.estamina >= ESTAMINA_CAMPANA)   // farmeo: barrido del nivel más alto ya superado
+    if (botHayEstamina())   // farmeo: barrido del nivel más alto ya superado
       for (const c of [...CAMPANAS].reverse()) for (const d of [...ORDEN_DIF].reverse()) if (superada(c.id, d)) return { barrido: [c, d] };
     return null;
   }
@@ -71,15 +71,18 @@
   // simulador (mejoras, runas, refinado) y pasa al día siguiente. Devuelve el texto del aviso.
   function botRecargarOPasarDia() {
     simCobrar();
-    if (cobrarAnuncio()) return `Bot: anuncio +${ESTAMINA_ANUNCIO} ⚡`;
-    if (recargarConCristales()) return `Bot: 💎 ${RECARGA_CRISTALES.coste} → +${RECARGA_CRISTALES.estamina} ⚡`;
+    if (tipoBot().anuncios && cobrarAnuncio()) return `Bot: anuncio +${ESTAMINA_ANUNCIO} ⚡`;
+    if (tipoBot().cristales && recargarConCristales()) return `Bot: 💎 ${RECARGA_CRISTALES.coste} → +${RECARGA_CRISTALES.estamina} ⚡`;
     desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));
     simMejorar(); simRunas(); simRefinar();
-    offsetDias++; try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}
+    offsetDias++;
+    while (tipoBot().juega < 1 && rnd() >= tipoBot().juega) offsetDias++;   // días que este tipo de jugador no entra
+    try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}
     revisarEstamina(); revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); revisarRecargas(); entradasJefe();
     if (loginDisponible()) reclamarLogin();
     if (desbloqueado('pRuinas')) recogerRuinas();
     simRuinas();
+    botFijarReserva();
     for (const k in botFallos) delete botFallos[k];
     $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
     return `Bot: día ${offsetDias + 1}`;
@@ -102,7 +105,7 @@
   }
   function botEmpezar(modo) {
     if (!MODO_PRUEBAS || botModo) return;
-    botModo = modo; botVel = velElegida;
+    botModo = modo; botVel = velElegida; botFijarReserva();
     $('pruebasMenu').classList.remove('visible'); $('botParar').hidden = false;
     (modo === 'jugar' ? botJugar() : botRepetir()).catch(e => { console.error(e); avisar('Bot: error, ver consola'); botParar(); });
   }
@@ -114,6 +117,11 @@
   }
   $('botRepetir').onclick = () => botEmpezar('repetir');
   $('botJugar').onclick = () => botEmpezar('jugar');
+  // tipo de jugador del bot (TIPOS_JUGADOR): cada toque pasa al siguiente
+  const pintarBotTipo = () => { $('botTipo').textContent = `🎭 Bot: ${tipoBot().nombre}`; };
+  $('botTipo').onclick = () => { const l = Object.keys(TIPOS_JUGADOR); botTipo = l[(l.indexOf(botTipo) + 1) % l.length];
+    try { localStorage.setItem('batalla.botTipo', botTipo); } catch {} pintarBotTipo(); };
+  pintarBotTipo();
   $('botParar').onclick = botParar;
   // si el jugador sale de una batalla a mano (huir, abandonar o salir del resultado), el bot se para: sus propios clics
   // no son de una persona (isTrusted false) y no cuentan

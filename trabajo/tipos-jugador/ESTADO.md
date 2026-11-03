@@ -7,11 +7,18 @@ Que el simulador y los bots se parezcan a jugadores reales, no solo al "óptimo 
 casual / constante / de pago, y más adelante decisiones de batalla y multijugador en el bot de pantalla.
 
 ## Próximo paso
-Fase 2, en `js/pruebas/1-bot.js` y `5-bot-pantalla.js`: el bot de pantalla ("🤖 Bot: jugar solo") con tipo de jugador
-(los mismos `TIPOS_JUGADOR`: días saltados, gasto de estamina, reintentos, rival de arena). Hecho cuando se elige el tipo
-en el menú 🧪 y el bot respeta sus límites.
+Fase 3: habilidades con criterio en el combate simulado (hoy `habLista` usa la primera lista). Dónde: la función que elige
+habilidad en `jugarHastaFin` / autoataque; guardar la más fuerte para el jefe o el último enemigo. Hecho cuando el tipo
+lo pueda activar y una prueba muestre que la reserva para el jefe.
 
 ## Última sesión
+**2026-11-03 · Claude (fase 2)**
+- `js/pruebas/1-bot.js` · `botTipo` (guardado en `batalla.botTipo`), `tipoBot`, `botReserva`, `botHayEstamina`, `botFijarReserva`.
+- `js/pruebas/5-bot-pantalla.js` · el bot de pantalla respeta el tipo: reintentos, rival de arena, estamina sin gastar,
+  anuncios y cristales solo si el tipo los usa, y salta los días que ese tipo no juega. Botón "🎭 Bot: <tipo>" en el menú 🧪.
+- `TIPOS_JUGADOR` · campos `anuncios` y `cristales` (los usa el bot de pantalla).
+- Verificación: 43/43 sistemas, 15/15 escenarios, igual con pantalla y sin ella. Falta que el usuario lo pruebe en pantalla.
+
 **2026-11-03 · Claude**
 - Cambios: `js/pruebas/3-simulador-de-progresion.js` · `TIPOS_JUGADOR` (casual, constante, pago) y `rivalArenaSim`;
   `simularProgresion({ tipo })`: días sin jugar (azar sembrado por día), reserva de estamina sin gastar (`gasto`),
@@ -29,10 +36,10 @@ en el menú 🧪 y el bot respeta sus límites.
 - 2026-11-03 · 'constante' = comportamiento anterior, para no mover las mediciones de balance ya hechas · Claude.
 
 ## Hecho
-- Fase 1: tipos en el simulador y en los bots del servidor · commit en qa · sistemas + medición.
+- Fase 1: tipos en el simulador y en los bots del servidor · 232b4bc · sistemas + medición.
+- Fase 2: tipo de jugador en el bot de pantalla · commit en qa · sistemas, sin-pantalla.
 
 ## Pendiente
-- Fase 2: tipo de jugador en el bot de pantalla (ver Próximo paso).
 - Fase 3: habilidades con criterio (guardar la fuerte para el jefe o el último enemigo) en vez de `habLista`.
 - Fase 4: el bot de pantalla entra en calabozo y Torre de reyes (en modo pruebas los aliados son bots).
 - Ajustar los números de cada tipo con datos reales cuando los haya.
@@ -59,4 +66,5 @@ en el menú 🧪 y el bot respeta sus límites.
 - Cambiar los tipos cambia los bots del servidor: subir `VERSION_SERVIDOR`.
 
 ## Bitácora
+- 2026-11-03 · Claude · Fase 2: bot de pantalla con tipo.
 - 2026-11-03 · Claude · Tema creado; fase 1 (tipos en simulador y bots del servidor).
