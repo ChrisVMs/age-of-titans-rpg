@@ -2,6 +2,11 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Auto x10: hace los barridos que permite la estamina y no barre niveles sin superar': `
+    const c = CAMPANAS[0]; (jugador.superadas ||= {})[c.id + ':normal'] = true;
+    jugador.estamina = ESTAMINA_CAMPANA * 3; const n = barridos(c, 'normal', 10);
+    jugador.estamina = ESTAMINA_CAMPANA * 5; const sin = barridos(CAMPANAS[1], 'normal', 10);
+    [n === 3, jugador.estamina === ESTAMINA_CAMPANA * 5, sin === 0]`,
   'Cambio de cristales por oro: cobra cristales, da oro según el nivel y no deja comprar sin cristales': `
     jugador.nivel = 10; jugador.cristales = 25; const o = jugador.oro;
     const ok = cambiarOro(0), sin = cambiarOro(0);

@@ -190,6 +190,13 @@
     ui.avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
     ui.pintarCampanas();
   }
+  // varios Auto seguidos (x10 de pruebas y el bot): para al acabarse la estamina. Devuelve cuántos hizo.
+  function barridos(c, d, veces = 1) {
+    let n = 0;
+    for (; n < veces && superada(c.id, d) && (revisarEstamina(), jugador.estamina >= ESTAMINA_CAMPANA); n++) barrido(c, d);
+    if (!n) barrido(c, d);   // sin estamina: que avise
+    return n;
+  }
   // fondo de la batalla: el de la etapa de esa campaña (las demás batallas, el de siempre)
   const fondoBatalla = c => { const e = c.idCampana && ETAPAS.find(x => x.id === +c.idCampana.split('-')[0]); return e && e.fondo ? { img: e.fondo, zoom: e.fondoZoom || 1 } : null; };
   function batallaCampana(c, d) { return { nombre: `${c.nombre} · ${DIFICULTADES[d]}`, idCampana: c.id, dif: d, ancestral: c.ancestral, ...c.dificultades[d] }; }
