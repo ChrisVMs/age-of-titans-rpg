@@ -66,6 +66,7 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - Botón para silenciar o activar el sonido, en el Campamento y en la batalla (se recuerda).
 
 ### 🧪 Modo pruebas
+- 🌐 Servidor de 99 bots que avanzan solos cada día de juego (en hilos aparte, sin frenar tus batallas); ocupan el ranking, la arena, los Ecos y los aliados.
 - Los paquetes de cristales se pueden comprar gratis (compra simulada).
 - Velocidad x5 en batalla (también la usa el bot).
 - Menú de pruebas por grupos (recursos, bots y simulación, partida, otros). Un solo botón rellena estamina y todas las entradas; otro da materiales y 💎.

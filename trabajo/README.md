@@ -9,7 +9,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 |---|---|---|---|
 | [Balance del Asesino](balance-asesino/ESTADO.md) | en curso · **prioridad alta** | Comparar clases con simularProgresion y escenarios; ajustar CLASES.asesino, HAB_TODAS y ARBOL.asesino. | 2026-10-31 · Claude |
 | [Asesino personalizable (piezas y skins)](asesino-personalizable/ESTADO.md) | en curso · **prioridad alta** | Elegir propuesta con el usuario (capas por regiones, accesorios, skins completas). | 2026-10-31 · Claude |
-| [Generador de jugadores bot](bots-servidor/ESTADO.md) | en curso · **prioridad alta** | Estudiar simularProgresion y 35-bots-del-servidor.js; proponer diseño. | 2026-10-31 · Claude |
+| [Generador de jugadores bot](bots-servidor/ESTADO.md) | en curso · **prioridad alta** | Hecho: 99 bots automáticos (hilos, incremental). Que el usuario lo pruebe y ajuste. | 2026-11-03 · Claude |
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |

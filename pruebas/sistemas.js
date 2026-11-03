@@ -179,6 +179,18 @@ const PRUEBAS = {
   'Cristales: un paquete comprado entrega sus cristales': `
     const c0 = jugador.cristales || 0; const ok = cobrarPaquete(1), mal = cobrarPaquete(99);
     [ok, mal === false, jugador.cristales === c0 + PAQUETES_CRISTALES[1].cristales]`,
+  'Servidor de bots: plan fijo por semilla, 99 nombres distintos y clases válidas': `
+    const p = planServidor(), q = planServidor();
+    [p.length === BOTS_SERVIDOR, JSON.stringify(p) === JSON.stringify(q), new Set(p.map(b => b.nombre)).size === p.length,
+     p.every(b => CLASES[b.clase] && RITMOS_BOT[b.ritmo] && b.inicio >= INICIO_BOT[0] && b.inicio <= INICIO_BOT[1]),
+     JSON.stringify(planServidor(BOTS_SERVIDOR, 2)) !== JSON.stringify(p)]`,
+  'Servidor de bots: días pendientes según el día del servidor': `
+    const b = { inicio: 3 };
+    [diasPendientesBot(b, 0, 2) === 0, diasPendientesBot(b, 0, 3) === 1, diasPendientesBot(b, 2, 5) === 1, diasPendientesBot(b, 5, 5) === 0]`,
+  'Servidor de bots: avanzar un bot 2 días sube su nivel y conserva nombre y clase': `
+    const b = { id: 0, nombre: 'Prueba', clase: 'mago', inicio: 0, ritmo: 'intenso', semilla: 7 }, yo = jugador.nombre;
+    const p = avanzarBot(b, null, 0, 2, 0), p2 = avanzarBot(b, p, 2, 1, 2);
+    [p.nivel > 1, p.nombre === 'Prueba', p.clase === 'mago', p.bot === true, p2.nivel >= p.nivel, jugador.nombre === yo]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

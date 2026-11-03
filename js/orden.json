@@ -89,8 +89,10 @@
   "js/pruebas/2-simulador-de-batallas.js",
   "js/pruebas/3-simulador-de-progresion.js",
   "js/pruebas/4-escenarios.js",
+  "js/pruebas/4-servidor-bots.js",
   "js/pruebas/5-bot-pantalla.js",
   "js/pruebas/6-simuladores-pantalla.js",
-  "js/pruebas/7-escenarios-pantalla.js"
+  "js/pruebas/7-escenarios-pantalla.js",
+  "js/pruebas/8-servidor-bots-pantalla.js"
  ]
 }
