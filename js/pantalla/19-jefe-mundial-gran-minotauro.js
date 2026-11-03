@@ -307,11 +307,17 @@
     };
   };
   $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.eco ? 'pRanking' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.grieta ? 'pGrieta' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
-  $('resOtra').onclick = () => batalla.campana.mundial ? iniciarMundial() : batalla.campana.torre ? iniciarTorre() : iniciarCampana(batalla.campana);
+  // "Otra" (subir al piso siguiente, jugar de nuevo, reintentar): si venías con el autoataque, la siguiente batalla sigue con él
+  let autoSeguir = false;
+  $('resOtra').onclick = async () => {
+    const seguir = autoSeguir; autoSeguir = false;
+    await (batalla.campana.mundial ? iniciarMundial() : batalla.campana.torre ? iniciarTorre() : iniciarCampana(batalla.campana));
+    if (seguir) { await wait(800); if (pantallaActual === 'pBatalla' && !batalla.terminada && !auto) btnAuto.click(); }
+  };
 
   $('resTexto').addEventListener('click', e => { const b = e.target.closest('[data-uid]'); if (b) mostrarObjeto(+b.dataset.uid); });   // objetos ganados en la batalla: se muestran como iconos en el resultado
   function mostrarResultado(gano) {
-    auto = false;
+    autoSeguir = auto; auto = false;
     btnAuto.title = 'Autoataque: OFF'; btnAuto.classList.remove('activo');
     const { extra: extraRes, sinBotin, danoHecho } = cobrarResultado(gano);
     $('resTitulo').textContent = gano ? '¡Victoria!' : 'Derrota';
