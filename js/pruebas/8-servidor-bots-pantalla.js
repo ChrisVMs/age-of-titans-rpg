@@ -4,6 +4,7 @@
   // estás en batalla. Sin hilos (abriendo el archivo directamente) se hace en el hilo principal, de a un bot y día.
   // Los bots que ya empezaron sustituyen a los del ranking (cacheBots), que usan arena, Ecos, reyes y aliados.
   const DIA_MS = 864e5, DIAS_POR_ENVIO = 3;
+  const VERSION_SERVIDOR = 2;   // si cambian las reglas de los bots, el servidor guardado se rehace solo (2: sin ventajas de inicio)
   const servidor = { meta: null, plan: [], estado: {}, cola: [], hilos: [], libres: [], ocupados: 0, sinHilos: false, error: null };
   const medianoche = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
   const diaServidor = () => Math.round((medianoche(ahoraJuego().getTime()) - servidor.meta.inicio) / DIA_MS);
@@ -69,7 +70,8 @@
     servidor.enCurso = new Set();
     try { dbServidor = await abrirDB(); } catch { return; }
     servidor.meta = await leerDB('meta');
-    if (!servidor.meta) { servidor.meta = { inicio: medianoche(ahoraJuego().getTime()), semilla: 1 }; await escribirDB('meta', servidor.meta); }
+    if (servidor.meta && servidor.meta.version !== VERSION_SERVIDOR) { await borrarDB(); servidor.meta = null; }
+    if (!servidor.meta) { servidor.meta = { inicio: medianoche(ahoraJuego().getTime()), semilla: 1, version: VERSION_SERVIDOR }; await escribirDB('meta', servidor.meta); }
     servidor.plan = planServidor(BOTS_SERVIDOR, servidor.meta.semilla);
     for (const b of servidor.plan) { const e = await leerDB('bot:' + b.id); if (e) servidor.estado[b.id] = e; }
     publicarBots();

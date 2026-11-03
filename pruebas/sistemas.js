@@ -191,6 +191,11 @@ const PRUEBAS = {
     const b = { id: 0, nombre: 'Prueba', clase: 'mago', inicio: 0, ritmo: 'intenso', semilla: 7 }, yo = jugador.nombre;
     const p = avanzarBot(b, null, 0, 2, 0), p2 = avanzarBot(b, p, 2, 1, 2);
     [p.nivel > 1, p.nombre === 'Prueba', p.clase === 'mago', p.bot === true, p2.nivel >= p.nivel, jugador.nombre === yo]`,
+  'Servidor de bots: empiezan sin ventajas (recursos del juego publicado)': `
+    const b = { id: 1, nombre: 'Real', clase: 'guerrero', inicio: 0, ritmo: 'casual', semilla: 3 };
+    let p0 = null; const r = simularProgresion; simularProgresion = o => { p0 = structuredClone(o.perfil); return null; };
+    try { avanzarBot(b, null, 0, 1, 0); } finally { simularProgresion = r; }
+    [!p0 || (p0.oro === INICIO_REAL_BOT.oro && p0.mat.piedra === INICIO_REAL_BOT.mat.piedra && p0.mat.esencia === 0 && p0.cristales === 0)]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

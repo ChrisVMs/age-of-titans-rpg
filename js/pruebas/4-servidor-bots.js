@@ -7,7 +7,10 @@
   const BOTS_SERVIDOR = 99;
   // ritmo: estamina extra al día (anuncios/cristales) y probabilidad de jugar cada día
   const RITMOS_BOT = { casual: { estaminaExtra: 0, juega: .7, peso: 3 }, normal: { estaminaExtra: 150, juega: .95, peso: 5 }, intenso: { estaminaExtra: 300, juega: 1, peso: 2 } };
-  const INICIO_BOT = [-5, 20];   // día del servidor en que empieza cada bot (negativo: ya jugaba antes)
+  const INICIO_BOT = [-2, 20];   // día del servidor en que empieza cada bot (negativo: ya jugaba antes; como mucho 2 días)
+  // Jugadores reales, sin ventajas: empiezan con lo del juego publicado (ORO_INICIAL y MAT_INICIAL fuera del modo pruebas,
+  // en 06-progreso-del-jugador.js). Aquí van copiados porque el simulador corre en modo pruebas, que da más.
+  const INICIO_REAL_BOT = { oro: 3000, mat: { piedra: 20, polvo: 5, almas: 0, esencia: 0 }, cristales: 0 };
   const SILABAS_BOT = ['ka', 'ri', 'to', 'mor', 'ga', 'na', 'el', 'ric', 'sig', 'lyr', 'tho', 'zan', 'dra', 'vel', 'ku', 'mi', 'ra', 'shen', 'bo', 'lux'];
   // el plan de los bots (fijo para una semilla): nombre, clase, día de inicio, ritmo y semilla propia
   function planServidor(n = BOTS_SERVIDOR, semilla = 1) {
@@ -26,7 +29,7 @@
   // Los días que no juega solo pasa el tiempo (no se simula nada).
   function avanzarBot(b, perfil, hechos, dias, offset) {
     let p = perfil || Object.assign(partidaNueva(), { nombre: b.nombre, clase: b.clase, arbol: {}, torre: { mejor: 0 }, calabozos: {}, calabozosDif: {},
-      mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } });
+      mascotas: {}, runas: [], skinsPropias: {}, formacion: { pos: 'frente', aliados: [] } }, structuredClone(INICIO_REAL_BOT));
     const o0 = offsetDias;
     try {
       for (let d = hechos + 1; d <= hechos + dias; d++) {

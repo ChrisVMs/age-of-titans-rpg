@@ -11,6 +11,13 @@ Que el usuario lo pruebe (ranking, arena, Ecos, reyes, aliados con los bots nuev
 ritmos, días de inicio. Opcional: modo rápido (sin combate golpe a golpe) si en móvil va lento.
 
 ## Última sesión
+**2026-11-03 · Claude (jugadores reales)**
+- Los bots empezaban con el botín del modo pruebas (10 000 oro, 300 piedras…) y hasta 5 días antes del día 1: el día 1
+  había bots de 30 k. Ahora empiezan con lo del juego publicado (`INICIO_REAL_BOT`: 3000 oro, 20 piedras, 5 polvo, 0 almas,
+  esencia y cristales) y como mucho 2 días antes (`INICIO_BOT` -2..20). `VERSION_SERVIDOR` 2: el servidor guardado se rehace solo.
+- Medido (3 días, un bot por ritmo): día 1 entre 2,0 k y 2,7 k de poder; intenso día 3 ~8,9 k; casual ~2,6 k.
+- Prueba nueva: empiezan sin ventajas. 35/35 sistemas.
+
 **2026-11-03 · Claude**
 - Diseño acordado: incremental (cada bot guarda su partida y solo se simula el día que falta) + varios hilos (Web Workers,
   uno por núcleo hasta 4) + asíncrono (se pausa en tus batallas, guarda cada bot al terminar).
