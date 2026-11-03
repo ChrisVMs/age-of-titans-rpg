@@ -8,7 +8,7 @@
     { icono: '🔨', nombre: 'Día de la Forja', desc: '+50 % piedras y polvo · encantar cuesta −25 % de oro', mat: 1.5, forja: .25 },
     { icono: '🏹', nombre: 'Día de Cacería', desc: '+50 % prob. de equipo y +15 % de que suba de rareza', drop: 1.5, caza: .15 },
     { icono: '💰', nombre: 'Miércoles de oro', desc: '+50 % de oro', oro: 1.5 },
-    { icono: '👹', nombre: 'Día de Jefes', desc: 'jefes mundiales: +50 % de recompensas y de prob. de pieza de set', jefes: 1.5 },
+    { icono: '👹', nombre: 'Día de Jefes', desc: 'jefes: +50 % de recompensas y de prob. de pieza de set', jefes: 1.5 },
     { icono: '📈', nombre: 'Viernes de experiencia', desc: '+50 % de experiencia y maestría', xp: 1.5 },
     { icono: '🎁', nombre: 'Fin de semana de botín', desc: 'doble prob. de equipo y polvo', drop: 2 },   // sábado
   ];

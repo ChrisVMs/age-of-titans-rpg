@@ -36,9 +36,10 @@
     const g = r.golpe, e = ESTADOS[g.estado];
     return `${Math.round(g.prob * n * k * 10) / 10} % de ${e.nombre.toLowerCase()} ${e.icono} al golpear (${g.turnos} turnos, ${g.pct * 100} % de tu ataque por turno)`;
   }
-  // Al terminar un intento contra un jefe mundial: reliquia segura si lo derrotas; si no, probabilidad según el daño
-  function botinReliquia(jefe, gano) {
-    const prob = gano ? 1 : Math.min(.6, .15 + batalla.danoHecho / MUNDIALES[jefe].enemigo.vida * 3);
+  // Al terminar un intento contra un jefe: reliquia con la probabilidad de su dificultad (DIF_JEFE); sin vencerlo, según
+  // el daño causado (todo su vida = la máxima)
+  function botinReliquia(jefe, gano, dif = 'normal') {
+    const [siGana, max] = DIF_JEFE[dif].reliquia, prob = gano ? siGana : Math.min(max, batalla.danoHecho / vidaJefe(jefe, dif) * max);
     if (rnd() >= prob) return '';
     const r = elegir(RELIQUIAS.filter(x => x.jefe === jefe)); jugador.reliquias ||= {};
     if (nivelReliquia(r.id) >= RELIQUIA_MAX) { jugador.mat.polvo += 30; return `<br>${r.icono} ${r.nombre} (ya al máximo): ✨ +30 polvo`; }
@@ -46,16 +47,16 @@
     return `<br><b>${r.icono} Reliquia: ${r.nombre} ${nivelReliquia(r.id) > 1 ? 'Nv ' + nivelReliquia(r.id) : '¡nueva!'}</b>`;
   }
 
-  // Equipo exclusivo del jefe: 35 % si lo derrotas; si no, hasta un 10 % según el daño causado
-  // Equipo de jefe (piezas de su set). Garantía: 8 intentos seguidos sin pieza de ese jefe dan una segura, y la garantía
-  // prefiere una pieza que aún no tengas (para que completar el set de 4 no dependa solo de la suerte).
-  const GARANTIA_JEFE = 8;
-  function botinEquipoJefe(jefe, gano) {
-    const P = jugador.pityJefe ||= {}; P[jefe] = (P[jefe] || 0) + 1;
-    const prob = (gano ? .35 : Math.min(.1, batalla.danoHecho / MUNDIALES[jefe].enemigo.vida * .5)) * ((eventoHoy() || {}).jefes || 1);
-    if (rnd() >= prob && P[jefe] < GARANTIA_JEFE) return `<br><small class="proteccion">🍀 Pieza de set garantizada en ${GARANTIA_JEFE - P[jefe]} intento${GARANTIA_JEFE - P[jefe] > 1 ? 's' : ''}</small>`;
-    const garantia = P[jefe] >= GARANTIA_JEFE; P[jefe] = 0;
+  // Equipo de jefe (piezas de su set): probabilidad de su dificultad (DIF_JEFE). Garantía: tras D.garantia intentos seguidos
+  // sin pieza de ese jefe sale una segura, y prefiere una que aún no tengas (completar el set no depende solo de la suerte).
+  // En Pesadilla, las líneas salen como mínimo a ★estrellasMin.
+  function botinEquipoJefe(jefe, gano, dif = 'normal') {
+    const D = DIF_JEFE[dif], k = claveJefe(jefe, dif), P = jugador.pityJefe ||= {}; P[k] = (P[k] || 0) + 1;
+    const prob = (gano ? D.equipo[0] : Math.min(D.equipo[1], batalla.danoHecho / vidaJefe(jefe, dif) * D.equipo[1])) * ((eventoHoy() || {}).jefes || 1);
+    if (rnd() >= prob && P[k] < D.garantia) return `<br><small class="proteccion">🍀 Pieza de set garantizada en ${D.garantia - P[k]} intento${D.garantia - P[k] > 1 ? 's' : ''}</small>`;
+    const garantia = P[k] >= D.garantia; P[k] = 0;
     const todas = MODELOS.filter(m => m.jefe === jefe), faltan = todas.filter(m => !jugador.objetos.some(o => o.modelo === m.id));
     const o = crearObjeto(elegir(garantia && faltan.length ? faltan : todas).id); jugador.objetos.push(o);
+    if (D.estrellasMin) for (const l of o.lineas) l.e = Math.max(l.e, D.estrellasMin);
     obtenidos.push(o); return '';
   }

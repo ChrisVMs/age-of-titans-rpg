@@ -15,13 +15,23 @@
     reglas: ['Barre con su espada de fuego; cada 5 turnos usa el <b>Gran Tajo</b>: golpe al 300 % que además te quita un 10 % de vida.',
              'Por debajo del 70 % entra en <b>furia</b>: <b>triplica su daño</b> durante 5 turnos, cada 10 turnos.',
              'Prueba de build: <b>vida, defensa y reducción de daño</b> (la reducción frena el doble la parte del Gran Tajo que va por tu vida).'] };
-  let mundialSel = 'cerbero';
-  function estadoMundial(id = mundialSel) {
+  // Jefes: evento individual (cada uno con su vida diaria, compartida entre tus intentos) con drops fuertes pero muy raros.
+  // Cada jefe tiene versión Pesadilla (se abre al vencer su versión normal): más dura, con mejores probabilidades y piezas
+  // de set con todas sus líneas a ★estrellasMin o más. reliquia/equipo: [prob. si lo vences, prob. máxima por daño sin vencerlo].
+  const DIF_JEFE = {
+    normal:    { nombre: 'Normal',    vida: 1, dano: 1,   premio: 1,   reliquia: [.25, .08], equipo: [.12, .03], garantia: 20, estrellasMin: 0 },
+    pesadilla: { nombre: 'Pesadilla', vida: 3, dano: 2.2, premio: 2.5, reliquia: [.45, .12], equipo: [.25, .06], garantia: 12, estrellasMin: 4 },
+  };
+  let mundialSel = 'cerbero', difJefeSel = 'normal';
+  const claveJefe = (id, dif) => dif === 'pesadilla' ? id + ':pesadilla' : id;
+  const vidaJefe = (id, dif = 'normal') => Math.round(MUNDIALES[id].enemigo.vida * DIF_JEFE[dif].vida);
+  const jefeAbierto = (id, dif) => dif === 'normal' || !!jefeVencido(id);   // Pesadilla: tras vencer al normal
+  function estadoMundial(id = mundialSel, dif = difJefeSel) {
     if (jugador.mundial && !jugador.mundiales) { jugador.mundiales = { cerbero: jugador.mundial }; delete jugador.mundial; }   // partidas anteriores
     jugador.mundiales = jugador.mundiales || {};
-    const e = jugador.mundiales[id];
-    if (!e || e.dia !== hoy()) { jugador.mundiales[id] = { dia: hoy(), vida: MUNDIALES[id].enemigo.vida, mio: 0 }; guardar(); }
-    return jugador.mundiales[id];
+    const k = claveJefe(id, dif), e = jugador.mundiales[k];
+    if (!e || e.dia !== hoy()) { jugador.mundiales[k] = { dia: hoy(), vida: vidaJefe(id, dif), mio: 0 }; guardar(); }
+    return jugador.mundiales[k];
   }
   // Ranking de daño del día. Sin servidor, los demás jugadores se simulan con una semilla por fecha
   // (siempre los mismos valores el mismo día); cuando haya backend se sustituye por la lista real.
@@ -39,10 +49,12 @@
     if (jugador.diaJefes !== hoy()) { jugador.diaJefes = hoy(); jugador.entradasJefe = ENTRADAS_JEFE; }
     return jugador.entradasJefe;
   }
-  function batallaMundial(id) {
-    const m = MUNDIALES[id], e = { ...m.enemigo, dano: [...m.enemigo.dano], aplica: [...(m.enemigo.aplica || [])] };   // copia con los modificadores de la semana
+  function batallaMundial(id, dif = difJefeSel) {
+    const m = MUNDIALES[id], D = DIF_JEFE[dif], e = { ...m.enemigo, dano: [...m.enemigo.dano], aplica: [...(m.enemigo.aplica || [])] };   // copia con los modificadores de la semana
+    e.vida = vidaJefe(id, dif); e.dano = e.dano.map(x => Math.round(x * D.dano));
     for (const md of modsSemana()) md.ap(e);
-    return { nombre: 'Jefe mundial: ' + m.enemigo.nombre, mundial: id, coste: 0, premio: m.premio, botin: { piedra: [0, 0], polvo: 0 }, enemigos: [e] };
+    const premio = Object.fromEntries(Object.entries(m.premio).map(([k, v]) => [k, Math.round(v * D.premio)]));
+    return { nombre: `${dif === 'pesadilla' ? 'Jefe pesadilla' : 'Jefe'}: ${m.enemigo.nombre}`, mundial: id, difJefe: dif, coste: 0, premio, botin: { piedra: [0, 0], polvo: 0 }, enemigos: [e] };
   }
   // lanzallamas largo: carga la boca (cuadros 0-3 de la carga), enciende (llamita azul), el chorro se alarga
   // y sopla en continuo un rato sobre el guerrero. img/jefes/cerbero/lanzallamas.png: 0-3 encendido, 4-7 emisión, 8-24 continuo.
@@ -98,7 +110,7 @@
     if (batalla.campana.mundial) {   // jefe mundial: recompensa según el daño causado en este intento
       batalla.ganado.oro += Math.round(batalla.danoHecho * .2); batalla.ganado.xp += Math.round(batalla.danoHecho * .1);   // ajustado a la vida actual de los jefes
       batalla.ganado.piedra += Math.floor(batalla.danoHecho / 100); batalla.ganado.polvo += Math.floor(batalla.danoHecho / 375);
-      estadoMundial(batalla.campana.mundial).vida = Math.max(0, enemigoDuelo().vida);
+      estadoMundial(batalla.campana.mundial, batalla.campana.difJefe).vida = Math.max(0, enemigoDuelo().vida);
     }
     const ev = eventoHoy() || {};   // eventos por calendario
     batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro') + bonoRuinas('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
@@ -109,7 +121,7 @@
     let extraRes = '';
     obtenidos = [...batalla.ganado.objetos];
     if (batalla.ganado.objetos.length) jugador.objetos.push(...batalla.ganado.objetos);
-    if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano) + botinEquipoJefe(batalla.campana.mundial, gano); sumarMaestria(gano ? 30 : 10); }
+    if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano, batalla.campana.difJefe) + botinEquipoJefe(batalla.campana.mundial, gano, batalla.campana.difJefe); sumarMaestria(gano ? 30 : 10); }
     if (batalla.campana.arena) extraRes += batalla.campana.eco ? resultadoEco(gano) : resultadoArena(gano);
     if (batalla.campana.torre && gano) extraRes += pisoSuperado(batalla.campana.torre);
     if (batalla.campana.grieta) { const u = heroeYo(); extraRes += grietaTerminada(gano, u.vida / u.vidaMax); }
@@ -144,6 +156,6 @@
       ui.pintarCampanas();
     }
     const danoHecho = batalla.danoHecho;
-    if (batalla.campana.mundial) { const e = estadoMundial(batalla.campana.mundial); e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; guardar(); }
+    if (batalla.campana.mundial) { const e = estadoMundial(batalla.campana.mundial, batalla.campana.difJefe); e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; guardar(); }
     return { extra: extraRes, sinBotin, danoHecho };
   }

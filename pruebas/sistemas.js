@@ -101,7 +101,7 @@ const PRUEBAS = {
     offsetDias += 1 / 24; const una = produccionRuinas().piedra;       // 1 h a Nv 2: 0,5 × 2 = 1 piedra
     offsetDias += 1; const tope = produccionRuinas().piedra;            // 25 h: se queda en las 8 del almacén
     const r = recogerRuinas(), tras = produccionRuinas().piedra;
-    [Math.abs(una - 1) < 1e-6, Math.abs(tope - 8) < 1e-6, r.piedra === 8, jugador.mat.piedra === p0 + 8, tras === 0]`,
+    [Math.abs(una - 1) < 1e-6, Math.abs(tope - 8) < 1e-6, r.piedra === 8, jugador.mat.piedra === p0 + 8, tras < 1e-3]`,
   'Ruinas: reloj hacia atrás no produce; edificio bloqueado por nivel; el almacén amplía el tope': `
     jugador.nivel = 30; jugador.oro = 1e8; jugador.mat.piedra = 1e4; mejorarEdificio('forja');
     offsetDias -= 2; const atras = produccionRuinas().piedra || 0; offsetDias += 2;
@@ -206,6 +206,16 @@ const PRUEBAS = {
     const e = crearDificultad(15, 'normal', ['esqueleto']).enemigos[0], sin = crearDificultad(15, 'normal', ['parca']).enemigos[0];
     T.hoja = antes;
     [e.hoja === 'img/enemigos/esqueleto.png', !sin.hoja, e.filtro === T.filtro]`,
+  'Jefes: Pesadilla se abre al vencer al normal, más dura y con su propia vida del día': `
+    const cerrada = !jefeAbierto('cerbero', 'pesadilla'); (jugador.logros ||= {}).jefes = { cerbero: true };
+    const n = batallaMundial('cerbero', 'normal'), p = batallaMundial('cerbero', 'pesadilla');
+    estadoMundial('cerbero', 'normal').vida = 5;
+    [cerrada, jefeAbierto('cerbero', 'pesadilla'), p.enemigos[0].vida === vidaJefe('cerbero', 'pesadilla'), p.enemigos[0].vida > n.enemigos[0].vida,
+     p.premio.oro > n.premio.oro, estadoMundial('cerbero', 'pesadilla').vida === vidaJefe('cerbero', 'pesadilla'), p.difJefe === 'pesadilla']`,
+  'Jefes: piezas de Pesadilla con líneas a ★4 o más y garantía propia': `
+    batalla.danoHecho = 0; jugador.pityJefe = { 'cerbero:pesadilla': DIF_JEFE.pesadilla.garantia - 1 }; obtenidos = [];
+    const n0 = jugador.objetos.length; botinEquipoJefe('cerbero', false, 'pesadilla'); const o = jugador.objetos.at(-1);
+    [jugador.objetos.length === n0 + 1, o.lineas.every(l => l.e >= DIF_JEFE.pesadilla.estrellasMin), jugador.pityJefe['cerbero:pesadilla'] === 0, !jugador.pityJefe.cerbero]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
 };

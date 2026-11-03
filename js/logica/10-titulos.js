@@ -22,7 +22,7 @@
     T('resplandeciente','Resplandeciente',     'legendario', 'Sube una skin a ★5',                 () => [Math.max(0, ...Object.values(jugador.skinsPropias || {})), 5], { ataque: 4, defensa: 4 }),
     T('leyenda',        'Leyenda viviente',    'legendario', 'Alcanza el nivel 50',                () => [jugador.nivel, 50], { ataque: 5, vida: 5, defensa: 5, armadura: 5 }),
     T('matarreyes',     'Matarreyes',          'mitico',     'Vence a los 3 reyes en Pesadilla o Infierno', () => [logro('reyes1') ? 1 : 0, 1], { ataque: 6, vida: 6 }),
-    T('azote',          'Azote de los dioses', 'mitico',     'Derrota a los tres jefes mundiales', () => [jefeVencido('cerbero') + jefeVencido('asmodeo') + jefeVencido('minotauro'), 3], { ataque: 8, vida: 8 }),
+    T('azote',          'Azote de los dioses', 'mitico',     'Derrota a los tres jefes', () => [jefeVencido('cerbero') + jefeVencido('asmodeo') + jefeVencido('minotauro'), 3], { ataque: 8, vida: 8 }),
     T('senor',          'Señor de la guerra',  'mitico',     'Gasta 40 puntos de habilidad (todos los del nivel 80)', () => [puntosGastados(), Math.floor(NIVEL_MAX / 2)], { ataque: 6, defensa: 6 }),
   ];
   const tituloActual = () => (jugador.titulos || {})[jugador.titulo] ? TITULOS.find(t => t.id === jugador.titulo) : null;

@@ -33,6 +33,10 @@ En la app Android (`C:\PROYECTOS\BATALLA-MOBILE`) va la misma versión en `packa
 - En vertical la batalla en grupo va en diagonal (tu grupo abajo, los enemigos arriba) y sale ~1,7 veces más grande; en los duelos los dos luchan más juntos y se ven más grandes.
 - Los botones de huir, velocidad, sonido y auto van en 2×2 y la barra superior ya no se corta.
 
+### 👹 Jefes
+- Ya no son "jefes mundiales": son un evento individual (sin ranking) con drops fuertes pero muy raros.
+- Cada jefe tiene versión Pesadilla (×3 de vida, ×2,2 de daño): se abre al vencer al normal y da mejores probabilidades y piezas de set con líneas a ★4 o más.
+
 ### ⚔️ Clases
 - Cadena entre personajes: el guerrero aguanta mejor al asesino y al arquero; la maga atraviesa la resistencia del guerrero; el asesino y el arquero castigan a la maga. Quien tiene ventaja hace +20 % de daño.
 - Las 4 clases rinden parecido contra monstruos: guerrero más resistente, maga con penetración y algo menos frágil, arquero y asesino ajustados (Paso sombrío ignora la armadura).

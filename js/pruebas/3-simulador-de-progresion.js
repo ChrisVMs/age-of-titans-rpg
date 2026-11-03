@@ -156,8 +156,9 @@
               a.entradas--; a.rivalActual = i; k = 'arena'; c = batallaArena(i);
             }
             if (!c && desbloqueado('pEvento') && entradasJefe() > 0) {
-              const id = Object.keys(MUNDIALES).find(m => estadoMundial(m).vida > 0 && pocos('jefe' + m));
-              if (id) { jugador.entradasJefe--; k = 'jefe' + id; c = batallaMundial(id); }
+              const op = Object.keys(MUNDIALES).flatMap(m => ['pesadilla', 'normal'].map(d => [m, d]))   // Pesadilla primero, si está abierta
+                .find(([m, d]) => jefeAbierto(m, d) && estadoMundial(m, d).vida > 0 && pocos('jefe' + m + d));
+              if (op) { jugador.entradasJefe--; k = 'jefe' + op[0] + op[1]; c = batallaMundial(op[0], op[1]); }
             }
             if (!c && desbloqueado('pCalabozo') && revisarCalabozo().entradas > 0) {   // el siguiente sin superar; si no, el mejor superado
               const abiertos = CALABOZOS.filter(x => calabozoAbierto(x.id)).flatMap(x => ORDEN_DIF.filter(df => difAbierta(x.id, df)).map(df => [x.id, df]));
@@ -188,7 +189,7 @@
             else {
               if (c.idCampana) hitos.campana[`${c.idCampana} ${c.dif}`] ||= d;
               if (c.torre && c.torre % 10 === 0) hitos.torre[c.torre] ||= d;
-              if (c.mundial) hitos.jefes[c.mundial] ||= d;
+              if (c.mundial) hitos.jefes[c.mundial + (c.difJefe === 'pesadilla' ? ' pesadilla' : '')] ||= d;
               if (c.calabozo) hitos.calabozo[`${c.cal} ${c.calabozo}`] ||= d;
               if (c.reyes) hitos.reyes[c.reyes] ||= d;
               if (c.eco) hitos.ecos[c.eco] = (hitos.ecos[c.eco] || 0) + 1;

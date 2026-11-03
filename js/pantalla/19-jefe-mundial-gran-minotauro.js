@@ -1,10 +1,13 @@
   // ---------------- Jefe mundial: Gran Minotauro (pantalla) ----------------
   function pintarEvento() {
-    const m = MUNDIALES[mundialSel], max = m.enemigo.vida, v = estadoMundial().vida, pct = v / max * 100, muerto = v <= 0;
+    if (!jefeAbierto(mundialSel, difJefeSel)) difJefeSel = 'normal';
+    const m = MUNDIALES[mundialSel], D = DIF_JEFE[difJefeSel], max = vidaJefe(mundialSel, difJefeSel), v = estadoMundial().vida, pct = v / max * 100, muerto = v <= 0;
+    const pc = x => Math.round(x * 100) + ' %';
     $('eventoCaja').innerHTML = `
       <div class="jefes">${Object.entries(MUNDIALES).map(([id, j]) => `<button data-jefe="${id}" class="${id === mundialSel ? 'on' : ''}">${j.enemigo.nombre}</button>`).join('')}</div>
+      <div class="jefes">${Object.entries(DIF_JEFE).map(([d, x]) => `<button data-difjefe="${d}" class="${d === difJefeSel ? 'on' : ''}" ${jefeAbierto(mundialSel, d) ? '' : 'disabled'}>${x.nombre}${jefeAbierto(mundialSel, d) ? '' : ' 🔒'}</button>`).join('')}</div>
       <div class="ev-izq">
-        <h2>${m.titulo}</h2>
+        <h2>${m.titulo}${difJefeSel === 'pesadilla' ? ' · Pesadilla' : ''}</h2>
         <div class="retrato" style="${m.retrato(v, max)}"></div>
         <div class="barra"><i style="width:${pct}%"></i></div>
         <small>${muerto ? '¡Derrotado hoy! Vuelve mañana.' : `Vida: ${v} / ${max}`}</small>
@@ -12,17 +15,18 @@
         ${!muerto && entradasJefe() <= 0 ? `<small class="falta">Sin entradas de jefe: vuelven mañana (${ENTRADAS_JEFE} al día).</small>` : ''}
       </div>
       <div class="ev-der"><ul>
+        ${jefeAbierto(mundialSel, 'pesadilla') ? '' : '<li>🔒 <b>Pesadilla</b>: vence a este jefe para abrirla.</li>'}
         <li>Su vida se comparte entre todos tus intentos del día.</li>
         ${m.reglas.map(r => `<li>${r}</li>`).join('')}
         <li>Armadura <b>${m.enemigo.armadura}</b>: la <b>penetración</b> ignora parte de ella y aumenta tu daño.</li>
         <li>Recompensa según el daño que causes; derrotarlo da un premio extra.</li>
-        <li>Botín: reliquias y su <b>equipo exclusivo</b> (${MODELOS.filter(x => x.jefe === mundialSel).map(x => x.nombre).join(', ')}), con atributos secundarios al azar.</li>
+        <li>Botín raro: <b>reliquia</b> ${pc(D.reliquia[0])} si lo vences (hasta ${pc(D.reliquia[1])} sin vencerlo) · <b>pieza de su set</b> (${MODELOS.filter(x => x.jefe === mundialSel).map(x => x.nombre).join(', ')}) ${pc(D.equipo[0])} (hasta ${pc(D.equipo[1])}), segura cada ${D.garantia} intentos${D.estrellasMin ? `, con líneas a ★${D.estrellasMin} o más` : ''}.</li>
         <li>Cada intento usa una <b>entrada de jefe</b> (${ENTRADAS_JEFE} al día), no estamina.</li>
         <li><b>Esta semana</b> (cambia cada lunes): ${modsSemana().map(md => `${md.icono} <b>${md.nombre}</b> (${md.desc})`).join(' · ')}. Recompensas +30 %.</li>
-      </ul>
-      ${pintarRanking()}</div>`;
+      </ul></div>`;
     $('desafiar').onclick = iniciarMundial;
     $('eventoCaja').querySelectorAll('[data-jefe]').forEach(b => b.onclick = () => { mundialSel = b.dataset.jefe; pintarEvento(); });
+    $('eventoCaja').querySelectorAll('[data-difjefe]').forEach(b => b.onclick = () => { difJefeSel = b.dataset.difjefe; pintarEvento(); });
   }
   // aspecto del enemigo según su tipo (parca, Cerbero o Asmodeo)
   function modoJefe() {
@@ -275,7 +279,7 @@
   function salirBatalla(destino) {
     secEquipoBatalla = null;   // sin esto, al abandonar quedaba el equipo de la batalla guardado
     if (batalla.campana && batalla.campana.mundial) {
-      const e = estadoMundial(batalla.campana.mundial);
+      const e = estadoMundial(batalla.campana.mundial, batalla.campana.difJefe);
       if (!batalla.terminada) { e.mio = (e.mio || 0) + batalla.danoHecho; batalla.danoHecho = 0; }   // abandono: el daño cuenta para el ranking
       e.vida = Math.max(0, enemigoDuelo().vida); guardar(); destino = destino === 'pCampana' ? 'pEvento' : destino; }
     if (batalla.campana && batalla.campana.arena && !batalla.terminada) avisar((batalla.campana.eco ? resultadoEco : resultadoArena)(false).replace(/<[^>]+>/g, ' ').trim());   // huir de la arena (o de un Eco) = derrota

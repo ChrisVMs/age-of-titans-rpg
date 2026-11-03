@@ -20,8 +20,9 @@
       return { clave: 'arena', iniciar: () => { pintarArena(); $('arenaPvp').querySelector(`[data-rival="${i}"]`).click(); } };
     }
     if (desbloqueado('pEvento') && entradasJefe() > 0) {
-      const id = Object.keys(MUNDIALES).find(m => estadoMundial(m).vida > 0 && pocos('jefe' + m));
-      if (id) return { clave: 'jefe' + id, iniciar: () => { mundialSel = id; iniciarMundial(); } };
+      const op = Object.keys(MUNDIALES).flatMap(m => ['pesadilla', 'normal'].map(d => [m, d]))
+        .find(([m, d]) => jefeAbierto(m, d) && estadoMundial(m, d).vida > 0 && pocos('jefe' + m + d));
+      if (op) return { clave: 'jefe' + op[0] + op[1], iniciar: () => { mundialSel = op[0]; difJefeSel = op[1]; iniciarMundial(); } };
     }
     if (retoPendiente()) return { clave: 'eco', iniciar: () => iniciarCampana(batallaEco()) };   // reto del Eco
     if (desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso

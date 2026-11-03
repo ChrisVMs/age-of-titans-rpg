@@ -62,7 +62,7 @@
   function siguienteEnemigo(i) {   // motor: el enemigo i entra en combate (1 contra 1)
     const e = batalla.campana.enemigos[i], u = unidadMonstruo(e, 'frente');
     batalla.enemigo = e; batalla.iEnemigo = i; u.duelo = true;
-    if (batalla.campana.mundial) u.vida = estadoMundial(batalla.campana.mundial).vida;   // el jefe mundial conserva el daño de otros intentos
+    if (batalla.campana.mundial) u.vida = estadoMundial(batalla.campana.mundial, batalla.campana.difJefe).vida;   // el jefe mundial conserva el daño de otros intentos
     batalla.infernal = !!e.cerbero && u.vida <= e.vida / 2;
     batalla.grupo.enemigos = [u]; batalla.grupo.objetivo = u;
   }
