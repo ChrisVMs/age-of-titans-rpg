@@ -3,6 +3,8 @@
   function botCerrarMensajes() {   // mensajes de solo OK (desbloqueos...); los de confirmar se dejan
     if ($('dialogo').classList.contains('visible') && $('dialogoNo').hidden) $('dialogoSi').click();
   }
+  // entrar a un nivel de campaña: si ya está superado (p. ej. otra vez tras una derrota), Auto en vez de pelearlo
+  const botEntrar = (c, d, b) => { if (superada(c.id, d)) { barridos(c, d, Infinity); return 'auto'; } b.click(); };
   // siguiente cosa por jugar: { clave, iniciar } o { barrido: [c, d] }
   function botSiguiente() {
     revisarEstamina();
@@ -10,7 +12,7 @@
     if (jugador.estamina >= ESTAMINA_CAMPANA) {
       for (const c of CAMPANAS) for (const d of ORDEN_DIF) {
         const k = `${c.id}:${d}`, b = $('listaCampanas').querySelector(`[data-campana="${c.id}"][data-dif="${d}"]`);
-        if (b && !b.disabled && !superada(c.id, d) && pocos(k)) return { clave: k, iniciar: () => b.click() };
+        if (b && !b.disabled && !superada(c.id, d) && pocos(k)) return { clave: k, iniciar: () => botEntrar(c, d, b) };
       }
     }
     const piso = 'torre' + (jugador.torre.mejor + 1);
@@ -89,7 +91,7 @@
       const acc = botSiguiente();
       if (!acc) { avisar(botRecargarOPasarDia()); guardar(); pintarHud(); await esperar(800); continue; }
       if (acc.barrido) { barrido(...acc.barrido); await esperar(400); continue; }
-      ponerVelocidad(VELOCIDADES.at(-1)); acc.iniciar(); await esperar(100);
+      ponerVelocidad(VELOCIDADES.at(-1)); if (acc.iniciar() === 'auto') { await esperar(400); continue; } await esperar(100);
       const gano = await botBatalla();
       if (!botModo) break;
       if (!gano) botFallos[acc.clave] = (botFallos[acc.clave] || 0) + 1;   // derrota o no pudo empezar

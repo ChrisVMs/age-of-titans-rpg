@@ -2,7 +2,7 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
-  'Auto x10: hace los barridos que permite la estamina y no barre niveles sin superar': `
+  'Varios Auto (bot): hace los barridos que permite la estamina y no barre niveles sin superar': `
     const c = CAMPANAS[0]; (jugador.superadas ||= {})[c.id + ':normal'] = true;
     jugador.estamina = ESTAMINA_CAMPANA * 3; const n = barridos(c, 'normal', 10);
     jugador.estamina = ESTAMINA_CAMPANA * 5; const sin = barridos(CAMPANAS[1], 'normal', 10);

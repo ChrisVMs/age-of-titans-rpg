@@ -190,7 +190,7 @@
     ui.avisar(`⚡ ${c.id} ${DIFICULTADES[d]}: ● ${g.oro} · ${g.xp} XP · 🔷 ${g.piedra}${g.polvo ? ' · ✨ ' + g.polvo : ''}${objetos.length ? ' · 🎁 ' + objetos.map(o => modelo[o.modelo].nombre).join(', ') : ''}`);
     ui.pintarCampanas();
   }
-  // varios Auto seguidos (x10 de pruebas y el bot): para al acabarse la estamina. Devuelve cuántos hizo.
+  // varios Auto seguidos (el bot): para al acabarse la estamina. Devuelve cuántos hizo.
   function barridos(c, d, veces = 1) {
     let n = 0;
     for (; n < veces && superada(c.id, d) && (revisarEstamina(), jugador.estamina >= ESTAMINA_CAMPANA); n++) barrido(c, d);

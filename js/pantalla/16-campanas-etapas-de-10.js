@@ -13,14 +13,14 @@
             const nota = !ok ? `<img class="ic-txt" src="img/iconos/candado.png" alt="">${razonBloqueo(c, d)}` : `<img class="ic-txt" src="img/iconos/estamina.png" alt="">${ESTAMINA_CAMPANA} · ${dif.enemigos.length} enem.${superada(c.id, d) ? ' · ✔' : ''}`;
             return `<button class="d-${d}" data-campana="${c.id}" data-dif="${d}" ${ok ? '' : 'disabled'}>${DIFICULTADES[d]}<small>${nota}</small></button>`;
           }).join('')}</div>${ORDEN_DIF.some(d => superada(c.id, d)) ? `<div class="difs autos">${ORDEN_DIF.map(d => superada(c.id, d)   // cada Auto debajo de su dificultad
-            ? `<span class="auto-par"><button data-auto="${d}" data-campana="${c.id}" aria-label="Auto ${DIFICULTADES[d]}"><img class="ic-txt" src="img/iconos/estamina.png" alt="">Auto</button><button class="prueba" data-auto="${d}" data-veces="10" data-campana="${c.id}" aria-label="Auto x10">x10</button></span>` : '<span></span>').join('')}</div>` : ''}` : `<small><img class="ic-txt" src="img/iconos/candado.png" alt="">${razonBloqueo(c, 'normal')}</small>`}</div>`;
+            ? `<button data-auto="${d}" data-campana="${c.id}" aria-label="Auto ${DIFICULTADES[d]}"><img class="ic-txt" src="img/iconos/estamina.png" alt="">Auto</button>` : '<span></span>').join('')}</div>` : ''}` : `<small><img class="ic-txt" src="img/iconos/candado.png" alt="">${razonBloqueo(c, 'normal')}</small>`}</div>`;
       }).join('');
     }).join('');
     if (pantallaActual === 'pCampana') requestAnimationFrame(() => { const a = $('listaCampanas').querySelector('.actual'); if (a) a.scrollIntoView({ block: 'center' }); });
   }
   pintarCampanas();
   $('listaCampanas').addEventListener('click', e => {
-    const a = e.target.closest('[data-auto]'); if (a) return barridos(CAMPANAS.find(x => x.id === a.dataset.campana), a.dataset.auto, +a.dataset.veces || 1);
+    const a = e.target.closest('[data-auto]'); if (a) return barrido(CAMPANAS.find(x => x.id === a.dataset.campana), a.dataset.auto);
     const b = e.target.closest('[data-dif]'); if (!b) return;
     iniciarCampana(batallaCampana(CAMPANAS.find(x => x.id === b.dataset.campana), b.dataset.dif));
   });
