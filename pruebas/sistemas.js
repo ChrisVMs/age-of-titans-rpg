@@ -2,8 +2,16 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
-  'Tipos de jugador: sin tipo es el bot de siempre; el casual se salta días y gasta menos estamina que el constante': `
-    const base = simularProgresion({ dias: 3, semilla: 5, estaminaExtra: 150 }).dia, cte = simularProgresion({ dias: 3, semilla: 5, tipo: 'constante' }).dia;
+  'Habilidades con criterio: guarda la más fuerte si viene un jefe, la usa contra el jefe y no remata con habilidades': `
+    HABILIDADES = [{ id: 'd', mult: 2, turnos: 1 }, { id: 'f', mult: 4, turnos: 1 }]; batalla.carga.d = batalla.carga.f = 5;
+    const u = (jefe, vida = 100) => ({ vida, vidaMax: 100, e: { jefe } });
+    const prueba = (enemigos, duelo, lista = [], i = 0) => { batalla.grupo = { enemigos, duelo, objetivo: null }; batalla.campana = { enemigos: lista }; batalla.iEnemigo = i; return habCriterio(); };
+    const viene = prueba([u(false)], true, [{}, { jefe: true }]), jefe = prueba([u(true)], true, [{ jefe: true }]);
+    const remate = prueba([u(false, 10)], false), normal = prueba([u(false)], false);
+    batalla.carga.d = batalla.carga.f = 0; const nada = prueba([u(true)], true, [{ jefe: true }]);
+    [viene.id === 'd', jefe.id === 'f', remate === null, normal.id === 'f', nada === null]`,
+  'Tipos de jugador: sin tipo es el constante con autoataque; el casual se salta días y gasta menos estamina que el constante': `
+    const base = simularProgresion({ dias: 3, semilla: 5, estaminaExtra: 150 }).dia, cte = simularProgresion({ dias: 3, semilla: 5, tipo: { ...TIPOS_JUGADOR.constante, habilidades: 'auto' } }).dia;
     const cas = simularProgresion({ dias: 10, semilla: 5, tipo: 'casual' }).dia, ctl = simularProgresion({ dias: 10, semilla: 5, tipo: 'constante' }).dia;
     const libres = cas.filter(x => x.batallas === 0).length;
     [JSON.stringify(base) === JSON.stringify(cte), libres >= 1 && libres <= 6, cas.at(-1).nivel <= ctl.at(-1).nivel,

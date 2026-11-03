@@ -10,7 +10,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 | [Balance de clases](balance-asesino/ESTADO.md) | en curso · **prioridad alta** | Cadena de clases hecha y 4 clases parejas contra monstruos; que el usuario lo juegue. | 2026-11-03 · Claude |
 | [Asesino personalizable (piezas y skins)](asesino-personalizable/ESTADO.md) | en curso · **prioridad alta** | Elegir propuesta con el usuario (capas por regiones, accesorios, skins completas). | 2026-10-31 · Claude |
 | [Generador de jugadores bot](bots-servidor/ESTADO.md) | en curso · **prioridad alta** | Hecho: 99 bots automáticos (hilos, incremental). Que el usuario lo pruebe y ajuste. | 2026-11-03 · Claude |
-| [Tipos de jugador (simular jugadores reales)](tipos-jugador/ESTADO.md) | en curso | Fase 3: habilidades con criterio en el combate simulado. | 2026-11-03 · Claude |
+| [Tipos de jugador (simular jugadores reales)](tipos-jugador/ESTADO.md) | en curso | Fase 4: el bot de pantalla juega calabozo y Torre de reyes. | 2026-11-03 · Claude |
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |

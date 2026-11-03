@@ -7,11 +7,21 @@ Que el simulador y los bots se parezcan a jugadores reales, no solo al "óptimo 
 casual / constante / de pago, y más adelante decisiones de batalla y multijugador en el bot de pantalla.
 
 ## Próximo paso
-Fase 3: habilidades con criterio en el combate simulado (hoy `habLista` usa la primera lista). Dónde: la función que elige
-habilidad en `jugarHastaFin` / autoataque; guardar la más fuerte para el jefe o el último enemigo. Hecho cuando el tipo
-lo pueda activar y una prueba muestre que la reserva para el jefe.
+Fase 4: el bot de pantalla entra en calabozo y Torre de reyes (en modo pruebas los aliados son bots), como ya hace el
+simulador. Dónde: `botSiguiente` en `js/pruebas/5-bot-pantalla.js`. Hecho cuando el bot juega sus entradas diarias de
+calabozo y reyes en pantalla.
 
 ## Última sesión
+**2026-11-03 · Claude (fase 3)**
+- `js/pruebas/2-simulador-de-batallas.js` · `habCriterio` y `VIDA_REMATE`: contra un jefe la habilidad más fuerte lista;
+  si viene un jefe más adelante (1 contra 1), guarda la más fuerte; no gasta habilidades rematando al último enemigo.
+- `TIPOS_JUGADOR.habilidades`: casual 'auto', constante y de pago 'criterio'. Lo usan `simularProgresion` y el bot de
+  pantalla (`botBatalla` juega cada ronda con `habCriterio` en vez del autoataque).
+- Sin tipo, `simularProgresion` sigue con el autoataque (mediciones de balance sin cambios).
+- Prueba nueva en `pruebas/sistemas.js`. Verificación: 44/44 sistemas, 15/15 escenarios, igual con pantalla y sin ella.
+- Medición (60 días, constante): semilla 1 auto Nv 79 / piso 129 / Pesadillas días 21-33-39 → criterio Nv 80 (día 59) /
+  piso 137 / días 18-22-30; semilla 2 piso 95 → 99, Nv 69 → 71.
+
 **2026-11-03 · Claude (fase 2)**
 - `js/pruebas/1-bot.js` · `botTipo` (guardado en `batalla.botTipo`), `tipoBot`, `botReserva`, `botHayEstamina`, `botFijarReserva`.
 - `js/pruebas/5-bot-pantalla.js` · el bot de pantalla respeta el tipo: reintentos, rival de arena, estamina sin gastar,
@@ -33,14 +43,14 @@ lo pueda activar y una prueba muestre que la reserva para el jefe.
 
 ## Decisiones
 - 2026-11-03 · Un solo catálogo de tipos para simulador y bots del servidor · propuesta aceptada por el usuario.
-- 2026-11-03 · 'constante' = comportamiento anterior, para no mover las mediciones de balance ya hechas · Claude.
+- 2026-11-03 · Sin tipo = comportamiento anterior (autoataque), para no mover las mediciones de balance ya hechas · Claude.
 
 ## Hecho
 - Fase 1: tipos en el simulador y en los bots del servidor · 232b4bc · sistemas + medición.
-- Fase 2: tipo de jugador en el bot de pantalla · commit en qa · sistemas, sin-pantalla.
+- Fase 2: tipo de jugador en el bot de pantalla · f3306af · sistemas, sin-pantalla.
+- Fase 3: habilidades con criterio · commit en qa · sistemas + medición.
 
 ## Pendiente
-- Fase 3: habilidades con criterio (guardar la fuerte para el jefe o el último enemigo) en vez de `habLista`.
 - Fase 4: el bot de pantalla entra en calabozo y Torre de reyes (en modo pruebas los aliados son bots).
 - Ajustar los números de cada tipo con datos reales cuando los haya.
 
@@ -66,5 +76,6 @@ lo pueda activar y una prueba muestre que la reserva para el jefe.
 - Cambiar los tipos cambia los bots del servidor: subir `VERSION_SERVIDOR`.
 
 ## Bitácora
+- 2026-11-03 · Claude · Fase 3: habilidades con criterio.
 - 2026-11-03 · Claude · Fase 2: bot de pantalla con tipo.
 - 2026-11-03 · Claude · Tema creado; fase 1 (tipos en simulador y bots del servidor).

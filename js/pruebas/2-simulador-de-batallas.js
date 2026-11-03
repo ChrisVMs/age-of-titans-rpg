@@ -17,6 +17,20 @@
       Object.assign(batalla.carga, carga);
     }
   }
+  // Habilidades con criterio (como un jugador atento, no el autoataque): contra un jefe, la más fuerte lista; si viene un
+  // jefe más adelante, guarda la más fuerte y usa las demás; no gasta habilidades en un enemigo casi muerto.
+  const VIDA_REMATE = .2;   // por debajo de esta parte de su vida, el objetivo se remata con el ataque normal
+  function habCriterio() {
+    const listas = HABILIDADES.filter(h => batalla.carga[h.id] >= h.turnos);
+    if (!listas.length) return null;
+    const G = batalla.grupo, vivosE = G.enemigos.filter(u => u.vida > 0), t = G.objetivo && G.objetivo.vida > 0 ? G.objetivo : vivosE[0];
+    const porFuerza = [...listas].sort((a, b) => b.mult - a.mult), fuerte = [...HABILIDADES].sort((a, b) => b.mult - a.mult)[0];
+    if (vivosE.some(u => esJefe(u.e))) return porFuerza[0];
+    if (t && t.vida < t.vidaMax * VIDA_REMATE && vivosE.length === 1 && !(G.duelo && quedanEnemigos())) return null;
+    const viene = G.duelo && (batalla.campana.enemigos || []).slice(batalla.iEnemigo + 1).some(esJefe);
+    return (viene ? porFuerza.filter(h => h !== listas.find(x => x.id === fuerte.id)) : porFuerza)[0] || null;
+  }
+  const quedanEnemigos = () => (batalla.campana.enemigos || []).length > batalla.iEnemigo + 1;
   // Juega la batalla c hasta el final con el motor; devuelve true (victoria), false (derrota) o null (sin terminar)
   function jugarHastaFin(c, decidir = habLista, maxRondas = 300) {
     prepararBatalla(c);

@@ -38,10 +38,12 @@
   async function botBatalla() {
     if (pantallaActual !== 'pBatalla' || batalla.terminada) return null;
     await esperar(1500);   // que salgan los enemigos antes de atacar
+    const criterio = botModo === 'jugar' && tipoBot().habilidades === 'criterio';
     while (!batalla.terminada) {
       if (!botModo) return null;
       botCerrarMensajes();
-      if (!auto && !bucle && !enRonda) btnAuto.click();
+      if (criterio) { if (!enRonda && !auto) { await ronda(habCriterio()); continue; } }   // elige cada habilidad (habCriterio)
+      else if (!auto && !bucle && !enRonda) btnAuto.click();
       await esperar(300);
     }
     await esperar(300);

@@ -102,12 +102,13 @@
   //   juega: probabilidad de jugar cada día (los días que no juega solo pasa el tiempo) · estaminaExtra: recargas al día
   //   (anuncios, diamantes) · gasto: parte de la estamina del día que gasta (el resto se pierde) · reintentos: derrotas en
   //   una batalla antes de dejarla para otro día · arena: a qué rival ataca (facil, azar o fuerte) · anuncios y cristales:
-  //   si el bot de pantalla recarga estamina viendo anuncios o con cristales (el simulador lo resume en estaminaExtra).
-  // 'constante' es el bot de siempre (todo, cada día): sin tipo, simularProgresion se comporta igual que antes.
+  //   si el bot de pantalla recarga estamina viendo anuncios o con cristales (el simulador lo resume en estaminaExtra) ·
+  //   habilidades: 'auto' (la primera lista, como el autoataque) o 'criterio' (habCriterio: guarda la fuerte para el jefe).
+  // Sin tipo, simularProgresion es el bot de siempre (todo cada día, autoataque); 'constante' es eso con habilidades con criterio.
   const TIPOS_JUGADOR = {
-    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, reintentos: 1, arena: 'azar',   anuncios: false, cristales: false },
-    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  reintentos: 2, arena: 'facil',  anuncios: true,  cristales: false },
-    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  reintentos: 3, arena: 'fuerte', anuncios: true,  cristales: true },
+    casual:    { nombre: 'Casual',    juega: .7, estaminaExtra: 0,   gasto: .6, reintentos: 1, arena: 'azar',   anuncios: false, cristales: false, habilidades: 'auto' },
+    constante: { nombre: 'Constante', juega: 1,  estaminaExtra: 150, gasto: 1,  reintentos: 2, arena: 'facil',  anuncios: true,  cristales: false, habilidades: 'criterio' },
+    pago:      { nombre: 'De pago',   juega: 1,  estaminaExtra: 300, gasto: 1,  reintentos: 3, arena: 'fuerte', anuncios: true,  cristales: true,  habilidades: 'criterio' },
   };
   const rivalArenaSim = (rivales, modo, r) => modo === 'azar' ? Math.floor(r() * rivales.length)
     : rivales.reduce((m, x, k) => (modo === 'fuerte' ? x.f > rivales[m].f : x.f < rivales[m].f) ? k : m, 0);
@@ -148,7 +149,7 @@
           if (jugador.estamina < coste) return null;
           jugador.estamina -= coste; if (coste) contarMision('estamina', coste);
           if (c.aliados) c.aliados = aliados();
-          const { fin } = jugarHastaFin(c, habLista, 400);
+          const { fin } = jugarHastaFin(c, T.habilidades === 'criterio' ? habCriterio : habLista, 400);
           cacheBots.splice(botsAntes.length);
           cobrarResultado(fin === true); return fin === true;
         };
