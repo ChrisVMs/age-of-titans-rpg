@@ -3,6 +3,12 @@
   function botCerrarMensajes() {   // mensajes de solo OK (desbloqueos...); los de confirmar se dejan
     if ($('dialogo').classList.contains('visible') && $('dialogoNo').hidden) $('dialogoSi').click();
   }
+  // 2 aliados para el grupo: los bots del servidor de poder más parecido al tuyo
+  function botAliados() {
+    const yo = poder();
+    return bots().filter(b => b.nombre !== jugador.nombre).map(b => [b.nombre, Math.abs(conPerfil(b, () => poder()) - yo)])
+      .sort((a, b) => a[1] - b[1]).slice(0, 2).map(x => x[0]);
+  }
   // entrar a un nivel de campaña: si ya está superado (p. ej. otra vez tras una derrota), Auto en vez de pelearlo
   const botEntrar = (c, d, b) => { if (superada(c.id, d)) { barridos(c, d, Infinity); return 'auto'; } b.click(); };
   // siguiente cosa por jugar: { clave, iniciar } o { barrido: [c, d] }
@@ -24,6 +30,15 @@
     if (desbloqueado('pEvento') && entradasJefe() > 0) {
       const op = opcionJefeSim(pocos);
       if (op) return { clave: 'jefe' + op[0] + op[1], iniciar: () => { mundialSel = op[0]; difJefeSel = op[1]; iniciarMundial(); } };
+    }
+    // en grupo (calabozo y reyes): con los bots de poder más parecido al tuyo como aliados
+    if (desbloqueado('pCalabozo') && revisarCalabozo().entradas > 0) {
+      const [id, df] = opcionCalabozoSim(pocos);
+      if (id) return { clave: `cal${id}:${df}`, iniciar: () => iniciarCalabozo(df, botAliados(), null, id) };
+    }
+    if (desbloqueado('pReyes') && revisarReyes().entradas > 0) {
+      const df = opcionReyesSim(pocos);
+      if (df) return { clave: 'reyes' + df, iniciar: () => iniciarReyes(df, botAliados(), null) };
     }
     if (retoPendiente()) return { clave: 'eco', iniciar: () => iniciarCampana(batallaEco()) };   // reto del Eco
     if (desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso

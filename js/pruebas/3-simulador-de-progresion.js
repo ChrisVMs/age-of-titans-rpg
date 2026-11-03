@@ -91,6 +91,14 @@
     return Object.keys(MUNDIALES).flatMap(m => ['normal', 'pesadilla'].map(d => [m, d]))
       .filter(([m, d]) => jefeAbierto(m, d) && estadoMundial(m, d).vida > 0 && pocos('jefe' + m + d)).sort((a, b) => prio(a) - prio(b))[0];
   }
+  // calabozo: el siguiente sin superar (de la dificultad más baja); si no, el mejor superado · [id, dif] o []
+  function opcionCalabozoSim(pocos = () => true) {
+    const abiertos = CALABOZOS.filter(x => calabozoAbierto(x.id)).flatMap(x => ORDEN_DIF.filter(df => difAbierta(x.id, df)).map(df => [x.id, df]));
+    return [...abiertos].sort((a, b) => ORDEN_DIF.indexOf(a[1]) - ORDEN_DIF.indexOf(b[1])).find(([id, df]) => !jugador.calabozosDif[`${id}:${df}`] && pocos(`cal${id}:${df}`))
+      || abiertos.filter(([id, df]) => jugador.calabozosDif[`${id}:${df}`]).at(-1) || [];
+  }
+  // Torre de reyes: la primera dificultad sin vencer esta semana
+  const opcionReyesSim = (pocos = () => true) => Object.keys(DIF_REYES).find(x => !revisarReyes().vencidas[x] && pocos('reyes' + x));
   function simCobrar() {   // misiones y bonus hechos
     for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); BONUS_MISIONES[tipo].forEach((_, i) => reclamarMision(tipo, 'cofre' + i)); }
     for (const [id, p] of hitosPendientes()) reclamarHito(id, p);   // hitos del Códice
@@ -194,12 +202,11 @@
               if (op) { jugador.entradasJefe--; k = 'jefe' + op[0] + op[1]; c = batallaMundial(op[0], op[1]); }
             }
             if (!c && desbloqueado('pCalabozo') && revisarCalabozo().entradas > 0) {   // el siguiente sin superar; si no, el mejor superado
-              const abiertos = CALABOZOS.filter(x => calabozoAbierto(x.id)).flatMap(x => ORDEN_DIF.filter(df => difAbierta(x.id, df)).map(df => [x.id, df]));
-              const [id, df] = [...abiertos].sort((a, b) => ORDEN_DIF.indexOf(a[1]) - ORDEN_DIF.indexOf(b[1])).find(([id, df]) => !jugador.calabozosDif[`${id}:${df}`] && pocos(`cal${id}:${df}`)) || abiertos.filter(([id, df]) => jugador.calabozosDif[`${id}:${df}`]).at(-1) || [];
+              const [id, df] = opcionCalabozoSim(pocos);
               if (id) { revisarCalabozo().entradas--; k = `cal${id}:${df}`; c = batallaCalabozo(df, ['x'], null, id); }
             }
             if (!c && desbloqueado('pReyes') && revisarReyes().entradas > 0) {
-              const df = Object.keys(DIF_REYES).find(x => !revisarReyes().vencidas[x] && pocos('reyes' + x));
+              const df = opcionReyesSim(pocos);
               if (df) { revisarReyes().entradas--; k = 'reyes' + df; c = batallaReyes(df, ['x'], null); }
             }
             if (!c && retoPendiente()) { k = 'eco'; c = batallaEco(); }   // el reto del Eco, siempre

@@ -1,17 +1,25 @@
 # Tipos de jugador (simular jugadores reales)
 
-**Estado:** en curso · **Rama:** qa · **Actualizado:** 2026-11-03
+**Estado:** pausado (espera: datos de jugadores reales para ajustar los tipos) · **Rama:** qa · **Actualizado:** 2026-11-03
 
 ## Objetivo
 Que el simulador y los bots se parezcan a jugadores reales, no solo al "óptimo que juega todo cada día": perfiles
 casual / constante / de pago, y más adelante decisiones de batalla y multijugador en el bot de pantalla.
 
 ## Próximo paso
-Fase 4: el bot de pantalla entra en calabozo y Torre de reyes (en modo pruebas los aliados son bots), como ya hace el
-simulador. Dónde: `botSiguiente` en `js/pruebas/5-bot-pantalla.js`. Hecho cuando el bot juega sus entradas diarias de
-calabozo y reyes en pantalla.
+Las 4 fases están hechas. Cuando haya datos de jugadores reales (o el usuario diga cómo juega la gente), ajustar los
+números de `TIPOS_JUGADOR` (días que juega, gasto, recargas, reintentos). Antes: que el usuario pruebe el bot de pantalla
+(🎭 tipo, habilidades con criterio, calabozo y reyes).
 
 ## Última sesión
+**2026-11-03 · Claude (fase 4)**
+- `js/pruebas/3-simulador-de-progresion.js` · `opcionCalabozoSim` y `opcionReyesSim` (antes dentro de `simularProgresion`,
+  sin cambios de comportamiento).
+- `js/pruebas/5-bot-pantalla.js` · `botSiguiente` juega calabozo y Torre de reyes (tras jefes, antes del Eco) con
+  `iniciarCalabozo` / `iniciarReyes`; `botAliados`: los 2 bots del servidor de poder más parecido.
+- Prueba nueva "Bot en grupo". Verificación: 45/45 sistemas, 15/15 escenarios, igual con pantalla y sin ella.
+  Sin probar en el navegador.
+
 **2026-11-03 · Claude (fase 3)**
 - `js/pruebas/2-simulador-de-batallas.js` · `habCriterio` y `VIDA_REMATE`: contra un jefe la habilidad más fuerte lista;
   si viene un jefe más adelante (1 contra 1), guarda la más fuerte; no gasta habilidades rematando al último enemigo.
@@ -48,10 +56,10 @@ calabozo y reyes en pantalla.
 ## Hecho
 - Fase 1: tipos en el simulador y en los bots del servidor · 232b4bc · sistemas + medición.
 - Fase 2: tipo de jugador en el bot de pantalla · f3306af · sistemas, sin-pantalla.
-- Fase 3: habilidades con criterio · commit en qa · sistemas + medición.
+- Fase 3: habilidades con criterio · 64bbd84 · sistemas + medición.
+- Fase 4: bot de pantalla en calabozo y Torre de reyes · commit en qa · sistemas.
 
 ## Pendiente
-- Fase 4: el bot de pantalla entra en calabozo y Torre de reyes (en modo pruebas los aliados son bots).
 - Ajustar los números de cada tipo con datos reales cuando los haya.
 
 ## Medición (60 días, semilla 1, partida nueva, guerrero)
@@ -76,6 +84,7 @@ calabozo y reyes en pantalla.
 - Cambiar los tipos cambia los bots del servidor: subir `VERSION_SERVIDOR`.
 
 ## Bitácora
+- 2026-11-03 · Claude · Fase 4: calabozo y reyes en el bot de pantalla.
 - 2026-11-03 · Claude · Fase 3: habilidades con criterio.
 - 2026-11-03 · Claude · Fase 2: bot de pantalla con tipo.
 - 2026-11-03 · Claude · Tema creado; fase 1 (tipos en simulador y bots del servidor).

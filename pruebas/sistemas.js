@@ -2,6 +2,12 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Bot en grupo: elige el calabozo sin superar más bajo (o el mejor superado) y la primera Torre de reyes sin vencer': `
+    const c = CALABOZOS[0]; jugador.calabozos = {}; jugador.calabozosDif = {};
+    const abierto = calabozoAbierto(c.id), primero = opcionCalabozoSim();
+    jugador.calabozosDif[c.id + ':normal'] = true; const tras = opcionCalabozoSim(), fallado = opcionCalabozoSim(k => k !== 'cal' + c.id + ':dificil');
+    const R = revisarReyes(), d0 = Object.keys(DIF_REYES); R.vencidas = {}; const r0 = opcionReyesSim(); R.vencidas[d0[0]] = true;
+    [!abierto || primero.join() === c.id + ',normal', !abierto || tras[1] !== 'normal' || tras[0] !== c.id, !abierto || fallado.length === 2, r0 === d0[0], opcionReyesSim() === d0[1]]`,
   'Habilidades con criterio: guarda la más fuerte si viene un jefe, la usa contra el jefe y no remata con habilidades': `
     HABILIDADES = [{ id: 'd', mult: 2, turnos: 1 }, { id: 'f', mult: 4, turnos: 1 }]; batalla.carga.d = batalla.carga.f = 5;
     const u = (jefe, vida = 100) => ({ vida, vidaMax: 100, e: { jefe } });
