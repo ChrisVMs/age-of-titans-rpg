@@ -29,13 +29,27 @@
     if (jugador.arena.dia !== hoy()) { jugador.arena.dia = hoy(); jugador.arena.entradas = ARENA_ENTRADAS; generarRivales(); }
     return jugador.arena;
   }
+  // El rival es un jugador del servidor (el de poder más cercano al pedido) que lucha como tú: sus habilidades, sets,
+  // efectos y clase (cuenta la ventaja de clase). Sus atributos se escalan para que su poder sea el tuyo × f.
+  // Antes era un monstruo con tus atributos y una sola habilidad: con el mismo poder ganabas casi siempre.
+  function rivalArena(f) {
+    const objetivo = poder() * f, c = rankingServidor().filter(x => !x.yo && x.poder > 0);
+    if (!c.length) return null;
+    const b = c.reduce((m, x) => Math.abs(x.poder - objetivo) < Math.abs(m.poder - objetivo) ? x : m);
+    return { perfil: b.bot, clase: b.clase, pct: objetivo / b.poder };
+  }
   function batallaArena(i) {   // la batalla contra el rival i (sin gastar la entrada)
-    const a = revisarArena(), r = a.rivales[i], s0 = estadisticas(), li = ligaDe(a.puntos);
+    const a = revisarArena(), r = a.rivales[i], li = ligaDe(a.puntos), x = rivalArena(r.f);
     return ({ nombre: `Arena: ${r.nombre}`, arena: true, premio: { oro: 300 + 150 * li, xp: 60, piedra: 4, polvo: 5 + li },   // la Arena es la fuente propia de polvo (refinar y pulir)
-      botin: { piedra: [0, 0], polvo: 0 }, enemigos: [{ nombre: r.nombre, rival: true, vida: Math.round(s0.vida * Math.sqrt(r.f) * 1.12), armadura: Math.round(s0.armadura * r.f), defensa: Math.round(s0.defensa * r.f), ef: efectosDefensa(efecto),
-        dano: [Math.round(s0.ataque * Math.sqrt(r.f) * .9), Math.round(s0.ataque * Math.sqrt(r.f) * 1.1)], oro: 0, xp: 0, filtro: r.filtro,
-        critico: efecto('critico'), danoCritico: DANO_CRITICO_BASE + efecto('danoCritico'), habilidad: { nombre: 'Estocada', turnos: 4, mult: 2.5 },
-        aplica: [{ estado: 'sangrado', prob: .15, turnos: 2, pct: .03 }] }] });
+      botin: { piedra: [0, 0], polvo: 0 }, enemigos: [x ? { nombre: `${CLASES[x.clase].icono} ${r.nombre}`, rival: true, perfil: x.perfil, pct: x.pct, oro: 0, xp: 0 }
+        : rivalSimple(r)] });
+  }
+  function rivalSimple(r) {   // sin jugadores en el servidor: una copia simplificada de ti
+    const s0 = estadisticas();
+    return { nombre: r.nombre, rival: true, vida: Math.round(s0.vida * Math.sqrt(r.f) * 1.12), armadura: Math.round(s0.armadura * r.f), defensa: Math.round(s0.defensa * r.f), ef: efectosDefensa(efecto),
+      dano: [Math.round(s0.ataque * Math.sqrt(r.f) * .9), Math.round(s0.ataque * Math.sqrt(r.f) * 1.1)], oro: 0, xp: 0, filtro: r.filtro,
+      critico: efecto('critico'), danoCritico: DANO_CRITICO_BASE + efecto('danoCritico'), habilidad: { nombre: 'Estocada', turnos: 4, mult: 2.5 },
+      aplica: [{ estado: 'sangrado', prob: .15, turnos: 2, pct: .03 }] };
   }
   function resultadoArena(gano) {
     const a = revisarArena(), r = a.rivales[a.rivalActual] || { f: 1 }, d = gano ? Math.round(25 * r.f) : -12, antes = ligaDe(a.puntos);

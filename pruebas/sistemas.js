@@ -201,6 +201,9 @@ const PRUEBAS = {
     [ventajaClase('mago', 'guerrero') > 1, ventajaClase('guerrero', 'mago') === 1, ventajaClase('asesino', undefined) === 1,
      v('guerrero', 'asesino') > .55, v('guerrero', 'arquero') > .55, v('mago', 'guerrero') > .55, v('asesino', 'mago') > .52, v('arquero', 'mago') > .55,
      Math.abs(v('asesino', 'arquero') - .5) < .15]`,
+  'Arena: el rival es un jugador del servidor con tu poder × f (lucha con sus habilidades)': `
+    const A = revisarArena(), e = batallaArena(1).enemigos[0], pd = conPerfil(e.perfil, () => poder()) * e.pct;
+    [!!e.perfil, e.pct > 0, Math.abs(pd / (poder() * A.rivales[1].f) - 1) < .01]`,
   'Contenido alto: el arte de un enemigo se enchufa como dato (hoja)': `
     const T = TIPOS_ENEMIGO.esqueleto, antes = T.hoja; T.hoja = 'img/enemigos/esqueleto.png';
     const e = crearDificultad(15, 'normal', ['esqueleto']).enemigos[0], sin = crearDificultad(15, 'normal', ['parca']).enemigos[0];

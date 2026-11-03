@@ -14,6 +14,10 @@ afinar Puñalada o la Danza vigilando la matriz (`duelosClase`) para no romper l
 - Arena y Torre de reyes: todos los combatientes tienen `VIDA_PVP = 2.5` × vida (`js/logica/29-motor-del-combate.js`,
   `unidadRey` en `41-ascension-2.js`). Duelos de igual poder: de ~6 rondas a ~10-20 (más el guerrero, menos el mago).
 - Con peleas largas el asesino ya no ganaba a la maga (.50): `BONO_VENTAJA_CLASE` .2 → .27 (solo entre personajes).
+- Rival de arena: ahora es el bot del servidor de poder más cercano, escalado (`pct`) a tu poder × f, y lucha como un
+  jugador (`rivalArena` en `15-arena.js`; `siguienteEnemigo` usa `unidadRey` si hay perfil). Antes ganabas ~100 % contra
+  el parejo; ahora depende de clase y build (0-100 %, la mayoría 20-90 %). Sin bots: el rival simple de antes.
+  Progresión: semilla 2 llega a Nv 56 (antes 63) porque se ganan menos arenas.
   Cadena: guerrero>asesino .82, guerrero>arquero .80, maga>guerrero .83, asesino>maga .57, arquero>maga .65.
 
 **2026-11-03 · Claude (cadena de clases y balance de las 4)**
