@@ -227,7 +227,7 @@
     modoJefe();
     $('nombreEnemigo').textContent = batalla.infernal ? 'Cerbero infernal' : batalla.enemigo.nombre;
     $('oleada').textContent = batalla.campana.mundial || batalla.campana.arena || batalla.campana.reyes ? '' : batalla.campana.torre ? `Piso ${batalla.campana.torre} · ${i + 1}/${batalla.campana.enemigos.length}` : `Enemigo ${i + 1} / ${batalla.campana.enemigos.length}`;   // jefe mundial y arena: ya lo dice el título
-    parca.frames.style.filter = batalla.enemigo.filtro;
+    pintarHojaEnemigo(parca.frames, batalla.enemigo);
     slots[1].classList.toggle('jefe', !!batalla.enemigo.jefe);
     if (batalla.enemigo.jefe || batalla.enemigo.cerbero || batalla.enemigo.asmodeo || batalla.enemigo.minotauro) avisar(batalla.enemigo.jefe ? '¡Jefe!' : `¡${batalla.enemigo.nombre}!`);
     ajustarEscala();

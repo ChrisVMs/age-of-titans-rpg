@@ -1,6 +1,7 @@
   // ---------------- Inventario ----------------
-  // Ícono estándar por tipo de objeto, teñido con el mismo color que la pieza
-  const icono = m => `<span class="icono" style="background-image:url(${m.icono || RANURAS[m.ranura].icono});filter:${m.color || 'none'}"></span>`;
+  // Ícono estándar por tipo de objeto, teñido con el mismo color que la pieza; un modelo con icono propio (p. ej. los
+  // Ancestrales, en color) se ve tal cual
+  const icono = m => `<span class="icono" style="background-image:url(${m.icono || RANURAS[m.ranura].icono});filter:${m.icono ? 'none' : m.color || 'none'}"></span>`;
   const ORDEN_RAREZA = Object.keys(RAREZAS);
   let invTab = 'objetos';
   function textoAccionMascota(m, n) {

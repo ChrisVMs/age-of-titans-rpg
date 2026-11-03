@@ -45,6 +45,8 @@
                  filtro: 'sepia(1) saturate(4) hue-rotate(70deg) brightness(.7)',
                  aplica: [{ estado: 'veneno', prob: .4, turnos: 3, pct: .03 }, { estado: 'congelacion', prob: .12, turnos: 1 }] },
     // Etapa 2: las ruinas del reino caído (sprites propios pendientes: hoja de la parca con otro color)
+    // Arte propio (cuando llegue): hoja: 'img/enemigos/<id>.png', 7 cuadros de 260×200 como img/enemigos/parca.png
+    // (prompt en PROMPT_SPRITE.md, "Enemigos de las etapas 2-3"). Con hoja se dibuja sin filtro; sin ella, parca teñida.
     esqueleto: { nombre: 'Esqueleto guerrero', vida: 1.1,  dano: 1.1,  armadura: 15, filtro: 'grayscale(1) brightness(1.45) contrast(1.1)' },
     caballero: { nombre: 'Caballero espectral', vida: 1.2, dano: 1.05, armadura: 45, filtro: 'grayscale(.6) sepia(.3) hue-rotate(170deg) brightness(1.2) saturate(1.6)',
                  aplica: [{ estado: 'aturdimiento', prob: .08, turnos: 1 }] },
@@ -123,7 +125,7 @@
     const m = mods[d], vidaBase = 45 * 1.23 ** (n - 1), danoBase = 1.23 ** (n - 1), k = m.premio, g = 1.25 ** (n - 1);
     const enemigos = tipos.map(t => {
       const T = TIPOS_ENEMIGO[t], vida = Math.round(vidaBase * T.vida * m.vida);
-      return { nombre: T.nombre, jefe: T.jefe, avance: T.avance, filtro: T.filtro, vida, armadura: (T.armadura || 0) + m.armadura,
+      return { nombre: T.nombre, jefe: T.jefe, avance: T.avance, filtro: T.filtro, hoja: T.hoja, vida, armadura: (T.armadura || 0) + m.armadura,
         nEq: n + Math.log(m.vida * m.dano) / (2 * Math.log(1.23)),   // nivel de contenido (con la dificultad): fija el daño de sus estados
         dano: [Math.round(3 * danoBase * T.dano * m.dano), Math.round(5 * danoBase * T.dano * m.dano)],
         oro: Math.round(vidaBase * T.vida * .4 * m.oro), xp: Math.round(vida * .33),

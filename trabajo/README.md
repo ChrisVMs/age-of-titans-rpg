@@ -13,7 +13,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
-| [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | pausado | Espera el arte (lista en su ESTADO) | 2026-10-29 · Claude |
+| [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | pausado | Espera el arte: prompts listos y arte enchufable como dato | 2026-11-03 · Claude |
 | [Retención a largo plazo](retencion/ESTADO.md) | pausado | Pacto e Invasiones: esperan servidor real | 2026-10-29 · Claude |
 
 ### Estados

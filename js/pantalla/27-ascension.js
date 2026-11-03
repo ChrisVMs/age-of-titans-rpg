@@ -86,7 +86,7 @@
         if (u.e.jefe) u.el.classList.add('jefe');
       } else {
         if (u.e.jefe) u.el.classList.add('jefe');
-        u.el.querySelector('.frames').style.filter = u.e.filtro || '';
+        pintarHojaEnemigo(u.el.querySelector('.frames'), u.e);
         u.pj = personaje(u.el, 260); pintarVida(u.el, u.vida, u.vidaMax);
       }
     }
@@ -171,4 +171,9 @@
     if (!await confirmar('¿Ascender? Vuelves al nivel 1 y se reinician los árboles de habilidades, a cambio de +5 % a todo y 2 puntos de habilidad extra para siempre.')) return;
     jugador.ascension = ascension() + 1; jugador.nivel = 1; jugador.xp = 0; jugador.arbol = {}; borrador = null;
     guardar(); montarHabilidades(); aplicarEquipo(); pintarHud(); avisar(`⭐ Ascensión ${jugador.ascension}`); pintarArbol();
+  }
+  // Enemigo con arte propio (TIPOS_ENEMIGO.hoja): su hoja y sin filtro; sin ella, la parca con el filtro de su tipo
+  function pintarHojaEnemigo(frames, e) {
+    frames.style.backgroundImage = e.hoja ? `url(${e.hoja})` : '';
+    frames.style.filter = e.hoja ? '' : (e.filtro || '');
   }

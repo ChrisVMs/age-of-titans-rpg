@@ -7,8 +7,9 @@ Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga re
 estanca hacia el día 24 (~50 k: todo al máximo) y los jefes, reyes y la Torre alta caen mucho antes del nivel 80.
 
 ## Próximo paso
-**Paso 7: arte.** La lista está en **Arte pendiente**; cuando llegue cada pieza, quitar `arte: false` de su etapa o
-calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, nada que programar.
+**Paso 7: arte.** Prompts listos (`PROMPT_SPRITE.md` → "Enemigos de las etapas 2-3"; `PROMPT_ICONOS.md` → "Equipo
+Ancestral", "Calabozos 5-8" y fondos de las etapas 2-3). Cuando llegue cada pieza, se enchufa como dato (ver **Arte
+pendiente**) y se prueba en el navegador; con todas, quitar `arte: false` de las etapas y calabozos.
 
 ## Plan
 1. ✅ Aura: 10 niveles, +2 % a todo por nivel, con Esencia y oro; se ve bajo el personaje (tenue → late desde el 5 →
@@ -25,6 +26,15 @@ calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, 
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-11-03 · Claude (arte enchufable como dato)**
+- `TIPOS_ENEMIGO.<id>.hoja` (opcional): `crearDificultad` la pasa al enemigo y la pantalla (`pintarHojaEnemigo`, en
+  27-ascension.js; duelo y grupo) dibuja esa hoja sin filtro; sin ella, la parca teñida como hasta ahora.
+- `icono()` (19-inventario.js): un modelo con icono propio no se tiñe (los Ancestrales vendrán en color).
+- Prompts: 10 enemigos/jefes (reemplazo genérico sobre la hoja de la parca, mismos 7 cuadros 260×200), 4 iconos
+  Ancestrales, 4 iconos de calabozo y fondos de las etapas 2-3.
+- Prueba nueva: el arte de un enemigo se enchufa como dato. 37/37 sistemas, 15/15 escenarios, igual con y sin pantalla.
+- `main` puesta al día con `qa` (avance directo, a pedido del usuario).
+
 **2026-11-03 · Claude (vida de los objetos; pedido del usuario)**
 - Los objetos morados "no hacían diferencia": una línea de vida rendía, frente a la vida base (10 por nivel; el ataque 2),
   la mitad que una de ataque (épico Nv 20: +24 de vida ≈ 8 %, ataque ≈ 25-40 %), y el poder la contaba igual (~40).
@@ -116,6 +126,12 @@ calabozo (y el filtro provisional) y comprobar en el navegador. Hasta entonces, 
 - Torre alta: usa los enemigos de las etapas 2-3 (nada nuevo).
 - Opcional (hoy CSS/emoji, ya jugables en el juego publicado): edificios de las Ruinas en la escena del Campamento (ruina →
   reconstruido), retratos de los 4 Ecos (hoy el guerrero con un filtro de color), marcos de perfil del Códice, brillo D5.
+- Cómo enchufar cada pieza (sin código nuevo):
+  - Enemigo o jefe: hoja en `img/enemigos/<id>.png` (7 cuadros de 260×200, como `parca.png`) y `hoja:` en su entrada de
+    `TIPOS_ENEMIGO`; añadirlo a `animaciones.html`.
+  - Pieza Ancestral: icono con `tools/iconos_menu.py` y `icono: 'img/iconos/eq_..._antiguo.png'` en su `MODELOS`.
+  - Fondo de etapa: `img/fondos/etapa2.jpg` / `etapa3.jpg` y `fondo:` en su entrada de `ETAPAS`.
+  - Calabozo: hoy el icono es texto en un combo; las imágenes necesitan mostrarse fuera de él (pequeño cambio de pantalla).
 - Cómo publicar al llegar el arte: quitar `arte: false` en `ETAPAS` (22-campanas) y `CALABOZOS` (37-calabozo); la Torre
   alta y lo Ancestral se activan solos (`contenidoAlto`).
 

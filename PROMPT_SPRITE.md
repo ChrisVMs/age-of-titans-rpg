@@ -47,3 +47,29 @@ CHANGE ONLY:
 
 No text, no labels, no numbers, no watermark.
 ```
+
+
+## Enemigos de las etapas 2-3 (contenido de nivel alto)
+
+Hoy son la parca teñida con un filtro. Cada uno se rehace con el **reemplazo genérico** de arriba sobre la hoja de la
+parca, para que tenga **los mismos 7 cuadros** (260×200 cada uno, en fila: `img/enemigos/parca.png`, 1820×200) y entre en
+el juego sin código: guardar la hoja en `img/enemigos/<id>.png` y poner `hoja: 'img/enemigos/<id>.png'` en su entrada
+de `TIPOS_ENEMIGO` (`js/logica/22-campanas-etapas-de-10.js`). Los jefes usan la de `img/enemigos/parca_jefe.png` (mismo
+formato) como base. Añadir cada uno a `animaciones.html`.
+
+En el prompt genérico: [N] = 7, [COLS] = 7, [ROWS] = 1, [CURRENT CHARACTER] = "a hooded grim reaper with a long scythe",
+[ANIMATION] = "idle, a scythe attack and a hit reaction", y en [NEW LOOK] la descripción de la tabla (con su imagen de
+referencia). Si el enemigo no lleva guadaña, pedir que el arma nueva siga el mismo movimiento.
+
+| id | Etapa | Nuevo aspecto ([NEW LOOK]) |
+|---|---|---|
+| `esqueleto` | 2 | a skeleton warrior in rusted chain mail, chipped round shield and a notched short sword, glowing pale-blue eye sockets |
+| `caballero` | 2 | a spectral knight in translucent blue-grey plate armor, tattered dark cape, ghostly longsword, faint cyan glow |
+| `gargola` | 2 | a hunched stone gargoyle with bat wings and claws, cracked grey stone skin with moss, glowing amber eyes |
+| `campeon` (jefe) | 2 | an undead champion in heavy black plate armor with bone trims and a huge two-handed greatsword, red eye glow |
+| `liche` (jefe) | 2 | a lich king in ornate purple-and-gold robes and a spiked crown, skeletal hands, a staff with a green soul gem |
+| `diablillo` | 3 | a small red imp with tiny horns, bat wings, a long tail and a three-pronged fork |
+| `demonio` | 3 | a fire demon with charred black skin and glowing lava cracks, curved horns, flaming claws |
+| `sucubo` | 3 | a succubus with dark purple skin, curled horns, bat wings, a black leather outfit and a whip of shadow |
+| `verdugo` (jefe) | 3 | an abyssal executioner: huge brute in a black iron hood and chains, a giant blood-red axe |
+| `senor` (jefe) | 3 | the Lord of the Abyss: towering demon with a crown of horns, obsidian armor with lava veins, a burning greatsword |

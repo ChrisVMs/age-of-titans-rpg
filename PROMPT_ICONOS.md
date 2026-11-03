@@ -142,6 +142,25 @@ Destino: `skin_<id>` (ids en `js/logica/08-skins.js`: egida_tormentosa, obsidian
 15 cute companion pet portraits, head and shoulders, front three-quarter view: rat · frog · owl · wolf · turtle / bat · phoenix · panther · stone golem · dragon / lion · unicorn · serpent · whale · dog
 ```
 
+### Equipo Ancestral — `iconos_ancestral.jpg` (1024×256, 4×1) + bloque común
+Rareza por encima de mítica ("de los Antiguos"). Hoy usan los iconos de equipo con un filtro turquesa. Estos sí van en color
+(no se tiñen): turquesa y oro viejo, runas antiguas, un leve brillo; mismo estilo que `iconos_equipo.jpg` (adjuntarlo).
+```
+Four legendary "ancient ones" equipment icons for a cartoon fantasy RPG inventory, in EXACTLY the same style as the attached reference icons (thick black outlines, bold simple shapes, flat cel shading with one soft highlight, chunky stylized proportions). Colors: deep turquoise and teal metal with old-gold trims and small glowing turquoise runes; no pure green. Absolutely no text.
+1 an ancient sword pointing up, wide blade with a carved rune line, gold crossguard with a turquoise gem · 2 an ancient crested helmet with a turquoise visor glow and gold wings on the sides · 3 an ancient chest plate with gold filigree and a glowing turquoise rune in the center · 4 an ancient cape seen from the front, turquoise cloth with gold rune border and a gem clasp
+```
+Destino: `eq_espada_antigua`, `eq_casco_antiguo`, `eq_armadura_antigua`, `eq_capa_antigua`, con `python3 tools/iconos_menu.py`
+(entrada nueva en `HOJAS`), y en el campo `icono` de cada modelo Ancestral (`MODELOS`, `js/logica/05-encantamiento-y-refinamiento.js`).
+
+### Calabozos 5-8 — `iconos_calabozos_alto.jpg` (1024×256, 4×1) + bloque común
+Hoy son emoji (💀 👑 🔥 🕳️).
+```
+Four dungeon entrance icons for a cartoon fantasy RPG. Absolutely no text.
+1 Catacombs of the King: a stone crypt doorway with a skull keystone and blue torches · 2 Throne of the Lich: a dark throne of bones with a floating green soul gem · 3 Pit of Demons: a fiery chasm with demon horns rising from lava · 4 Heart of the Abyss: a swirling black-and-purple vortex with a burning red core
+```
+Destino: `cal_5` … `cal_8`. Ojo: hoy `icono` de `CALABOZOS` es texto (emoji) y se muestra en un combo, donde no caben
+imágenes: al llegar los iconos habrá que pintarlos fuera del combo (p. ej. en la ficha del calabozo elegido).
+
 ## Fondos
 
 Pantalla completa, sin personajes; recorte con `background-size:cover` anclado abajo.
@@ -156,5 +175,10 @@ DISTANT GRAVEYARD only between 150 and 300 px, small and far away, sitting on th
 STYLE: cartoon 2D game background, hand-painted, soft dark outlines; desaturated purples, cold blues, muted greens; lightest area is the ground.
 ```
   Clave: horizonte alto (~30-35 %) y suelo vacío, porque la fila de enemigos de arriba pisa a ~40 % de la altura.
+- **Etapa 2** (`img/fondos/etapa2.jpg`, campo `fondo` de la etapa 2): mismo prompt que la Etapa 1 cambiando la escena:
+  "the ruins of a fallen kingdom at dusk: broken castle walls and collapsed towers far away on the horizon, cracked stone
+  paving and rubble on the ground; colors: cold greys, dusty purples, faint blue moonlight".
+- **Etapa 3** (`img/fondos/etapa3.jpg`, campo `fondo` de la etapa 3): "the Abyss: a hellish wasteland, distant lava falls
+  and black spires on the horizon, cracked obsidian ground with glowing lava veins; colors: deep reds, oranges, charcoal".
 - **Vitrina del héroe** (`img/fondos/perfil.jpg`): patio de entrenamiento con arco rúnico y suelo de losas (dado por el usuario);
   el centro del suelo queda bajo los pies (`background-position:50% 88%`).
