@@ -1,0 +1,57 @@
+{
+ "config": {
+  "dias": 90,
+  "semillas": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "tipo": null
+ },
+ "dias": {
+  "7": {
+   "nivel": 41,
+   "poder": 25506,
+   "torre": 71,
+   "oro": 41031,
+   "aura": 1
+  },
+  "30": {
+   "nivel": 61,
+   "poder": 54671,
+   "torre": 93,
+   "oro": 836737,
+   "aura": 3
+  },
+  "60": {
+   "nivel": 70,
+   "poder": 66949,
+   "torre": 104,
+   "oro": 2489298,
+   "aura": 5
+  },
+  "90": {
+   "nivel": 75,
+   "poder": 79723,
+   "torre": 112,
+   "oro": 18142715,
+   "aura": 8
+  }
+ },
+ "oroFuentes": {
+  "login": 91800,
+  "misiones": 667250,
+  "campaña": 2021022,
+  "ruinas": 1108932,
+  "torre": 500420,
+  "arena": 24948,
+  "eco": 27315,
+  "expedición": 2170560,
+  "calabozo": 1347373,
+  "grieta": 581334,
+  "jefes": 4469233,
+  "barrido": 90832352,
+  "reyes": 851250
+ }
+}

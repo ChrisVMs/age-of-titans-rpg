@@ -25,7 +25,9 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
 - Contenido como datos (listas de etapas, calabozos, misiones…): añadir uno nuevo = añadir una entrada, no código nuevo.
 - Valores de balance en constantes con nombre, en un solo sitio.
 - Lo nuevo fuera del combate lleva su prueba en `pruebas/sistemas.js` (una entrada por prueba).
-- Al terminar: `node pruebas/escenarios.js`, `node pruebas/sistemas.js` y `node pruebas/sin-pantalla.js`; si cambia el balance, `node pruebas/progresion.js`.
+- Al terminar: `node pruebas/todo.js` (rápido: escenarios, sistemas, sin-pantalla). Si cambia el motor o el balance:
+  `node pruebas/todo.js completo` (+ métricas contra `pruebas/referencia.json` y equivalencia con `main`). La referencia
+  solo se actualiza (`node pruebas/metricas.js --guardar-referencia`) tras entender la diferencia y si es intencional.
 
 ## Pruebas en navegador
 - Las pruebas en el navegador las hace el usuario. No abrir el navegador para verificar cambios normales.

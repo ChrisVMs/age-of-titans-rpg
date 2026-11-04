@@ -40,3 +40,4 @@ module.exports = function cargar({ archivos = null, pruebas = true, pantalla = f
   for (const a of archivos) vm.runInContext(fs.readFileSync(path.join(raiz, a), 'utf8'), ctx, { filename: a });
   return { ctx, correr: codigo => vm.runInContext(codigo, ctx) };
 };
+module.exports.FECHA_PRUEBAS = FECHA_PRUEBAS; module.exports.relojFijo = relojFijo;

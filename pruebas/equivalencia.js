@@ -3,7 +3,8 @@
 // Juega 234 casos (6 perfiles × campaña, Torre, calabozo, reyes, arena, jefes y duelo) con 6 semillas en cada versión.
 const fs = require('fs'), path = require('path');
 const medir = fs.readFileSync(path.join(__dirname, '..', 'trabajo', 'refactor-motor-combate', 'herramientas', 'medir-semilla.js'), 'utf8');
-const otra = require(path.resolve(process.argv[2], 'pruebas', 'cargar.js'))(), esta = require('./cargar')();
+const cargar = require('./cargar'), otra = require(path.resolve(process.argv[2], 'pruebas', 'cargar.js'))(), esta = cargar();
+otra.ctx.Date = cargar.relojFijo(cargar.FECHA_PRUEBAS);   // las dos con el mismo reloj (las versiones anteriores usaban la fecha real)
 const A = otra.correr(medir), B = esta.correr(medir), dif = {};
 let n = 0;
 for (const k of Object.keys(A)) { if (k[0] === '_') continue; n++;
