@@ -1,4 +1,11 @@
   // ---------------- Campamento (menú principal) ----------------
+  // Renovaciones del día, como al abrir el juego: entradas, misiones, jefes y el cierre semanal de los Ecos. El juego las
+  // hace al pintar el Campamento; el simulador y los bots, al empezar cada día. Sin esto, lo que se renueva "la primera vez
+  // que se consulta" (p. ej. el premio semanal de los Ecos) llega en otro momento del día y la partida cambia con o sin pantalla.
+  function revisarDia() {
+    revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); revisarRecargas(); entradasJefe();
+    avisosCampamento(); retoPendiente();
+  }
   // Avisos rojos: algo que el jugador puede hacer ahora mismo
   function avisosCampamento() {
     const masc = MASCOTAS.some(m => { const n = nivelMascota(m); return n > 0 && n < MASCOTA_MAX && jugador.oro >= costeMejora(m, n); });

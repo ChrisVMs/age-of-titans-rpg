@@ -15,13 +15,20 @@ function comodin() {
   return p;
 }
 
-module.exports = function cargar({ archivos = null, pruebas = true, pantalla = false } = {}) {
+// Fecha fija de las pruebas: lo que depende del día (eventos, semanas, Ecos, fin de mes) da lo mismo se corra cuando se
+// corra. fecha: null usa el reloj real.
+const FECHA_PRUEBAS = new Date(2026, 0, 5, 10).getTime();   // lunes 5 de enero de 2026, 10:00 (hora local)
+function relojFijo(t) {
+  return class extends Date { constructor(...a) { a.length ? super(...a) : super(t); } static now() { return t; } };
+}
+
+module.exports = function cargar({ archivos = null, pruebas = true, pantalla = false, fecha = FECHA_PRUEBAS } = {}) {
   const raiz = path.join(__dirname, '..'), guardado = {};
   const orden = JSON.parse(fs.readFileSync(path.join(raiz, 'js', 'orden.json'), 'utf8'));   // el orden de index.html
   // sin pantalla: la lógica del juego y las herramientas de pruebas que no pintan (bot, simuladores, escenarios)
   archivos ||= [...orden.juego, ...orden.pruebas].filter(f => pantalla || f.startsWith('js/logica/') || /^js\/pruebas\/[1-4]-/.test(f));
   const ventana = {
-    console, Math, Date, JSON, Promise, performance, structuredClone, Intl, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
+    console, Math, Date: fecha == null ? Date : relojFijo(fecha), JSON, Promise, performance, structuredClone, Intl, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
     requestAnimationFrame: () => 0, addEventListener() {}, removeEventListener() {}, dispatchEvent() {}, innerWidth: 900, innerHeight: 420,
     localStorage: { getItem: k => guardado[k] ?? null, setItem: (k, v) => { guardado[k] = String(v); }, removeItem: k => { delete guardado[k]; } },
     location: { protocol: pruebas ? 'file:' : 'https:', hostname: 'localhost', search: '', href: '' },   // file: = modo pruebas

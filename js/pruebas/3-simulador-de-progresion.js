@@ -193,7 +193,7 @@
           revisarEstamina(); jugador.estamina += T.estaminaExtra;   // recargas extra del día (anuncios, diamantes)
           const reserva = Math.floor(jugador.estamina * (1 - T.gasto));   // lo que no llega a gastar hoy
           const hayEstamina = () => jugador.estamina - reserva >= ESTAMINA_CAMPANA;
-          revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); entradasJefe();   // lo que se renueva cada día, como al abrir el juego (el Campamento lo revisa al pintarse)
+          revisarDia();   // lo que se renueva cada día, como al abrir el juego (el Campamento lo revisa al pintarse)
           if (loginDisponible()) medir('login', reclamarLogin);
           if (desbloqueado('pRuinas')) medir('ruinas', recogerRuinas);   // una vez al día (lo que quepa en el almacén)
           if (desbloqueado('expedicion')) {   // expediciones de 8 h al día (las que da tiempo a mandar y recoger)

@@ -95,7 +95,7 @@
     offsetDias++;
     while (tipoBot().juega < 1 && rnd() >= tipoBot().juega) offsetDias++;   // días que este tipo de jugador no entra
     try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}
-    revisarEstamina(); revisarArena(); revisarReyes(); revisarCalabozo(); revisarMisiones(); revisarRecargas(); entradasJefe();
+    revisarEstamina(); revisarDia();
     if (loginDisponible()) reclamarLogin();
     if (desbloqueado('pRuinas')) recogerRuinas();
     simRuinas();
