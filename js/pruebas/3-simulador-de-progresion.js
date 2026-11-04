@@ -20,6 +20,7 @@
   // sigue siendo la mejor se compra. Solo se recalcula la de arriba: decide como el greedy completo con muchos menos cálculos.
   // El encantamiento cuenta su probabilidad; la runa nueva, la ganancia media de los tipos.
   function simMejorar() {
+    jugador.mascotas ||= {}; jugador.runas ||= []; jugador.skinsPropias ||= {};   // una partida de pantalla los crea al abrir su pantalla
     const ponerMascota = () => simMejor(MASCOTAS.filter(m => nivelMascota(m) > 0).map(m => m.id), id => { jugador.mascota = id; });
     const elegirSkin = () => simMejor([null, ...skinsDisponibles().map(k => k.id)], id => ponerSkin(id));
     const prueba = (cambiar, deshacer) => { const base = poder(); cambiar(); const g = poder() - base; deshacer(); return g; };

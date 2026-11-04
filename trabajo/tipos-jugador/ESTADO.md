@@ -13,6 +13,13 @@ Investigar por qué el De pago no supera al Constante (pasa con la regla vieja y
 (🎭 tipo, habilidades con criterio, calabozo y reyes).
 
 ## Última sesión
+**2026-11-04 · Claude (bot se paraba al perder)**
+- Causa: tras perder, el bot de pantalla llama a `simMejorar`, que fallaba en una partida sin `jugador.mascotas` (la
+  pantalla lo crea al abrir Mascotas) → "Bot: error" y se paraba. Arreglo: `simMejorar` crea `mascotas`, `runas` y
+  `skinsPropias` si faltan. Prueba nueva en `pruebas/sistemas.js` (47/47).
+- Verificado en el navegador (headless, tipo De pago, ataque al 60 % para forzar derrotas, 4,5 min a x10): sigue tras
+  cada derrota; nunca pelea un nivel de campaña ya superado (69 Auto). Los calabozos de grupo no tienen Auto.
+
 **2026-11-03 · Claude (reintentos)**
 - Pedido del usuario: repetir una batalla perdida sin mejorar es absurdo y gasta estamina.
 - `js/pruebas/3-simulador-de-progresion.js` · `MEJORA_REINTENTO` (.05), `REINTENTOS_GRATIS` (2), `DERROTA_AJUSTADA` (.3),
@@ -100,6 +107,7 @@ Investigar por qué el De pago no supera al Constante (pasa con la regla vieja y
 - Cambiar los tipos cambia los bots del servidor: subir `VERSION_SERVIDOR`.
 
 ## Bitácora
+- 2026-11-04 · Claude · Arreglo: el bot de pantalla se paraba al perder.
 - 2026-11-03 · Claude · Reintentos: solo tras derrota ajustada o con más poder.
 - 2026-11-03 · Claude · Fase 4: calabozo y reyes en el bot de pantalla.
 - 2026-11-03 · Claude · Fase 3: habilidades con criterio.

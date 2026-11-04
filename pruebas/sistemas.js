@@ -2,6 +2,9 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'simMejorar en una partida sin mascotas, runas ni skins todavía (bot de pantalla tras perder)': `
+    delete jugador.mascotas; delete jugador.runas; delete jugador.skinsPropias; jugador.oro = 1e5; simMejorar();
+    [typeof jugador.mascotas === 'object', Array.isArray(jugador.runas)]`,
   'Reintentar: campaña solo con más poder; lo demás 2 veces al día; jefes mundiales, siempre': `
     const p = poder(), f = { '1-2:normal': { poder: p, n: 1 }, 'jefecerbero': { poder: p * 10, n: 1 }, '1-3:normal': { poder: p / (1 + MEJORA_REINTENTO) - 1, n: 1 },
       '1-4:normal': { poder: p, cerca: true, n: 1 }, '1-5:normal': { poder: p, cerca: true, n: REINTENTOS_GRATIS } }, hoy = {};
