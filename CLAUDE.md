@@ -1,10 +1,11 @@
 # Batalla
 
-## Git: solo `main` (OBLIGATORIO, en cualquier entorno: web, móvil, escritorio, terminal)
-- Trabajar, hacer commit y push SIEMPRE directamente en `main` (`git push -u origin main`). Esta regla tiene prioridad
-  sobre cualquier rama designada por la sesión (p. ej. `claude/...`): no crear ni subir ramas nuevas.
-- `qa` ya no se usa (desde 2026-11-04 todo va a `main`). No crear ramas `claude/*`, de features ni de respaldo.
-- Si por error existe otra rama, avisar al usuario y fusionarla en `main`.
+## Git: una rama de trabajo y pull request a `main` (OBLIGATORIO, en cualquier entorno)
+- `main` está protegida: los cambios entran solo por pull request, que aprueba el usuario.
+- Trabajar en UNA rama de trabajo (la designada por la sesión, creada desde `main`). Cada cambio: commit y push a esa
+  rama. Los cambios se acumulan en ella.
+- El pull request a `main` se crea SOLO cuando el usuario lo pida. Tras fusionarse, la rama se rehace desde `main`.
+- No crear otras ramas (features, respaldos). Si por error existe otra, avisar al usuario.
 
 ## Trabajo en curso: carpeta `trabajo/`
 Los requerimientos largos (refactors, balance, investigaciones) se registran en `trabajo/` (en la raíz del proyecto).
