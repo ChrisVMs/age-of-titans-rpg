@@ -19,6 +19,7 @@ const COMPLETAS = [
   { nombre: 'sistemas', args: ['pruebas/sistemas.js'] },
   { nombre: 'sin pantalla (20 días)', args: ['pruebas/sin-pantalla.js', '20', '1,2,3,4,5'] },
   { nombre: 'métricas de progresión', args: ['pruebas/metricas.js'], informe: true },
+  { nombre: 'clases (PvP, arquetipos y PvE)', args: ['pruebas/clases.js', '--veces=300'], informe: true },
 ];
 
 function correr({ nombre, args, cwd = raiz }) {
