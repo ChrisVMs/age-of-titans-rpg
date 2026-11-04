@@ -53,6 +53,7 @@
     if (id === 'pTorre') pintarTorre();
     if (id === 'pGrieta') pintarGrieta();
     if (id === 'pRuinas') pintarRuinas();
+    if (id === 'pPacto') pintarPacto();
     if (id === 'pReyes') pintarReyes();
     if (id === 'pFormacion') pintarFormacion();
     if (id === 'pRanking') pintarRanking();

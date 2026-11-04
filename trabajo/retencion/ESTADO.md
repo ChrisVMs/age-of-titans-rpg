@@ -1,14 +1,15 @@
 # Retención a largo plazo (meses y años)
 
-**Estado:** pausado (espera: servidor real para el Pacto y las Invasiones) · **Rama:** `qa` · **Actualizado:** 2026-10-29
+**Estado:** en curso · **Rama:** de trabajo · **Actualizado:** 2026-11-04
 
 ## Objetivo
 Que el jugador tenga algo que hacer hoy, esta semana y a largo plazo, como Wartune: una rutina diaria corta y gratificante,
 un ciclo semanal con premios exclusivos y una progresión que no se termina en semanas.
 
 ## Próximo paso
-Lo que queda (Pacto de compañeros e Invasiones) necesita servidor real y notificaciones: preguntar al usuario cuando
-exista. Estirar el tramo final sigue en el paso 6 de `contenido-nivel-alto`.
+Que el usuario pruebe el Pacto (Campamento → Pacto, desde el Nv 20). Después, según el análisis Wartune (2026-11-04):
+servidor real (ranking y arena contra jugadores reales: cambiar `servidorPacto` y los bots por el servidor), notificación
+de Android para la hora del asalto, y contenido después del Nv 80 (temporadas o subir el tope).
 
 ## Plan
 Referencia Wartune (mismas intenciones, mecánicas propias). Orden acordado: Grieta → Despertar → Campamento → Ecos → Pacto e
@@ -23,12 +24,29 @@ invasiones cuando haya servidor.
 7. ✅ **Ruinas del campamento**: edificios que dan un bono pequeño y producen recursos mientras no juegas (con tope).
 8. ✅ **Ecos**: 3-5 bots rivales con memoria que suben contigo; te retan en la arena; ranking semanal contra ellos.
 9. ✅ **Códice de colección**: sets completos (bestiario por etapa, títulos por rareza) dan bono permanente y marco.
-10. **Pacto de compañeros** (gremio sin servidor: 3 héroes, tecnologías comunes, jefe semanal). Cuando haya servidor.
+10. ✅ **Pacto** (local): 5 miembros (tú + jugadores del servidor de poder parecido; hoy bots), donaciones diarias,
+    tecnologías comunes, jefe semanal con vida compartida y hora del asalto (12-14 y 20-22 h, daño ×2). Falta: servidor real.
 11. **Invasiones** del campamento a horas fijas (oleada con los bots; 30 min). Necesita notificaciones en móvil.
 
 No copiar de Wartune: VIP agresivo / pago para ganar, decenas de monedas, pantallas llenas de puntos rojos.
 
 ## Última sesión
+**2026-11-04 · Claude (Pacto local; pedido del usuario tras comparar con Wartune)**
+- `js/logica/51-pacto.js`: `PACTO_MIEMBROS` 5, `DONACIONES_DIA` 3 (`costeDonacion` 50 × nivel de oro, `APORTE_DONACION` 10
+  fondos), los bots donan `DONACIONES_BOT_DIA` 2 y pegan `DANO_BOT_DIA` 2,5 % de la vida del jefe al día; `TEC_PACTO`
+  (Fuerza, Aguante, Muralla +0,5 %/nivel; Botín, Saber +1 %/nivel; `TEC_MAX` 20, `costeTec` 20 × (n + 1));
+  `JEFES_PACTO` en rueda semanal, vida = jefe de tu nivel de campaña × `VIDA_JEFE_PACTO` 60, `INTENTOS_JEFE_PACTO` 2 al
+  día; `HORAS_ASALTO` 12-14 y 20-22 (`MULT_ASALTO` ×2); `PREMIO_JEFE_PACTO` al caer. `servidorPacto.candidatos()` es el
+  único punto que cambia con un servidor real. Los huecos se completan cada día (al empezar hay pocos bots).
+- Enganches: `statsPacto` en `estadisticas`, `bonoPacto('oro'/'xp')` y `resultadoPacto` en `cobrarResultado`, vida
+  compartida en `siguienteEnemigo` (motor), sin estamina (`c.pacto`), resultado vuelve a `pPacto`. Desbloqueo `pPacto` Nv 20.
+- Pantalla: `js/pantalla/34-pacto.js`, `#pPacto` en index.html, icono en el Campamento (provisional: calabozo.png) con
+  punto rojo si hay premio o es la hora del asalto con intentos.
+- Simulador y bot: `simPacto` (dona, sube la tecnología más baja, cobra el premio) y atacan al jefe del Pacto.
+- Medición (90 días, semillas 1-3): con donación a 150 × nivel el poder final bajaba (56-78 k frente a 79-96 k: el oro
+  donado no se recupera); a 50 × nivel queda neutro (80-83 k).
+- Verificación: 49/49 sistemas (2 nuevas del Pacto), 15/15 escenarios; carga en el navegador y batalla del jefe probadas.
+
 **2026-10-29 · Claude (Códice)**
 - Ampliada la Colección (`js/logica/14-coleccion.js`), no un sistema aparte: 5 colecciones nuevas (Títulos, Piezas de
   set, Bestiario Etapa 2 y 3, Cazador veterano: 100 derrotas por enemigo), `HITOS_COLECCION` (25/50/75/100 %: 💎 y 🎟️,

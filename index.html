@@ -926,6 +926,7 @@
         <button class="camp-icono" data-ir="pTorre" id="campTorre"><img class="ic-hd" src="img/iconos/torre.png" alt=""><small>Torre</small></button>
         <button class="camp-icono" data-ir="pGrieta" id="campGrieta"><img class="ic-hd" src="img/iconos/grieta.png" alt=""><small>Grieta</small></button>
         <button class="camp-icono" data-ir="pRuinas" id="campRuinas"><img class="ic-hd" src="img/iconos/ruinas.png" alt=""><small>Ruinas</small></button>
+        <button class="camp-icono" data-ir="pPacto" id="campPacto"><img class="ic-hd" src="img/iconos/calabozo.png" alt=""><small>Pacto</small></button>
         <button class="camp-icono evento" data-ir="pReyes" id="campReyes"><img class="ic-hd" src="img/iconos/reyes.png" alt=""><small>Reyes</small></button>
         <button class="camp-icono" data-ir="pMisiones" id="campMisiones"><img class="ic-hd" src="img/iconos/misiones.png" alt=""><small>Misiones</small></button>
       </div>
@@ -1064,6 +1065,11 @@
   <div class="pantalla" id="pRuinas">
     <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Ruinas del campamento</h2><div class="hud"></div></div>
     <div class="panel" id="ruinas"></div>
+  </div>
+
+  <div class="pantalla" id="pPacto">
+    <div class="cabecera"><button class="volver" data-ir="menu" aria-label="Volver">←</button><h2>Pacto</h2><div class="hud"></div></div>
+    <div class="panel" id="pactoPanel"></div>
   </div>
 
   <div class="pantalla" id="pGrieta">
@@ -1214,6 +1220,7 @@
 <script src="js/logica/46-recargas-y-cristales.js"></script>
 <script src="js/logica/47-grieta.js"></script>
 <script src="js/logica/49-ruinas.js"></script>
+<script src="js/logica/51-pacto.js"></script>
 <script src="js/logica/50-ecos.js"></script>
 <script src="js/logica/99-lista.js"></script>
 <script src="js/pantalla/01-inicio.js"></script>
@@ -1249,6 +1256,7 @@
 <script src="js/pantalla/31-grieta.js"></script>
 <script src="js/pantalla/32-despertar.js"></script>
 <script src="js/pantalla/33-ruinas.js"></script>
+<script src="js/pantalla/34-pacto.js"></script>
 <script>
   // Herramientas de pruebas (menú 🧪: bot, simuladores, escenarios): solo en modo pruebas. Mismo orden que js/orden.json.
   if (MODO_PRUEBAS) for (const f of ["js/pruebas/1-bot.js", "js/pruebas/2-simulador-de-batallas.js", "js/pruebas/3-simulador-de-progresion.js", "js/pruebas/4-escenarios.js", "js/pruebas/4-servidor-bots.js", "js/pruebas/5-bot-pantalla.js", "js/pruebas/6-simuladores-pantalla.js", "js/pruebas/7-escenarios-pantalla.js", "js/pruebas/8-servidor-bots-pantalla.js"]) {

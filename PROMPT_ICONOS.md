@@ -161,6 +161,12 @@ Four dungeon entrance icons for a cartoon fantasy RPG. Absolutely no text.
 Destino: `cal_5` … `cal_8`. Ojo: hoy `icono` de `CALABOZOS` es texto (emoji) y se muestra en un combo, donde no caben
 imágenes: al llegar los iconos habrá que pintarlos fuera del combo (p. ej. en la ficha del calabozo elegido).
 
+### Pacto — 1 icono (512×512) + bloque común — PENDIENTE (hoy usa `calabozo.png`)
+```
+One square icon for a cartoon fantasy RPG menu: the "Pact", a guild of heroes. Two gauntleted hands clasping over a round shield with a banner. Absolutely no text.
+```
+Destino: `img/iconos/pacto.png` (entrada en `HOJAS` de `tools/iconos_menu.py`) y el `campPacto` de index.html.
+
 ## Fondos
 
 Pantalla completa, sin personajes; recorte con `background-size:cover` anclado abajo.

@@ -100,6 +100,13 @@
   }
   // Torre de reyes: la primera dificultad sin vencer esta semana
   const opcionReyesSim = (pocos = () => true) => Object.keys(DIF_REYES).find(x => !revisarReyes().vencidas[x] && pocos('reyes' + x));
+  // Pacto: dona lo que puede, sube la tecnología más baja (reparte), cobra el premio del jefe
+  function simPacto() {
+    if (!desbloqueado('pPacto')) return;
+    while (donarPacto());
+    for (;;) { const t = [...TEC_PACTO].sort((a, b) => nivelTec(a.id) - nivelTec(b.id))[0]; if (!mejorarTec(t.id)) break; }
+    cobrarPremioPacto();
+  }
   function simCobrar() {   // misiones y bonus hechos
     for (const tipo of ['diaria', 'semanal']) { for (const m of misionesVisibles(tipo)) reclamarMision(tipo, m.id); BONUS_MISIONES[tipo].forEach((_, i) => reclamarMision(tipo, 'cofre' + i)); }
     for (const [id, p] of hitosPendientes()) reclamarHito(id, p);   // hitos del Códice
@@ -172,7 +179,7 @@
           return nombres;
         };
         const jugar = c => {   // como iniciarCampana, sin pantalla: cobra la entrada, pelea y cobra el resultado
-          const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo || c.grieta ? 0 : (c.coste || ESTAMINA_CAMPANA);
+          const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo || c.grieta || c.pacto ? 0 : (c.coste || ESTAMINA_CAMPANA);
           if (jugador.estamina < coste) return null;
           jugador.estamina -= coste; if (coste) contarMision('estamina', coste);
           if (c.aliados) c.aliados = aliados();
@@ -208,7 +215,7 @@
               mejorar = false;
               botCofres(); botEquipar(); botArbol();
               desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));   // lo que no lleva puesto, a almas
-              simMejorar(); simRunas(); simRefinar(); simRuinas();
+              simMejorar(); simRunas(); simRefinar(); simRuinas(); simPacto();
             }
             let k = null, c = null;
             if (hayEstamina())
@@ -230,6 +237,7 @@
               const df = opcionReyesSim(pocos);
               if (df) { revisarReyes().entradas--; k = 'reyes' + df; c = batallaReyes(df, ['x'], null); }
             }
+            if (!c && desbloqueado('pPacto')) { c = batallaPacto(); if (c) k = 'pacto'; }   // el jefe del Pacto (sus intentos del día)
             if (!c && retoPendiente()) { k = 'eco'; c = batallaEco(); }   // el reto del Eco, siempre
             if (!c && desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso
               elegirBendicion(bendicionSugerida());
@@ -242,7 +250,7 @@
               if (!x) break;
               medir('barrido', () => barrido(...x)); batallas++; continue;
             }
-            const fuente = c.idCampana ? 'campaña' : c.eco ? 'eco' : c.grieta ? 'grieta' : c.torre ? 'torre' : c.arena ? 'arena' : c.mundial ? 'jefes' : c.calabozo ? 'calabozo' : 'reyes';
+            const fuente = c.idCampana ? 'campaña' : c.pacto ? 'pacto' : c.eco ? 'eco' : c.grieta ? 'grieta' : c.torre ? 'torre' : c.arena ? 'arena' : c.mundial ? 'jefes' : c.calabozo ? 'calabozo' : 'reyes';
             const gano = medir(fuente, () => jugar(c)); batallas++;
             if (c.eco) hitos.ecosJugados[c.eco] = (hitos.ecosJugados[c.eco] || 0) + 1;
             if (gano === null) break;

@@ -111,18 +111,20 @@
     const sinBotin = batalla.campana.torre && !gano;
     if (sinBotin || batalla.campana.ayuda) batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] };   // ayuda: sin recompensa
     if (gano && !batalla.campana.ayuda) for (const k in batalla.campana.premio) batalla.ganado[k] = (batalla.ganado[k] || 0) + batalla.campana.premio[k];
+    let extraPacto = '';
+    if (batalla.campana.pacto) extraPacto = resultadoPacto();   // jefe del Pacto: paga por daño y baja la vida compartida
     if (batalla.campana.mundial) {   // jefe mundial: recompensa según el daño causado en este intento
       batalla.ganado.oro += Math.round(batalla.danoHecho * .2); batalla.ganado.xp += Math.round(batalla.danoHecho * .1);   // ajustado a la vida actual de los jefes
       batalla.ganado.piedra += Math.floor(batalla.danoHecho / 100); batalla.ganado.polvo += Math.floor(batalla.danoHecho / 375);
       estadoMundial(batalla.campana.mundial, batalla.campana.difJefe).vida = Math.max(0, enemigoDuelo().vida);
     }
     const ev = eventoHoy() || {};   // eventos por calendario
-    batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro') + bonoRuinas('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
+    batalla.ganado.oro = Math.round(batalla.ganado.oro * (1 + efecto('oro') + bonoRuinas('oro') + bonoPacto('oro')) * (ev.oro || 1) * (batalla.campana.mundial ? 1.3 : 1));   // Áurico solar; los jefes con modificadores pagan +30 %
     batalla.ganado.xp = Math.round(batalla.ganado.xp * (ev.xp || 1));
     batalla.ganado.piedra = Math.round(batalla.ganado.piedra * (ev.mat || 1)); batalla.ganado.polvo = Math.round(batalla.ganado.polvo * (ev.mat || 1));   // Día de la Forja
     if (batalla.campana.mundial && ev.jefes) for (const k of ['oro', 'xp', 'piedra', 'polvo']) batalla.ganado[k] = Math.round(batalla.ganado[k] * ev.jefes);   // Día de Jefes
-    batalla.ganado.xp = Math.round(batalla.ganado.xp * (1 + efecto('experiencia')));   // línea secundaria "Experiencia extra"
-    let extraRes = '';
+    batalla.ganado.xp = Math.round(batalla.ganado.xp * (1 + efecto('experiencia') + bonoPacto('xp')));   // línea secundaria "Experiencia extra"
+    let extraRes = extraPacto;
     obtenidos = [...batalla.ganado.objetos];
     if (batalla.ganado.objetos.length) jugador.objetos.push(...batalla.ganado.objetos);
     if (batalla.campana.mundial) { extraRes += botinReliquia(batalla.campana.mundial, gano, batalla.campana.difJefe) + botinEquipoJefe(batalla.campana.mundial, gano, batalla.campana.difJefe); sumarMaestria(gano ? 30 : 10); }
