@@ -1,6 +1,6 @@
 # Contenido de nivel alto
 
-**Estado:** pausado (espera: arte de las etapas 2-3, Ancestral y calabozos 5-8) · **Rama:** `qa` · **Actualizado:** 2026-10-29
+**Estado:** pausado (espera: sprites de los 10 enemigos de las etapas 2-3, 4 iconos Ancestrales y fondos de las etapas 2-3) · **Rama:** de trabajo · **Actualizado:** 2026-11-04
 
 ## Objetivo
 Que el tramo largo (nivel 30 → 80, ~3,5-4 meses con el balance nuevo) tenga retos y progreso. Hoy el poder del jugador se
@@ -26,6 +26,10 @@ pendiente**) y se prueba en el navegador; con todas, quitar `arte: false` de las
    modo pruebas con sprites provisionales (parcas con otro color); en el juego publicado sale "Próximamente".
 
 ## Última sesión
+**2026-11-04 · Claude (revisión del arte)**
+- Ya llegaron los iconos de los calabozos 5-8 (`cal_5`…`cal_8`). Faltan: 10 hojas de enemigos (`img/enemigos/`), 4 iconos
+  Ancestrales (`iconos_ancestral.jpg`) y los fondos `etapa2.jpg` / `etapa3.jpg`. Sin cambios de código.
+
 **2026-11-03 · Claude (informe del Asesino casual y recalibración; pedido del usuario)**
 - Botín: ya no hay recompensa por monstruo. Su oro, XP, materiales y objetos quedan en `batalla.pendiente` y solo se
   cobran si ganas la batalla completa (`cobrarResultado`); al perder o abandonar, nada. Los jefes siguen pagando por daño.
@@ -142,7 +146,7 @@ pendiente**) y se prueba en el navegador; con todas, quitar `arte: false` de las
 - Equipo Ancestral: casco, armadura, espada y capa "de los Antiguos" (capas del guerrero como las demás piezas; hoy
   usan las de otra pieza con un filtro turquesa, `METAL.ancestral` y `TELA.ancestral`).
 - Etapas 2-3: esqueleto, caballero, gárgola, diablillo, demonio y súcubo; jefes Campeón, Liche, Verdugo y Señor del Abismo.
-- Calabozos 5-8: fondos/iconos propios (hoy emoji).
+- ~~Calabozos 5-8: iconos propios~~ HECHO: `img/iconos/cal_5` … `cal_8`, ya se ven en la pantalla del calabozo.
 - Torre alta: usa los enemigos de las etapas 2-3 (nada nuevo).
 - Opcional (hoy CSS/emoji, ya jugables en el juego publicado): edificios de las Ruinas en la escena del Campamento (ruina →
   reconstruido), retratos de los 4 Ecos (hoy el guerrero con un filtro de color), marcos de perfil del Códice, brillo D5.
