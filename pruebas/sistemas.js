@@ -260,6 +260,19 @@ const PRUEBAS = {
     [tras1 === 0, perdio === 0, batalla.ganado.oro >= u2.e.oro + (c.premio.oro || 0)]`,
   'Evento: bloqueado antes de su nivel': `
     jugador.nivel = 1; contarMision(temaSemana().ev, 1000); [revisarEvento().fichas === 0]`,
+  'Textos: cada número de un valor (árbol, bendiciones de la Grieta, eventos, modificadores) sale en su descripción': `
+    const limpio = t => t.replace(/<[^>]+>/g, ''), cifra = v => String(+(+v).toFixed(2)).replace('.', '[,.]');
+    const mal = [], ver = (quien, t, vals) => { for (const v of vals) if (v && !new RegExp('(^|[^0-9,.])' + cifra(v) + '([^0-9]|$)').test(limpio(t))) mal.push(quien + ': falta ' + v + ' en «' + limpio(t) + '»'); };
+    for (const [cl, ramas] of Object.entries(ARBOL)) for (const r of ramas) for (const n of r.nodos)   // rango 1
+      ver(cl + '/' + n.id, n.d(1), [...Object.values(n.ef || {}), ...Object.values(n.stat || {}), ...(n.golpe ? [n.golpe.prob, n.golpe.pct * 100, n.golpe.turnos] : []), ...(n.habMult ? [n.habMult[1] * 100] : [])]);
+    for (const h of HAB_TODAS.filter(h => h.nodo)) ver('habilidad/' + h.id, ARBOL[h.clase].flatMap(r => r.nodos).find(n => n.id === h.nodo).d(1), [h.mult, h.turnos]);
+    for (const b of BENDICIONES) ver('grieta/' + b.id, b.desc, [...Object.values(b.st || {}), (b.cura || 0) * 100]);
+    for (const e of EVENTOS) ver('evento/' + e.nombre, e.desc, [...['mat', 'oro', 'jefes', 'xp'].map(k => e[k] ? (e[k] - 1) * 100 : 0), e.drop && e.drop !== 2 ? (e.drop - 1) * 100 : 0, (e.forja || 0) * 100, (e.caza || 0) * 100]);
+    for (const m of [...MODIFICADORES, ...MODIFICADORES.filter(x => x.torre).map(x => ({ ...x, ...x.torre, id: x.id + ' (Torre)' }))]) {   // se aplica a un enemigo de prueba
+      const e = { vida: 1000, dano: [100, 100], armadura: 0 }; m.ap(e);
+      ver('modificador/' + m.id, m.desc, [(e.dano[0] / 100 - 1) * 100, (e.vida / 1000 - 1) * 100, e.armadura, (e.espinas || 0) * 100, (e.regen || 0) * 100]);
+    }
+    mal.length ? mal : [true]`,
 };
 let ok = 0;
 for (const [nombre, codigo] of Object.entries(PRUEBAS)) {

@@ -186,7 +186,7 @@
     dano = Math.max(1, Math.round(dano * m));
     if (batalla.infernal && t.e && t.e.cerbero) dano = Math.max(1, Math.round(dano / (critico ? INFERNAL.defensaCritico : INFERNAL.defensa)));
     if (batalla.escudoRestante > 0 && t.e && t.e.asmodeo) {   // escudo de Asmodeo: absorbe el 80 % y gasta un turno; una habilidad lo rompe
-      if (hab) { dano = Math.max(1, Math.round(dano * .7)); batalla.escudoRestante = 0; emitir('claseU', t, 'escudado', false); verFx(t, 'num-cura', '💥 Escudo roto', 300); }
+      if (hab) { dano = Math.max(1, Math.round(dano * ESCUDO.rompe)); batalla.escudoRestante = 0; emitir('claseU', t, 'escudado', false); verFx(t, 'num-cura', '💥 Escudo roto', 300); }
       else { dano = Math.max(1, Math.round(dano * (1 - ESCUDO.reduce))); if (--batalla.escudoRestante === 0) emitir('claseU', t, 'escudado', false); }
     }
     dano = Math.min(t.vida, aguanteSet4(t, dano));
@@ -199,7 +199,7 @@
     if (hab && u.s4('asmodeo') && u.vida < u.vidaMax) curar(u, Math.min(u.vidaMax - u.vida, Math.round(dano * SET4_CURA)), '🔯 ', 300);   // set 4 de Asmodeo: parte del daño del golpe
     if (t.vida > 0) {
       for (const g of u.golpes) if (rnd() < g.prob) aplicarEstado(t, g.estado, g.turnos, Math.max(1, Math.round(u.st.ataque * g.pct)));
-      if (critico && u.s4('cerbero')) aplicarEstado(t, 'quemadura', 2, Math.max(1, Math.round(u.st.ataque * .3)));   // set 4 de Cerbero
+      if (critico && u.s4('cerbero')) aplicarEstado(t, 'quemadura', SET4_QUEMA.turnos, Math.max(1, Math.round(u.st.ataque * SET4_QUEMA.pct)));   // set 4 de Cerbero
       efectosHab(u, t, hab);
     }
     emitir('golpe', u, t, hab, critico, dano, t.duelo ? tipoJefe() : null);
@@ -257,7 +257,7 @@
     if (batalla.especialAsmodeo === 'cura') {   // quemado, envenenado o sangrando: cura la mitad
       const herido = ['quemadura', 'veneno', 'sangrado'].some(k => u.estados[k]);
       if (herido) verFx(u, 'num-cura', '☠ Curación a la mitad', 300);
-      curar(u, Math.min(u.vidaMax - u.vida, Math.round(u.vidaMax * CURACION.pct * (herido ? .5 : 1))));
+      curar(u, Math.min(u.vidaMax - u.vida, Math.round(u.vidaMax * CURACION.pct * (herido ? CURACION.conEstado : 1))));
       batalla.especialAsmodeo = null; emitir('espera', 900); return true;
     }
     return false;

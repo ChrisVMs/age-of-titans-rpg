@@ -27,6 +27,8 @@
   const ventajaClase = (atacante, objetivo) => atacante && objetivo && (VENTAJA_CLASE[atacante] || []).includes(objetivo) ? 1 + BONO_VENTAJA_CLASE : 1;
   // icono HD de la clase para la pantalla (el emoji 'icono' queda para textos como avisos y nombres de enemigos)
   const iconoClase = id => `<img class="ic-txt" src="img/iconos/clase_${id}.png" alt="${CLASES[id].nombre}">`;
+  // multiplicador y recarga de la habilidad que da un nodo, sacados de HAB_TODAS (un solo sitio para los números)
+  const habNodo = id => { const h = HAB_TODAS.find(x => x.id === id); return `×${String(h.mult).replace('.', ',')} (recarga ${h.turnos})`; };
   const ARBOL = {
     guerrero: [
       { id: 'furia', nombre: 'Furia', icono: '🗡️', nodos: [
@@ -34,7 +36,7 @@
         { id: 'certero',     nombre: 'Golpe certero',     icono: '🎯', max: 5, ef: { critico: 2 }, d: r => `${2 * r} % de prob. de crítico` },
         { id: 'estocada_m',  nombre: 'Estocada feroz',    icono: '⚡', max: 3, poder: 1.5, habMult: ['estocada', .2], d: r => `Estocada hace +${20 * r} % de daño` },
         { id: 'sed',         nombre: 'Sed de sangre',     icono: '🩸', max: 3, ef: { robo: 2 }, d: r => `${2 * r} % de robo de vida` },
-        { id: 'aplastante',  nombre: 'Golpe aplastante',  icono: '🔨', max: 1, poder: 4, d: () => 'Nueva habilidad: golpe ×3 que aturde al enemigo 1 turno (recarga 5)' },
+        { id: 'aplastante',  nombre: 'Golpe aplastante',  icono: '🔨', max: 1, poder: 4, d: () => `Nueva habilidad: golpe ${habNodo('aplastante')} que aturde al enemigo 1 turno` },
       ] },
       { id: 'baluarte', nombre: 'Baluarte', icono: '🛡️', nodos: [
         { id: 'piel',        nombre: 'Piel de hierro',    icono: '❤️', max: 5, stat: { vida: 3 }, d: r => `+${3 * r} % de vida` },
@@ -57,7 +59,7 @@
         { id: 'ojo_halcon',  nombre: 'Ojo de halcón',     icono: '🦅', max: 5, ef: { critico: 2 }, d: r => `${2 * r} % de prob. de crítico` },
         { id: 'disparo_m',   nombre: 'Disparo afinado',   icono: '🎯', max: 3, poder: 1.5, habMult: ['disparo', .2], d: r => `Disparo certero hace +${20 * r} % de daño` },
         { id: 'letal',       nombre: 'Punta letal',       icono: '💀', max: 3, ef: { danoCritico: 8 }, d: r => `+${8 * r} % de daño crítico` },
-        { id: 'perforante',  nombre: 'Flecha perforante', icono: '🗡️', max: 1, poder: 4, d: () => 'Nueva habilidad: flecha ×3,2 que atraviesa la armadura (recarga 5)' },
+        { id: 'perforante',  nombre: 'Flecha perforante', icono: '🗡️', max: 1, poder: 4, d: () => `Nueva habilidad: flecha ${habNodo('perforante')} que atraviesa la armadura` },
       ] },
       { id: 'supervivencia', nombre: 'Supervivencia', icono: '🍃', nodos: [
         { id: 'agilidad',    nombre: 'Agilidad',          icono: '💨', max: 5, ef: { esquiva: 2 }, d: r => `${2 * r} % de prob. de esquivar` },
@@ -68,7 +70,7 @@
       ] },
       { id: 'caceria', nombre: 'Cacería', icono: '🐺', nodos: [
         { id: 'rastreo',     nombre: 'Rastreo',           icono: '🐾', max: 5, ef: { jefes: 6 }, d: r => `+${6 * r} % de daño contra jefes` },
-        { id: 'flecha_ven',  nombre: 'Flechas venenosas', icono: '☠️', max: 5, golpe: { estado: 'veneno', prob: 6, turnos: 3, pct: .18 }, poder: 1, d: r => `${6 * r} % de envenenar al golpear (acumulable)` },
+        { id: 'flecha_ven',  nombre: 'Flechas venenosas', icono: '☠️', max: 5, golpe: { estado: 'veneno', prob: 6, turnos: 3, pct: .18 }, poder: 1, d: r => `${6 * r} % de envenenar al golpear (3 turnos, 18 % de tu ataque; acumulable)` },
         { id: 'lluvia_r',    nombre: 'Lluvia rápida',     icono: '🌧️', max: 1, poder: 2, habRecarga: ['lluvia', 1], d: () => 'Lluvia de flechas se recarga 1 turno antes' },
         { id: 'penetrante',  nombre: 'Puntas de acero',   icono: '🔩', max: 3, ef: { penetracion: 8 }, d: r => `+${8 * r} % de penetración` },
         { id: 'marca',       nombre: 'Marca del cazador', icono: '🎖️', max: 1, ef: { remate: 30, jefes: 10 }, d: () => '+30 % de daño a enemigos por debajo del 50 % de vida y +10 % contra jefes' },
@@ -80,7 +82,7 @@
         { id: 'ignicion',    nombre: 'Ignición',          icono: '🔥', max: 5, golpe: { estado: 'quemadura', prob: 5, turnos: 2, pct: .25 }, poder: 1, d: r => `${5 * r} % de quemar al golpear (2 turnos, 25 % de tu ataque)` },
         { id: 'bola_m',      nombre: 'Bola mayor',        icono: '☀️', max: 3, poder: 1.5, habMult: ['bola', .25], d: r => `Bola de fuego hace +${25 * r} % de daño` },
         { id: 'combustion',  nombre: 'Combustión',        icono: '💥', max: 3, ef: { critico: 3 }, d: r => `${3 * r} % de prob. de crítico` },
-        { id: 'meteoro',     nombre: 'Meteoro',           icono: '☄️', max: 1, poder: 4, d: () => 'Nueva habilidad: meteoro ×4 que quema (recarga 6)' },
+        { id: 'meteoro',     nombre: 'Meteoro',           icono: '☄️', max: 1, poder: 4, d: () => `Nueva habilidad: meteoro ${habNodo('meteoro')} que quema` },
       ] },
       { id: 'hielo', nombre: 'Hielo', icono: '❄️', nodos: [
         { id: 'escarcha',    nombre: 'Armadura de escarcha', icono: '🧊', max: 5, stat: { armadura: 5, vida: 2 }, d: r => `+${5 * r} % de armadura y +${2 * r} % de vida` },
@@ -113,7 +115,7 @@
         { id: 'emboscada',   nombre: 'Emboscada',         icono: '🌘', max: 1, poder: 2, cargaInicial: true, d: () => 'Empiezas cada batalla con las habilidades cargadas' },
       ] },
       { id: 'venenos', nombre: 'Venenos', icono: '☠️', nodos: [
-        { id: 'toxina',      nombre: 'Toxina',            icono: '🧪', max: 5, golpe: { estado: 'veneno', prob: 6, turnos: 3, pct: .18 }, poder: 1, d: r => `${6 * r} % de envenenar al golpear (acumulable)` },
+        { id: 'toxina',      nombre: 'Toxina',            icono: '🧪', max: 5, golpe: { estado: 'veneno', prob: 6, turnos: 3, pct: .18 }, poder: 1, d: r => `${6 * r} % de envenenar al golpear (3 turnos, 18 % de tu ataque; acumulable)` },
         { id: 'desangrar',   nombre: 'Desangrar',         icono: '🩸', max: 5, golpe: { estado: 'sangrado', prob: 6, turnos: 3, pct: .3 }, poder: 1, d: r => `${6 * r} % de hacer sangrar al golpear (3 turnos, 30 % de tu ataque)` },
         { id: 'sed_a',       nombre: 'Sed de sangre',     icono: '🍷', max: 3, ef: { robo: 2 }, d: r => `${2 * r} % de robo de vida` },
         { id: 'cazarrecom',  nombre: 'Cazarrecompensas',  icono: '🐲', max: 3, ef: { jefes: 5 }, d: r => `+${5 * r} % de daño contra jefes` },

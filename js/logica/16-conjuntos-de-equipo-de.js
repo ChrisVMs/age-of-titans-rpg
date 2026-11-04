@@ -2,13 +2,15 @@
   // 2 piezas del mismo jefe equipadas activan su bono (en fracción, como los efectos)
   // Sets de equipo de jefe: 2 piezas bono pequeño, 3 piezas bono importante, 4 piezas efecto que cambia el combate
   // (pensado contra la mecánica de su jefe: Cerbero premia críticos, Asmodeo habilidades y aguante, Minotauro aguantar golpes).
+  const SET4_GOLPE = .15, SET4_REDUCE = .35, SET4_CURA = .12;   // SET4_CURA: del daño del golpe con habilidad (antes 6 % de la vida máxima)
+  const SET4_QUEMA = { turnos: 2, pct: .3 };   // set 4 de Cerbero: quemadura de tus críticos (pct: de tu ataque por turno)
   const CONJUNTOS = {
     cerbero:   { nombre: 'Furia del inframundo', 2: { critico: .06 }, 3: { danoCritico: .25, jefes: .08 },
-                 especial: 'Tus críticos aplican Quemadura (2 turnos, 30 % de tu ataque por turno)' },
+                 especial: `Tus críticos aplican Quemadura (${SET4_QUEMA.turnos} turnos, ${Math.round(SET4_QUEMA.pct * 100)} % de tu ataque por turno)` },
     asmodeo:   { nombre: 'Pacto demoníaco',      2: { habilidad: .12 }, 3: { robo: .04, curacion: .15 },
-                 especial: 'Cada habilidad que usas te cura un 6 % de tu vida máxima' },
+                 especial: `Cada golpe de habilidad te cura el ${Math.round(SET4_CURA * 100)} % del daño que hace` },
     minotauro: { nombre: 'Fuerza del laberinto', 2: { reduccion: .05 }, 3: { penetracion: .12, resistencia: .1 },
-                 especial: 'Un golpe que te quite más del 15 % de tu vida máxima se reduce un 35 %' },
+                 especial: `Un golpe que te quite más del ${Math.round(SET4_GOLPE * 100)} % de tu vida máxima se reduce un ${Math.round(SET4_REDUCE * 100)} %` },
   };
   function piezasConjunto() { return memoizar('conjuntos', piezasConjuntoSinMemo); }
   function piezasConjuntoSinMemo() {
@@ -20,5 +22,4 @@
   const set4 = j => (piezasConjunto()[j] || 0) >= 4;
   const efectoConjuntos = esp => Object.entries(piezasConjunto()).reduce((s, [j, n]) => s + (n >= 2 ? CONJUNTOS[j][2][esp] || 0 : 0) + (n >= 3 ? CONJUNTOS[j][3][esp] || 0 : 0), 0);
   const textoNivelSet = ef => textoBonos({}, Object.fromEntries(Object.entries(ef).map(([a, v]) => [a, Math.round(v * 100)])));
-  const SET4_GOLPE = .15, SET4_REDUCE = .35, SET4_CURA = .12;   // SET4_CURA: del daño del golpe con habilidad (antes 6 % de la vida máxima)
   const ALIENTO_MULT = .5;   // Segundo aliento: cura tu ataque × esto por rango (antes 10 % de la vida máxima)

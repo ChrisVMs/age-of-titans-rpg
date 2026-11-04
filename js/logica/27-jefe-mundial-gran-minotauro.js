@@ -12,8 +12,8 @@
   MUNDIALES.minotauro = { enemigo: MINOTAURO, titulo: 'Gran Minotauro, coloso del laberinto', estamina: 20,
     premio: { oro: 5000, xp: 2500, piedra: 50, polvo: 18 },
     retrato: () => 'background:url(img/jefes/minotauro/minotauro.png) 0 0 / 7000px 230px no-repeat; width:280px; height:230px',
-    reglas: ['Barre con su espada de fuego; cada 5 turnos usa el <b>Gran Tajo</b>: golpe al 300 % que además te quita un 10 % de vida.',
-             'Por debajo del 70 % entra en <b>furia</b>: <b>triplica su daño</b> durante 5 turnos, cada 10 turnos.',
+    reglas: [`Barre con su espada de fuego; cada ${GRAN_TAJO.turnos} turnos usa el <b>Gran Tajo</b>: golpe al ${GRAN_TAJO.mult * 100} % que además te quita un ${Math.round(GRAN_TAJO.quema * 100)} % de vida.`,
+             `Por debajo del ${Math.round(FURIA.umbral * 100)} % entra en <b>furia</b>: <b>daño ×${FURIA.mult}</b> durante sus ${FURIA.dura} ataques siguientes, cada ${FURIA.turnos} turnos.`,
              'Prueba de build: <b>vida, defensa y reducción de daño</b> (la reducción frena el doble la parte del Gran Tajo que va por tu vida).'] };
   // Jefes: evento individual (cada uno con su vida diaria, compartida entre tus intentos) con drops fuertes pero muy raros.
   // Cada jefe tiene versión Pesadilla (se abre al vencer su versión normal): más dura, con mejores probabilidades y piezas

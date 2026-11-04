@@ -7,21 +7,23 @@ Lo rescatable de una revisión externa (hecha sobre una versión anterior del pr
 que el motor sea determinista, que probar sea rápido y que el balance se mida antes de añadir contenido.
 
 ## Próximo paso
-Que el usuario juegue las ramas nuevas. Pendientes de decidir: asesino flojo en PvP (40 %; su build por defecto, filo, rinde
-menos que sombras), Asmodeo frente al guerrero y las propuestas de economía (`economia.md`). Luego Fase 5 (textos vs valores).
+Fases 1-5 hechas. Que el usuario juegue las ramas nuevas y decida lo pendiente: asesino en PvP (40 %), Asmodeo frente al
+guerrero y las propuestas de economía (`economia.md`).
 
 ## Última sesión
-**2026-11-04 · Claude** (Fase 3, ajuste de ramas, elegido por el usuario: "subir finales 2 y 3")
-- Cambios: `js/logica/09-clases-y-arbol-de.js` (`ARBOL`, valores y textos `d`):
-  · nodos finales de las ramas 2 y 3 con bono además de su efecto: Último bastión -12 % daño recibido · Adrenalina +15 %
-    habilidades · Camuflaje -6 % daño recibido · Marca del cazador remate 12 → 30 % y +10 % a jefes · Ventisca -8 % daño
-    recibido · Torrente de maná +20 % habilidades · Golpe de gracia remate 15 → 30 %.
-  · Represalia 3 → 5 % por rango · Rastreo 4 → 6 % · Flechas venenosas y Toxina 4 → 6 % (veneno .12 → .18) · Desangrar
-    4 → 6 % (.2 → .3) · Puntas de acero 5 → 8 %.
-- Resultado (400 duelos por lado): ninguna rama a más de 10 puntos de la media de su clase (antes 7 avisos). Guerrero
-  62/49/55, asesino 40/49/37, arquero 46/43/32, mago 53/48/43. Matriz PvP y cadena casi iguales; Torre igual.
-- `pruebas/referencia.json` actualizada: nivel, poder y Torre dentro de ±10 %; cambian el oro a mano y el aura (±1).
-- Sin commit: nada. Verificación: `todo.js completo` 6/6 (equivalencia con `main`: 101 distintos, esperado).
+**2026-11-04 · Claude** (Fase 5: textos frente a valores)
+- Errores corregidos (el texto no decía lo que hace el código):
+  · Flecha perforante decía ×3,2; la habilidad hace ×2,6.
+  · Set 4 de Asmodeo decía "cura un 6 % de tu vida máxima"; cura el 12 % del daño del golpe de habilidad (`SET4_CURA`).
+  · Gran Minotauro: la furia dura sus 5 ataques siguientes, no "5 turnos".
+  · Escudo de Asmodeo: el golpe de habilidad que lo rompe hace el 70 % (no se decía).
+  · Flechas venenosas y Toxina no decían turnos ni daño del veneno.
+- Un solo sitio para los números: reglas de los 3 jefes (`MUNDIALES[...].reglas`), set 4 (`CONJUNTOS[...].especial`) y
+  los nodos que dan habilidad (`habNodo` en `09-clases-y-arbol-de.js`, desde `HAB_TODAS`) se escriben con sus constantes.
+  Nuevas constantes: `CURACION.conEstado`, `ESCUDO.rompe`, `SET4_QUEMA` (antes .5, .7 y 2/.3 sueltos en el motor).
+- Prueba nueva en `pruebas/sistemas.js` ("Textos: ..."): cada número de nodos del árbol, habilidades de nodo, bendiciones
+  de la Grieta, eventos y modificadores (aplicados a un enemigo de prueba) tiene que salir en su texto.
+- Sin commit: nada. Verificación: `todo.js` 3/3 (sistemas 48/48); equivalencia con el commit anterior: 0 distintos.
 
 ## Hallazgos de clases (2026-11-04, nivel 60, 1000 duelos por lado)
 - Cadena PvP correcta: guerrero 82 % a asesino y 81 % a arquero; mago 85 % a guerrero; asesino 60 % y arquero 62 % a mago.
@@ -48,13 +50,14 @@ menos que sombras), Asmodeo frente al guerrero y las propuestas de economía (`e
 - Fase 2 (ejecutor único): `todo.js`, `metricas.js` + `referencia.json`, equivalencia con el mismo reloj · rama del PR.
 - Fase 3 (clases): `pruebas/clases.js` y ajuste de las ramas 2 y 3 · rama del PR.
 - Fase 4 (medición de economía): `pruebas/economia.js` + `economia.md` · rama del PR. Falta decidir ajustes.
+- Fase 5 (textos vs valores): 5 textos corregidos, textos generados desde constantes y prueba automática · rama del PR.
 
 ## Pendiente
 1. Opcional: GitHub Actions con `node pruebas/todo.js` en cada PR.
 2. **Fase 3 · Resto** (decide el usuario): asesino en PvP (40 %), Asmodeo frente al guerrero (le quita 97 % por intento).
 3. **Fase 4 · Ajustes de economía** (decide el usuario): ver propuestas en `economia.md` (polvo, piedra, oro tras Nv 80,
    cristales en el simulador). El día de la semana en que se empieza cambia mucho el oro final (1,5-4,6 M a 90 días).
-4. **Fase 5 · Textos vs. valores:** que las reglas y premios mostrados coincidan con el código.
+4. Textos aún escritos a mano con números (sin prueba): descripciones sueltas en `js/pantalla/`; revisar si aparecen fallos.
 5. Menor: el Minotauro tiene su propio generador (`27-…:41`); pasarlo a `azarSemilla`.
 
 ## Cómo verificar
@@ -71,6 +74,7 @@ menos que sombras), Asmodeo frente al guerrero y las propuestas de economía (`e
 - Cambiar `FECHA_PRUEBAS` cambia los números de progresión (eventos por día de la semana).
 
 ## Bitácora
+- 2026-11-04 · Claude · Fase 3: ramas 2 y 3 competitivas (bono en nodos finales); referencia actualizada.
 - 2026-11-04 · Claude · Fase 4: `pruebas/economia.js` + `economia.md` (180 días, 3 tipos); sin aplicar.
 - 2026-11-04 · Claude · Fase 3: `--probar` en clases.js; causa: habilidad nueva al final de la primera rama.
 - 2026-11-04 · Claude · Fase 3: `pruebas/clases.js` (matriz PvP, arquetipos, PvE); hallazgos sin aplicar.
