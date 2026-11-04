@@ -25,6 +25,10 @@ Luego Fase 5: textos y valores mostrados frente al código.
 - **Arquetipos poco viables**: la primera rama gana casi siempre (furia 58 %, precisión 46 %, fuego 54 %, frente a
   baluarte 35 %, cacería 20 %, venenos 26 %, hielo 36 %, arcano 33 %). En el asesino la mejor es sombras (49 %), no filo.
   Los bots usan la primera rama por defecto.
+- **Causa (2026-11-04):** la última habilidad de la primera rama es una **habilidad nueva** (golpe aplastante, flecha
+  perforante, meteoro; en el asesino, Danza incesante). Sin ella (`--probar` con `max = 0`) las ramas del guerrero quedan
+  en 48-57 % y las del mago en 42-48 %. Subir nodos pasivos de las ramas 2 y 3 (~+30 %) solo mueve 3-6 puntos.
+  Cacería y venenos son flojas incluso así (27 % y 42 %), y cacería rinde peor que precisión contra jefes.
 - PvE parejo en Torre (asesino 69, el resto 72-74). **Asmodeo favorece al guerrero**: le quita un 93 % por intento
   (24 rondas), frente al 50-63 % de las demás clases.
 

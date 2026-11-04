@@ -4,7 +4,8 @@
 //  · Arquetipos: cada clase con el árbol volcado en una rama (las 3 de ARBOL[clase]) contra las otras clases.
 //  · PvE: cada clase y arquetipo en la Torre (piso más alto que gana la mayoría de semillas) y contra cada jefe mundial
 //    (daño medio por intento, en % de su vida).
-// Uso: node pruebas/clases.js [--veces=200] [--nivel=60] [--solo=pvp|arquetipos|pve]
+// Uso: node pruebas/clases.js [--veces=200] [--nivel=60] [--solo=pvp|arquetipos|pve] [--probar=archivo.js]
+//   --probar: código que se corre en el juego antes de medir (probar un ajuste de balance sin tocar el juego)
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const os = require('os');
 
@@ -40,7 +41,7 @@ const EN_JUEGO = `
   };`;
 
 if (!isMainThread) {
-  const juego = require('./cargar')(); juego.correr(EN_JUEGO);
+  const juego = require('./cargar')(); juego.correr(EN_JUEGO); if (workerData.probar) juego.correr(require('fs').readFileSync(workerData.probar, 'utf8'));
   const T = workerData, J = x => JSON.stringify(x);
   let r;
   if (T.tipo === 'duelo') r = juego.correr(`aislado(() => {   // a contra b, la mitad atacando cada uno
@@ -95,6 +96,8 @@ async function enHilos(tareas) {
     tareas.push({ tipo: 'duelo', grupo: 'arq', a, b, ra, rb: null, veces: Math.ceil(veces / 4), nivel });
   if (!solo || solo === 'pve') for (const a of CLASES) for (const ra of [null, ...ramas[a]]) tareas.push({ tipo: 'pve', a, ra, nivel });
   console.log(`Clases · nivel ${nivel} · ${veces} duelos por lado · ${tareas.length} tareas en ${Math.min(os.cpus().length, tareas.length)} hilos`);
+  const probar = opcion('probar', null) && require('path').resolve(opcion('probar'));
+  for (const t of tareas) t.probar = probar;
   const R = await enHilos(tareas);
 
   const pvp = R.filter(r => r.grupo === 'pvp');
