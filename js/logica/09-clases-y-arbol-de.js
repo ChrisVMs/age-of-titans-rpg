@@ -12,11 +12,11 @@
   const CLASES = {
     guerrero: { nombre: 'Guerrero', icono: '⚔️', desc: 'Resistente y equilibrado. Aguanta golpes y remata con fuerza.', mod: { vida: 10, defensa: 10 }, ef: {} },
     arquero:  { nombre: 'Arquero',  icono: '🏹', desc: 'Daño alto y críticos; menos vida y defensa. Hace sangrar y envenena.',
-                mod: { ataque: 8, vida: -12, defensa: -20 }, ef: { critico: .05, esquiva: .04 }, distancia: true },
+                mod: { ataque: 8, vida: -12, defensa: -20 }, ef: { critico: .10, esquiva: .04 }, distancia: true },   // crítico: faceta del asesino y del arquero (2026-11-04: antes 5 % base de todos + 5 %)
     mago:     { nombre: 'Maga',     icono: '🔮', desc: 'Habilidades muy fuertes que queman y congelan; frágil cuerpo a cuerpo.',
                 mod: { ataque: 6, vida: -10, armadura: -25 }, ef: { habilidad: .15, resistencia: .05, penetracion: .15 }, distancia: true },   // penetración: el daño mágico atraviesa la armadura
     asesino:  { nombre: 'Asesino',  icono: '🗡️', desc: 'Golpes rápidos y críticos letales desde las sombras; poca defensa.',
-                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .07, danoCritico: .1, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
+                mod: { ataque: 6, vida: -10, defensa: -15 }, ef: { critico: .12, danoCritico: .1, esquiva: .05 } },   // 2026-11-03: +12 % ataque / +15 % crít. rendía muy por encima
   };
   // Cadena de clases (entre personajes: reyes, bots, arena con perfiles): guerrero > asesino y arquero (vida y resistencia
   // contra el daño físico) · maga > guerrero (el daño mágico atraviesa su resistencia) · asesino y arquero > maga (daño
@@ -33,7 +33,7 @@
     guerrero: [
       { id: 'furia', nombre: 'Furia', icono: '🗡️', nodos: [
         { id: 'fuerza',      nombre: 'Fuerza bruta',      icono: '💪', max: 5, stat: { ataque: 2 }, d: r => `+${2 * r} % de ataque` },
-        { id: 'certero',     nombre: 'Golpe certero',     icono: '🎯', max: 5, ef: { critico: 2 }, d: r => `${2 * r} % de prob. de crítico` },
+        { id: 'certero',     nombre: 'Golpe certero',     icono: '🎯', max: 5, ef: { penetracion: 3 }, d: r => `+${3 * r} % de penetración` },   // 2026-11-04: antes crítico (no es del guerrero)
         { id: 'estocada_m',  nombre: 'Estocada feroz',    icono: '⚡', max: 3, poder: 1.5, habMult: ['estocada', .2], d: r => `Estocada hace +${20 * r} % de daño` },
         { id: 'sed',         nombre: 'Sed de sangre',     icono: '🩸', max: 3, ef: { robo: 2 }, d: r => `${2 * r} % de robo de vida` },
         { id: 'aplastante',  nombre: 'Golpe aplastante',  icono: '🔨', max: 1, poder: 4, d: () => `Nueva habilidad: golpe ${habNodo('aplastante')} que aturde al enemigo 1 turno` },
@@ -81,7 +81,7 @@
         { id: 'poder_arc',   nombre: 'Poder arcano',      icono: '✨', max: 5, stat: { ataque: 2 }, d: r => `+${2 * r} % de ataque` },
         { id: 'ignicion',    nombre: 'Ignición',          icono: '🔥', max: 5, golpe: { estado: 'quemadura', prob: 5, turnos: 2, pct: .25 }, poder: 1, d: r => `${5 * r} % de quemar al golpear (2 turnos, 25 % de tu ataque)` },
         { id: 'bola_m',      nombre: 'Bola mayor',        icono: '☀️', max: 3, poder: 1.5, habMult: ['bola', .25], d: r => `Bola de fuego hace +${25 * r} % de daño` },
-        { id: 'combustion',  nombre: 'Combustión',        icono: '💥', max: 3, ef: { critico: 3 }, d: r => `${3 * r} % de prob. de crítico` },
+        { id: 'combustion',  nombre: 'Combustión',        icono: '💥', max: 3, ef: { habilidad: 4 }, d: r => `+${4 * r} % de daño de habilidades` },   // 2026-11-04: antes crítico (no es de la maga)
         { id: 'meteoro',     nombre: 'Meteoro',           icono: '☄️', max: 1, poder: 4, d: () => `Nueva habilidad: meteoro ${habNodo('meteoro')} que quema` },
       ] },
       { id: 'hielo', nombre: 'Hielo', icono: '❄️', nodos: [

@@ -11,19 +11,19 @@ Fases 1-5 hechas. Que el usuario juegue las ramas nuevas y decida lo pendiente: 
 guerrero y las propuestas de economía (`economia.md`).
 
 ## Última sesión
-**2026-11-04 · Claude** (Fase 5: textos frente a valores)
-- Errores corregidos (el texto no decía lo que hace el código):
-  · Flecha perforante decía ×3,2; la habilidad hace ×2,6.
-  · Set 4 de Asmodeo decía "cura un 6 % de tu vida máxima"; cura el 12 % del daño del golpe de habilidad (`SET4_CURA`).
-  · Gran Minotauro: la furia dura sus 5 ataques siguientes, no "5 turnos".
-  · Escudo de Asmodeo: el golpe de habilidad que lo rompe hace el 70 % (no se decía).
-  · Flechas venenosas y Toxina no decían turnos ni daño del veneno.
-- Un solo sitio para los números: reglas de los 3 jefes (`MUNDIALES[...].reglas`), set 4 (`CONJUNTOS[...].especial`) y
-  los nodos que dan habilidad (`habNodo` en `09-clases-y-arbol-de.js`, desde `HAB_TODAS`) se escriben con sus constantes.
-  Nuevas constantes: `CURACION.conEstado`, `ESCUDO.rompe`, `SET4_QUEMA` (antes .5, .7 y 2/.3 sueltos en el motor).
-- Prueba nueva en `pruebas/sistemas.js` ("Textos: ..."): cada número de nodos del árbol, habilidades de nodo, bendiciones
-  de la Grieta, eventos y modificadores (aplicados a un enemigo de prueba) tiene que salir en su texto.
-- Sin commit: nada. Verificación: `todo.js` 3/3 (sistemas 48/48); equivalencia con el commit anterior: 0 distintos.
+**2026-11-05 · Claude** (crítico solo de asesino y arquero; pedido del usuario)
+- Usuario (2026-11-04): "critico deberia ser parte de la faceta de asesino - arquero, NO de mago - guerrero […] Deberia
+  poder adquirir critico? si pero por otros medios: atributos en el equipamiento […] tendria costo".
+- Antes (nivel 60, mismo equipo): crítico guerrero 22 %, maga 21 % (5 % base de todos + 9-10 % del árbol + equipo y runa).
+- Cambios: `04-atributos-estrellas-y-rarezas.js` · `BASE_SEC` sin crítico · `09-clases-y-arbol-de.js` · arquero 5 → 10 % y
+  asesino 7 → 12 % de crítico de clase (el 5 % base pasa a ellos) · Golpe certero (guerrero): crítico → +3 % de penetración
+  por rango · Combustión (maga): crítico → +4 % de daño de habilidades por rango.
+- Ahora: guerrero y maga 7 % (solo su línea de equipo y su runa de crítico); asesino 29 %, arquero 27 %, igual que antes.
+- Efecto: PvP casi igual (la ventaja del guerrero es la cadena y la resistencia). Jefes: guerrero 74 → 67 % a Cerbero y
+  97 → 85 % a Asmodeo. Progresión del simulado (guerrero) a 90 días: poder y Torre -8 %; oro de jefes -63 %.
+  `pruebas/referencia.json` actualizada.
+- Prueba nueva en `sistemas.js`: ni la base, ni la clase, ni el árbol dan crítico al guerrero o a la maga.
+- Sin commit: nada. Verificación: `todo.js completo` 6/6 (sistemas 49/49).
 
 ## Hallazgos de clases (2026-11-04, nivel 60, 1000 duelos por lado)
 - Cadena PvP correcta: guerrero 82 % a asesino y 81 % a arquero; mago 85 % a guerrero; asesino 60 % y arquero 62 % a mago.
@@ -74,6 +74,7 @@ guerrero y las propuestas de economía (`economia.md`).
 - Cambiar `FECHA_PRUEBAS` cambia los números de progresión (eventos por día de la semana).
 
 ## Bitácora
+- 2026-11-04 · Claude · Fase 5: 5 textos corregidos; reglas de jefes, sets y nodos de habilidad desde constantes.
 - 2026-11-04 · Claude · Fase 3: ramas 2 y 3 competitivas (bono en nodos finales); referencia actualizada.
 - 2026-11-04 · Claude · Fase 4: `pruebas/economia.js` + `economia.md` (180 días, 3 tipos); sin aplicar.
 - 2026-11-04 · Claude · Fase 3: `--probar` en clases.js; causa: habilidad nueva al final de la primera rama.

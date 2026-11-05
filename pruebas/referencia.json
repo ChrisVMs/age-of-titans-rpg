@@ -11,47 +11,47 @@
  },
  "dias": {
   "7": {
-   "nivel": 41,
-   "poder": 26967,
-   "torre": 73,
-   "oro": 16991,
-   "aura": 1
+   "nivel": 42,
+   "poder": 30765,
+   "torre": 74,
+   "oro": 24525,
+   "aura": 2
   },
   "30": {
    "nivel": 61,
-   "poder": 51988,
-   "torre": 92,
-   "oro": 848810,
-   "aura": 4
+   "poder": 53946,
+   "torre": 89,
+   "oro": 500451,
+   "aura": 3
   },
   "60": {
    "nivel": 69,
-   "poder": 63433,
-   "torre": 101,
-   "oro": 2262358,
-   "aura": 6
+   "poder": 62170,
+   "torre": 96,
+   "oro": 1643398,
+   "aura": 5
   },
   "90": {
-   "nivel": 75,
-   "poder": 76737,
-   "torre": 111,
-   "oro": 5794064,
+   "nivel": 73,
+   "poder": 70497,
+   "torre": 102,
+   "oro": 3217130,
    "aura": 7
   }
  },
  "oroFuentes": {
   "login": 91800,
-  "misiones": 672625,
-  "campaña": 2071630,
-  "ruinas": 1179621,
-  "torre": 494477,
-  "arena": 27333,
-  "eco": 37742,
-  "expedición": 2144610,
-  "calabozo": 529827,
-  "grieta": 570968,
-  "jefes": 5730177,
-  "barrido": 85587954,
-  "reyes": 870000
+  "misiones": 622250,
+  "campaña": 1765523,
+  "ruinas": 896935,
+  "torre": 399420,
+  "arena": 5366,
+  "eco": 5810,
+  "calabozo": 136070,
+  "grieta": 496874,
+  "jefes": 2106945,
+  "barrido": 76422282,
+  "reyes": 870000,
+  "expedición": 1969200
  }
 }

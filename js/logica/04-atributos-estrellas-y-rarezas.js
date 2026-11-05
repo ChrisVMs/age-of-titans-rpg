@@ -7,7 +7,7 @@
                         resistencia: 'Resistencia', habilidad: 'Daño de habilidades', jefes: 'Daño a jefes', experiencia: 'Experiencia extra' };
   // Otros efectos de combate (solo skins y árbol): se muestran si tienes alguno
   const OTROS_EFECTOS = { esquiva: 'Esquiva', robo: 'Robo de vida', contra: 'Contraataque', remate: 'Remate (<50 %)', curacion: 'Curación', oro: 'Oro extra', fortuna: 'Fortuna (drops)' };
-  const BASE_SEC = { critico: .05 };                       // todo guerrero tiene un 5 % de crítico
+  const BASE_SEC = {};   // sin base común: el crítico de base es del asesino y del arquero (CLASES[..].ef); los demás lo consiguen con equipo, runas…
   const DANO_CRITICO_BASE = 1.5;                           // un crítico hace ×1,5 (+ daño crítico)
   const TOPE_SEC = { experiencia: .5, critico: .5, danoCritico: 1.5, penetracion: .6, reduccion: .6, resistencia: .75, habilidad: 1, jefes: 1, esquiva: .4, fortuna: .3,
                      robo: .25, contra: .35, remate: .5, curacion: 1 };   // sin tope, robo y contraataque apilados volvían inmortal al personaje

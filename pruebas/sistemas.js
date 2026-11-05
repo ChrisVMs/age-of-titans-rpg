@@ -273,6 +273,9 @@ const PRUEBAS = {
       ver('modificador/' + m.id, m.desc, [(e.dano[0] / 100 - 1) * 100, (e.vida / 1000 - 1) * 100, e.armadura, (e.espinas || 0) * 100, (e.regen || 0) * 100]);
     }
     mal.length ? mal : [true]`,
+  'Clases: el crítico es del asesino y del arquero; guerrero y maga solo lo consiguen con equipo, runas, mascota, skins…': `
+    const conCritico = c => [...ARBOL[c].flatMap(r => r.nodos).filter(n => (n.ef || {}).critico).map(n => n.id), ...((CLASES[c].ef || {}).critico ? ['clase'] : [])];
+    [!BASE_SEC.critico, conCritico('guerrero').length === 0, conCritico('mago').length === 0, conCritico('asesino').length > 0, conCritico('arquero').length > 0]`,
 };
 let ok = 0;
 for (const [nombre, codigo] of Object.entries(PRUEBAS)) {
