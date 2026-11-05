@@ -29,8 +29,7 @@
   // Efecto especial de la skin: suma valor × peso en % del poder (el peso refleja cuánto se activa en combate)
   const PESO_EFECTO = { habilidad: .5, jefes: .5, reduccion: 1, contra: .6, curacion: .3, oro: 0,
                         critico: .5, remate: .5, robo: .6, resistencia: .3, esquiva: 1, danoCritico: .1, penetracion: .3, fortuna: 0 };
-  const textoEfecto = a => a === 'danoCritico' ? `${Math.round((DANO_CRITICO_BASE + efecto(a)) * 100)}%`
-    : `${Math.round(efecto(a) * 1000) / 10}%${TOPE_SEC[a] && efecto(a) >= TOPE_SEC[a] ? ' (máx)' : ''}`;
+  const textoEfecto = a => String(puntosSec(a));   // en puntos: el % real es interno (curvaSec)
   function poder(st) {
     const anidado = !!memo; memo ||= {};
     try { st ||= estadisticas(); return poderSinMemo(st); } finally { if (!anidado) memo = null; }

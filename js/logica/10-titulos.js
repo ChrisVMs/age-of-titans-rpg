@@ -46,6 +46,6 @@
 
   const nombreEf = esp => SECUNDARIOS[esp] || OTROS_EFECTOS[esp];
   const r1 = v => Math.round(v * 10) / 10;
-  // texto de bonos: base = % a atributos base, ef = % a efectos
+  // texto de bonos: base = % a atributos base, ef = efectos (en los datos en %; se muestran en puntos)
   const textoBonos = (base = {}, ef = {}) => [...Object.entries(base).map(([a, v]) => `+${r1(v)} % ${ATRIBUTOS[a].toLowerCase()}`),
-    ...Object.entries(ef).map(([a, v]) => `+${r1(v)} % ${nombreEf(a).toLowerCase()}`)].join(', ');
+    ...Object.entries(ef).map(([a, v]) => textoPuntos(a, v))].join(', ');

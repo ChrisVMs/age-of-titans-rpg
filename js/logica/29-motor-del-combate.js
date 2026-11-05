@@ -180,7 +180,7 @@
     let m = multGolpe(u.ef, hab, esJefe(t.e), t.vida < t.vidaMax / 2);
     if (u.estados.danza) m *= 1 + BUFF_DANZA.dano;
     m *= ventajaClase(u.clase, t.clase);   // cadena de clases (solo entre personajes)
-    if (rnd() < u.ef('critico')) { critico = true; m *= DANO_CRITICO_BASE + u.ef('danoCritico'); }
+    if (rnd() < u.ef('critico') * (1 - (t.ef ? t.ef('tenacidad') : 0))) { critico = true; m *= DANO_CRITICO_BASE + u.ef('danoCritico'); }
     const def = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };   // misma defensa para todos
     m *= factorDefensa({ armadura: armaduraEfectiva(def.armadura, u.ef('penetracion'), hab && hab.perfora), defensa: def.defensa }) * (1 - t.ef('reduccion'));
     dano = Math.max(1, Math.round(dano * m));
@@ -297,7 +297,7 @@
     const e = u.e; let dano = danoRecibido(azar(...e.dano), t.st), critico = false;
     if (e.rival) {   // el rival de la arena: su Estocada cada N turnos y sus críticos
       if (++u.turnoRival % e.habilidad.turnos === 0) { dano = Math.round(dano * e.habilidad.mult); verFx(u, 'num-cura', `⚔ ${e.habilidad.nombre}`); }
-      if (rnd() < e.critico) { critico = true; dano = Math.round(dano * e.danoCritico); }
+      if (rnd() < e.critico * (1 - t.ef('tenacidad'))) { critico = true; dano = Math.round(dano * e.danoCritico); }
     }
     dano = Math.max(1, Math.round(dano * (1 - t.ef('reduccion'))));
     if (batalla.infernal) dano = Math.round(dano * INFERNAL.dano);

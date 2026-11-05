@@ -37,8 +37,8 @@
   }
   const valorExtra = r => r.cal && r.extra ? RUNAS[r.extra].v * r.nivel * CAL_RUNA[r.cal].f : 0;
   function efectoRunas(esp) { return runasPuestas().reduce((s, r) => s + (r.tipo === esp && !RUNAS[r.tipo].base ? RUNAS[r.tipo].v * r.nivel / 100 : 0) + (r.extra === esp ? valorExtra(r) / 100 : 0), 0); }
-  const textoRuna = r => `+${r1(RUNAS[r.tipo].v * r.nivel)} % ${(RUNAS[r.tipo].base ? ATRIBUTOS[r.tipo] : nombreEf(r.tipo)).toLowerCase()}`
-    + (r.cal && r.extra ? `<br><span style="color:${CAL_RUNA[r.cal].color}">+${r1(valorExtra(r))} % ${nombreEf(r.extra).toLowerCase()}</span>` : '');
+  const textoRuna = r => (RUNAS[r.tipo].base ? `+${r1(RUNAS[r.tipo].v * r.nivel)} % ${ATRIBUTOS[r.tipo].toLowerCase()}` : textoPuntos(r.tipo, RUNAS[r.tipo].v * r.nivel))
+    + (r.cal && r.extra ? `<br><span style="color:${CAL_RUNA[r.cal].color}">${textoPuntos(r.extra, valorExtra(r))}</span>` : '');
   function crearRuna() {   // paga y crea una runa de tipo al azar (sin equipar)
     jugador.runas ||= []; pagar(COSTE_RUNA);
     const nueva = calidadNueva({ uid: sigUid++, tipo: elegir(Object.keys(RUNAS)), nivel: 1 }, sortearCalRuna());

@@ -57,8 +57,11 @@
     return t;
   }
   const topeExtraSkin = esp => { const k = skinActual(); return k && k.esp === esp && pasivaDespertar('skin', k.id) ? PASIVA_SKIN.tope : 0; };
-  const efecto = esp => Math.min((TOPE_SEC[esp] ?? Infinity) + topeExtraSkin(esp), (BASE_SEC[esp] || 0) + efectoSkin(esp) + efectoArbol(esp) + (secEquipo()[esp] || 0) / 100
-    + efectoReliquias(esp) + efectoRunas(esp) + efectoColeccion(esp) + efectoMaestria(esp) + efectoMascota(esp) + (CLASES[jugador.clase].ef[esp] || 0) + efectoConjuntos(esp));
+  // suma de todas las fuentes (en fracción; × PUNTOS_SEC = los puntos que ve el jugador) y su efecto real (curvaSec)
+  const efectoBruto = esp => (BASE_SEC[esp] || 0) + efectoSkin(esp) + efectoArbol(esp) + (secEquipo()[esp] || 0) / 100
+    + efectoReliquias(esp) + efectoRunas(esp) + efectoColeccion(esp) + efectoMaestria(esp) + efectoMascota(esp) + (CLASES[jugador.clase].ef[esp] || 0) + efectoConjuntos(esp);
+  const puntosSec = esp => Math.round(efectoBruto(esp) * PUNTOS_SEC);
+  const efecto = esp => curvaSec(efectoBruto(esp), (TOPE_SEC[esp] ?? Infinity) + topeExtraSkin(esp) + ((CLASES[jugador.clase].topes || {})[esp] || 0), jugador.nivel);
   const skinsDisponibles = () => skinsClase().filter(k => estrellasSkin(k.id) > 0);
   let skinSel = null;   // skin seleccionada en la pestaña (tocar una no la equipa)
   const textoEstrellas = n => `<span class="est">${'★'.repeat(n)}<i>${'★'.repeat(5 - n)}</i></span>`;
@@ -69,8 +72,8 @@
       <h3 style="margin:0;color:${k.color}">${k.icono} ${k.nombre} ${textoEstrellas(n)}</h3>
       <div class="atributos" style="width:100%">
         <div><span>${ATRIBUTOS[k.base[0]]}</span><span>+${bonoSkinBase(k)}%</span></div>
-        <div><span>Especial</span><span>${k.menos ? '−' : '+'}${valorSkin(k, Math.max(1, n))}% ${k.txt}</span></div>
-        ${n < 5 ? `<div><span>En ★${Math.max(1, n) + 1}</span><span>+${k.base[1]}% ${ATRIBUTOS[k.base[0]].toLowerCase()} · especial ${valorSkin(k, Math.max(1, n) + 1)}%</span></div>` : '<div><span>★5</span><span>Brillo de poder</span></div>'}
+        <div><span>Especial</span><span>${textoPuntos(k.esp, valorSkin(k, Math.max(1, n)))}</span></div>
+        ${n < 5 ? `<div><span>En ★${Math.max(1, n) + 1}</span><span>+${k.base[1]}% ${ATRIBUTOS[k.base[0]].toLowerCase()} · especial ${puntosDe(valorSkin(k, Math.max(1, n) + 1))}</span></div>` : '<div><span>★5</span><span>Brillo de poder</span></div>'}
       </div>
       <div class="fila">
         ${puesta ? '<button data-acc="quitar">Desequipar</button>' : '<button data-acc="equipar">EQUIPAR</button>'}

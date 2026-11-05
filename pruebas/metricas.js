@@ -1,7 +1,7 @@
 // Métricas de progresión comparables entre versiones: simula partidas nuevas (sin navegador, un hilo por semilla) y
-// promedia nivel, poder, Torre, oro y aura en días clave, y el oro de cada fuente. Compara con pruebas/referencia.json
+// da la mediana de nivel, poder, Torre, oro y aura en días clave, y el oro de cada fuente. Compara con pruebas/referencia.json
 // y señala lo que se movió más de lo tolerado y las fuentes de oro que dominan la economía.
-// Uso: node pruebas/metricas.js [--dias=90] [--semillas=1,2,3,4] [--tipo=casual] [--guardar-referencia]
+// Uso: node pruebas/metricas.js [--dias=90] [--semillas=1,...,8] [--tipo=casual] [--guardar-referencia]
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const fs = require('fs'), path = require('path'), os = require('os');
 
@@ -20,6 +20,8 @@ if (!isMainThread) {
 
 const opcion = (n, def) => { const a = process.argv.find(x => x.startsWith(`--${n}=`)); return a ? a.split('=')[1] : def; };
 const promedio = l => l.reduce((a, b) => a + b, 0) / l.length;
+// mediana: una semilla que entra en bola de nieve (el simulador es muy sensible al azar) no arrastra el resultado
+const mediana = l => { const o = [...l].sort((a, b) => a - b), m = o.length >> 1; return o.length % 2 ? o[m] : (o[m - 1] + o[m]) / 2; };
 
 // Simula y resume: { config, dias: { 30: { nivel, ... } }, oroFuentes: { fuente: oro medio } }
 async function medir({ dias = 90, semillas = [1, 2, 3, 4], tipo = null } = {}) {
@@ -30,10 +32,10 @@ async function medir({ dias = 90, semillas = [1, 2, 3, 4], tipo = null } = {}) {
     w.on('message', r => partidas.push(r)); w.on('error', mal); w.on('exit', () => hilo().then(ok, mal));
   });
   await Promise.all(Array.from({ length: Math.min(os.cpus().length, semillas.length) }, hilo));
-  const res = { config: { dias, semillas, tipo }, dias: {}, oroFuentes: {} };
+  const res = { config: { dias, semillas, tipo, medida: 'mediana' }, dias: {}, oroFuentes: {} };
   for (const d of DIAS_CLAVE.filter(d => d <= dias)) {
     res.dias[d] = {};
-    for (const c of CAMPOS) res.dias[d][c] = Math.round(promedio(partidas.map(p => p.dia[d - 1][c])));
+    for (const c of CAMPOS) res.dias[d][c] = Math.round(mediana(partidas.map(p => p.dia[d - 1][c])));
   }
   const fuentes = new Set(partidas.flatMap(p => Object.keys(p.fuentes)));
   for (const f of fuentes) res.oroFuentes[f] = Math.round(promedio(partidas.map(p => (p.fuentes[f] || {}).oro || 0)));
@@ -49,7 +51,7 @@ function informe(nuevo, ref) {
     if (fuera) avisos.push(`${nombre}: ${n(a)} → ${n(b)}`);
     L.push(`  ${nombre.padEnd(26)} ${misma ? n(a).padStart(12) : ''} ${n(b).padStart(12)} ${cambio == null || !misma ? '' : `${cambio >= 0 ? '+' : ''}${(cambio * 100).toFixed(1)} %`}${fuera ? ' ⚠' : ''}`);
   };
-  L.push(`Progresión · ${nuevo.config.dias} días · semillas ${nuevo.config.semillas.join(',')}${nuevo.config.tipo ? ' · ' + nuevo.config.tipo : ''} (promedios)`);
+  L.push(`Progresión · ${nuevo.config.dias} días · semillas ${nuevo.config.semillas.join(',')}${nuevo.config.tipo ? ' · ' + nuevo.config.tipo : ''} (medianas)`);
   if (ref && !misma) L.push('  (la referencia es de otra configuración: no se compara)');
   L.push(`  ${''.padEnd(26)} ${misma ? 'referencia'.padStart(12) : ''} ${'ahora'.padStart(12)}`);
   for (const d of Object.keys(nuevo.dias)) for (const c of CAMPOS) fila(`día ${d} · ${c}`, misma ? ref.dias[d]?.[c] : null, nuevo.dias[d][c]);
@@ -65,7 +67,7 @@ function informe(nuevo, ref) {
 module.exports = { medir, informe, REFERENCIA };
 
 if (require.main === module) (async () => {
-  const conf = { dias: +opcion('dias', 90), semillas: opcion('semillas', '1,2,3,4').split(',').map(Number), tipo: opcion('tipo', null) };
+  const conf = { dias: +opcion('dias', 90), semillas: opcion('semillas', '1,2,3,4,5,6,7,8').split(',').map(Number), tipo: opcion('tipo', null) };
   const t0 = Date.now(), r = await medir(conf), ref = fs.existsSync(REFERENCIA) ? JSON.parse(fs.readFileSync(REFERENCIA, 'utf8')) : null;
   const { texto, avisos } = informe(r, ref);
   console.log(texto);

@@ -7,11 +7,34 @@ Lo rescatable de una revisión externa (hecha sobre una versión anterior del pr
 que el motor sea determinista, que probar sea rápido y que el balance se mida antes de añadir contenido.
 
 ## Próximo paso
-Fases 1-5 hechas. Que el usuario juegue las ramas nuevas y decida lo pendiente: asesino en PvP (40 %), Asmodeo frente al
+Fases 1-5 hechas y secundarios en puntos. Que el usuario lo vea en el navegador (textos en puntos) y decida lo pendiente: muro del piso 100 (progresión bimodal), asesino en PvP (40 %), Asmodeo frente al
 guerrero y las propuestas de economía (`economia.md`).
 
 ## Última sesión
-**2026-11-05 · Claude** (crítico solo de asesino y arquero; pedido del usuario)
+**2026-11-05 · Claude** (secundarios en puntos + tenacidad; pedido del usuario)
+- Usuario: "no mostrar porcentaje, ese calculo debe ser interno. solo mostrar puntaje del atributo, tal cual lo hace
+  wartune" · todos los secundarios · tenacidad "en menor medida".
+- Núcleo (`04-atributos-estrellas-y-rarezas.js`): `PUNTOS_SEC` (1 % de antes = 10 puntos; los datos no cambian),
+  `curvaSec` (igual que antes hasta el codo = mitad del tope a nivel ≤60, que baja con el nivel; desde ahí rendimientos
+  decrecientes hacia el tope), `puntosDe`, `textoPuntos`. `08-skins.js`: `efectoBruto` (suma de fuentes), `puntosSec`
+  (lo que se ve) y `efecto` (el % real, con `CLASES[..].topes`).
+- Crítico: tope 40 % (antes 50 %); asesino y arquero +20 % de tope (`topes`), faceta suya también arriba.
+  Nivel 80: 140 pts = 14 % · 250 = 23 % · 400 = 29 % · 600 = 32 % (asesino: 25 / 36 / 43 %). Línea mítica ★5 = 64 pts,
+  ancestral ★5 = 90, runa Nv 10 = 60, clase asesino 120.
+- Tenacidad (secundario nuevo, tope 30 %): reduce la prob. de crítico que te hacen (`29-motor-del-combate.js`, en los dos
+  sitios del dado de crítico). Guerrero 100 puntos de clase (−10 %); sale también como línea de equipo.
+- Pantalla en puntos: líneas de equipo (`fmtAtr`), panel de atributos (`textoEfecto`), `textoBonos` (títulos, sets,
+  colecciones, reliquias, maestría), clase, runas, skins (y tienda), mascotas. Nodos del árbol con efectos: texto generado
+  (`n.especial` + bonos en puntos); 27 textos a mano quitados.
+- `pruebas/metricas.js`: mediana de 8 semillas (antes media de 4).
+- Medición: matriz de clases igual que antes (guerrero 85/84 a asesino/arquero, mago 87 a guerrero). Progresión: Torre
+  mediana a 90 días 99 → 111 por el cambio de azar del sorteo de líneas (control: con "daño a jefes" en vez de tenacidad
+  salen los mismos números). Referencia guardada.
+- Hallazgo: la progresión es **bimodal**: muchas semillas se quedan en el piso 99 (muro del 100, contenido alto) y las que
+  lo pasan entran en bola de nieve (110-150, Nv 80). Cualquier cambio de azar mueve mucho la media.
+- Sin commit: nada. Verificación: `todo.js completo` 6/6; pantalla sin navegador (sin-pantalla). Falta verla en el navegador.
+
+**2026-11-05 · Claude** (anterior)
 - Usuario (2026-11-04): "critico deberia ser parte de la faceta de asesino - arquero, NO de mago - guerrero […] Deberia
   poder adquirir critico? si pero por otros medios: atributos en el equipamiento […] tendria costo".
 - Antes (nivel 60, mismo equipo): crítico guerrero 22 %, maga 21 % (5 % base de todos + 9-10 % del árbol + equipo y runa).
