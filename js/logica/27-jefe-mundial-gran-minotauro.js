@@ -88,7 +88,7 @@
   function prepararBatalla(c) {
     revisarTitulos();   // los títulos (y su bono del Códice) cuentan desde la batalla siguiente, guarde o no la pantalla antes
     batalla.id = (batalla.id || 0) + 1; secEquipoBatalla = new WeakMap();   // identifica la batalla: lo que quede por dibujar de otra anterior se descarta
-    batalla.danoHecho = 0; batalla.especialCerbero = null; batalla.turnoBola = 0; batalla.turnoLanza = 0; batalla.turnoOnda = 0; batalla.turnoCura = 0; batalla.turnoEscudo = 0; batalla.escudoRestante = 0; batalla.turnoFuria = FURIA.turnos - 1; batalla.furiaRestante = 0; batalla.especialMinotauro = null; batalla.turnoTajo = 0; batalla.especialAsmodeo = null;
+    batalla.danoHecho = 0; batalla.rondaTitan = 0; batalla.titanPedido = false; batalla.especialCerbero = null; batalla.turnoBola = 0; batalla.turnoLanza = 0; batalla.turnoOnda = 0; batalla.turnoCura = 0; batalla.turnoEscudo = 0; batalla.escudoRestante = 0; batalla.turnoFuria = FURIA.turnos - 1; batalla.furiaRestante = 0; batalla.especialMinotauro = null; batalla.turnoTajo = 0; batalla.especialAsmodeo = null;
     c.grupo = !!(c.idCampana || c.torre || c.reyes || c.calabozo || c.grieta);   // campaña, Torre y Torre de reyes: batalla por grupos en rombo
     batalla.campana = c; batalla.reglas = c.grupo ? REGLAS.grupo : REGLAS.duelo;
     prepararHabilidades(); batalla.st = estadisticas(); batalla.ganado = { oro: 0, xp: 0, piedra: 0, polvo: 0, almas: 0, objetos: [] }; batalla.terminada = false;

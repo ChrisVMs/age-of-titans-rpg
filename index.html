@@ -120,6 +120,11 @@
   .unidad.enemigo.jefe .vida { top:-120px; } .unidad.enemigo.jefe .vida b { color:#ff9f1a; }
   .unidad.muerto { opacity:0; pointer-events:none; }
   .unidad .acompana { left:-40px; bottom:20px; font-size:40px; }
+  .unidad-mascota { pointer-events:none; }
+  /* Modo Titán: brillo dorado del que lo activa; el botón se ilumina con la barra llena */
+  .titan .pj { filter:drop-shadow(0 0 8px #ffd84a) drop-shadow(0 0 18px #ff9f1a); animation:brilloD5 .8s infinite alternate; }
+  .btn-titan { background:linear-gradient(to top, #ffb02e55 var(--titan, 0%), transparent var(--titan, 0%)); }
+  .btn-titan.listo { box-shadow:0 0 10px #ffd84a, 0 0 22px #ff9f1a; color:#ffd84a; }
   .bola-maga { width:110px; display:block; margin:-30px 0 0 -40px; }
   .bola-maga.izq { transform:scaleX(-1); }
   .unidad .tag-pos { position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); font-size:11px; color:#fff9; }
@@ -1155,6 +1160,7 @@
         <button id="btnHuir" class="util-btn" title="Huir" aria-label="Huir">🏳️<small>Huir</small></button>
         <button id="btnVel" class="util-btn" title="Velocidad">⏩<small>x1</small></button>
         <button class="util-btn btn-sonido" aria-label="Sonido"></button>
+        <button id="btnTitan" class="util-btn btn-titan" hidden title="Modo Titán" aria-label="Modo Titán">⚡<small>0 %</small></button>
         <button id="btnAuto" class="util-btn" title="Autoataque: OFF" aria-label="Autoataque"><img class="ic-hd" src="img/iconos/auto.png" alt=""><small>Auto</small></button>
       </div>
       <div class="combate">

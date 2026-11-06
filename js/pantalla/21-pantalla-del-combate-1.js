@@ -12,13 +12,14 @@
       else if (tipo === 'espera') await wait(a[0]);
       else if (tipo === 'estadoAtaque') estadoAtaque(a[0]);
       else if (tipo === 'carga') pintarEspecial();
-      else if (tipo === 'animHeroe') { const [u, t, hab] = a; if (u.duelo) await animarAtaque(0, hab); else regresos.set(u, await animHeroe(u, t, hab)); }
+      else if (tipo === 'animHeroe') { const [u, t, hab] = a; if (u.duelo) await (u.heroe ? animarAtaque(0, hab) : animarAtaque(1, null)); else regresos.set(u, await animHeroe(u, t, hab)); }
       else if (tipo === 'animEnemigo') { const [u, t, ataque] = a; if (u.duelo) await animarAtaque(1, ataque); else regresos.set(u, await animEnemigo(u, t)); }
       else if (tipo === 'volver') { const r = regresos.get(a[0]); regresos.delete(a[0]); if (r) await r(); }
       else if (tipo === 'golpe') await dibujarGolpe(...a);
       else if (tipo === 'marcar') marcarObjetivo(a[0]);
-      else if (tipo === 'muerteU') { const [u, jefe] = a; if (!u.duelo) { await caeU(u); u.el.classList.add('muerto'); if (u.yo) pintarEspecial(); } else if (!u.heroe) await animarMuerte(jefe); else await caeHeroe(); }
-      else if (tipo === 'mascota') { if (a[0].duelo) $('acompana').style.transform = a[1] ? `translateX(${avanceReal(420)}px) scale(1.2)` : ''; }
+      else if (tipo === 'muerteU') { const [u, jefe] = a; if (!u.duelo) { await caeU(u); u.el.classList.add('muerto'); if (u.mascotaEl) u.mascotaEl.classList.add('muerto'); if (u.yo) pintarEspecial(); } else if (!u.heroe) await animarMuerte(jefe); else await caeHeroe(); }
+      else if (tipo === 'titan') { const [u, on] = a; if (u.el) u.el.classList.toggle('titan', on); pintarTitan(); }
+      else if (tipo === 'mascota') { if (a[0].duelo) $('acompana').style.transform = a[1] ? `translateX(${avanceReal(420)}px) scale(1.2)` : ''; else if (a[0].mascotaEl) a[0].mascotaEl.style.transform = a[1] ? 'translateX(140px) scale(1.15)' : ''; }
       else if (tipo === 'transformar') await animarTransformacion();
       else if (tipo === 'siguiente') await mostrarEnemigo();
       else if (tipo === 'resultado') mostrarResultado(a[0]);

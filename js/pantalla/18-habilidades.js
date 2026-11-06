@@ -94,7 +94,18 @@
       b.disabled = falta > 0 || enRonda || auto || batalla.terminada;
     }
     document.querySelectorAll('#pruebas button').forEach(b => b.disabled = enRonda || auto || batalla.terminada);
+    pintarTitan();
   }
+  // Modo Titán: barra (TITAN, 29-motor-del-combate.js) y botón; en auto o con el bot se activa solo
+  ui.titanManual = () => !auto && !simulando && !(typeof botModo !== 'undefined' && botModo);
+  function pintarTitan() {
+    const b = $('btnTitan'), u = batalla.grupo && !batalla.terminada && pvp() ? heroeYo() : null;
+    b.hidden = !u; if (!u) return;
+    const T = u.titan || { carga: 0, activo: 0 }, pct = T.activo ? 100 : Math.floor(T.carga);
+    b.querySelector('small').textContent = T.activo ? `${T.activo} r` : `${pct} %`; b.style.setProperty('--titan', pct + '%');
+    b.classList.toggle('listo', titanListo(u)); b.disabled = !titanListo(u) || enRonda || auto || batalla.terminada || batalla.titanPedido;
+  }
+  $('btnTitan').onclick = () => { if (titanListo(heroeYo()) && !enRonda && !auto) { batalla.titanPedido = true; ronda(null); } };
   document.querySelector('#pBatalla').addEventListener('click', e => {
     const b = e.target.closest('[data-hab]'); if (!b || b.disabled) return;
     const h = HABILIDADES.find(x => x.id === b.dataset.hab) || HAB_TODAS.find(x => x.id === b.dataset.hab);

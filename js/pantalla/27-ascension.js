@@ -75,7 +75,11 @@
       pintarAura(u.el.querySelector('.sombra'), nivelAura(u.perfil));
     }
     const yo = heroes.find(h => h.yo), m = mascotaActual();
-    if (m) { const a = document.createElement('div'); a.className = 'acompana'; a.innerHTML = dibujoMascota(m, .4); yo.el.appendChild(a); yo.mascotaEl = a; }
+    if (m) {   // la mascota va aparte (no dentro de tu unidad): no se mueve en bloque cuando atacas; tiene su propio avance
+      const caja = document.createElement('div'); caja.className = 'unidad unidad-mascota';
+      Object.assign(caja.style, { left: yo.x + 'px', top: yo.y + 'px', zIndex: 2 + Math.round(yo.y / 50) });
+      caja.innerHTML = `<div class="acompana">${dibujoMascota(m, .4)}</div>`; arenaG.appendChild(caja); yo.mascotaEl = caja;
+    }
     for (const u of enemigos) {
       dibujarUnidad(u);
       if (u.perfil) {   // un rey: se dibuja como un jugador

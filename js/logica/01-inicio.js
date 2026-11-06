@@ -7,7 +7,7 @@
   let logicaLista = false;   // toda la lógica cargada (js/logica/99-lista.js): antes, la colección no puede contar campañas ni jefes
   // La lógica avisa a la pantalla a través de `ui`: sin pantalla (Node, el simulador) son funciones vacías y js/pantalla
   // pone las de verdad (cada archivo registra las suyas). Así las reglas no dependen de la página.
-  const ui = { avisar() {}, mensaje() {}, pintarHud() {}, pintarCampanas() {}, aplicarEquipo() {}, repintarSala() {}, enBatalla: () => false };
+  const ui = { avisar() {}, mensaje() {}, pintarHud() {}, pintarCampanas() {}, aplicarEquipo() {}, repintarSala() {}, enBatalla: () => false, titanManual: () => false };
   // Modo pruebas: abriendo el archivo directamente (file://), en un servidor local en 127.0.0.1 con ?pruebas, o en la web
   // y la app Android tocando 7 veces la versión del Campamento (PRUEBAS_GESTO; otras 7 lo quitan). ?pruebas en la URL
   // desplegada no hace nada. Activado con el gesto usa otra partida (CLAVE), así no toca la real.

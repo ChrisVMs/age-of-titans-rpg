@@ -253,7 +253,7 @@
     pintarAura(slots[0].querySelector('.sombra'), c.grupo ? 0 : nivelAura());
     slots[1].classList.remove('escudado', 'tajando', 'furia'); prepararMascota();
     // por si se salió a mitad de un ataque: ambos vuelven a su sitio
-    slots.forEach(s => { s.querySelector('.pj').style.transform = ''; s.classList.remove('golpeado'); });
+    slots.forEach(s => { s.querySelector('.pj').style.transform = ''; s.classList.remove('golpeado', 'titan'); });
     marcoGuerrero.classList.remove('carga');
     $('pBatalla').classList.toggle('modo-grupo', c.grupo);
     const fondo = fondoBatalla(c); $('pBatalla').classList.toggle('con-fondo', !!fondo);
