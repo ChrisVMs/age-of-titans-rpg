@@ -32,16 +32,21 @@
   // El rival es un jugador del servidor (el de poder más cercano al pedido) que lucha como tú: sus habilidades, sets,
   // efectos y clase (cuenta la ventaja de clase). Sus atributos se escalan para que su poder sea el tuyo × f.
   // Antes era un monstruo con tus atributos y una sola habilidad: con el mismo poder ganabas casi siempre.
-  function rivalArena(f) {
-    const objetivo = poder() * f, c = rankingServidor().filter(x => !x.yo && x.poder > 0);
-    if (!c.length) return null;
-    const b = c.reduce((m, x) => Math.abs(x.poder - objetivo) < Math.abs(m.poder - objetivo) ? x : m);
-    return { perfil: b.bot, clase: b.clase, pct: objetivo / b.poder };
+  // Los 3 rivales de la lista, cada uno un jugador distinto (el de poder más cercano a tu poder × f que quede libre).
+  // La lista y la batalla muestran el mismo: su nombre y su clase reales. null: sin jugadores en el servidor.
+  function oponentesArena() {
+    const a = revisarArena(), yo = poder(), c = rankingServidor().filter(x => !x.yo && x.poder > 0), usados = new Set();
+    return a.rivales.map(r => {
+      const objetivo = yo * r.f, libres = c.filter(x => !usados.has(x.nombre)); if (!libres.length) return null;
+      const b = libres.reduce((m, x) => Math.abs(x.poder - objetivo) < Math.abs(m.poder - objetivo) ? x : m); usados.add(b.nombre);
+      return { nombre: b.nombre, clase: b.clase, perfil: b.bot, pct: objetivo / b.poder };
+    });
   }
   function batallaArena(i) {   // la batalla contra el rival i (sin gastar la entrada)
-    const a = revisarArena(), r = a.rivales[i], li = ligaDe(a.puntos), x = rivalArena(r.f);
-    return ({ nombre: `Arena: ${r.nombre}`, arena: true, premio: { oro: 300 + 150 * li, xp: 60, piedra: 4, polvo: 5 + li },   // la Arena es la fuente propia de polvo (refinar y pulir)
-      botin: { piedra: [0, 0], polvo: 0 }, enemigos: [x ? { nombre: `${CLASES[x.clase].icono} ${r.nombre}`, rival: true, perfil: x.perfil, pct: x.pct, oro: 0, xp: 0 }
+    const a = revisarArena(), r = a.rivales[i], li = ligaDe(a.puntos), x = oponentesArena()[i];
+    // contra un jugador, en la escena de grupo (se dibuja con su clase y equipo, como los reyes); aliados: [] para ir solo
+    return ({ nombre: `Arena: ${x ? x.nombre : r.nombre}`, arena: true, aliados: [], premio: { oro: 300 + 150 * li, xp: 60, piedra: 4, polvo: 5 + li },   // la Arena es la fuente propia de polvo (refinar y pulir)
+      botin: { piedra: [0, 0], polvo: 0 }, enemigos: [x ? { nombre: `${CLASES[x.clase].icono} ${x.nombre}`, rival: true, perfil: x.perfil, pct: x.pct, oro: 0, xp: 0 }
         : rivalSimple(r)] });
   }
   function rivalSimple(r) {   // sin jugadores en el servidor: una copia simplificada de ti

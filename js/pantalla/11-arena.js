@@ -1,10 +1,10 @@
   // ---------------- Arena (PvP asíncrono) (pantalla) ----------------
   function pintarArena() {
-    const a = revisarArena(), l = LIGAS[ligaDe(a.puntos)], st0 = estadisticas(), p = poder(st0);
+    const a = revisarArena(), l = LIGAS[ligaDe(a.puntos)], st0 = estadisticas(), p = poder(st0), op = oponentesArena();
     $('arenaPvp').innerHTML = `<div class="liga"><span class="ic"><img class="ic-liga" src="img/iconos/${l[3]}.png" alt=""></span><div><b>Liga ${l[1]}</b><br>${a.puntos} puntos · ${a.victorias || 0} victorias
         <br><small>Entradas hoy: ${a.entradas}/${ARENA_ENTRADAS} · Temporada: acaba en ${diasFinMes()} días · premio de tu liga: ${htmlPremio(PREMIO_LIGA[ligaDe(a.puntos)])}</small></div></div>
-      <small class="nota">PvP asíncrono: luchas contra copias de guerreros controladas por la IA, con un poder parecido al tuyo. Sus sprites de guerrero llegarán más adelante.</small>
-      ${a.rivales.map((r, i) => `<div class="rival"><span class="ic-runa"><img class="ic-grande" src="img/iconos/arena.png" alt=""></span><div class="info"><b>${r.nombre}</b><small><img class="ic-txt" src="img/iconos/poder.png" alt="">${Math.round(p * r.f).toLocaleString('es')} poder · ${r.puntos} pts</small>
+      <small class="nota">PvP asíncrono: luchas contra otros jugadores, controlados por la IA, con un poder parecido al tuyo.</small>
+      ${a.rivales.map((r, i) => `<div class="rival"><span class="ic-runa">${op[i] ? `<img class="ic-grande" src="img/iconos/clase_${op[i].clase}.png" alt="${CLASES[op[i].clase].nombre}">` : '<img class="ic-grande" src="img/iconos/arena.png" alt="">'}</span><div class="info"><b>${op[i] ? op[i].nombre : r.nombre}</b><small><img class="ic-txt" src="img/iconos/poder.png" alt="">${Math.round(p * r.f).toLocaleString('es')} poder · ${r.puntos} pts</small>
         <small>${r.f < .95 ? 'Fácil' : r.f > 1.05 ? 'Difícil' : 'Igualado'} · ganar: +${Math.round(25 * r.f)} pts</small></div>
         <button data-rival="${i}" ${a.entradas > 0 ? '' : 'disabled'}>Desafiar</button></div>`).join('')}
       <div class="fila" style="display:flex;gap:8px;align-items:center"><button data-acc="rivales" ${jugador.oro >= COSTE_RIVALES ? '' : 'disabled'}>Cambiar rivales</button><small>● ${COSTE_RIVALES}</small></div>`;
