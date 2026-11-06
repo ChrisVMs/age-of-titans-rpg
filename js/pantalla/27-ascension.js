@@ -88,6 +88,10 @@
         const capas = montarCapas(fr); conPerfil(u.perfil, () => pintarVista(capas));
         u.pj = personaje(u.el, 296); pintarVida(u.el, u.vida, u.vidaMax);
         if (u.e.jefe) u.el.classList.add('jefe');
+        const mr = conPerfil(u.perfil, mascotaActual);   // su mascota, aparte (como la tuya), mirando hacia ti
+        if (mr) { const caja = document.createElement('div'); caja.className = 'unidad unidad-mascota';
+          Object.assign(caja.style, { left: u.x + 'px', top: u.y + 'px', zIndex: 2 + Math.round(u.y / 50) });
+          caja.innerHTML = `<div class="acompana rival">${dibujoMascota(mr, .4)}</div>`; arenaG.appendChild(caja); u.mascotaEl = caja; }
       } else {
         if (u.e.jefe) u.el.classList.add('jefe');
         pintarHojaEnemigo(u.el.querySelector('.frames'), u.e);

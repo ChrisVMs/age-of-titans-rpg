@@ -337,7 +337,6 @@
     if (t.vida <= 0) morir(t);
   }
   // La mascota de un rival que es un jugador (arena, reyes): actúa como la tuya, en el turno de su bando, con sus datos.
-  // Sin dibujo propio (no hay hueco para ella en la escena): solo su número.
   function resolverMascotaRival(u, rivales, aliados) {
     const p = u.perfil, m = conPerfil(p, mascotaActual); if (!m || u.vida <= 0) return;
     u.turnoMascota = (u.turnoMascota || 0) + 1; if (u.turnoMascota < m.accion.turnos) return; u.turnoMascota = 0;
@@ -348,10 +347,12 @@
       curar(t, Math.min(t.vidaMax - t.vida, Math.round(atk * m.accion.mult * (1 + u.ef('curacion')))), '🐾 '); return;
     }
     const t = objetivoAlAzar(rivales); if (!t) return;
+    const R = reglas(); emitir('mascota', u, true); emitir('espera', R.esperas.mascotaIda);
     const def = factorDefensa({ armadura: armaduraEfectiva(t.st.armadura, u.ef('penetracion')), defensa: t.st.defensa }) * (1 - t.ef('reduccion'));
     const d = Math.max(1, Math.min(t.vida, Math.round(atk * m.accion.mult * def)));
     t.vida -= d; verVida(t); verFx(t, 'dano', `🐾 -${d}`);
     const ap = m.accion.aplica; if (ap && t.vida > 0 && rnd() < ap.prob) aplicarEstado(t, ap.estado, ap.turnos, Math.max(1, Math.round(atk * (ap.mult || 0))));
+    emitir('mascota', u, false); emitir('espera', R.esperas.mascotaVuelta);
     if (t.vida <= 0) morir(t);
   }
   function morir(u) {
@@ -382,7 +383,7 @@
     esquiva: 10,      // % extra de barra por cada golpe esquivado (las peleas cortas restaban valor a esquivar: asesino y arquero)
     recarga: .5,      // cada uso hace la siguiente carga más lenta (20 → 13 → 10 % por ronda)
     dura: 3,          // rondas activo (incluida la de activación)
-    ataque: 1,        // ×ataque mientras está activo (1: un +60 % durante 3 rondas coincidía con el meteoro de la maga mientras el asesino gastaba su ronda en Danza)
+    ataque: 2.2,      // ×ataque mientras está activo (+120 %, a prueba; con golpe ×8 el asesino aguanta: el +60 % con golpe por % de vida lo hundía)
     golpe: 8,         // golpe titánico al activarlo: ×daño de un golpe normal (tu ataque contra su defensa; sin crítico: con él, la maga quedaba atrás)
     tope: 15,         // desde esta ronda, ambos lados ganan ataque cada ronda
     escalada: 1.15,   // ×ataque acumulado por ronda pasado el tope

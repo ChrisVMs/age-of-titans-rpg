@@ -50,6 +50,7 @@ afinar Puñalada o la Danza vigilando la matriz (`duelosClase`) para no romper l
 - Verificación: 15/15 escenarios, 35/35 sistemas, igual con pantalla y sin ella.
 
 ## Decisiones
+- 2026-11-06 · Usuario: +120 % de ataque mientras el Titán está activo (a prueba), con golpe ×8. Medido (300 peleas): asesino-maga 0,65, asesino-arquero 0,39, arquero-maga 0,62, guerrero-asesino 0,89, maga-guerrero 0,65; duelos de ~10 a ~6-7 rondas.
 - 2026-11-05 · Usuario: el golpe titánico NO debe ser % de vida ("que se note la diferencia de poder, es incentivo para crecer"): ahora ×4 un golpe normal sin crítico (con crítico la maga quedaba atrás). Cadena con 300 peleas: asesino-maga 0,61, asesino-arquero 0,50, arquero-maga 0,62, guerrero-asesino 0,95, maga-guerrero 0,88; ~11-12 rondas. Usuario eligió ×8 y carga 25 %/ronda: ~10 rondas; asesino-maga 0,64, asesino-arquero 0,53, arquero-maga 0,62, guerrero-asesino 0,90, maga-guerrero 0,79.
 - 2026-11-05 · (anterior) Modo Titán (TITAN en 29-motor-del-combate.js), PvP: solo golpe del 25 % de la vida del rival + escalada desde la ronda 15; sin +ataque. Medido ronda a ronda: un +60 % en las rondas 5-7 coincidía con el meteoro de la maga (ronda 7) mientras el asesino gastaba la 6 en Danza (asesino-maga 0,59 → 0,42). Con 300 peleas por pareja: asesino-maga 0,55, asesino-arquero 0,49, arquero-maga 0,57; duelos de ~13 a ~10 rondas.
 - 2026-11-05 · Usuario: con la mascota del rival activa en combate (arena, reyes), arquero contra maga queda parejo (0,50, antes 0,58). "Aceptar empate": la prueba de la cadena lo admite.

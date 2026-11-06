@@ -19,7 +19,9 @@
       else if (tipo === 'marcar') marcarObjetivo(a[0]);
       else if (tipo === 'muerteU') { const [u, jefe] = a; if (!u.duelo) { await caeU(u); u.el.classList.add('muerto'); if (u.mascotaEl) u.mascotaEl.classList.add('muerto'); if (u.yo) pintarEspecial(); } else if (!u.heroe) await animarMuerte(jefe); else await caeHeroe(); }
       else if (tipo === 'titan') { const [u, on] = a; if (u.el) u.el.classList.toggle('titan', on); pintarTitan(); }
-      else if (tipo === 'mascota') { if (a[0].duelo) $('acompana').style.transform = a[1] ? `translateX(${avanceReal(420)}px) scale(1.2)` : ''; else if (a[0].mascotaEl) a[0].mascotaEl.style.transform = a[1] ? 'translateX(140px) scale(1.15)' : ''; }
+      else if (tipo === 'mascota') { const [u, va] = a, lado = u.lado === 0 ? 1 : -1;   // la tuya avanza a la derecha; la de un rival, a la izquierda
+        if (u.duelo) $(u.lado === 0 ? 'acompana' : 'acompanaRival').style.transform = va ? `translateX(${lado * avanceReal(420)}px) scale(1.2)` : '';
+        else if (u.mascotaEl) u.mascotaEl.style.transform = va ? `translateX(${lado * 140}px) scale(1.15)` : ''; }
       else if (tipo === 'transformar') await animarTransformacion();
       else if (tipo === 'siguiente') await mostrarEnemigo();
       else if (tipo === 'resultado') mostrarResultado(a[0]);

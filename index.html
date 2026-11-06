@@ -507,6 +507,8 @@
   .acompana { position:absolute; left:-60px; bottom:40px; font-size:54px; z-index:2; pointer-events:none;
               filter:drop-shadow(0 4px 4px #0008); animation:flotaMascota 1.8s ease-in-out infinite; transition:transform .2s ease-out; }
   @keyframes flotaMascota { 50% { translate:0 -6px; } }
+  .acompana.rival { left:auto; right:-60px; scale:-1 1; }   /* la mascota de un rival jugador: a su lado, mirando hacia ti */
+  .unidad .acompana.rival { left:auto; right:-40px; }
   .fila-cofre { display:flex; gap:8px; width:100%; } .fila-cofre button { flex:1; padding:10px 6px; font-size:15px; }
 
   /* Campaña */
@@ -1148,7 +1150,7 @@
           <div class="vida"><b id="nombreGuerrero">Guerrero</b><div class="barra"><i></i></div><div class="estados" id="estados0"></div></div>
           <div class="pj"><div class="frames guerrero" role="img" aria-label="Guerrero"></div></div>
         </div>
-        <div class="slot" id="s2"><div class="sombra"></div>
+        <div class="slot" id="s2"><div class="sombra"></div><div class="acompana rival" id="acompanaRival"></div>
           <div class="vida"><b id="nombreEnemigo"></b><div class="barra"><i></i></div><div class="estados" id="estados1"></div></div>
           <div class="espejo"><div class="pj"><div class="frames" role="img" aria-label="Enemigo"></div><div class="carga"></div><div class="curacion"></div><div class="escudo"></div><div class="tajo"></div></div></div>
         </div>
