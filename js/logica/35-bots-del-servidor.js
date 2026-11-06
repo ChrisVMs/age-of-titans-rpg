@@ -53,7 +53,9 @@
     return b;
   }
   let cacheBots = null;
-  const bots = () => cacheBots ||= DEF_BOTS.map(construirBot);
+  // Los jugadores del servidor son solo los bots que crecen día a día (servidor de bots, modo pruebas). DEF_BOTS ya no
+  // entran al ranking: quedan como partidas de prueba para cargar y como plantilla de los simuladores.
+  const bots = () => cacheBots ||= [];
   // evalúa cualquier función del juego "como si" el perfil fuera el jugador (estadísticas, efectos, poder)
   function conPerfil(perfil, fn) { const yo = jugador; jugador = perfil; try { return fn(); } finally { jugador = yo; } }
   function rankingServidor() {

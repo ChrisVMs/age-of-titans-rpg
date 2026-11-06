@@ -16,7 +16,7 @@
   function validarNombre(n) {
     if (n.length < 3 || n.length > 14) return 'El nombre debe tener entre 3 y 14 caracteres';
     if (!/^[\p{L}\p{N} _-]+$/u.test(n)) return 'Solo letras, números, espacios, - y _';
-    if (DEF_BOTS.some(d => d.nombre.toLowerCase() === n.toLowerCase())) return 'Ese nombre ya lo usa otro jugador';
+    if (bots().some(d => d.nombre.toLowerCase() === n.toLowerCase())) return 'Ese nombre ya lo usa otro jugador';
     return '';
   }
   const CATEGORIAS_BOLSA = ['espada', 'casco', 'armadura', 'capa'];

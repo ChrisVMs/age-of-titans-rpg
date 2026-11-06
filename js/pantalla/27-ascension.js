@@ -3,12 +3,12 @@
   $('volverFormacion').onclick = () => ir(volverDeFormacion);
   function pintarFormacion() {
     const F = jugador.formacion, quien = pos => F.pos === pos ? 'yo' : (F.aliados.find(a => a.pos === pos) || {}).bot;
-    const nombreDe = q => q === 'yo' ? `${CLASES[jugador.clase].icono} Tú` : `${CLASES[DEF_BOTS.find(d => d.nombre === q).clase].icono} ${q}`;
+    const nombreDe = q => q === 'yo' ? `${CLASES[jugador.clase].icono} Tú` : `${CLASES[(bots().find(d => d.nombre === q) || jugador).clase].icono} ${q}`;
     $('formacion').innerHTML = `<small class="nota">Elige una ficha y toca una casilla. Los golpes normales enemigos caen más en el frente
         (Frente 50 % · Arriba 20 % · Abajo 20 % · Retaguardia 10 %); las habilidades, en cualquiera. En grupo, máximo ${MAX_JUGADORES} jugadores
         (sin servidor, los aliados son los bots del ranking) y los enemigos tienen +${VIDA_POR_ALIADO * 100} % de vida por aliado.</small>
       <div class="fichas"><button data-ficha="yo" class="${fichaSel === 'yo' ? 'on' : ''}">${nombreDe('yo')}</button>
-        ${(MODO_PRUEBAS ? DEF_BOTS : []).map(d => `<button data-ficha="${d.nombre}" class="${fichaSel === d.nombre ? 'on' : ''}">${nombreDe(d.nombre)} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${conPerfil(bots().find(b => b.nombre === d.nombre), () => poder()).toLocaleString('es')}</button>`).join('')}
+        ${(MODO_PRUEBAS ? bots() : []).map(d => `<button data-ficha="${d.nombre}" class="${fichaSel === d.nombre ? 'on' : ''}">${nombreDe(d.nombre)} · <img class="ic-txt" src="img/iconos/poder.png" alt="">${conPerfil(d, () => poder()).toLocaleString('es')}</button>`).join('')}
         <button data-ficha="quitar" class="${fichaSel === 'quitar' ? 'on' : ''}">✖ Quitar aliado</button></div>
       <div class="rombo">${POSICIONES.map(pos => { const q = quien(pos);
         return `<button class="casilla${q ? ' ocupada' : ''}" data-pos="${pos}">${q ? nombreDe(q) : '—'}<small>${NOMBRE_POS[pos]} · ${PESO_POS[pos]} %</small></button>`; }).join('')}</div>

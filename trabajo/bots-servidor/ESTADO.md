@@ -11,6 +11,9 @@ Que el usuario lo pruebe (ranking, arena, Ecos, reyes, aliados con los bots nuev
 ritmos, días de inicio. Opcional: modo rápido (sin combate golpe a golpe) si en móvil va lento.
 
 ## Última sesión
+**2026-11-05 · Claude (sin bots fijos)**
+- `bots()` ya no usa `DEF_BOTS` (Kaito, Lyra…): el servidor son solo los bots que crecen. `DEF_BOTS` queda para "Jugar con la partida de un bot" y los simuladores. Sin 3 jugadores no hay Torre de reyes (`puedeJugar`, simulador). Fichas de Formación desde `bots()`. Sin commit. Pruebas: escenarios, sistemas y sin-pantalla OK.
+
 **2026-11-03 · Claude (tipos de jugador)**
 - `RITMOS_BOT` ahora usa `TIPOS_JUGADOR` (casual/constante/pago: estamina extra, gasto, reintentos, rival de arena); `VERSION_SERVIDOR` 3. Ver `trabajo/tipos-jugador/`.
 

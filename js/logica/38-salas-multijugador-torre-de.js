@@ -48,5 +48,5 @@
     const fuera = new Set([jugador.nombre, ...sala.miembros.map(m => m.n)]);
     return bots().filter(b => !fuera.has(b.nombre));
   }
-  const puedeJugar = modo => modo === 'calabozo' ? true : revisarReyes().entradas > 0;   // calabozo sin intentos: entra como ayuda
+  const puedeJugar = modo => modo === 'calabozo' ? true : revisarReyes().entradas > 0 && reyesSemana().length === 3;   // sin 3 jugadores en el servidor no hay reyes   // calabozo sin intentos: entra como ayuda
   const ayudaCalabozo = modo => modo === 'calabozo' && revisarCalabozo().entradas <= 0;

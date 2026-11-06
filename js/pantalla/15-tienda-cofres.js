@@ -93,7 +93,7 @@
       if (b.dataset.bot === 'volver') { localStorage.setItem(CLAVE, localStorage.getItem(CLAVE_RESPALDO)); localStorage.removeItem(CLAVE_RESPALDO); }
       else {
         if (!jugador.bot) localStorage.setItem(CLAVE_RESPALDO, JSON.stringify(jugador));   // solo se respalda tu partida real
-        const bot = JSON.parse(JSON.stringify(bots()[+b.dataset.bot])); bot.sigUid = 990000;
+        const bot = construirBot(DEF_BOTS[+b.dataset.bot], +b.dataset.bot); bot.sigUid = 990000;
         localStorage.setItem(CLAVE, JSON.stringify(bot));
       }
     } catch { avisar('No se pudo cambiar de perfil'); return; }

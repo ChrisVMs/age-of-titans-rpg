@@ -3,11 +3,13 @@
 const t0 = Date.now();
 const PRUEBAS = {
   'Pacto: miembros del servidor, donaciones con tope diario, tecnología con fondos y bono en las estadísticas': `
+    cacheBots = DEF_BOTS.map(construirBot);   // un servidor con jugadores (sin bots fijos, el pacto sale de los del servidor)
     jugador.nivel = NIVEL_PACTO; jugador.oro = 1e6; delete jugador.pacto;
     const P = pacto(), f0 = P.fondos, ok = [donarPacto(), donarPacto(), donarPacto(), donarPacto()];
     P.fondos = costeTec(0); const sube = mejorarTec('fuerza'), bono = statsPacto().ataque;
     [P.miembros.length === PACTO_MIEMBROS - 1, ok.join() === 'true,true,true,false', P.fondos === 0, sube, bono === TEC_PACTO[0].pct, !mejorarTec('fuerza')]`,
   'Pacto: el jefe semanal comparte la vida; tus intentos son limitados; los bots le pegan cada día; premio una vez': `
+    cacheBots = DEF_BOTS.map(construirBot);   // un servidor con jugadores (sin bots fijos, el pacto sale de los del servidor)
     jugador.nivel = NIVEL_PACTO; delete jugador.pacto; const P = pacto(), v0 = P.jefe.vida;
     const c = batallaPacto(); jugarHastaFin(c, habLista, 300); cobrarResultado(false);
     const v1 = P.jefe.vida, mio = P.jefe.dano.yo || 0;
@@ -249,7 +251,8 @@ const PRUEBAS = {
      v('guerrero', 'asesino') > .55, v('guerrero', 'arquero') > .55, v('mago', 'guerrero') > .55, v('asesino', 'mago') > .52, v('arquero', 'mago') > .55,
      Math.abs(v('asesino', 'arquero') - .5) < .15]`,
   'Arena: el rival es un jugador del servidor con tu poder × f (lucha con sus habilidades)': `
-    const A = revisarArena(), e = batallaArena(1).enemigos[0], pd = conPerfil(e.perfil, () => poder()) * e.pct;
+    const antes = cacheBots; cacheBots = DEF_BOTS.slice(0, 3).map(construirBot);   // un servidor con jugadores
+    const A = revisarArena(), e = batallaArena(1).enemigos[0], pd = conPerfil(e.perfil, () => poder()) * e.pct; cacheBots = antes;
     [!!e.perfil, e.pct > 0, Math.abs(pd / (poder() * A.rivales[1].f) - 1) < .01]`,
   'Contenido alto: el arte de un enemigo se enchufa como dato (hoja)': `
     const T = TIPOS_ENEMIGO.esqueleto, antes = T.hoja; T.hoja = 'img/enemigos/esqueleto.png';

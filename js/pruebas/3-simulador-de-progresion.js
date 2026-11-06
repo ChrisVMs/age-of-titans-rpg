@@ -233,7 +233,7 @@
               const [id, df] = opcionCalabozoSim(pocos);
               if (id) { revisarCalabozo().entradas--; k = `cal${id}:${df}`; c = batallaCalabozo(df, ['x'], null, id); }
             }
-            if (!c && desbloqueado('pReyes') && revisarReyes().entradas > 0) {
+            if (!c && desbloqueado('pReyes') && revisarReyes().entradas > 0 && reyesSemana().length === 3) {   // sin 3 jugadores en el servidor no hay reyes
               const df = opcionReyesSim(pocos);
               if (df) { revisarReyes().entradas--; k = 'reyes' + df; c = batallaReyes(df, ['x'], null); }
             }
