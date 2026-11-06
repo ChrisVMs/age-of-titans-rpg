@@ -245,7 +245,7 @@
   }
   async function iniciarCampana(c) {
     revisarEstamina();
-    const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo || c.grieta ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
+    const coste = c.arena || c.mundial || c.torre || c.reyes || c.calabozo || c.grieta || c.pacto ? 0 : (c.coste || ESTAMINA_CAMPANA);   // arena y jefes gastan entradas, no estamina
     if (jugador.estamina < coste) { avisar('Sin estamina: vuelve mañana'); return; }
     jugador.estamina -= coste; if (coste) contarMision('estamina', coste); guardar(); pintarHud();
     prepararBatalla(c);
@@ -310,7 +310,7 @@
       if (acc === 'salir') salirBatalla(batalla.campana.grieta ? 'pGrieta' : 'pCampana');
     };
   };
-  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.eco ? 'pRanking' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.grieta ? 'pGrieta' : batalla.campana.reyes ? 'pReyes' : 'pCampana');
+  $('resSalir').onclick = () => salirBatalla(batalla.campana.mundial ? 'pEvento' : batalla.campana.eco ? 'pRanking' : batalla.campana.arena ? 'pArena' : batalla.campana.torre ? 'pTorre' : batalla.campana.grieta ? 'pGrieta' : batalla.campana.reyes ? 'pReyes' : batalla.campana.pacto ? 'pPacto' : 'pCampana');
   // "Otra" (subir al piso siguiente, jugar de nuevo, reintentar): si venías con el autoataque, la siguiente batalla sigue con él
   let autoSeguir = false;
   $('resOtra').onclick = async () => {
@@ -331,8 +331,8 @@
     $('resTexto').innerHTML += extraRes + (!gano && !batalla.campana.mundial ? '<br><small>El botín solo se cobra al ganar la batalla.</small>' : '')
       + (obtenidos.length ? `<div class="obtenidos">Obtenido: ${obtenidos.map(o => `<button class="item r-${modelo[o.modelo].rareza}" data-uid="${o.uid}">${icono(modelo[o.modelo])}</button>`).join('')}</div>` : '');
     $('resOtra').textContent = batalla.campana.torre ? (gano ? `Subir al piso ${batalla.campana.torre + 1}` : 'Reintentar') : gano ? 'Jugar de nuevo' : 'Reintentar';
-    $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo || batalla.campana.grieta ? 'none' : '';
-    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.eco ? 'Volver a los Ecos' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : batalla.campana.grieta ? 'Volver a la Grieta' : 'Volver a campaña';
+    $('resOtra').style.display = (batalla.campana.mundial && gano) || batalla.campana.arena || batalla.campana.reyes || batalla.campana.calabozo || batalla.campana.grieta || batalla.campana.pacto ? 'none' : '';
+    $('resSalir').textContent = batalla.campana.mundial ? 'Volver al evento' : batalla.campana.eco ? 'Volver a los Ecos' : batalla.campana.arena ? 'Volver a la arena' : batalla.campana.torre ? 'Volver a la torre' : batalla.campana.reyes ? 'Volver a la Torre de reyes' : batalla.campana.calabozo ? 'Volver al calabozo' : batalla.campana.grieta ? 'Volver a la Grieta' : batalla.campana.pacto ? 'Volver al Pacto' : 'Volver a campaña';
     $('resultado').classList.add('visible');
     if (!gano && batalla.enemigo.minotauro) { parca.frames.classList.add('quieto'); parca.ver(19); }   // rugido de victoria
     if (!gano && batalla.enemigo.asmodeo) { parca.frames.classList.add('quieto'); parca.ver(16); }   // pose de victoria

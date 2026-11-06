@@ -40,6 +40,8 @@
       const df = opcionReyesSim(pocos);
       if (df) return { clave: 'reyes' + df, iniciar: () => iniciarReyes(df, botAliados(), null) };
     }
+    if (desbloqueado('pPacto') && pacto().intentos < INTENTOS_JEFE_PACTO && pacto().jefe.vida > 0)
+      return { clave: 'pacto', iniciar: () => { const c = batallaPacto(); if (c) iniciarCampana(c); } };
     if (retoPendiente()) return { clave: 'eco', iniciar: () => iniciarCampana(batallaEco()) };   // reto del Eco
     if (desbloqueado('pGrieta')) {   // Grieta: bendición y el siguiente piso
       elegirBendicion(bendicionSugerida());
@@ -91,7 +93,7 @@
     if (tipoBot().anuncios && cobrarAnuncio()) return `Bot: anuncio +${ESTAMINA_ANUNCIO} ⚡`;
     if (tipoBot().cristales && recargarConCristales()) return `Bot: 💎 ${RECARGA_CRISTALES.coste} → +${RECARGA_CRISTALES.estamina} ⚡`;
     desguazar(jugador.objetos.filter(o => !Object.values(jugador.equipado).includes(o.uid)));
-    simMejorar(); simRunas(); simRefinar();
+    simMejorar(); simRunas(); simRefinar(); simPacto();
     offsetDias++;
     while (tipoBot().juega < 1 && rnd() >= tipoBot().juega) offsetDias++;   // días que este tipo de jugador no entra
     try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}

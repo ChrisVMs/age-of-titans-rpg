@@ -16,7 +16,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
 | [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | pausado | Espera el arte: prompts listos y arte enchufable como dato | 2026-11-03 · Claude |
-| [Retención a largo plazo](retencion/ESTADO.md) | pausado | Pacto e Invasiones: esperan servidor real | 2026-10-29 · Claude |
+| [Retención a largo plazo](retencion/ESTADO.md) | en curso | Pacto local hecho: que el usuario lo pruebe; luego servidor real, aviso Android del asalto, contenido post-Nv 80. | 2026-11-04 · Claude |
 
 ### Estados
 | Estado | Significa | Qué hacer al retomarlo |

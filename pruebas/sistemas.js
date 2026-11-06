@@ -2,6 +2,19 @@
 // Cada prueba corre en un juego recién cargado (partida nueva). Añadir una = añadir una entrada a PRUEBAS.
 const t0 = Date.now();
 const PRUEBAS = {
+  'Pacto: miembros del servidor, donaciones con tope diario, tecnología con fondos y bono en las estadísticas': `
+    jugador.nivel = NIVEL_PACTO; jugador.oro = 1e6; delete jugador.pacto;
+    const P = pacto(), f0 = P.fondos, ok = [donarPacto(), donarPacto(), donarPacto(), donarPacto()];
+    P.fondos = costeTec(0); const sube = mejorarTec('fuerza'), bono = statsPacto().ataque;
+    [P.miembros.length === PACTO_MIEMBROS - 1, ok.join() === 'true,true,true,false', P.fondos === 0, sube, bono === TEC_PACTO[0].pct, !mejorarTec('fuerza')]`,
+  'Pacto: el jefe semanal comparte la vida; tus intentos son limitados; los bots le pegan cada día; premio una vez': `
+    jugador.nivel = NIVEL_PACTO; delete jugador.pacto; const P = pacto(), v0 = P.jefe.vida;
+    const c = batallaPacto(); jugarHastaFin(c, habLista, 300); cobrarResultado(false);
+    const v1 = P.jefe.vida, mio = P.jefe.dano.yo || 0;
+    batallaPacto(); const sin = batallaPacto();
+    offsetDias++; pacto(); const v2 = P.jefe.vida;
+    P.jefe.vida = 0; const premio = cobrarPremioPacto(), otra = cobrarPremioPacto();
+    [v1 < v0 && v0 - v1 === mio, sin === null, P.intentos === 0, v2 < v1, !!premio, otra === null]`,
   'simMejorar en una partida sin mascotas, runas ni skins todavía (bot de pantalla tras perder)': `
     delete jugador.mascotas; delete jugador.runas; delete jugador.skinsPropias; jugador.oro = 1e5; simMejorar();
     [typeof jugador.mascotas === 'object', Array.isArray(jugador.runas)]`,

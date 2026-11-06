@@ -152,7 +152,7 @@ Four legendary "ancient ones" equipment icons for a cartoon fantasy RPG inventor
 Destino: `eq_espada_antigua`, `eq_casco_antiguo`, `eq_armadura_antigua`, `eq_capa_antigua`, con `python3 tools/iconos_menu.py`
 (entrada nueva en `HOJAS`), y en el campo `icono` de cada modelo Ancestral (`MODELOS`, `js/logica/05-encantamiento-y-refinamiento.js`).
 
-### Calabozos 5-8 — `iconos_calabozos_alto.jpg` (1024×256, 4×1) + bloque común
+### Calabozos 5-8 — `iconos_calabozos_alto.jpg` (1024×256, 4×1) + bloque común — GENERADA (`cal_5` … `cal_8`, ya en la pantalla del calabozo)
 Hoy son emoji (💀 👑 🔥 🕳️).
 ```
 Four dungeon entrance icons for a cartoon fantasy RPG. Absolutely no text.
@@ -160,6 +160,12 @@ Four dungeon entrance icons for a cartoon fantasy RPG. Absolutely no text.
 ```
 Destino: `cal_5` … `cal_8`. Ojo: hoy `icono` de `CALABOZOS` es texto (emoji) y se muestra en un combo, donde no caben
 imágenes: al llegar los iconos habrá que pintarlos fuera del combo (p. ej. en la ficha del calabozo elegido).
+
+### Pacto — 1 icono (512×512) + bloque común — PENDIENTE (hoy usa `calabozo.png`)
+```
+One square icon for a cartoon fantasy RPG menu: the "Pact", a guild of heroes. Two gauntleted hands clasping over a round shield with a banner. Absolutely no text.
+```
+Destino: `img/iconos/pacto.png` (entrada en `HOJAS` de `tools/iconos_menu.py`) y el `campPacto` de index.html.
 
 ## Fondos
 
