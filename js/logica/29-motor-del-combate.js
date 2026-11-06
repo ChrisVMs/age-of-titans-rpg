@@ -375,7 +375,7 @@
     const P = batalla.pendiente; P.oro += e.oro; P.xp += e.xp; P.piedra += mat.piedra; P.polvo += mat.polvo;
   }
 
-  // ---- Modo Titán (combates entre jugadores: arena, reyes, duelos) ----
+  // ---- Modo Titán (todas las batallas; solo lo tienen los jugadores: tú, aliados, reyes y rivales; los monstruos no) ----
   // Cada jugador carga su barra cada ronda; llena, se activa (sola en auto y en los bots; tú, con el botón ⚡): golpe titánico
   // y más ataque unas rondas. Tras TITAN.tope rondas, ambos lados pegan más cada ronda: ninguna pelea se eterniza.
   const TITAN = {
@@ -388,7 +388,6 @@
     tope: 15,         // desde esta ronda, ambos lados ganan ataque cada ronda
     escalada: 1.15,   // ×ataque acumulado por ronda pasado el tope
   };
-  const pvp = () => batalla.grupo.enemigos.some(u => u.perfil);
   const titanListo = u => !!u && !!u.titan && u.titan.carga >= 100 && !u.titan.activo;
   function ataqueTitan(u) {   // el ataque del jugador según su estado: base × Titán activo × escalada pasado el tope
     const T = u.titan, extra = Math.max(0, batalla.rondaTitan - TITAN.tope);
@@ -399,14 +398,14 @@
     emitir('titan', u, true); verFx(u, 'num-cura', '⚡ ¡MODO TITÁN!');
     const t = objetivoAlAzar(rivales); if (!t) return;
     let m = TITAN.golpe * ventajaClase(u.clase, t.clase);   // depende de tu poder: crecer se nota
-    m *= factorDefensa({ armadura: armaduraEfectiva(t.st.armadura, u.ef('penetracion')), defensa: t.st.defensa }) * (1 - t.ef('reduccion'));
+    const dt = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };   // un monstruo guarda su defensa en e
+    m *= factorDefensa({ armadura: armaduraEfectiva(dt.armadura, u.ef('penetracion')), defensa: dt.defensa }) * (1 - t.ef('reduccion'));
     const d = Math.max(1, Math.min(t.vida, Math.round(danoGuerrero({ ...u.st, ataque: T.base }) * m)));
     t.vida -= d; if (u.lado === 0) batalla.danoHecho += d; verVida(t); verFx(t, 'dano critico', `⚡ -${d} TITÁN!`, 200);
     emitir('espera', reglas().esperas.contra);
     if (t.vida <= 0) morir(t);
   }
   function resolverTitan(G) {
-    if (!pvp()) return;
     batalla.rondaTitan = (batalla.rondaTitan || 0) + 1;
     for (const [u, rivales] of [...G.heroes.map(u => [u, G.enemigos]), ...G.enemigos.map(u => [u, G.heroes])]) {
       if (!u.perfil || u.vida <= 0) continue;

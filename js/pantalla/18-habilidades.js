@@ -99,7 +99,7 @@
   // Modo Titán: barra (TITAN, 29-motor-del-combate.js) y botón; en auto o con el bot se activa solo
   ui.titanManual = () => !auto && !simulando && !(typeof botModo !== 'undefined' && botModo);
   function pintarTitan() {
-    const b = $('btnTitan'), u = batalla.grupo && !batalla.terminada && pvp() ? heroeYo() : null;
+    const b = $('btnTitan'), u = batalla.grupo && !batalla.terminada ? heroeYo() : null;
     b.hidden = !u; if (!u) return;
     const T = u.titan || { carga: 0, activo: 0 }, pct = T.activo ? 100 : Math.floor(T.carga);
     b.querySelector('small').textContent = T.activo ? `${T.activo} r` : `${pct} %`; b.style.setProperty('--titan', pct + '%');

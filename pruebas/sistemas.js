@@ -21,12 +21,12 @@ const PRUEBAS = {
     jugador.nivel = 10; jugador.estamina = ESTAMINA_MAX; const d0 = offsetDias, dia = hoy();
     const r = simularProgresion({ dias: 1, semilla: 7, perfil: structuredClone(jugador), tipo: { ...TIPOS_JUGADOR.constante, juega: 1, gasto: 1, estaminaExtra: 0 } });
     [!!r, r.jugador.estamina < ESTAMINA_CAMPANA, r.jugador.diaEstamina === dia, offsetDias === d0]`,
-  'Modo Titán: solo entre jugadores; carga, se activa sola (sin pantalla) y el golpe quita parte de la vida máxima': `
+  'Modo Titán: en toda batalla, solo para jugadores; carga, se activa sola (sin pantalla) y el golpe hace daño': `
     const antes = cacheBots; cacheBots = DEF_BOTS.slice(0, 3).map(construirBot);
     const c = batallaArena(1); prepararBatalla(c); const G = batalla.grupo, yo = heroeYo(), r = G.enemigos[0];
     for (let i = 0; i < 100 / TITAN.carga - 1; i++) resolverTitan(G);
     const casi = yo.titan.carga, v0 = r.vida; resolverTitan(G); cacheBots = antes;
-    const monstruo = (prepararBatalla({ ...crearDificultad(5, 'normal', ['parca']), nombre: 'm', botin: { piedra: [0, 0], polvo: 0 }, premio: {} }), resolverTitan(batalla.grupo), !heroeYo().titan);
+    const monstruo = (prepararBatalla({ ...crearDificultad(5, 'normal', ['parca']), nombre: 'm', botin: { piedra: [0, 0], polvo: 0 }, premio: {} }), resolverTitan(batalla.grupo), !!heroeYo().titan && batalla.grupo.enemigos.every(e => !e.titan));
     [casi < 100, yo.titan.activo === TITAN.dura, r.vida < v0, monstruo]`,
   'simMejorar en una partida sin mascotas, runas ni skins todavía (bot de pantalla tras perder)': `
     delete jugador.mascotas; delete jugador.runas; delete jugador.skinsPropias; jugador.oro = 1e5; simMejorar();
