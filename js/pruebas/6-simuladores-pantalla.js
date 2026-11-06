@@ -20,6 +20,14 @@
   let hiloSim = null, cancelarSim = null, sim = null, tipoSim = 'constante';   // tipo de jugador (TIPOS_JUGADOR)
   const diasPedidos = def => Math.max(1, Math.min(DIAS_SIM_MAX, Math.round(+$('simDias').value || def)));
   const campoDias = def => `<label class="prueba-check">Días <input id="simDias" type="number" min="1" max="${DIAS_SIM_MAX}" value="${def}" style="width:70px"></label>`;
+  // Un clic: tu personaje juega lo que queda de hoy (estamina, arena, calabozos, jefes…) con el simulador, sin batallas en
+  // pantalla, como un jugador constante que lo gasta todo. El día de juego no cambia.
+  $('hoyPrueba').onclick = () => {
+    if (!MODO_PRUEBAS) return;
+    if (ui.enBatalla()) return avisar('Termina la batalla primero');
+    const t = jugarHoySinPantalla({ ...TIPOS_JUGADOR.constante, gasto: 1, estaminaExtra: 0 });
+    avisar(t ? `⚡ ${t}` : 'No se pudo simular');
+  };
   $('progPrueba').onclick = () => {
     if (!MODO_PRUEBAS) return;
     const tipos = () => Object.entries(TIPOS_JUGADOR).map(([k, t]) => `<button data-tipo="${k}" class="${k === tipoSim ? 'on' : ''}">${t.nombre}</button>`).join('');

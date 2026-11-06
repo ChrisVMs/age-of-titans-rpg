@@ -17,6 +17,10 @@ const PRUEBAS = {
     offsetDias++; pacto(); const v2 = P.jefe.vida;
     P.jefe.vida = 0; const premio = cobrarPremioPacto(), otra = cobrarPremioPacto();
     [v1 < v0 && v0 - v1 === mio, sin === null, P.intentos === 0, v2 < v1, !!premio, otra === null]`,
+  'Jugar hoy sin pantalla: el simulador gasta la estamina de hoy con tu partida y no cambia el día': `
+    jugador.nivel = 10; jugador.estamina = ESTAMINA_MAX; const d0 = offsetDias, dia = hoy();
+    const r = simularProgresion({ dias: 1, semilla: 7, perfil: structuredClone(jugador), tipo: { ...TIPOS_JUGADOR.constante, juega: 1, gasto: 1, estaminaExtra: 0 } });
+    [!!r, r.jugador.estamina < ESTAMINA_CAMPANA, r.jugador.diaEstamina === dia, offsetDias === d0]`,
   'simMejorar en una partida sin mascotas, runas ni skins todavía (bot de pantalla tras perder)': `
     delete jugador.mascotas; delete jugador.runas; delete jugador.skinsPropias; jugador.oro = 1e5; simMejorar();
     [typeof jugador.mascotas === 'object', Array.isArray(jugador.runas)]`,

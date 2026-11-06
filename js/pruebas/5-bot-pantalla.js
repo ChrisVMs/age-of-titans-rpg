@@ -106,9 +106,42 @@
     $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
     return `Bot: día ${offsetDias + 1}`;
   }
+  // Juega hoy con el simulador (sin batallas en pantalla) y la partida resultante pasa a ser la tuya. El día no cambia.
+  // tipo: campos de TIPOS_JUGADOR (estamina extra, cuánta gasta, arena, habilidades). Devuelve el resumen o null.
+  function jugarHoySinPantalla(tipo) {
+    const antes = { nivel: jugador.nivel, poder: poder() };
+    const r = simularProgresion({ dias: 1, semilla: Date.now() % 1e6, perfil: structuredClone(jugador), tipo: { ...tipo, juega: 1 } });
+    if (!r) return null;
+    jugador = Object.assign(r.jugador, { nombre: jugador.nombre }); sigUid = Math.max(sigUid, r.jugador.sigUid || 0);
+    guardar(); ui.aplicarEquipo(); pintarHud(); pintarCampamento();
+    return `Día ${offsetDias + 1} jugado: Nv ${antes.nivel} → ${jugador.nivel} · ⚔ ${antes.poder.toLocaleString('es')} → ${poder().toLocaleString('es')}`;
+  }
+  // Bot sin pantalla: cada día lo juega el simulador según el tipo del bot y pasa al siguiente (se para con "Parar")
+  async function botJugarRapido() {
+    if (pantallaActual === 'pBatalla') { if ($('resultado').classList.contains('visible')) $('resSalir').click(); else { avisar('Bot: termina la batalla primero'); return botParar(); } }
+    while (botModo === 'jugar') {
+      if (!botSinPantalla) return botJugar();   // se desactivó con el bot en marcha: sigue con batallas en pantalla
+      const t = jugarHoySinPantalla(tipoBot());
+      if (!t) { avisar('Bot: no se pudo simular'); break; }
+      avisar(`Bot: ${t}`);
+      offsetDias++;
+      while (tipoBot().juega < 1 && rnd() >= tipoBot().juega) offsetDias++;   // días que este tipo de jugador no entra
+      try { localStorage.setItem(DIA_PRUEBA, offsetDias); } catch {}
+      revisarEstamina(); revisarDia(); guardar(); pintarHud();
+      $('diaPrueba').textContent = `Día ${offsetDias + 1}`;
+      await esperar(1500);   // da tiempo a ver el aviso y a pulsar Parar
+    }
+    botParar();
+  }
+  let botSinPantalla = false; try { botSinPantalla = localStorage.getItem('batalla.botSinPantalla') === '1'; } catch {}
+  const pintarBotSinPantalla = () => { $('botSinPantalla').textContent = `⚡ Bot sin pantalla: ${botSinPantalla ? 'sí' : 'no'}`; };
+  $('botSinPantalla').onclick = () => { botSinPantalla = !botSinPantalla; try { localStorage.setItem('batalla.botSinPantalla', botSinPantalla ? '1' : '0'); } catch {} pintarBotSinPantalla();
+    if (botModo === 'jugar') avisar(botSinPantalla ? 'Bot: sin pantalla desde la próxima batalla' : 'Bot: con batallas en pantalla desde el próximo día'); };
+  pintarBotSinPantalla();
   async function botJugar() {
     if (pantallaActual === 'pBatalla' && $('resultado').classList.contains('visible')) $('resSalir').click();
     while (botModo === 'jugar') {
+      if (botSinPantalla && pantallaActual !== 'pBatalla') return botJugarRapido();   // se activó con el bot en marcha (entre batallas)
       botCerrarMensajes(); botPreparar();
       const acc = botSiguiente();
       if (!acc) { avisar(botRecargarOPasarDia()); guardar(); pintarHud(); await esperar(800); continue; }
@@ -126,7 +159,7 @@
     if (!MODO_PRUEBAS || botModo) return;
     botModo = modo; botVel = velElegida; botFijarReserva();
     $('pruebasMenu').classList.remove('visible'); $('botParar').hidden = false;
-    (modo === 'jugar' ? botJugar() : botRepetir()).catch(e => { console.error(e); avisar('Bot: error, ver consola'); botParar(); });
+    (modo === 'jugar' ? (botSinPantalla ? botJugarRapido() : botJugar()) : botRepetir()).catch(e => { console.error(e); avisar('Bot: error, ver consola'); botParar(); });
   }
   function botParar() {
     if (!botModo) return;
