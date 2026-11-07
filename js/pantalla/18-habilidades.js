@@ -99,13 +99,20 @@
   // Modo Titán: barra (TITAN, 29-motor-del-combate.js) y botón; en auto o con el bot se activa solo
   ui.titanManual = () => !auto && !simulando && !(typeof botModo !== 'undefined' && botModo);
   function pintarTitan() {
-    const b = $('btnTitan'), u = batalla.grupo && !batalla.terminada ? heroeYo() : null;
+    const b = $('btnTitan'), u = batalla.grupo && !batalla.terminada && nivelTitan() ? heroeYo() : null;
     b.hidden = !u; if (!u) return;
-    const T = u.titan || { carga: 0, activo: 0 }, pct = T.activo ? 100 : Math.floor(T.carga);
+    const T = u.titan || { carga: 0, activo: 0 }, pct = T.activo ? 100 : Math.floor(T.carga), def = definitivaLista(u), D = DEFINITIVAS[jugador.clase];
+    // con el Titán activo y la definitiva disponible (Nv 5+), el mismo botón la lanza
+    b.firstChild.textContent = def && D ? D.icono : '⚡'; b.title = def && D ? D.nombre : 'Modo Titán';
     b.querySelector('small').textContent = T.activo ? `${T.activo} r` : `${pct} %`; b.style.setProperty('--titan', pct + '%');
-    b.classList.toggle('listo', titanListo(u)); b.disabled = !titanListo(u) || enRonda || auto || batalla.terminada || batalla.titanPedido;
+    const puede = titanListo(u) || def;
+    b.classList.toggle('listo', puede); b.disabled = !puede || enRonda || auto || batalla.terminada || batalla.titanPedido || batalla.definitivaPedida;
   }
-  $('btnTitan').onclick = () => { if (titanListo(heroeYo()) && !enRonda && !auto) { batalla.titanPedido = true; ronda(null); } };
+  $('btnTitan').onclick = () => {
+    const u = heroeYo(); if (enRonda || auto) return;
+    if (titanListo(u)) batalla.titanPedido = true; else if (definitivaLista(u)) batalla.definitivaPedida = true; else return;
+    ronda(null);
+  };
   document.querySelector('#pBatalla').addEventListener('click', e => {
     const b = e.target.closest('[data-hab]'); if (!b || b.disabled) return;
     const h = HABILIDADES.find(x => x.id === b.dataset.hab) || HAB_TODAS.find(x => x.id === b.dataset.hab);

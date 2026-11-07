@@ -25,7 +25,8 @@
         for (let i = 0; i < 4; i++) { const v = e.vida; resolverRonda(null); d.push(v - e.vida); }
         return d;
       };
-      const sin = golpes(false), con = golpes(true);
+      TITAN.activo = false;   // sin Titán: su golpe se mezclaría con el daño de la Danza
+      let sin, con; try { sin = golpes(false); con = golpes(true); } finally { TITAN.activo = true; }
       if (!con) return 'Danza golpeó al enemigo';
       const r = con.map((x, i) => x / sin[i]);
       return r.slice(0, 3).every(x => Math.abs(x - 1 - BUFF_DANZA.dano) < .1) && Math.abs(r[3] - 1) < .02 || `proporción por golpe: ${r.map(x => x.toFixed(2))}`;

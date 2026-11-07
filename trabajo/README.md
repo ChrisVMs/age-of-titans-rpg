@@ -13,6 +13,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 | [Generador de jugadores bot](bots-servidor/ESTADO.md) | en curso · **prioridad alta** | Hecho: 99 bots automáticos (hilos, incremental). Que el usuario lo pruebe y ajuste. | 2026-11-03 · Claude |
 | [Tipos de jugador (simular jugadores reales)](tipos-jugador/ESTADO.md) | pausado | Fases 1-4 hechas; ajustar tipos con datos reales. Que el usuario pruebe el bot. | 2026-11-03 · Claude |
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |
+| [Skin Escarcha del Asesino](skin-escarcha/ESTADO.md) | en curso | En el juego: que el usuario la pruebe. | 2026-11-07 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
 | [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | pausado | Espera el arte: prompts listos y arte enchufable como dato | 2026-11-03 · Claude |

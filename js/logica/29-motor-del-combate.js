@@ -336,7 +336,7 @@
     emitir('mascota', yo, false); emitir('espera', R.esperas.mascotaVuelta);
     if (t.vida <= 0) morir(t);
   }
-  // La mascota de un rival que es un jugador (arena, reyes): actúa como la tuya, en el turno de su bando, con sus datos.
+  // La mascota de otro jugador (un rival de arena, un rey o un aliado): actúa como la tuya, en el turno de su bando, con sus datos.
   function resolverMascotaRival(u, rivales, aliados) {
     const p = u.perfil, m = conPerfil(p, mascotaActual); if (!m || u.vida <= 0) return;
     u.turnoMascota = (u.turnoMascota || 0) + 1; if (u.turnoMascota < m.accion.turnos) return; u.turnoMascota = 0;
@@ -375,47 +375,66 @@
     const P = batalla.pendiente; P.oro += e.oro; P.xp += e.xp; P.piedra += mat.piedra; P.polvo += mat.polvo;
   }
 
-  // ---- Modo Titán (todas las batallas; solo lo tienen los jugadores: tú, aliados, reyes y rivales; los monstruos no) ----
+  // ---- Modo Titán (todas las batallas; solo lo tienen los jugadores con él desbloqueado; los monstruos no) ----
   // Cada jugador carga su barra cada ronda; llena, se activa (sola en auto y en los bots; tú, con el botón ⚡): golpe titánico
-  // y más ataque unas rondas. Tras TITAN.tope rondas, ambos lados pegan más cada ronda: ninguna pelea se eterniza.
+  // y más daño unas rondas; desde el Nv 5, una definitiva de su clase. Los valores de cada nivel: 44b-titan.js.
+  // Entre jugadores, tras TITAN.tope rondas, ambos lados pegan más cada ronda: ninguna pelea se eterniza.
   const TITAN = {
-    carga: 25,        // % de barra por ronda (llena en 4)
+    activo: true,     // false: sin Titán (las pruebas que miden otra cosa)
     esquiva: 10,      // % extra de barra por cada golpe esquivado (las peleas cortas restaban valor a esquivar: asesino y arquero)
-    recarga: .5,      // cada uso hace la siguiente carga más lenta (20 → 13 → 10 % por ronda)
-    dura: 3,          // rondas activo (incluida la de activación)
-    ataque: 2.2,      // ×ataque mientras está activo (+120 %, a prueba; con golpe ×8 el asesino aguanta: el +60 % con golpe por % de vida lo hundía)
-    golpe: 8,         // golpe titánico al activarlo: ×daño de un golpe normal (tu ataque contra su defensa; sin crítico: con él, la maga quedaba atrás)
-    tope: 15,         // desde esta ronda, ambos lados ganan ataque cada ronda
+    recarga: .5,      // cada uso hace la siguiente carga más lenta
+    tope: 15,         // entre jugadores: desde esta ronda, ambos lados ganan ataque cada ronda
     escalada: 1.15,   // ×ataque acumulado por ronda pasado el tope
   };
   const titanListo = u => !!u && !!u.titan && u.titan.carga >= 100 && !u.titan.activo;
+  const definitivaLista = u => !!u && !!u.titan && u.titan.activo > 0 && !u.titan.definitivaUsada && u.titan.datos.definitiva > 0;
   function ataqueTitan(u) {   // el ataque del jugador según su estado: base × Titán activo × escalada pasado el tope
-    const T = u.titan, extra = Math.max(0, batalla.rondaTitan - TITAN.tope);
-    u.st.ataque = Math.round(T.base * (T.activo ? TITAN.ataque : 1) * TITAN.escalada ** extra);
+    // la escalada, solo entre jugadores (escalan los dos lados): contra monstruos o jefes de vida enorme (Pacto, mundiales) serías tú solo
+    const T = u.titan, extra = batalla.grupo.enemigos.some(e => e.perfil) ? Math.max(0, batalla.rondaTitan - TITAN.tope) : 0;
+    u.st.ataque = Math.round(T.base * (T.activo ? 1 + T.datos.extra : 1) * TITAN.escalada ** extra);
   }
-  function activarTitan(u, rivales) {
-    const T = u.titan; T.carga = 0; T.activo = TITAN.dura; T.usos++;
-    emitir('titan', u, true); verFx(u, 'num-cura', '⚡ ¡MODO TITÁN!');
-    const t = objetivoAlAzar(rivales); if (!t) return;
-    let m = TITAN.golpe * ventajaClase(u.clase, t.clase);   // depende de tu poder: crecer se nota
+  // un golpe del Titán (el titánico o la definitiva): ×mult de un golpe normal con tu ataque base contra su defensa
+  function golpeTitan(u, t, mult, perfora = 0) {
     const dt = t.perfil ? t.st : { armadura: t.e.armadura || 0, defensa: t.e.defensa || 0 };   // un monstruo guarda su defensa en e
-    m *= factorDefensa({ armadura: armaduraEfectiva(dt.armadura, u.ef('penetracion')), defensa: dt.defensa }) * (1 - t.ef('reduccion'));
-    const d = Math.max(1, Math.min(t.vida, Math.round(danoGuerrero({ ...u.st, ataque: T.base }) * m)));
-    t.vida -= d; if (u.lado === 0) batalla.danoHecho += d; verVida(t); verFx(t, 'dano critico', `⚡ -${d} TITÁN!`, 200);
+    const m = mult * ventajaClase(u.clase, t.clase) * factorDefensa({ armadura: armaduraEfectiva(dt.armadura * (1 - perfora), u.ef('penetracion')), defensa: dt.defensa }) * (1 - t.ef('reduccion'));
+    return Math.max(1, Math.min(t.vida, Math.round(danoGuerrero({ ...u.st, ataque: u.titan.base }) * m)));
+  }
+  function herirTitan(u, t, d, texto) {
+    t.vida -= d; if (u.lado === 0) batalla.danoHecho += d; verVida(t); verFx(t, 'dano critico', texto, 200);
     emitir('espera', reglas().esperas.contra);
     if (t.vida <= 0) morir(t);
   }
+  function activarTitan(u, rivales) {
+    const T = u.titan; T.carga = 0; T.activo = T.datos.dura; T.usos++; T.definitivaUsada = false;
+    emitir('titan', u, true); verFx(u, 'num-cura', '⚡ ¡MODO TITÁN!');
+    const t = objetivoAlAzar(rivales); if (!t) return;
+    const d = golpeTitan(u, t, T.datos.golpe); herirTitan(u, t, d, `⚡ -${d} TITÁN!`);
+  }
+  function usarDefinitiva(u, rivales) {
+    const T = u.titan, D = DEFINITIVAS[u.clase], t = objetivoAlAzar(rivales); T.definitivaUsada = true;
+    if (!D || !t) return;
+    let mult = D.mult * T.datos.definitiva; if (D.ejecuta && t.vida < t.vidaMax * D.ejecuta) mult *= 2;
+    const d = golpeTitan(u, t, mult, D.perfora || 0);
+    verFx(u, 'num-cura', `${D.icono} ${D.nombre}`);
+    if (D.aturde && t.vida > d) aplicarEstado(t, 'aturdimiento', 1);
+    if (D.quema && t.vida > d) aplicarEstado(t, 'quemadura', D.quema, Math.max(1, Math.round(T.base * .5)));
+    herirTitan(u, t, d, `${D.icono} -${d}!`);
+  }
   function resolverTitan(G) {
+    if (!TITAN.activo) return;
     batalla.rondaTitan = (batalla.rondaTitan || 0) + 1;
     for (const [u, rivales] of [...G.heroes.map(u => [u, G.enemigos]), ...G.enemigos.map(u => [u, G.heroes])]) {
       if (!u.perfil || u.vida <= 0) continue;
-      const T = u.titan ||= { carga: 0, activo: 0, usos: 0, base: u.st.ataque };
+      if (!u.titan) { const n = nivelTitan(u.perfil); if (!n) continue; u.titan = { nivel: n, datos: datosTitan(n), carga: 0, activo: 0, usos: 0, base: u.st.ataque }; }
+      const T = u.titan, manual = u.yo && ui.titanManual();
       if (T.activo && --T.activo === 0) emitir('titan', u, false);
-      else if (!T.activo) T.carga = Math.min(100, T.carga + TITAN.carga / (1 + T.usos * TITAN.recarga));
-      if (titanListo(u) && vivos(rivales).length && (!u.yo || !ui.titanManual() || batalla.titanPedido)) activarTitan(u, rivales);
+      else if (!T.activo) T.carga = Math.min(100, T.carga + T.datos.carga / (1 + T.usos * TITAN.recarga));
+      if (titanListo(u) && vivos(rivales).length && (!manual || batalla.titanPedido)) activarTitan(u, rivales);
+      // la definitiva: sola, la ronda siguiente a activarlo; tú, cuando la pidas mientras dura
+      else if (definitivaLista(u) && vivos(rivales).length && (manual ? batalla.definitivaPedida : T.activo === T.datos.dura - 1)) usarDefinitiva(u, rivales);
       ataqueTitan(u);
     }
-    batalla.titanPedido = false; emitir('carga');
+    batalla.titanPedido = false; batalla.definitivaPedida = false; emitir('carga');
   }
 
   // ---- ronda ----
@@ -425,7 +444,10 @@
     const G = batalla.grupo, R = reglas(), orden = l => POSICIONES.flatMap(p => l.filter(u => u.pos === p));
     emitir('estadoAtaque', 'Atacando...');
     resolverTitan(G);
-    for (const u of orden(G.heroes)) if (u.vida > 0 && vivos(G.enemigos).length) resolverAccionJugador(u, hab, G.enemigos);
+    for (const u of orden(G.heroes)) if (u.vida > 0 && vivos(G.enemigos).length) {
+      resolverAccionJugador(u, hab, G.enemigos);
+      if (!u.yo && vivos(G.enemigos).length) resolverMascotaRival(u, G.enemigos, G.heroes);   // la mascota de un aliado (la tuya va aparte)
+    }
     if (vivos(G.enemigos).length) resolverMascota();
     if (vivos(G.enemigos).length && vivos(G.heroes).length) {
       emitir('estadoAtaque', 'Esperando...'); emitir('espera', R.esperas.turnoEnemigo);

@@ -67,31 +67,24 @@
   async function dibujarGrupo(c) {
     arenaG.innerHTML = ''; $('oleada').textContent = c.torre ? `Piso ${c.torre}` : '';
     const { heroes, enemigos } = batalla.grupo; colocarGrupo();
-    for (const u of heroes) {
-      dibujarUnidad(u);
-      if (u.yo) u.el.classList.add('yo');
-      const capas = montarCapas(u.el.querySelector('.frames')); conPerfil(u.perfil, () => pintarVista(capas));
+    // un jugador (tú, un aliado, un rey o un rival de arena): el modelo de su clase con su equipo y skin, su aura y su mascota
+    const dibujarJugadorU = u => {
+      const fr = u.el.querySelector('.frames'); fr.classList.add('guerrero');   // la base de capas; la clase con sprite propio lo pinta encima
+      const capas = montarCapas(fr); conPerfil(u.perfil, () => pintarVista(capas));
       u.pj = personajeClase(u.el, u.clase); pintarVida(u.el, u.vida, u.vidaMax);
       pintarAura(u.el.querySelector('.sombra'), nivelAura(u.perfil));
-    }
-    const yo = heroes.find(h => h.yo), m = mascotaActual();
-    if (m) {   // la mascota va aparte (no dentro de tu unidad): no se mueve en bloque cuando atacas; tiene su propio avance
+      const m = conPerfil(u.perfil, mascotaActual); if (!m) return;   // la mascota va aparte (no se mueve en bloque con él)
       const caja = document.createElement('div'); caja.className = 'unidad unidad-mascota';
-      Object.assign(caja.style, { left: yo.x + 'px', top: yo.y + 'px', zIndex: 2 + Math.round(yo.y / 50) });
-      caja.innerHTML = `<div class="acompana">${dibujoMascota(m, .4)}</div>`; arenaG.appendChild(caja); yo.mascotaEl = caja;
-    }
+      Object.assign(caja.style, { left: u.x + 'px', top: u.y + 'px', zIndex: 2 + Math.round(u.y / 50) });
+      caja.innerHTML = `<div class="acompana${u.lado === 0 ? '' : ' de-rival'}">${dibujoMascota(m, .4)}</div>`; arenaG.appendChild(caja); u.mascotaEl = caja;
+    };
+    for (const u of heroes) { dibujarUnidad(u); if (u.yo) u.el.classList.add('yo'); dibujarJugadorU(u); }
     for (const u of enemigos) {
       dibujarUnidad(u);
-      if (u.perfil) {   // un rey: se dibuja como un jugador
+      if (u.perfil) {   // un rey o un rival de arena: se dibuja como un jugador
         u.el.classList.replace('enemigo', 'unidad-rey');
-        const fr = u.el.querySelector('.frames'); fr.classList.add('guerrero');
-        const capas = montarCapas(fr); conPerfil(u.perfil, () => pintarVista(capas));
-        u.pj = personaje(u.el, 296); pintarVida(u.el, u.vida, u.vidaMax);
+        dibujarJugadorU(u);
         if (u.e.jefe) u.el.classList.add('jefe');
-        const mr = conPerfil(u.perfil, mascotaActual);   // su mascota, aparte (como la tuya), mirando hacia ti
-        if (mr) { const caja = document.createElement('div'); caja.className = 'unidad unidad-mascota';
-          Object.assign(caja.style, { left: u.x + 'px', top: u.y + 'px', zIndex: 2 + Math.round(u.y / 50) });
-          caja.innerHTML = `<div class="acompana de-rival">${dibujoMascota(mr, .4)}</div>`; arenaG.appendChild(caja); u.mascotaEl = caja; }
       } else {
         if (u.e.jefe) u.el.classList.add('jefe');
         pintarHojaEnemigo(u.el.querySelector('.frames'), u.e);

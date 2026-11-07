@@ -10,6 +10,7 @@ const PRUEBAS = {
     [P.miembros.length === PACTO_MIEMBROS - 1, ok.join() === 'true,true,true,false', P.fondos === 0, sube, bono === TEC_PACTO[0].pct, !mejorarTec('fuerza')]`,
   'Pacto: el jefe semanal comparte la vida; tus intentos son limitados; los bots le pegan cada día; premio una vez': `
     cacheBots = DEF_BOTS.map(construirBot);   // un servidor con jugadores (sin bots fijos, el pacto sale de los del servidor)
+    TITAN.activo = false;   // sin Titán: su golpe cambiaría la vida que se compara
     jugador.nivel = NIVEL_PACTO; delete jugador.pacto; const P = pacto(), v0 = P.jefe.vida;
     const c = batallaPacto(); jugarHastaFin(c, habLista, 300); cobrarResultado(false);
     const v1 = P.jefe.vida, mio = P.jefe.dano.yo || 0;
@@ -22,12 +23,27 @@ const PRUEBAS = {
     const r = simularProgresion({ dias: 1, semilla: 7, perfil: structuredClone(jugador), tipo: { ...TIPOS_JUGADOR.constante, juega: 1, gasto: 1, estaminaExtra: 0 } });
     [!!r, r.jugador.estamina < ESTAMINA_CAMPANA, r.jugador.diaEstamina === dia, offsetDias === d0]`,
   'Modo Titán: en toda batalla, solo para jugadores; carga, se activa sola (sin pantalla) y el golpe hace daño': `
-    const antes = cacheBots; cacheBots = DEF_BOTS.slice(0, 3).map(construirBot);
+    jugador.nivel = 40; cacheBots = DEF_BOTS.slice(0, 3).map(construirBot);
     const c = batallaArena(1); prepararBatalla(c); const G = batalla.grupo, yo = heroeYo(), r = G.enemigos[0];
-    for (let i = 0; i < 100 / TITAN.carga - 1; i++) resolverTitan(G);
-    const casi = yo.titan.carga, v0 = r.vida; resolverTitan(G); cacheBots = antes;
+    resolverTitan(G); const D = yo.titan.datos;
+    for (let i = 1; i < 100 / D.carga - 1; i++) resolverTitan(G);
+    const casi = yo.titan.carga, v0 = r.vida; resolverTitan(G);
     const monstruo = (prepararBatalla({ ...crearDificultad(5, 'normal', ['parca']), nombre: 'm', botin: { piedra: [0, 0], polvo: 0 }, premio: {} }), resolverTitan(batalla.grupo), !!heroeYo().titan && batalla.grupo.enemigos.every(e => !e.titan));
-    [casi < 100, yo.titan.activo === TITAN.dura, r.vida < v0, monstruo]`,
+    [casi < 100, yo.titan.activo === D.dura, r.vida < v0, monstruo, D === TITAN_NIVELES[0]]`,
+  'Modo Titán: se desbloquea en su nivel (empieza en Nv 1), se sube con Esencia y oro hasta el máximo': `
+    jugador.nivel = nivelDesbloqueo('titan') - 1; const antes = nivelTitan();
+    jugador.nivel = nivelDesbloqueo('titan'); const n1 = nivelTitan();
+    jugador.oro = 1e8; jugador.mat.esencia = 1e5; while (subirTitan());
+    jugador.oro = 0; jugador.titanNv = 5; const sinOro = subirTitan();
+    [antes === 0, n1 === 1, (jugador.titanNv = TITAN_MAX, nivelTitan()) === TITAN_MAX, !sinOro, TITAN_NIVELES.length === TITAN_MAX,
+     TITAN_NIVELES.every((d, i) => !i || d.extra > TITAN_NIVELES[i - 1].extra)]`,
+  'Modo Titán: la definitiva sale desde el Nv 5, una vez por activación, y hace daño': `
+    jugador.nivel = 60; cacheBots = DEF_BOTS.slice(0, 3).map(construirBot);
+    const prueba = nv => { jugador.titanNv = nv; prepararBatalla(batallaArena(1)); const G = batalla.grupo, yo = heroeYo(), r = G.enemigos[0]; r.vida = r.vidaMax = 1e9;   // que aguante
+      for (let i = 0; i < 6; i++) resolverTitan(G);
+      if (yo.titan.definitivaUsada && r.vida >= 1e9) return false;
+      return yo.titan.definitivaUsada; };
+    [!prueba(4), prueba(5), Object.keys(CLASES).every(c => DEFINITIVAS[c])]`,
   'simMejorar en una partida sin mascotas, runas ni skins todavía (bot de pantalla tras perder)': `
     delete jugador.mascotas; delete jugador.runas; delete jugador.skinsPropias; jugador.oro = 1e5; simMejorar();
     [typeof jugador.mascotas === 'object', Array.isArray(jugador.runas)]`,
@@ -68,10 +84,10 @@ const PRUEBAS = {
     [ok, !sin, jugador.cristales === 5, jugador.oro === o + 3000]`,
   'Skins por clase: el Asesino solo ve las suyas y cada clase guarda su skin equipada': `
     jugador.clase = 'asesino'; jugador.oro = 1e6; const k = SKINS.find(x => x.id === 'espectro');
-    const solo = skinsClase().map(x => x.id).join(); comprarSkin(k); ponerSkin('espectro');
+    const lista = skinsClase(), solo = lista.length >= 2 && lista.every(x => x.clase === 'asesino') && lista.some(x => x.id === 'espectro'); comprarSkin(k); ponerSkin('espectro');
     const conSkin = !!skinActual() && skinActual().sprite.tira.includes('espectro');
     jugador.clase = 'guerrero'; const g = skinActual(); jugador.clase = 'asesino';
-    [solo === 'espectro', conSkin, g === null, skinPuesta('asesino') === 'espectro']`,
+    [solo, conSkin, g === null, skinPuesta('asesino') === 'espectro']`,
   'Títulos: los bonos de todos los desbloqueados se suman; el elegido solo se muestra': `
     jugador.titulos = {}; const p0 = poder();
     const [a, b] = TITULOS.filter(t => Object.keys(t.bono).length).slice(0, 2); jugador.titulos[a.id] = jugador.titulos[b.id] = true;

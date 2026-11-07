@@ -68,6 +68,7 @@
       if (!x.c.hacer()) { lista.shift(); continue; }
       x.v = x.c.valor(); if (x.v <= 0) lista.shift();
     }
+    while (subirTitan());   // el Titán no cuenta en el poder: con lo que sobra tras lo demás (el aura va antes por la Esencia)
   }
   // Refinar con el polvo que sobra (deja 20 para las runas): sortea la peor línea (menos de ★4) de cada pieza puesta y se
   // queda con lo que dé más poder.

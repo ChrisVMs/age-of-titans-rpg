@@ -6,7 +6,8 @@ del mismo tamaño, centrados y con los pies en la misma línea. Además deja <an
 
 Uso (desde la raíz):  python3 tools/skin_asesino.py espectro ataque tools/hojas/asesino_espectro_ataque.jpg 5 2 [ms]
 Desvanecimiento (el generador dibuja opaco lo que en el original es semitransparente): variable DESVANECER=3,4,5
-(cuadros, desde 0) y COLOR_SKIN=r,g,b (tinte del efecto). Lista por animación del Asesino:
+(cuadros, desde 0) y COLOR_SKIN=r,g,b (tinte del efecto). Animación en varias hojas: INICIO=N en la 2.ª y siguientes
+(numera desde N sin borrar las anteriores). Lista por animación del Asesino:
   paso: 3,4,5 · danza: sale de paso_00..04 (mismos cuadros 35-39), no necesita hoja propia
 """
 import glob, os, subprocess, sys, tempfile
@@ -17,9 +18,11 @@ from PIL import Image
 skin, anim, hoja, cols, filas = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
 ms = int(sys.argv[6]) if len(sys.argv) > 6 else 140
 dest = f'img/asesino/skins/{skin}'; os.makedirs(dest, exist_ok=True)
-for f in glob.glob(f'{dest}/{anim}_*.png'): os.remove(f)
+INICIO = int(os.environ.get('INICIO', 0))   # animación en varias hojas: la 2.ª y siguientes numeran desde aquí sin borrar las anteriores
+if not INICIO:
+    for f in glob.glob(f'{dest}/{anim}_*.png'): os.remove(f)
 tmp = tempfile.mkdtemp()
-subprocess.run(['python3', 'tools/split_sheet.py', hoja, '--cols', cols, '--rows', filas, '--uniform', '--out', tmp], check=True, capture_output=True)
+subprocess.run([sys.executable, 'tools/split_sheet.py', hoja, '--cols', cols, '--rows', filas, '--uniform', '--out', tmp], check=True, capture_output=True)
 
 def sin_motas(a, minimo=300):
     m = a[..., 3] > 40; H, W = m.shape; vis = np.zeros_like(m)
@@ -58,7 +61,7 @@ for k in DES:   # se disuelve en sombras: semitransparente, teñido del color de
     cuadros[k] = Image.fromarray(a.clip(0, 255).astype('uint8'))
 mw = max(c.width for c in cuadros); mh = max(c.height for c in cuadros); gif = []
 for k, c in enumerate(cuadros):
-    lienzo = Image.new('RGBA', (mw, mh)); lienzo.paste(c, ((mw - c.width) // 2, mh - c.height)); lienzo.save(f'{dest}/{anim}_{k:02d}.png')
+    lienzo = Image.new('RGBA', (mw, mh)); lienzo.paste(c, ((mw - c.width) // 2, mh - c.height)); lienzo.save(f'{dest}/{anim}_{INICIO + k:02d}.png')
     fondo = Image.new('RGB', (mw, mh), (40, 40, 60)); fondo.paste(lienzo, (0, 0), lienzo); gif.append(fondo)
 gif[0].save(f'{tmp}/{anim}.gif', save_all=True, append_images=gif[1:], duration=ms, loop=0)
 print(f'{len(cuadros)} cuadros -> {dest}/{anim}_NN.png ({mw}x{mh}); vista: {tmp}/{anim}.gif')

@@ -49,6 +49,15 @@ No text, no labels, no numbers, no watermark.
 ```
 
 
+### Skins del Asesino (flujo completo, 2026-11-07: Escarcha)
+1. `python tools/hoja_base_asesino.py` → hojas base en `tools/hojas/asesino_base_<anim>[_N].png` (cuadros y rejilla: `tools/asesino_grupos.py`).
+2. A Gemini, por hoja: la base + la referencia de la skin (`tools/hojas/asesino_skins/<skin>.png`) y el prompt de arriba, añadiendo:
+   "the character at the SAME SMALL SIZE ... keep crouched poses crouched ... Do NOT add slash trails or effects that are not in
+   the original ... pure bright flat green #00FF00 (not a darker green)". Gemini tiende a agrandar, enderezar poses y añadir tajos.
+3. Revisar: `python tools/comparar_hoja.py BASE NUEVA COLS FILAS N lado.png`; corregir en la misma conversación (2 intentos).
+4. `python tools/skin_asesino.py <skin> <anim> HOJA COLS FILAS` (2.ª hoja y siguientes con `INICIO=N`; paso con `DESVANECER=3,4,5`),
+   luego `python tools/tira_skin_asesino.py <skin>` y copiar celda y escalas a SKINS (`js/logica/08-skins.js`).
+
 ## Enemigos de las etapas 2-3 (contenido de nivel alto)
 
 Hoy son la parca teñida con un filtro. Cada uno se rehace con el **reemplazo genérico** de arriba sobre la hoja de la
