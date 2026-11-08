@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadros intermedios</title>
+<style>
+  :root { --fondo: #1d1b26; --panel: #2a2736; --texto: #eee; --acento: #f2b33d; }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 14px system-ui, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: #bbb; }
+  .fila { display: flex; gap: 12px; flex-wrap: wrap; }
+  .panel { flex: 1 1 300px; background: var(--panel); border-radius: 10px; padding: 10px; }
+  .panel b { display: block; margin-bottom: 6px; }
+  canvas { width: 100%; background: linear-gradient(#5b8fd8 70%, #4f9a3e 70%); border-radius: 8px; display: block; }
+  .botones { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; align-items: center; }
+  button { background: #3a3550; color: var(--texto); border: 1px solid #555; border-radius: 8px; padding: 8px 14px; font: inherit; min-height: 40px; }
+  button.on { background: var(--acento); color: #222; border-color: var(--acento); }
+  label { display: flex; gap: 8px; align-items: center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cuadros intermedios con IA (RIFE)</h1>
+  <p>Izquierda: el sprite actual (sus cuadros y tiempos). Derecha: los mismos cuadros con intermedios generados, en el mismo tiempo total. «Pausa» congela ambos; «Siguiente» avanza un cuadro.</p>
+  <div class="botones" id="anims"></div>
+  <div class="botones">
+    <label>Velocidad <input id="vel" type="range" min="0.1" max="1.5" step="0.1" value="1"> <span id="velTxt">x1</span></label>
+    <button id="paso">Pausa</button>
+    <button id="sig">Siguiente</button>
+  </div>
+  <div class="fila">
+    <div class="panel"><b>Sprite actual</b><canvas id="a" width="420" height="380"></canvas></div>
+    <div class="panel"><b>Con intermedios</b><canvas id="b" width="420" height="380"></canvas></div>
+  </div>
+</main>
+<script src="datos.js"></script>
+<script>
+  let D = DATOS.reposo || DATOS.ataque; const cache = {}, V = Date.now();   // V: las imágenes se regeneran con el mismo nombre
+  const img = f => cache[f] ||= Object.assign(new Image(), { src: 'salida/' + f + '?v=' + V });
+  for (const A of Object.values(DATOS)) [...A.original, ...A.interpolado].forEach(([f]) => img(f));
+  const cont = document.getElementById('anims');
+  for (const n of Object.keys(DATOS)) { const b = document.createElement('button'); b.textContent = n[0].toUpperCase() + n.slice(1); b.dataset.n = n; cont.appendChild(b); }
+  const marcar = () => cont.querySelectorAll('button').forEach(b => b.classList.toggle('on', DATOS[b.dataset.n] === D));
+  cont.onclick = e => { const b = e.target.closest('button'); if (!b) return; D = DATOS[b.dataset.n]; ms = 0; inicio = performance.now(); marcar(); };
+  marcar();
+  const total = s => s.reduce((t, x) => t + x[1], 0);
+  const en = (s, ms) => { let t = ms % total(s); for (const [f, d] of s) { if (t < d) return f; t -= d; } return s[0][0]; };
+  let vel = 1, inicio = performance.now(), paso = false, ms = 0;
+  const ca = document.getElementById('a').getContext('2d'), cb = document.getElementById('b').getContext('2d');
+  const pinta = (c, f) => { c.clearRect(0, 0, 420, 380); const i = img(f); if (i.complete) c.drawImage(i, (420 - D.ancho * 1.15) / 2, 372 - D.alto * 1.15, D.ancho * 1.15, D.alto * 1.15); };
+  function cuadro(ahora) {
+    if (!paso) ms = (ahora - inicio) * vel;
+    pinta(ca, en(D.original, ms)); pinta(cb, en(D.interpolado, ms)); requestAnimationFrame(cuadro);
+  }
+  requestAnimationFrame(cuadro);
+  document.getElementById('vel').oninput = e => { vel = +e.target.value; document.getElementById('velTxt').textContent = 'x' + vel; };
+  document.getElementById('paso').onclick = e => { paso = !paso; e.target.classList.toggle('on', paso); if (!paso) inicio = performance.now() - ms / vel; };
+  // paso a paso: avanza al siguiente cuadro de la versión con intermedios
+  document.getElementById('sig').onclick = () => { paso = true; document.getElementById('paso').classList.add('on');
+    let t = 0; const tt = ms % total(D.interpolado); for (const [, d] of D.interpolado) { t += d; if (t > tt + .01) { ms = ms - tt + t; return; } } ms = 0; };
+</script>
+</body>
+</html>

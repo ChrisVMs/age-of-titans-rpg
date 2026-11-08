@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""
+interpolar.py - Prueba de cuadros intermedios con IA (RIFE, tools/rife/): toma una secuencia de casillas de una tira
+(p. ej. el ataque del asesino), las coloca como en el juego (cada casilla con su escala, pies abajo al centro) y genera
+N cuadros intermedios entre cada par. RIFE trabaja en RGB: la transparencia se interpola aparte (el color va
+premultiplicado sobre negro y el alfa como imagen gris) y se recompone. Los efectos (tajo, destello) van aparte y en los saltos grandes hay menos intermedios. Escribe salida/<nombre>/*.png y datos.js
+(lo carga index.html).
+
+Uso (desde la raíz):  python prototipos/interpolar/interpolar.py [intermedios=2] [secuencias…, p. ej. reposo]
+"""
+import glob, json, os, subprocess, sys, tempfile
+import numpy as np
+from PIL import Image, ImageFilter
+
+D = os.path.dirname(os.path.abspath(__file__)); RAIZ = os.path.abspath(f'{D}/../..')
+EXE = glob.glob(f'{RAIZ}/tools/rife/**/rife-ncnn-vulkan.exe', recursive=True)[0]
+MODELO = 'rife-v4.6'
+CW, CH = 325, 357
+esc = lambda i: .84 if i < 40 else .74 if i < 55 else .72 if i < 70 else .58 if i < 80 else .82 if i < 100 else .57 if i < 108 else .88
+# secuencias del juego (12-vista-del-guerrero.js / 18-habilidades.js): [casilla, ms]
+SECUENCIAS = {'ataque': [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [16, 130], [17, 120], [18, 120], [19, 130], [70, 600]],
+              'reposo': [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]]}
+EN_BUCLE = {'reposo'}   # el último cuadro también se interpola hacia el primero
+SIN_EFECTOS = {'reposo'}   # sin tajo ni destello: lo azul claro son las dagas, que deben moverse (no fundirse)
+N = int(sys.argv[1]) if len(sys.argv) > 1 else 2
+SOLO = sys.argv[2:] or list(SECUENCIAS)   # p. ej. `interpolar.py 2 reposo` rehace solo esa
+LIENZO = (int(CW * .9), int(CH * .9))   # todas las casillas al tamaño de pantalla de la de ataque (.84) con margen
+
+tira = Image.open(f'{RAIZ}/img/asesino/tira.png').convert('RGBA')
+def cuadro(c):   # casilla c como en el juego: escalada por esc(c)/esc(11) respecto al ataque, pies abajo al centro
+    im = tira.crop((c * CW, 0, (c + 1) * CW, CH)); f = esc(c) / .84
+    im = im.resize((round(CW * f), round(CH * f)), Image.LANCZOS)
+    out = Image.new('RGBA', LIENZO); out.alpha_composite(im, ((LIENZO[0] - im.width) // 2, LIENZO[1] - im.height)); return out
+
+def rife(a, b, t, tmp):   # imagen intermedia en t (0-1) entre dos RGB
+    pa, pb, po = f'{tmp}/a.png', f'{tmp}/b.png', f'{tmp}/o.png'; a.save(pa); b.save(pb)
+    subprocess.run([EXE, '-0', pa, '-1', pb, '-o', po, '-m', os.path.join(os.path.dirname(EXE), MODELO), '-s', str(t)],
+                   check=True, capture_output=True)
+    return Image.open(po).convert('RGB')
+
+def partes(im):   # RGB premultiplicado sobre negro + alfa en gris (RGB)
+    a = np.asarray(im).astype(float); al = a[..., 3:4] / 255
+    return Image.fromarray((a[..., :3] * al).astype(np.uint8)), Image.fromarray(np.repeat(a[..., 3:4], 3, 2).astype(np.uint8))
+
+# ---- efectos (tajo, destello): RIFE los deforma y les deja contorno negro. En los pares con efectos se quitan, se
+# rellena con el color del cuerpo lo que tapaban, se interpola solo el personaje y el efecto va encima con un fundido ----
+UMBRAL_EFECTOS = 300   # px de efecto en el par para tratarlo aparte
+def mascara_efecto(im, ensanchar=True):
+    a = np.asarray(im).astype(int); r, g, b, al = a[..., 0], a[..., 1], a[..., 2], a[..., 3]
+    m = (((r + g + b > 590) | ((b > 170) & (g > 150) & (b - r > 40))) & (al > 20))
+    if not ensanchar: return m
+    return np.asarray(Image.fromarray((m * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))) > 0
+def cerrar(m, n):
+    return np.asarray(Image.fromarray((m * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(n)).filter(ImageFilter.MinFilter(n))) > 0
+def separar(im):   # -> (personaje sin efecto, con el hueco del cuerpo relleno; efecto solo)
+    a = np.asarray(im).copy(); ef = mascara_efecto(im)
+    cuerpo = (a[..., 3] > 60) & ~ef
+    hueco = ef & cerrar(cuerpo, 71)   # lo que el efecto tapaba dentro del cuerpo (el destello es grande: con 31 quedaba un hueco)
+    solo = mascara_efecto(im, False)   # lo que va encima: el efecto en sí, sin el margen de traje del ensanche (dejaba un
+    # parche: ese margen, fundido a medias, se veía como un recuadro sobre el traje)
+    efecto = a.copy(); efecto[~solo] = 0
+    f = a.astype(float); f[ef] = 0
+    # el relleno toma color solo del traje oscuro: el halo claro del destello (fuera de la máscara) dejaba un parche claro
+    conocido = (cuerpo & (a[..., :3].astype(int).sum(2) < 300)).astype(float)
+    for rad in (2, 4, 8, 16, 32):
+        pc = np.asarray(Image.fromarray((conocido * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(rad))).astype(float) / 255
+        nuevo = hueco & (conocido == 0) & (pc > .05)
+        for c in range(3):
+            canal = np.asarray(Image.fromarray((f[..., c] * conocido).clip(0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(rad))).astype(float)
+            f[..., c][nuevo] = (canal / np.maximum(pc, 1e-3))[nuevo]
+        f[..., 3][nuevo] = 255; conocido[nuevo] = 1
+    return Image.fromarray(f.clip(0, 255).astype(np.uint8)), Image.fromarray(efecto)
+def fundir(ea, eb, t):   # efecto de a apagándose y el de b apareciendo
+    a = np.asarray(ea).astype(float); b = np.asarray(eb).astype(float); a[..., 3] *= 1 - t; b[..., 3] *= t
+    out = Image.fromarray(a.astype(np.uint8)); out.alpha_composite(Image.fromarray(b.astype(np.uint8))); return out
+
+# ---- cuántos intermedios por par: con saltos grandes (la daga cambia de sitio de golpe) RIFE emborrona; se mide con
+# la coincidencia de siluetas (intersección / unión) ----
+def coincidencia(a, b):
+    ma, mb = np.asarray(a)[..., 3] > 60, np.asarray(b)[..., 3] > 60; return (ma & mb).sum() / max(1, (ma | mb).sum())
+# a mano, pares que aun así salen mal: (casilla, casilla siguiente) -> intermedios
+A_MANO = {(11, 12): 1, (16, 17): 0}   # 11→12: rastro de la daga de atrás; 16→17: el puño se emborrona (2026-11-07)
+def intermedios(a, b, par):
+    if par in A_MANO: return A_MANO[par]
+    c = coincidencia(a, b); return 0 if c < .5 else min(N, 1) if c < .62 else N
+
+def juntar(rgb, alfa):
+    al = np.asarray(alfa).astype(float)[..., :1]; c = np.asarray(rgb).astype(float)
+    c = np.where(al > 2, c * 255 / np.maximum(al, 1), 0).clip(0, 255); al = np.where(al < 12, 0, al)   # sin velos casi transparentes
+    return Image.fromarray(np.dstack([c, al]).astype(np.uint8), 'RGBA')
+
+hechos = {}   # (casilla, casilla siguiente, t) -> imagen: en el reposo (ida y vuelta) los pares se repiten al revés
+def intermedio(c1, c2, t, ra, aa, rb, ab, tmp):
+    if (c2, c1, 1 - t) in hechos: return hechos[(c2, c1, 1 - t)]
+    hechos[(c1, c2, t)] = juntar(rife(ra, rb, t, tmp), rife(aa, ab, t, tmp)); return hechos[(c1, c2, t)]
+
+for nombre in SOLO:
+    seq = SECUENCIAS[nombre]; od = f'{D}/salida/{nombre}'; os.makedirs(od, exist_ok=True); hechos.clear()
+    for f in glob.glob(f'{od}/*.png'): os.remove(f)
+    orig, inter = [], []   # original: [archivo, ms]; con intermedios: [archivo, ms]
+    with tempfile.TemporaryDirectory() as tmp:
+        for k, (c, ms) in enumerate(seq):
+            a = cuadro(c); fa = f'{nombre}/{k:02d}_0.png'; a.save(f'{D}/salida/{fa}'); orig.append([fa, ms])
+            ultimo = k == len(seq) - 1
+            if ultimo and nombre not in EN_BUCLE: inter.append([fa, ms]); break
+            c2 = seq[0 if ultimo else k + 1][0]
+            b = cuadro(c2); n = intermedios(a, b, (c, c2)); paso = ms / (n + 1)
+            con_efecto = nombre not in SIN_EFECTOS and mascara_efecto(a).sum() + mascara_efecto(b).sum() > UMBRAL_EFECTOS
+            (pa, ea), (pb, eb) = (separar(a), separar(b)) if con_efecto else ((a, None), (b, None))
+            ra, aa = partes(pa); rb, ab = partes(pb)
+            inter.append([fa, round(paso)])
+            for j in range(1, n + 1):
+                t = round(j / (n + 1), 4); im = intermedio(c, c2, t, ra, aa, rb, ab, tmp).copy()
+                if con_efecto: im.alpha_composite(fundir(ea, eb, t))
+                fi = f'{nombre}/{k:02d}_{j}.png'; im.save(f'{D}/salida/{fi}'); inter.append([fi, round(paso)])
+            print(nombre, c, '->', c2, n, 'intermedios', '(efectos aparte)' if con_efecto else '', 'coincidencia %.2f' % coincidencia(a, b))
+    json.dump({'nombre': nombre, 'original': orig, 'interpolado': inter, 'ancho': LIENZO[0], 'alto': LIENZO[1]}, open(f'{od}.json', 'w'))
+datos = {n: json.load(open(f'{D}/salida/{n}.json')) for n in SECUENCIAS if os.path.exists(f'{D}/salida/{n}.json')}
+open(f'{D}/datos.js', 'w').write('const DATOS = ' + json.dumps(datos) + ';' + chr(10))

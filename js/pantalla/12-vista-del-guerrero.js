@@ -3,13 +3,23 @@
   // Clases con sprite propio. La Maga sigue las 14 poses del guerrero; el Asesino tiene su tira de 109 cuadros
   // (celda 325x357) con sus animaciones (ANIM_ASESINO en 18-habilidades) y una escala por hoja fuente, porque
   // cada hoja dibuja al personaje a otro tamaño (se iguala al mostrarlo; la imagen no se reescala).
+  // Cuadros intermedios (RIFE, casillas 109+ de la tira del asesino; INTERMEDIOS_ASESINO): mete en una secuencia [cuadro, ms, ...]
+  // los intermedios y reparte su tiempo. Los cuadros originales conservan lo demás (avance, sonido, golpe). Sin esas casillas
+  // en la tira (las skins), la secuencia queda igual.
+  function intercalar(lista, nombre, sprite) {
+    const I = INTERMEDIOS_ASESINO;
+    if (!sprite || (sprite.cuadros || 0) < I.cuadros) return lista;
+    return I.secuencias[nombre].filter(([c, , k]) => c !== null || k < lista.length)
+      .map(([c, ms, k]) => c === null ? [lista[k][0], ms, ...lista[k].slice(2)] : [c, ms]);
+  }
   const SPRITE_CLASE = {
     mago: { tira: TIRA_MAGA },
-    asesino: { tira: TIRA_ASESINO, cuadros: 109, celda: [325, 357],
-               escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : .88,   // ataque y sombra · derrota · retroceso · reposo · puñalada · preparación (108: intermedio) (tamaño como la Maga)
+    asesino: { tira: TIRA_ASESINO, cuadros: INTERMEDIOS_ASESINO.cuadros, celda: [325, 357],
+               escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : i < 109 ? .88 : .84,   // ataque y sombra · derrota · retroceso · reposo · puñalada · preparación (108: intermedio) · intermedios RIFE (109+, todos a la escala del ataque) (tamaño como la Maga)
                // reposo: [cuadro, ms] de ida y vuelta (sin saltar del último al primero); se detiene más en los extremos. 76-78 cambian de postura de golpe
                reposo: [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]] },
   };
+  SPRITE_CLASE.asesino.reposo = intercalar(SPRITE_CLASE.asesino.reposo, 'reposo', SPRITE_CLASE.asesino);
   const spriteClase = (clase = jugador.clase) => { const k = clase === jugador.clase && skinActual(); return (k && k.sprite) || SPRITE_CLASE[clase]; };
   // escala del cuadro i en la tira de la clase (las tiras de 14 poses no la necesitan) y cuadros de su reposo animado
   const escalaCuadro = (i, clase) => { const s = spriteClase(clase); return !s ? 1 : s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1; };

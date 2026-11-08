@@ -28,8 +28,9 @@
   const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
   return {
     // salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (cuadros 11-19)
-    ataque: () => [[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
-      [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]],
+    // con los cuadros intermedios de la tira (sin ellos, en las skins, los mismos 9 cuadros)
+    ataque: () => intercalar([[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
+      [A(15), 180, , r => r()], [A(16), 130], [A(17), 120, 0], [A(18), 120], [A(19), 130]], 'ataque', spriteClase('asesino')),
     // en su sitio desenvaina y cruza las cuchillas (preparación 0-7), las carga hasta que estallan (ataque 5-10); se lanza (sombra 1), apuñala (sombra 7)
     // y remata (sombra 8). Los cuadros de la hoja de puñalada son los intermedios: carrera, frenada, apuntar y volver al reposo
     punalada: () => [[R(0), 130], [R(1), 130], [R(2), 120], [R(8), 110], [R(3), 140], ...tramo(R, 4, 7, 110), ...tramo(A, 5, 9, 110),
