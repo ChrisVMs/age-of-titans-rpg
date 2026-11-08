@@ -172,6 +172,11 @@
     if (u.yo && rivales === batalla.grupo.enemigos) { t = elegirObjetivo(); if (!t.duelo) emitir('marcar', t); }
     else t = hab ? objetivoAlAzar(rivales) : objetivoPorPosicion(rivales);
     emitir('animHeroe', u, t, hab);
+    // habilidad de área (Lluvia de flechas): una sola animación y un golpe a cada enemigo vivo
+    for (const x of hab && hab.area ? vivos(rivales) : [t]) { if (u.vida <= 0) break; golpearA(u, x, hab, R); }
+  }
+  // un golpe de u a t (esquiva, daño, efectos, muerte y contraataque)
+  function golpearA(u, t, hab, R) {
     if (t.conEfectos && rnd() < t.ef('esquiva')) {
       verFx(t, 'num-cura', '💨 Esquiva'); if (t.titan && !t.titan.activo) t.titan.carga = Math.min(100, t.titan.carga + TITAN.esquiva);   // esquivar carga el Titán
       emitir('espera', R.esperas.esquiva); emitir('volver', u);
