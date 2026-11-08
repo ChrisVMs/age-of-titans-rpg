@@ -29,6 +29,13 @@ def limpiar(a, personaje=True):   # quita el magenta que deja el croma (fondo y 
     tope = np.minimum(np.minimum(r, b), g + 30)
     a[borde, 0] = np.minimum(r, tope)[borde]; a[borde, 2] = np.minimum(b, tope)[borde]
     # restos sueltos pequeños (manchas del fondo, puntas de flecha de la celda vecina)
+    if not personaje:   # efectos: las líneas separadoras oscuras de la hoja (columnas o filas casi enteras de negro)
+        oscuro = (a[..., :3].astype(int).sum(2) < 120) & (a[..., 3] > 0)
+        borde = lambda i, n: i < 20 or i >= n - 20   # solo cerca del borde de la celda (los astiles horizontales no)
+        for x in np.nonzero(oscuro.mean(0) > .3)[0]:
+            if borde(x, a.shape[1]): a[:, max(0, x - 2):x + 3, 3] = 0
+        for y in np.nonzero(oscuro.mean(1) > .3)[0]:
+            if borde(y, a.shape[0]): a[max(0, y - 2):y + 3, :, 3] = 0
     m = a[..., 3] > 0; H, W = m.shape; visto = np.zeros((H, W), bool); trozos = []
     for y, x in zip(*np.nonzero(m)):
         if visto[y, x]: continue
