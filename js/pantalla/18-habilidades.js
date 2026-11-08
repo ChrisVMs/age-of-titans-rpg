@@ -84,18 +84,20 @@
   }
   // Lluvia de flechas: una volea sube desde el arco y sale por arriba; luego la lluvia cae sobre cada enemigo (x, y) y
   // quedan las flechas clavadas. cont: el escenario (1 contra 1 o grupo). Se cumple cuando caen (el impacto)
-  async function lluviaSobre(cont, x0, y0, blancos, dir = 1) {   // dir: -1 si dispara hacia la izquierda
-    const v = document.createElement('div'); v.className = 'proyectil volea-arq'; v.innerHTML = efectoArquero(1);
+  // dir: -1 si dispara hacia la izquierda (el arquero rival: todo se dibuja volteado) · tam: 'grande' (1 contra 1) o 'media' (grupo)
+  async function lluviaSobre(cont, x0, y0, blancos, dir = 1, tam = 'grande') {
+    const izq = dir < 0 ? ' izq' : '';
+    const v = document.createElement('div'); v.className = 'proyectil volea-arq'; v.innerHTML = efectoArquero(1, izq);
     v.style.left = x0 + 'px'; v.style.top = y0 + 'px'; cont.appendChild(v);
     void v.offsetWidth; v.style.top = (y0 - 420) + 'px'; v.style.left = (x0 + 160 * dir) + 'px';
     await wait(300); v.remove();
     const caen = blancos.map(([x, y]) => {
-      const p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoArquero(2, 'grande');
+      const p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoArquero(2, tam + izq);
       p.style.left = (x - 40) + 'px'; p.style.top = (y - 260) + 'px'; cont.appendChild(p); return [p, y];
     });
     void cont.offsetWidth; for (const [p, y] of caen) p.style.top = (y + 10) + 'px';
     await wait(300);
-    for (const [p] of caen) { p.innerHTML = efectoArquero(3, 'grande'); setTimeout(() => p.remove(), 450); }
+    for (const [p] of caen) { p.innerHTML = efectoArquero(3, tam + izq); setTimeout(() => p.remove(), 450); }
   }
   const lluviaFlechas = alImpacto => lluviaSobre(arena, slots[0].offsetLeft + 200, slots[0].offsetTop + 40,
     [[slots[1].offsetLeft, slots[1].offsetTop]]).then(alImpacto);

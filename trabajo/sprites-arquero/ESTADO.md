@@ -12,6 +12,10 @@ Que el usuario lo pruebe en batalla (1 contra 1 y en grupo), campamento, web y A
 `lluviaFlechas`). Luego, si lo pide: cuadros intermedios con `prototipos/interpolar/PROCESO.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (lluvia del rival)**
+- La lluvia del arquero rival caía sobre su propio bando (`blancos` = siempre `enemigos`): ahora cae sobre el bando contrario.
+  Volea y lluvia volteadas para el rival (`izq`). En grupo (arena) la lluvia es más pequeña (`media`, 140 px).
+
 **2026-11-07 · Claude (correcciones del usuario)**
 - Reposo rehecho en Gemini: la fila 2 de la hoja vieja estaba 6 px más alta (parecía ponerse de puntillas) y no respiraba.
   Ahora: botas fijas y torso y capa que se mueven. El físico delgado se mantiene (decisión del usuario: solo rehacer el reposo).
