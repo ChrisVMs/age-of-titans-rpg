@@ -7,8 +7,7 @@
   // Cuadros intermedios (RIFE, casillas 109+ de la tira del asesino; INTERMEDIOS_ASESINO): mete en una secuencia [cuadro, ms, ...]
   // los intermedios y reparte su tiempo. Los cuadros originales conservan lo demás (avance, sonido, golpe). Sin esas casillas
   // en la tira (las skins), la secuencia queda igual.
-  function intercalar(lista, nombre, sprite) {
-    const I = INTERMEDIOS_ASESINO;
+  function intercalar(lista, nombre, sprite, I = INTERMEDIOS_ASESINO) {   // I: los intermedios de la clase (INTERMEDIOS_MAGA…)
     if (!sprite || (sprite.cuadros || 0) < I.cuadros) return lista;
     return I.secuencias[nombre].filter(([c, , k]) => c !== null || k < lista.length)
       .map(([c, ms, k]) => c === null ? [lista[k][0], ms, ...lista[k].slice(2)] : [c, ms]);
@@ -16,8 +15,10 @@
   const SPRITE_CLASE = {
     // Maga: tira de 75 cuadros (celda 364x366, tools/tira_clase.py maga): reposo 0-9 · ataque 10-19 · bola 20-29 · lanza 30-39 ·
     // meteoro 40-49 · golpe 50-59 · derrota 60-74. Efectos aparte: img/maga/efectos.png
-    mago: { tira: TIRA_MAGA, cuadros: 75, celda: [364, 366], escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772,
-            punta: { 15: [.926, .303], 25: [.95, .406], 35: [.761, .165] } },   // reposo: como el arquero
+    // 75+: intermedios RIFE (INTERMEDIOS_MAGA), a la escala del ataque · punta 25: la bola de fuego en su mano
+    mago: { tira: TIRA_MAGA, cuadros: INTERMEDIOS_MAGA.cuadros, celda: [364, 366],
+            escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : i < 75 ? .772 : .633,
+            punta: { 15: [.926, .303], 25: [.897, .395], 35: [.761, .165] } },   // reposo: como el arquero
     // Arquero: tira de 65 cuadros (celda 349x366, tools/tira_clase.py arquero): reposo 0-9 · ataque 10-19 · doble 20-29 · lluvia 30-39 ·
     // golpe 40-49 · derrota 50-64 (esa hoja dibuja al personaje más pequeño). Efectos aparte: img/arquero/efectos.png
     // reposo: el cuadro 0 quieto con la respiración del CSS (sus cuadros de reposo cambian de tamaño entre sí)

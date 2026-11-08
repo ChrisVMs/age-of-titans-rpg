@@ -135,6 +135,10 @@
       derrota: () => [...tramo(60, 67, 120), ...tramo(71, 74, 150)],
     };
   })();
+  // con los cuadros intermedios de la tira (prototipos/interpolar/PROCESO.md); los originales conservan el disparo
+  for (const n of ['ataque', 'bola', 'lanza', 'meteoro', 'golpe', 'derrota']) {
+    const f = ANIM_MAGA[n]; ANIM_MAGA[n] = d => intercalar(f(d), n, spriteClase('mago'), INTERMEDIOS_MAGA);
+  }
   // efectos de la maga (img/maga/efectos.png): 0 rayo ámbar · 1 bola de fuego · 2 lanza de hielo · 3 meteoro · 4 explosión
   const efectoMaga = (n, cls = '') => `<div class="ef-maga ${cls}" style="background-position-x:${n * 25}%"></div>`;
   function hechizoMaga(n, alImpacto, cuadro) {   // el hechizo vuela de la maga (punta del báculo en `cuadro`) al enemigo

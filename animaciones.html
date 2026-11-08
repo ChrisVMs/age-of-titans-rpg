@@ -62,6 +62,7 @@
   </main>
 
 <script src="js/pantalla/12a-asesino-intermedios.js"></script>
+<script src="js/pantalla/12b-maga-intermedios.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const G = 'img/guerrero/';
@@ -69,7 +70,7 @@
   const seq = (desde, hasta, ms) => Array.from({ length: hasta - desde + 1 }, (_, i) => [desde + i, ms]);
 
   // los cuadros intermedios del asesino (RIFE), igual que intercalar() en js/pantalla/12-vista-del-guerrero.js
-  const conIntermedios = (lista, nombre) => INTERMEDIOS_ASESINO.secuencias[nombre].filter(([c, , k]) => c !== null || k < lista.length)
+  const conIntermedios = (lista, nombre, I = INTERMEDIOS_ASESINO) => I.secuencias[nombre].filter(([c, , k]) => c !== null || k < lista.length)
     .map(([c, ms, k]) => [c === null ? lista[k][0] : c, ms]);
   // Catálogo: cada personaje = hoja (una o varias capas apiladas) con cuadros de ancho x alto; cada
   // animación = lista de [cuadro, ms]. Una animación puede usar otra hoja (p. ej. la bola de fuego de Cerbero).
@@ -83,15 +84,15 @@
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
       { nombre: 'Reposo alternativo (sin usar)', cuadros: seq(8, 11, 200) },
     ] },
-    { id: 'maga', nombre: 'Maga', desc: 'Jugador · clase Mago · 75 cuadros (reposo 0-9, ataque 10-19, bola 20-29, lanza 30-39, meteoro 40-49, golpe 50-59, derrota 60-74) · tools/tira_clase.py maga', capas: ['img/maga/tira.png?v=25'], ancho: 364, alto: 366, total: 75, escala: .8,
-      escalaCuadro: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772, animaciones: [   // escalaCuadro y tiempos: los de SPRITE_CLASE.mago y ANIM_MAGA
+    { id: 'maga', nombre: 'Maga', desc: 'Jugador · clase Mago · reposo 0-9, ataque 10-19, bola 20-29, lanza 30-39, meteoro 40-49, golpe 50-59, derrota 60-74, intermedios RIFE desde la 75) · tools/tira_clase.py maga', capas: ['img/maga/tira.png?v=26'], ancho: 364, alto: 366, total: INTERMEDIOS_MAGA.cuadros, escala: .8,
+      escalaCuadro: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : i < 75 ? .772 : .633, animaciones: [   // escalaCuadro y tiempos: los de SPRITE_CLASE.mago y ANIM_MAGA
       { nombre: 'Reposo (quieto, respira)', cuadros: [[0, 1000]], respira: true },
-      { nombre: 'Ataque (rayo desde su sitio)', cuadros: [[10, 90], [11, 100], [12, 110], [13, 120], [14, 150], [15, 160], [18, 120], [19, 110], [0, 600]] },
-      { nombre: 'Bola de fuego (habilidad)', cuadros: [[20, 90], [21, 110], [22, 120], [23, 130], [24, 220], [25, 140], [26, 120], [27, 110], [28, 100], [29, 100], [0, 600]] },
-      { nombre: 'Lanza de hielo (habilidad)', cuadros: [[30, 90], [31, 110], [32, 120], [33, 130], [34, 180], [35, 140], [37, 120], [38, 110], [39, 100], [0, 600]] },
-      { nombre: 'Meteoro (habilidad)', cuadros: [[40, 90], [41, 110], [42, 130], [43, 160], [44, 220], [45, 220], [46, 140], [47, 160], [48, 110], [49, 100], [0, 600]] },
-      { nombre: 'Recibir golpe', cuadros: [[51, 90], [52, 110], [53, 100], [55, 100], [58, 90], [59, 80], [0, 600]] },
-      { nombre: 'Derrota', cuadros: [[60, 120], [61, 120], [62, 120], [63, 120], [64, 120], [65, 120], [66, 120], [67, 120], [71, 150], [72, 150], [73, 150], [74, 150], [74, 1500]] },
+      { nombre: 'Ataque (rayo desde su sitio)', cuadros: conIntermedios([[10, 90], [11, 100], [12, 110], [13, 120], [14, 150], [15, 160], [18, 120], [19, 110], [0, 600]], 'ataque', INTERMEDIOS_MAGA) },
+      { nombre: 'Bola de fuego (habilidad)', cuadros: conIntermedios([[20, 90], [21, 110], [22, 120], [23, 130], [24, 220], [25, 140], [26, 120], [27, 110], [28, 100], [29, 100], [0, 600]], 'bola', INTERMEDIOS_MAGA) },
+      { nombre: 'Lanza de hielo (habilidad)', cuadros: conIntermedios([[30, 90], [31, 110], [32, 120], [33, 130], [34, 180], [35, 140], [37, 120], [38, 110], [39, 100], [0, 600]], 'lanza', INTERMEDIOS_MAGA) },
+      { nombre: 'Meteoro (habilidad)', cuadros: conIntermedios([[40, 90], [41, 110], [42, 130], [43, 160], [44, 220], [45, 220], [46, 140], [47, 160], [48, 110], [49, 100], [0, 600]], 'meteoro', INTERMEDIOS_MAGA) },
+      { nombre: 'Recibir golpe', cuadros: conIntermedios([[51, 90], [52, 110], [53, 100], [55, 100], [58, 90], [59, 80], [0, 600]], 'golpe', INTERMEDIOS_MAGA) },
+      { nombre: 'Derrota', cuadros: conIntermedios([[60, 120], [61, 120], [62, 120], [63, 120], [64, 120], [65, 120], [66, 120], [67, 120], [71, 150], [72, 150], [73, 150], [74, 150], [74, 1500]], 'derrota', INTERMEDIOS_MAGA) },
       { nombre: 'Rayo / bola / lanza / meteoro / explosión (efectos)', hoja: { capas: ['img/maga/efectos.png?v=1'], ancho: 472, alto: 472, total: 5, escala: .4 }, cuadros: [[0, 700], [1, 700], [2, 700], [3, 700], [4, 700]] },
     ] },
     { id: 'arquero', nombre: 'Arquero', desc: 'Jugador · clase Arquero · 65 cuadros (reposo 0-9, ataque 10-19, doble 20-29, lluvia 30-39, golpe 40-49, derrota 50-64) · tools/tira_clase.py arquero', capas: ['img/arquero/tira.png?v=24'], ancho: 349, alto: 366, total: 65, escala: .8,

@@ -51,4 +51,4 @@ for k in QUIETOS:
 for k, a in enumerate(arr): Image.fromarray(a).save(f'{T}/c_{k:03d}.png')
 subprocess.run(['python3', 'tools/build_sheet.py', T, '--cols', str(len(arr)), '--cell', '325x357', '--anchor', 'bottom', '--bg', 'transparent',
                 '--sep', '0', '--no-json', '--out', 'img/asesino/tira.png'], check=True)
-subprocess.run(['python3', 'tools/intermedios_asesino.py'], check=True)   # vuelve a añadir los cuadros intermedios (casillas 109+)
+subprocess.run(['python3', 'tools/intermedios_clase.py', 'asesino'], check=True)   # vuelve a añadir los cuadros intermedios (casillas 109+)

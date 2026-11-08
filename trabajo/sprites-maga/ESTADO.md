@@ -12,6 +12,12 @@ Que el usuario la pruebe (duelo, grupo, campamento, Android). Ajustes posibles: 
 reemplazo de `PROMPT_SPRITE.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (intermedios en el juego)**
+- `tools/intermedios_asesino.py` → `tools/intermedios_clase.py <clase>` (asesino idéntico). Maga: 77 intermedios, casillas
+  75-151 (`12b-maga-intermedios.js`); `ANIM_MAGA` con `intercalar(..., INTERMEDIOS_MAGA)`; `animaciones.html` igual.
+  `tira_clase.py maga` los vuelve a añadir. `verificar_intermedios.py` también revisa la maga: todo idéntico.
+- Bola de fuego: sale de la bola en su mano (punta 25 = [.897, .395]). `VERSION_IMG` 26.
+
 **2026-11-08 · Claude (intermedios RIFE, prototipo)**
 - `prototipos/interpolar/interpolar.py --clase maga`: las 6 animaciones de `ANIM_MAGA` (sin reposo: es el cuadro quieto) en
   `salida/maga_*`; el visor muestra todas las clases (`datos.js` lee todo `salida/*.json`). Hojas de contactos sin manchas.

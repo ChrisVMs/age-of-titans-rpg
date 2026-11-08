@@ -30,12 +30,12 @@ Son las correcciones que salieron de revisar el reposo y el ataque del Asesino (
 - Primero se ve en `prototipos/interpolar/index.html`; al juego solo cuando el usuario lo pida.
 
 ## 5. Al pasarlo al juego
-- Añadir la secuencia a `SECUENCIAS` de `tools/intermedios_asesino.py` y correrlo: añade casillas desde la 109 (las
-  originales quedan idénticas; solo copia píxeles con `build_sheet.py`) y regenera `js/pantalla/12a-asesino-intermedios.js`.
+- Añadir la secuencia a `SECUENCIAS` de la clase en `CLASES` de `tools/intermedios_clase.py` y correrlo (`python tools/intermedios_clase.py <clase>`): añade casillas tras las originales (las
+  originales quedan idénticas; solo copia píxeles con `build_sheet.py`) y regenera el .js de la clase (`12a-asesino-intermedios.js`, `12b-maga-intermedios.js`).
 - En el juego, la secuencia se envuelve con `intercalar(lista, '<nombre>', sprite)`: los cuadros originales conservan avance,
   sonido y golpe; los intermedios reparten el tiempo (misma duración total). Las skins sin esas casillas siguen igual.
-- Casillas nuevas: escala .84 (la del ataque). Subir `VERSION_IMG` (`js/logica/08-skins.js`) y el `?v=` de `animaciones.html`.
+- Casillas nuevas: la escala del ataque de la clase (asesino .84, maga .633). Subir `VERSION_IMG` (`js/logica/08-skins.js`) y el `?v=` de `animaciones.html`.
 - `animaciones.html`: la misma secuencia con `conIntermedios(...)` y el `total` de cuadros nuevo.
-- `tools/tira_asesino.py` llama a `intermedios_asesino.py` al final: rehacer la tira no pierde los intermedios.
+- `tools/tira_asesino.py` y `tools/tira_clase.py maga` llaman a `intermedios_clase.py` al final: rehacer la tira no pierde los intermedios.
 - Volver a correr `tools/verificar_intermedios.py` (casillas 109+ idénticas a los intermedios, mismos tiempos) y
   `node pruebas/todo.js`. Probar web y Android lo hace el usuario.

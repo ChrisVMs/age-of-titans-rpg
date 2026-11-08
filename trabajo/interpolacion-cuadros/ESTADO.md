@@ -8,7 +8,7 @@ de cuadros con IA (RIFE). Alternativa al esqueleto 2D (`trabajo/esqueleto-2d/`),
 
 ## Próximo paso
 Que el usuario revise en `prototipos/interpolar/index.html` puñalada, paso sombrío, danza, golpe y derrota. Si convencen:
-añadir sus nombres a `SECUENCIAS` de `tools/intermedios_asesino.py`, correrlo y envolver cada secuencia de `ANIM_ASESINO`
+añadir sus nombres a `SECUENCIAS` de `tools/intermedios_clase.py`, correrlo y envolver cada secuencia de `ANIM_ASESINO`
 (`18-habilidades.js`) con `intercalar(..., '<nombre>', spriteClase('asesino'))`, como el ataque; lo mismo en `animaciones.html`.
 
 ## Cómo retomar desde cero (otro agente)
@@ -39,7 +39,7 @@ añadir sus nombres a `SECUENCIAS` de `tools/intermedios_asesino.py`, correrlo y
 - `12-vista-del-guerrero.js`: `reposoVistas()` anima el reposo (con intermedios) en el campamento y la vitrina.
 
 **2026-11-07 · Claude (en el juego)**
-- `tools/intermedios_asesino.py` (nuevo): añade los intermedios de `prototipos/interpolar/salida/` a `img/asesino/tira.png`
+- `tools/intermedios_clase.py` (nuevo): añade los intermedios de `prototipos/interpolar/salida/` a `img/asesino/tira.png`
   como casillas 109-143 (35 cuadros, solo copia píxeles con `build_sheet.py`; las 0-108 quedan idénticas) y escribe
   `js/pantalla/12a-asesino-intermedios.js`. `tools/tira_asesino.py` lo llama al final.
 - `intercalar()` en `12-vista-del-guerrero.js`: el reposo y el ataque del asesino usan los intermedios (escala .84); las

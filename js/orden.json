@@ -64,6 +64,7 @@
   "js/pantalla/10-coleccion.js",
   "js/pantalla/11-arena.js",
   "js/pantalla/12a-asesino-intermedios.js",
+  "js/pantalla/12b-maga-intermedios.js",
   "js/pantalla/12-vista-del-guerrero.js",
   "js/pantalla/13-inventario.js",
   "js/pantalla/14-herreria.js",

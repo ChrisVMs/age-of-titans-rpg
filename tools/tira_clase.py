@@ -116,3 +116,5 @@ subprocess.run([PY, 'tools/build_sheet.py', f'{T}/ef', '--cols', str(C['efectos'
 shutil.rmtree(T)
 print(f'tira: {len(fr)} cuadros, celda {ANCHO}x{ALTO} · efectos: celda {EA}x{EH}')
 print('ESCALAS (por hoja, relativas al reposo):', ESCALAS)
+if CLASE == 'maga':   # vuelve a añadir sus cuadros intermedios (RIFE) tras las casillas originales
+    subprocess.run([PY, 'tools/intermedios_clase.py', CLASE], check=True)
