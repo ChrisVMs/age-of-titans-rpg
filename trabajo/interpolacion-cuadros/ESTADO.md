@@ -23,6 +23,10 @@ añadir sus nombres a `SECUENCIAS` de `tools/intermedios_asesino.py`, correrlo y
   (`NN_0` = cuadro original, `NN_1..` = intermedios).
 
 ## Última sesión
+**2026-11-07 · Claude (verificación)**
+- `tools/verificar_intermedios.py` (nuevo): casillas y tiempos de las 7 secuencias iguales al juego; cuadros originales y
+  casillas 109-143 idénticos píxel a píxel. Corregido: la puñalada termina en el reposo 200 ms (el prototipo ponía 600).
+
 **2026-11-07 · Claude (resto de animaciones y campamento)**
 - `interpolar.py`: secuencias puñalada, paso, danza, golpe y derrota (las del juego, con la vuelta al reposo para verlas);
   un par con el mismo cuadro no lleva intermedios. Generadas: 13 / 26 / 28 / 33 / 80 cuadros. Revisadas en hoja de
