@@ -21,6 +21,9 @@ Que el usuario la pruebe (Tienda → skins del Asesino, batalla y `animaciones.h
 - Quedó a medias: paso y derrota sin generar (cupo agotado); nada dividido ni en el juego.
 
 ## Decisiones
+- 2026-11-07 · Casillas 21 y 28 compartidas por Puñalada y Paso: `tira_skin_asesino.py` se quedaba con la última (el Paso) y en mitad de la Puñalada cambiaba la pose de brazos; ahora elige el cuadro más parecido a la casilla base. Cuadro 3 de la Puñalada (casilla 102, tajo grande de Gemini) = copia del 2. VERSION_IMG 20.
+- 2026-11-07 · Casillas 0-2 de Escarcha = cuadros de reposo (copias de reposo_00-02), como Espectro: el juego muestra la casilla 0 fuera de las animaciones y entre acciones (ataque 19 → 0 → 70); antes era una pose agachada y grande. Reposo igual que Espectro. `tira_skin_asesino.py` (POR_CUADRO) da a 0-2 la escala del reposo. VERSION_IMG 19.
+- 2026-11-07 · Escarcha con escala POR CUADRO (`POR_CUADRO=1 python tools/tira_skin_asesino.py escarcha`): Gemini copió los tamaños de la hoja base (casilla 108 y 5-7 dibujadas pequeñas) y una escala por hoja los dejaba encogidos en la Puñalada. Reposo = el del asesino base (sus casillas 0-2 son poses agachadas). Pendiente menor: tajo grande añadido en el cuadro 3 de la Puñalada.
 - 2026-11-07 · Usuario: aceptar detalles menores (ondeo de capa). Al menos 2 intentos por igualar la base; si no sale,
   aceptar si el movimiento es coherente con la animación. Regenerar si se pierde la animación.
 - 2026-11-07 · Usuario: retroceso aceptado con los cuadros 4-5 de pie (en la base, agachado).

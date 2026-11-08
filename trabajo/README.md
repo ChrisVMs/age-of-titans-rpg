@@ -3,6 +3,11 @@
 Carpeta para dejar por escrito los requerimientos largos (un refactor, un balance, una investigación, cualquier tema),
 de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen el contexto**.
 
+## Último trabajo activo (si el usuario solo dice «continuar»)
+**2026-11-07 · [Cuadros intermedios con IA (RIFE)](interpolacion-cuadros/ESTADO.md)** — se estaba probando la
+interpolación de cuadros del ataque del asesino para quitar los saltos del sprite sin cambiar su arte. Abrir su
+`ESTADO.md` y seguir su **Próximo paso**. Tema hermano (pausado en favor de este): [esqueleto 2D](esqueleto-2d/ESTADO.md).
+
 ## Índice de temas
 
 | Tema | Estado | Próximo paso | Última sesión |
@@ -14,6 +19,7 @@ de forma que **cualquier agente o persona pueda retomarlos sin que le expliquen 
 | [Tipos de jugador (simular jugadores reales)](tipos-jugador/ESTADO.md) | pausado | Fases 1-4 hechas; ajustar tipos con datos reales. Que el usuario pruebe el bot. | 2026-11-03 · Claude |
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |
 | [Skin Escarcha del Asesino](skin-escarcha/ESTADO.md) | en curso | En el juego: que el usuario la pruebe. | 2026-11-07 · Claude |
+| [Animación por esqueleto 2D (MVP)](esqueleto-2d/ESTADO.md) | en curso · **prioridad alta** | Pierna de atrás corregida y codos/rodillas que se curvan: que el usuario lo compare. Pipeline documentado para retomarlo. | 2026-11-07 · Claude |
 | [Cuadros intermedios con IA (RIFE)](interpolacion-cuadros/ESTADO.md) | en curso | En el juego (reposo y ataque del asesino), rama `asesino-intermedios`: que el usuario lo pruebe. | 2026-11-07 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |

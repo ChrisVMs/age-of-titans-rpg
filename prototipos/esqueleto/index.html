@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esqueleto 2D · MVP</title>
+<style>
+  :root { --fondo: #1d1b26; --panel: #2a2736; --texto: #eee; --acento: #f2b33d; }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 14px system-ui, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: #bbb; }
+  .fila { display: flex; gap: 12px; flex-wrap: wrap; }
+  .panel { flex: 1 1 300px; background: var(--panel); border-radius: 10px; padding: 10px; }
+  .panel b { display: block; margin-bottom: 6px; }
+  canvas { width: 100%; background: linear-gradient(#5b8fd8 70%, #4f9a3e 70%); border-radius: 8px; display: block; }
+  .botones { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  button { background: #3a3550; color: var(--texto); border: 1px solid #555; border-radius: 8px; padding: 8px 14px; font: inherit; min-height: 40px; }
+  button.on { background: var(--acento); color: #222; border-color: var(--acento); }
+  label { display: flex; gap: 8px; align-items: center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Esqueleto 2D · Asesino hecho para esqueleto</h1>
+  <p>Izquierda: el sprite actual (cuadros y tiempos del juego). Derecha: el modelo nuevo (dibujo en pose neutra despiezado en huesos), con las mismas poses.</p>
+  <div class="botones" id="anims"></div>
+  <div class="botones">
+    <label>Velocidad <input id="vel" type="range" min="0.25" max="2" step="0.25" value="1"> <span id="velTxt">x1</span></label>
+    <button id="huesos">Ver huesos</button>
+    <button id="calco">Calco</button>
+  </div>
+  <div class="fila">
+    <div class="panel"><b>Sprite actual</b><canvas id="sprite" width="420" height="380"></canvas></div>
+    <div class="panel"><b>Esqueleto</b><canvas id="esqueleto" width="420" height="380"></canvas></div>
+  </div>
+</main>
+<script src="modelo.js"></script>
+<script src="poses_modelo.js"></script>
+<script src="ajustar.js" defer></script>
+<script>
+  // ---- sprite actual (datos del juego: 12-vista-del-guerrero.js y 18-habilidades.js) ----
+  const CW = 325, CH = 357;
+  const esc = i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : .88;
+  const SPRITE = {
+    reposo: [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]],
+    ataque: [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [16, 130], [17, 120], [18, 120], [19, 130], [70, 600]],
+  };
+  // ---- modelo (modelo.py) y poses (poses_modelo.py): cada clave = t (0-1) y giro de cada hueso en grados ----
+  const ANIM = POSES;
+  const suave = x => x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2;   // aceleración y frenada entre claves
+  function pose(nombre, ms) {
+    const A = ANIM[nombre], t = (ms % A.ms) / A.ms, c = A.claves;
+    let i = c.findIndex(k => k.t > t); if (i < 1) i = c.length - 1;
+    const a = c[i - 1], b = c[i], u = suave((t - a.t) / (b.t - a.t || 1)), p = {};
+    const mezcla = (x, y, def = 0) => (x ?? def) + ((y ?? def) - (x ?? def)) * u;
+    for (const h of new Set([...Object.keys(a), ...Object.keys(b)])) if (h !== 't')
+      p[h] = h === 'raiz' ? [mezcla(a.raiz[0], b.raiz[0]), mezcla(a.raiz[1], b.raiz[1])]
+        : mezcla(a[h], b[h], h.startsWith('alfa_') ? 1 : 0);   // alfa_<pieza>: visibilidad (1 si no se dice)
+    return p;
+  }
+  // ---- pies al suelo (cinemática inversa de 2 huesos): el tobillo se queda en la x que da la pose y baja/sube hasta que
+  // la suela toca el suelo; muslo y espinilla se recalculan para llegar ahí (la rodilla se dobla hacia el mismo lado que en
+  // la pose). suelo<lado>: giro del pie respecto al suelo (0 = plano como en el dibujo; - = punta abajo, talón arriba) ----
+  const JM = MODELO.articulaciones, gr = Math.PI / 180;
+  const angJ = (a, b) => Math.atan2(JM[b][1] - JM[a][1], JM[b][0] - JM[a][0]);
+  const PIERNA = {};
+  for (const l of 'ID') {
+    const largo = (a, b) => Math.hypot(JM[b][0] - JM[a][0], JM[b][1] - JM[a][1]);
+    PIERNA[l] = { L1: largo('cadera' + l, 'rodilla' + l), L2: largo('rodilla' + l, 'tobillo' + l), r1: angJ('cadera' + l, 'rodilla' + l), r2: angJ('rodilla' + l, 'tobillo' + l),
+      suela: ['punta' + l, 'talon' + l].map(k => [JM[k][0] - JM['tobillo' + l][0], JM[k][1] - JM['tobillo' + l][1]]) };
+  }
+  const SUELO_Y = Math.max(...['puntaI', 'talonI', 'puntaD', 'talonD'].map(k => JM[k][1]));
+  function pisar(p) {
+    for (const l of 'ID') {
+      const L = PIERNA[l], [hx, hy] = [JM['cadera' + l][0] + p.raiz[0], JM['cadera' + l][1] + p.raiz[1]];
+      const a1 = L.r1 + (p['pierna' + l] || 0) * gr, a2 = L.r2 + ((p['pierna' + l] || 0) + (p['espinilla' + l] || 0)) * gr;
+      const kx = hx + L.L1 * Math.cos(a1), ky = hy + L.L1 * Math.sin(a1), ax = kx + L.L2 * Math.cos(a2);
+      const lado = Math.sign((kx - hx) * Math.sin(a2) - (ky - hy) * Math.cos(a2)) || 1;   // hacia dónde se dobla la rodilla
+      const giro = (p['suelo' + l] || 0) * gr, bajo = Math.max(...L.suela.map(([x, y]) => x * Math.sin(giro) + y * Math.cos(giro)));
+      const tx = ax, ty = SUELO_Y - bajo;   // tobillo: lo justo para que el punto más bajo de la suela toque el suelo
+      let dx = tx - hx, dy = ty - hy, d = Math.hypot(dx, dy); const dmax = L.L1 + L.L2 - .5, dmin = Math.abs(L.L1 - L.L2) + .5;
+      if (d > dmax || d < dmin) { const f = Math.min(dmax, Math.max(dmin, d)) / d; dx *= f; dy *= f; d *= f; }
+      const c = Math.min(1, Math.max(-1, (L.L1 * L.L1 + d * d - L.L2 * L.L2) / (2 * L.L1 * d)));
+      const m1 = Math.atan2(dy, dx) - lado * Math.acos(c), nkx = hx + L.L1 * Math.cos(m1), nky = hy + L.L1 * Math.sin(m1);
+      const m2 = Math.atan2(hy + dy - nky, hx + dx - nkx);
+      p['pierna' + l] = (m1 - L.r1) / gr; p['espinilla' + l] = (m2 - m1 - (L.r2 - L.r1)) / gr;
+      p['pie' + l] = (p['suelo' + l] || 0) - (m2 - L.r2) / gr;   // el pie: su giro respecto al suelo menos lo que ya giró la espinilla
+    }
+    return p;
+  }
+  // ---- dibujo ----
+  const ESCALA = 1.15, BASE = [80, 372];   // tamaño en pantalla y dónde van los pies (abajo-izquierda del cuadro)
+  const tira = new Image(); tira.src = '../../img/asesino/tira.png?v=17';
+  const imgs = {}, imgsEfecto = {};
+  for (const n in MODELO.piezas) imgs[n] = Object.assign(new Image(), { src: MODELO.piezas[n].img });
+  let calco = false, verHuesos = false, anim = 'reposo', vel = 1, inicio = performance.now();
+  function cuadroSprite(nombre, ms) {
+    const seq = SPRITE[nombre], total = seq.reduce((s, x) => s + x[1], 0); let t = ms % total;
+    for (const [c, d] of seq) { if (t < d) return c; t -= d; } return seq[0][0];
+  }
+  function dibujarSprite(ctx, ms) {
+    const c = cuadroSprite(anim, ms), e = esc(c) * ESCALA;   // como en el juego: cada casilla con su escala, pies abajo al centro
+    ctx.save(); ctx.translate(BASE[0] + CW * esc(70) * ESCALA / 2, BASE[1]); ctx.scale(e, e);
+    ctx.drawImage(tira, c * CW, 0, CW, CH, -CW / 2, -CH, CW, CH); ctx.restore();
+  }
+  // matriz de un hueso: la de su padre × girar alrededor de su articulación (la raíz mueve todo)
+  function matriz(n, p) {
+    if (!n) return new DOMMatrix().translate(...p.raiz);
+    const P = MODELO.piezas[n], [gx, gy] = P.giro;
+    return matriz(P.padre, p).translate(gx, gy).rotate(p[n] || 0).translate(-gx, -gy);
+  }
+  // ---- articulaciones que se doblan (codos, rodillas, tobillos): brazos, piernas y pies se dibujan como malla; cerca de la
+  // articulación entre dos segmentos, cada vértice se reparte entre ambos huesos (peso suave según lo lejos que esté del
+  // giro, a lo largo del hueso hijo), así la unión se curva en vez de cruzarse dos recortes rígidos ----
+  const MIEMBRO = n => /^(brazo|antebrazo|pierna|espinilla|pie)[ID]$/.test(n);
+  const PASO_MALLA = 12, RADIO = { brazo: 16, antebrazo: 16, pierna: 22, espinilla: 22, pie: 14 };   // px del modelo
+  const MALLA = {};
+  function hijoMiembro(n) { return Object.keys(MODELO.piezas).find(h => MODELO.piezas[h].padre === n && MIEMBRO(h)); }
+  function pesoHijo(c, x, y) {   // 0 = todo del padre, 1 = todo del hijo c, según el avance a lo largo de c desde su giro
+    const [ini, fin] = MODELO.huesos[c], [jx, jy] = JM[ini], dx = JM[fin][0] - jx, dy = JM[fin][1] - jy, l = Math.hypot(dx, dy);
+    const t = ((x - jx) * dx + (y - jy) * dy) / l, r = RADIO[c.slice(0, -1)], u = Math.min(1, Math.max(0, .5 + t / (2 * r)));
+    return u * u * (3 - 2 * u);
+  }
+  function prepararMalla(n) {
+    const P = MODELO.piezas[n], img = imgs[n], [ox, oy] = [P.m[4], P.m[5]], padre = MIEMBRO(P.padre) ? P.padre : null, hijo = hijoMiembro(n);
+    const nx = Math.ceil(img.width / PASO_MALLA), ny = Math.ceil(img.height / PASO_MALLA), V = [], W = [], T = [];
+    for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+      const u = Math.min(img.width, i * PASO_MALLA), v = Math.min(img.height, j * PASO_MALLA), x = ox + u, y = oy + v, w = { [n]: 1 };
+      if (padre) { const a = pesoHijo(n, x, y); w[n] = a; w[padre] = 1 - a; }
+      if (hijo) { const b = pesoHijo(hijo, x, y); w[hijo] = b * w[n]; w[n] *= 1 - b; }
+      V.push([u, v]); W.push(Object.entries(w).filter(([, q]) => q > 1e-3));
+    }
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const a = j * (nx + 1) + i, b = a + 1, c = a + nx + 1, d = c + 1; T.push([a, b, d], [a, d, c]); }
+    MALLA[n] = { V, W, T };
+  }
+  for (const n of Object.keys(MODELO.piezas)) if (MIEMBRO(n)) {
+    const img = imgs[n], listo = () => prepararMalla(n);
+    img.complete && img.naturalWidth ? listo() : img.addEventListener('load', listo, { once: true });
+  }
+  function dibujarMalla(ctx, n, mats, k) {
+    const M = MALLA[n], P = MODELO.piezas[n], img = imgs[n], [ox, oy] = [P.m[4], P.m[5]], crece = .8 / k;   // +0,8 px: sin rendijas
+    const dst = M.V.map(([u, v], i) => { let X = 0, Y = 0; const x = ox + u, y = oy + v;
+      for (const [b, w] of M.W[i]) { const m = mats[b]; X += w * (m.a * x + m.c * y + m.e); Y += w * (m.b * x + m.d * y + m.f); }
+      return [X, Y]; });
+    for (const [i0, i1, i2] of M.T) {
+      const s0 = M.V[i0], s1 = M.V[i1], s2 = M.V[i2], d0 = dst[i0], d1 = dst[i1], d2 = dst[i2];
+      const den = (s1[0] - s0[0]) * (s2[1] - s0[1]) - (s2[0] - s0[0]) * (s1[1] - s0[1]); if (!den) continue;
+      const a = ((d1[0] - d0[0]) * (s2[1] - s0[1]) - (d2[0] - d0[0]) * (s1[1] - s0[1])) / den;
+      const b = ((d1[1] - d0[1]) * (s2[1] - s0[1]) - (d2[1] - d0[1]) * (s1[1] - s0[1])) / den;
+      const c = ((d2[0] - d0[0]) * (s1[0] - s0[0]) - (d1[0] - d0[0]) * (s2[0] - s0[0])) / den;
+      const d = ((d2[1] - d0[1]) * (s1[0] - s0[0]) - (d1[1] - d0[1]) * (s2[0] - s0[0])) / den;
+      const e = d0[0] - a * s0[0] - c * s0[1], f = d0[1] - b * s0[0] - d * s0[1];
+      const cx = (d0[0] + d1[0] + d2[0]) / 3, cy = (d0[1] + d1[1] + d2[1]) / 3;
+      const fuera = ([x, y]) => { const dx = x - cx, dy = y - cy, l = Math.hypot(dx, dy) || 1; return [x + dx / l * crece, y + dy / l * crece]; };
+      ctx.save(); ctx.beginPath(); ctx.moveTo(...fuera(d0)); ctx.lineTo(...fuera(d1)); ctx.lineTo(...fuera(d2)); ctx.closePath(); ctx.clip();
+      ctx.transform(a, b, c, d, e, f); ctx.drawImage(img, 0, 0); ctx.restore();
+    }
+  }
+  function dibujarEsqueleto(ctx, ms) {
+    const p = pisar(pose(anim, ms)), k = ESCALA * esc(70);   // mismo tamaño en pantalla que el reposo del sprite
+    ctx.save(); ctx.translate(BASE[0], BASE[1] - CH * k); ctx.scale(k, k);
+    ctx.save(); ctx.scale(.5, .5);   // el modelo está al doble de resolución que el cuadro
+    const mats = {}; for (const n of MODELO.orden) mats[n] = matriz(n, p);
+    for (const n of MODELO.orden) {
+      const P = MODELO.piezas[n], img = imgs[n], alfa = p['alfa_' + n] ?? 1; if (!img.complete || alfa <= .01) continue;
+      ctx.save(); ctx.globalAlpha = alfa;
+      if (MALLA[n]) dibujarMalla(ctx, n, mats, k / 2);
+      else { const m = mats[n]; ctx.transform(m.a, m.b, m.c, m.d, m.e, m.f); ctx.transform(...P.m); ctx.drawImage(img, 0, 0); }
+      ctx.restore();
+    }
+    if (verHuesos) for (const n of MODELO.orden) {
+      const P = MODELO.piezas[n], g = matriz(P.padre, p).transformPoint(new DOMPoint(...P.giro));
+      ctx.fillStyle = '#f2b33d'; ctx.beginPath(); ctx.arc(g.x, g.y, 9, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+    // efectos (tajo, destello) del sprite: capas encima, en su tramo del ataque, se desvanecen al final de cada uno
+    const A = ANIM[anim], t = (ms % A.ms) / A.ms;
+    for (const e of A.efectos || []) if (t >= e.desde && t < e.hasta) {
+      const img = imgsEfecto[e.img] ||= Object.assign(new Image(), { src: e.img }), u = (t - e.desde) / (e.hasta - e.desde);
+      ctx.save(); ctx.globalAlpha = 1 - Math.max(0, u - .6) / .4; ctx.translate(e.x, e.y); ctx.scale(e.escala, e.escala); ctx.drawImage(img, 0, 0); ctx.restore();
+    }
+    ctx.restore();
+  }
+  const cs = document.getElementById('sprite').getContext('2d'), ce = document.getElementById('esqueleto').getContext('2d');
+  function cuadro(ahora) {
+    const ms = (ahora - inicio) * vel;
+    for (const c of [cs, ce]) c.clearRect(0, 0, 420, 380);
+    if (tira.complete) dibujarSprite(cs, ms);
+    dibujarEsqueleto(ce, ms);
+    if (calco && tira.complete) { ce.save(); ce.globalAlpha = .35; dibujarSprite(ce, ms); ce.restore(); }   // el sprite encima, para comparar
+    requestAnimationFrame(cuadro);
+  }
+  requestAnimationFrame(cuadro);
+  // ---- controles (todo con toques) ----
+  const cont = document.getElementById('anims');
+  for (const n of Object.keys(ANIM)) {
+    const b = document.createElement('button'); b.textContent = n[0].toUpperCase() + n.slice(1); b.dataset.anim = n; cont.appendChild(b);
+  }
+  const pintar = () => cont.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.anim === anim));
+  cont.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; anim = b.dataset.anim; inicio = performance.now(); pintar(); });
+  pintar();
+  document.getElementById('vel').oninput = e => { vel = +e.target.value; document.getElementById('velTxt').textContent = 'x' + vel; };
+  document.getElementById('calco').onclick = e => { calco = !calco; e.target.classList.toggle('on', calco); };
+  document.getElementById('huesos').onclick = e => { verHuesos = !verHuesos; e.target.classList.toggle('on', verHuesos); };
+</script>
+</body>
+</html>

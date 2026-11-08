@@ -7,9 +7,13 @@
   function aislado(fn) {
     if (ui.enBatalla()) return null;   // la batalla en curso usa el mismo estado
     const real = jugador, uid = sigUid, antes = { ...batalla }, carga = { ...batalla.carga }, habs = HABILIDADES;
+    // la pantalla no se entera de la simulación: sin esto, abriendo index.html sin servidor (los bots se simulan en el hilo
+    // principal) se dibujaban sus personajes y su equipo en tu escena
+    const pantalla = { ...ui }; for (const k in ui) if (typeof ui[k] === 'function' && k !== 'enBatalla') ui[k] = () => {};
     simulando = true; jugador = structuredClone(real);
     try { return fn(real); }
     finally {
+      Object.assign(ui, pantalla);
       jugador = real; sigUid = uid; simulando = false; HABILIDADES = habs; sembrar(null);
       for (const k in batalla) delete batalla[k];
       Object.assign(batalla, antes);
