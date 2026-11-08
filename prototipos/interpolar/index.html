@@ -41,7 +41,15 @@
   const img = f => cache[f] ||= Object.assign(new Image(), { src: 'salida/' + f + '?v=' + V });
   for (const A of Object.values(DATOS)) [...A.original, ...A.interpolado].forEach(([f]) => img(f));
   const cont = document.getElementById('anims');
-  for (const n of Object.keys(DATOS)) { const b = document.createElement('button'); b.textContent = n[0].toUpperCase() + n.slice(1); b.dataset.n = n; cont.appendChild(b); }
+  // una fila por clase: las secuencias de la maga llevan el prefijo maga_; las demás son del asesino
+  const CLASES = [['Asesino', n => !n.includes('_')], ['Maga', n => n.startsWith('maga_')]];
+  cont.style.display = 'block';
+  for (const [titulo, es] of CLASES) {
+    const nombres = Object.keys(DATOS).filter(es); if (!nombres.length) continue;
+    const fila = document.createElement('div'); fila.className = 'botones'; fila.innerHTML = `<b style="min-width:70px">${titulo}</b>`;
+    for (const n of nombres) { const b = document.createElement('button'), s = n.replace(/^[a-z]+_/, ''); b.textContent = s[0].toUpperCase() + s.slice(1); b.dataset.n = n; fila.appendChild(b); }
+    cont.appendChild(fila);
+  }
   const marcar = () => cont.querySelectorAll('button').forEach(b => b.classList.toggle('on', DATOS[b.dataset.n] === D));
   cont.onclick = e => { const b = e.target.closest('button'); if (!b) return; D = DATOS[b.dataset.n]; ms = 0; inicio = performance.now(); marcar(); };
   marcar();
