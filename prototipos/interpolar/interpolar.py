@@ -19,7 +19,15 @@ CW, CH = 325, 357
 esc = lambda i: .84 if i < 40 else .74 if i < 55 else .72 if i < 70 else .58 if i < 80 else .82 if i < 100 else .57 if i < 108 else .88
 # secuencias del juego (12-vista-del-guerrero.js / 18-habilidades.js): [casilla, ms]
 SECUENCIAS = {'ataque': [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [16, 130], [17, 120], [18, 120], [19, 130], [70, 600]],
-              'reposo': [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]]}
+              'reposo': [[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]],
+              'punalada': [[100, 130], [101, 130], [102, 120], [108, 110], [103, 140], [104, 110], [105, 110], [106, 110], [107, 110], [5, 110], [6, 110], [7, 110],
+                           [8, 110], [9, 110], [10, 240], [21, 90], [89, 60], [90, 60], [91, 60], [92, 60], [93, 80], [95, 70], [96, 70], [97, 70], [98, 90],
+                           [27, 200], [81, 110], [28, 150], [83, 110], [84, 110], [86, 120], [70, 600]],
+              'paso': [[35, 100], [36, 100], [37, 100], [38, 100], [39, 100], [20, 160], [21, 150], [22, 90], [23, 90], [24, 180], [28, 120], [29, 130], [70, 600]],
+              'danza': [[35, 130], [36, 160], [37, 200], [39, 180], [38, 240], [39, 180], [37, 160], [36, 130], [35, 130], [70, 600]],
+              'golpe': [[56, 160], [57, 180], [62, 140], [64, 120], [65, 120], [70, 600]],
+              'derrota': [[41, 120], [42, 120], [43, 120], [44, 120], [45, 120], [46, 120], [47, 120], [48, 120], [49, 120], [50, 150], [51, 150], [52, 150],
+                          [53, 150], [54, 150]]}   # el último cuadro de cada una (70, el reposo) es la vuelta: el juego lo omite
 EN_BUCLE = {'reposo'}   # el último cuadro también se interpola hacia el primero
 SIN_EFECTOS = {'reposo'}   # sin tajo ni destello: lo azul claro son las dagas, que deben moverse (no fundirse)
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 2
@@ -82,6 +90,7 @@ def coincidencia(a, b):
 A_MANO = {(11, 12): 1, (16, 17): 0}   # 11→12: rastro de la daga de atrás; 16→17: el puño se emborrona (2026-11-07)
 def intermedios(a, b, par):
     if par in A_MANO: return A_MANO[par]
+    if par[0] == par[1]: return 0   # el mismo cuadro: nada que interpolar
     c = coincidencia(a, b); return 0 if c < .5 else min(N, 1) if c < .62 else N
 
 def juntar(rgb, alfa):

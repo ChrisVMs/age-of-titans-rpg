@@ -7,8 +7,9 @@ Quitar los saltos bruscos entre cuadros de los sprites sin cambiar su arte: gene
 de cuadros con IA (RIFE). Alternativa al esqueleto 2D (`trabajo/esqueleto-2d/`), que nunca iguala los cuadros exactos.
 
 ## Próximo paso
-Que el usuario lo pruebe en el juego (web y Android) y en `animaciones.html`. Para revertir: `git revert a8ba5be`.
-Luego, si se quiere: las skins del asesino (Espectro, Escarcha) y las habilidades (puñalada, paso, danza).
+Que el usuario revise en `prototipos/interpolar/index.html` puñalada, paso sombrío, danza, golpe y derrota. Si convencen:
+añadir sus nombres a `SECUENCIAS` de `tools/intermedios_asesino.py`, correrlo y envolver cada secuencia de `ANIM_ASESINO`
+(`18-habilidades.js`) con `intercalar(..., '<nombre>', spriteClase('asesino'))`, como el ataque; lo mismo en `animaciones.html`.
 
 ## Cómo retomar desde cero (otro agente)
 - Proyecto: `C:\PROYECTOS\AGE-OF-TITANS\age-of-titans-rpg`, rama `main`. Nada de esto tiene commit.
@@ -22,6 +23,12 @@ Luego, si se quiere: las skins del asesino (Espectro, Escarcha) y las habilidade
   (`NN_0` = cuadro original, `NN_1..` = intermedios).
 
 ## Última sesión
+**2026-11-07 · Claude (resto de animaciones y campamento)**
+- `interpolar.py`: secuencias puñalada, paso, danza, golpe y derrota (las del juego, con la vuelta al reposo para verlas);
+  un par con el mismo cuadro no lleva intermedios. Generadas: 13 / 26 / 28 / 33 / 80 cuadros. Revisadas en hoja de
+  contactos: sin manchas visibles. Aún no están en el juego.
+- `12-vista-del-guerrero.js`: `reposoVistas()` anima el reposo (con intermedios) en el campamento y la vitrina.
+
 **2026-11-07 · Claude (en el juego)**
 - `tools/intermedios_asesino.py` (nuevo): añade los intermedios de `prototipos/interpolar/salida/` a `img/asesino/tira.png`
   como casillas 109-143 (35 cuadros, solo copia píxeles con `build_sheet.py`; las 0-108 quedan idénticas) y escribe

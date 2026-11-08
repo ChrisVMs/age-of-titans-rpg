@@ -25,6 +25,18 @@
   const escalaCuadro = (i, clase) => { const s = spriteClase(clase); return !s ? 1 : s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1; };
   const reposoClase = clase => { const s = spriteClase(clase); return s && s.reposo; };
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }
+  // Reposo animado fuera de la batalla (campamento, vitrina): el mismo ciclo que en la batalla. La vista de la batalla
+  // (#s1) la anima personaje() en 17-batalla; las vistas ocultas no se tocan.
+  let pasoReposo = 0;
+  function reposoVistas() {
+    const r = reposoClase(), [c, ms] = r ? r[pasoReposo++ % r.length] : [0, 500];
+    for (const v of vistasGuerrero) {
+      if (v._cont.closest('#s1') || !v._cont.offsetParent) continue;
+      v._skinAnim.style.backgroundPositionX = `${-c * 296}px`; v._skinAnim.style.scale = escalaCuadro(c);
+    }
+    setTimeout(reposoVistas, ms);
+  }
+  setTimeout(reposoVistas, 0);
   // capas del guerrero en un contenedor (sin registrarlas: las vistas de aliados se pintan con su propio perfil)
   function montarCapas(cont) {
     const capaDe = {};

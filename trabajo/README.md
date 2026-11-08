@@ -20,7 +20,7 @@ interpolación de cuadros del ataque del asesino para quitar los saltos del spri
 | [Conversión de sprites HD a pixel art](pixel-art/ESTADO.md) | pausado · **prioridad alta** | Aplicar `tools/pixelar.py` al Asesino cuando el usuario termine sus correcciones | 2026-10-30 · Claude |
 | [Skin Escarcha del Asesino](skin-escarcha/ESTADO.md) | en curso | En el juego: que el usuario la pruebe. | 2026-11-07 · Claude |
 | [Animación por esqueleto 2D (MVP)](esqueleto-2d/ESTADO.md) | en curso · **prioridad alta** | Pierna de atrás corregida y codos/rodillas que se curvan: que el usuario lo compare. Pipeline documentado para retomarlo. | 2026-11-07 · Claude |
-| [Cuadros intermedios con IA (RIFE)](interpolacion-cuadros/ESTADO.md) | en curso | En el juego (reposo y ataque del asesino), en `main`: que el usuario lo pruebe. | 2026-11-07 · Claude |
+| [Cuadros intermedios con IA (RIFE)](interpolacion-cuadros/ESTADO.md) | en curso | Reposo y ataque en el juego (y reposo en el campamento); resto de animaciones en `prototipos/interpolar/`: que el usuario las revise. | 2026-11-07 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
 | [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | pausado | Espera el arte: prompts listos y arte enchufable como dato | 2026-11-03 · Claude |
