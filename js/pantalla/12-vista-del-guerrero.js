@@ -29,7 +29,9 @@
   SPRITE_CLASE.asesino.reposo = intercalar(SPRITE_CLASE.asesino.reposo, 'reposo', SPRITE_CLASE.asesino);
   const spriteClase = (clase = jugador.clase) => { const k = clase === jugador.clase && skinActual(); return (k && k.sprite) || SPRITE_CLASE[clase]; };
   // escala del cuadro i en la tira de la clase (las tiras de 14 poses no la necesitan) y cuadros de su reposo animado
-  const escalaDe = (s, i) => !s ? 1 : s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1;   // escala del cuadro i en un sprite dado
+  // Tamaño estándar: las clases con sprite propio (calibradas a ~159 px de alto de pie) se ven a la altura del guerrero (~125 px)
+  const ESCALA_SPRITES = .786;
+  const escalaDe = (s, i) => !s ? 1 : (s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1) * ESCALA_SPRITES;   // escala del cuadro i en un sprite dado
   const escalaCuadro = (i, clase) => escalaDe(spriteClase(clase), i);
   const reposoClase = clase => { const s = spriteClase(clase); return s && s.reposo; };
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }

@@ -12,6 +12,11 @@ Que el usuario la pruebe (duelo, grupo, campamento, Android). Ajustes posibles: 
 reemplazo de `PROMPT_SPRITE.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (tamaño estándar)**
+- Medido de pie en pantalla: asesino (y skins), arquero y maga ~158 px; guerrero 125 px. Usuario: bajar a los demás.
+  `ESCALA_SPRITES` = .786 en `escalaDe` (12-vista-del-guerrero.js) para toda clase con sprite propio; la vitrina ya no
+  los achica aparte (`scale:.82` quitado). `animaciones.html` sigue mostrando cada sprite a su escala propia.
+
 **2026-11-08 · Claude (arena y reposo estándar)**
 - Rivales en grupo (arena, reyes) con su propio sprite: antes usaban el tuyo (tu skin y tus escalas). Un asesino rival con
   Espectro recibía cuadros de intermedios que su tira no tiene (aparecía y desaparecía) y la escala de tu asesino (más pequeño).
