@@ -1,19 +1,30 @@
 # Sprites HD del Arquero
 
-**Estado:** pausado (espera: extensión Claude in Chrome conectada, para usar Gemini) · **Rama:** main · **Actualizado:** 2026-11-07
+**Estado:** en curso · **Rama:** main · **Actualizado:** 2026-11-07
 
 ## Objetivo
 Dar al Arquero su propio sprite HD (hoy usa el del guerrero), de rango, con el mismo estilo que el Asesino: reposo, ataque
 a distancia, Doble flecha, Lluvia de flechas (estilo Wartune), recibir golpe y derrota, más los efectos (flecha, lluvia).
 
 ## Próximo paso
-1. Con Chrome conectado: en Gemini, generar primero la **referencia** del personaje (prompt 0 de abajo) y guardarla en
-   `tools/hojas/arquero_referencia.jpg`.
-2. Cada hoja (prompts 1-7) en la misma conversación, adjuntando la referencia; guardar en `tools/hojas/arquero_<anim>.jpg`.
-3. Recortar con `tools/split_sheet.py --key FF00FF`, armar la tira con `tools/build_sheet.py` (un `tools/tira_arquero.py`
-   como `tira_asesino.py`), `SPRITE_CLASE.arquero` + `ANIM_ARQUERO` + proyectil, y `animaciones.html`.
+Que el usuario lo pruebe en batalla (1 contra 1 y en grupo), campamento, web y Android. Ajustes posibles: tamaño
+(`escala` de `SPRITE_CLASE.arquero`), tiempos de `ANIM_ARQUERO`, posición de la flecha y la lluvia (`flechaArquero`,
+`lluviaFlechas`). Luego, si lo pide: cuadros intermedios con `prototipos/interpolar/PROCESO.md`.
 
 ## Última sesión
+**2026-11-07 · Claude (generado e integrado)**
+- Gemini (Chrome): referencia + 7 hojas en `tools/hojas/arquero_*.jpg`. Doble flecha corregida una vez (fondo gris, faltaba
+  el arco); el reposo, una vez (personaje demasiado grande). Efectos con magenta más oscuro y separadores (se limpian).
+- `tools/tira_arquero.py` (nuevo): recorta con `split_sheet.py --key <fondo> --no-trim` (opción nueva; con fondo no verde
+  ya no se borra el verde del personaje), limpia magenta, restos de celdas vecinas y separadores, centra por la cabeza y
+  une con `build_sheet.py`: `img/arquero/tira.png` (65 cuadros, 349x366) y `img/arquero/efectos.png` (4).
+- Juego: `SPRITE_CLASE.arquero` (escala .555, derrota .676), `ANIM_ARQUERO` (ataque, doble, lluvia, perforante, golpe,
+  derrota), flecha en vuelo y lluvia sobre el enemigo; en grupo, `proyectil()` dibuja la flecha. Habilidades del arquero con
+  `animacion` doble / lluvia / perforante (sin cambios de daño). `animaciones.html` con todas. `VERSION_IMG` 23.
+- Cuadros 26 y 32 se saltan (restos de flechas pegados al cuerpo).
+- Verificación: `node pruebas/todo.js` igual que antes (solo falla «Clases: cadena…», previo); juego y `animaciones.html`
+  cargan sin errores de consola.
+
 **2026-11-07 · Claude**
 - Tema creado. Prompts listos (abajo). La extensión de Chrome no respondía: nada generado aún.
 
@@ -40,12 +51,12 @@ STYLE: high-detail hand-painted cartoon 2D fantasy RPG art, thick dark outlines,
 7. Efectos · 4x1 (4, sin personaje): `game effects on magenta: 1 a single wooden arrow flying right, horizontal; 2 two arrows flying right, slightly spread, faint green trail; 3 a dense rain of arrows falling down from the sky at a steep angle, about 20 arrows; 4 arrows stuck in the ground with small dust puffs.`
 
 ## Pendiente
-- Generar referencia y hojas (Gemini). Revisar con el criterio de `memory/criterio-hojas-gemini` (2 intentos por hoja).
-- Tira, `SPRITE_CLASE.arquero`, animaciones del juego, proyectil y lluvia; `animaciones.html`.
+- Pruebas del usuario (batalla, grupo, campamento, Android).
 - Luego, cuadros intermedios con `prototipos/interpolar/PROCESO.md` (solo si el usuario lo pide).
 
 ## Cómo verificar
 `node pruebas/todo.js`; ver el arquero en `animaciones.html` y en batalla (lo prueba el usuario).
 
 ## Bitácora
+- 2026-11-07 · Claude · Hojas generadas e integradas en el juego.
 - 2026-11-07 · Claude · Tema creado, prompts listos.

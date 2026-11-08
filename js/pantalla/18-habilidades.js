@@ -20,6 +20,10 @@
     punalada: () => guerrero.jugar(ANIM_ASESINO.punalada()),
     paso: () => guerrero.jugar(ANIM_ASESINO.paso()),
     danza: () => guerrero.jugar(ANIM_ASESINO.danza()),
+    // Arquero: dispara desde su sitio (Disparo certero se dibuja como Doble flecha)
+    doble: () => guerrero.jugar(ANIM_ARQUERO.doble(r => flechaArquero(1, r))),
+    lluvia: () => guerrero.jugar(ANIM_ARQUERO.lluvia(lluviaFlechas)),
+    perforante: () => guerrero.jugar(ANIM_ARQUERO.perforante(r => flechaArquero(0, r))),
   };
   // Asesino: cuadros de img/asesino/tira.png, en el orden de sus hojas (tools/hojas/asesino_*.jpg):
   // ataque 0-19 · sombra 20-39 · derrota 40-54 · retroceso 55-69 · reposo 70-79 · puñalada 80-99 · preparación 100-108 (108: intermedio entre 102 y 103). Va cuerpo a cuerpo.
@@ -49,7 +53,43 @@
   for (const n of ['punalada', 'paso', 'danza', 'golpe', 'derrota']) { const f = anim[n]; anim[n] = () => intercalar(f(), n, spriteClase('asesino')); }
   return anim;
   })();
-  const ANIM_CLASE = { asesino: ANIM_ASESINO };   // clases con animaciones propias (las demás usan las del guerrero)
+  // Arquero: cuadros de img/arquero/tira.png (ver SPRITE_CLASE.arquero). Cada animación recibe qué hacer al soltar la
+  // flecha (disparo(r): r = el impacto); sin él (en grupo, donde la flecha la dibuja proyectil()), solo marca el impacto.
+  // 26 y 32 se saltan: les quedan restos de flechas de la celda vecina.
+  const ANIM_ARQUERO = (() => {
+    const tramo = (a, b, ms, sin = []) => Array.from({ length: b - a + 1 }, (_, k) => a + k).filter(c => !sin.includes(c)).map(c => [c, ms]);
+    const soltar = d => d || (r => r());
+    return {
+      // saca una flecha, carga, apunta, suelta y baja el arco
+      ataque: d => [[10, 90], [11, 100], [12, 100], [13, 100], [14, 120], [15, 180, , sonidoEspada], [16, 90, , soltar(d)], [17, 110], [18, 110], [19, 110]],
+      // dos flechas a la vez con brillo verde
+      doble: d => [[20, 90], [21, 110], [22, 120], [23, 120], [24, 220, , sonidoEspada], [25, 110, , soltar(d)], [27, 140], [28, 110], [29, 110]],
+      // de rodillas, apunta al cielo y suelta una lluvia de flechas
+      lluvia: d => [[30, 90], [31, 120], [33, 110], [34, 130], [35, 220, , sonidoEspada], [36, 120, , soltar(d)], [37, 220], [38, 120], [39, 110]],
+      // como el ataque, cargando más tiempo con brillo
+      perforante: d => [[10, 90], [11, 100], [12, 100], [13, 100], [14, 140, , () => marcoGuerrero.classList.add('carga')],
+        [15, 380, , () => sonidoEspada()], [16, 100, , r => { marcoGuerrero.classList.remove('carga'); soltar(d)(r); }], [17, 110], [18, 110], [19, 110]],
+      golpe: () => tramo(40, 49, 90),   // encaja el golpe, retrocede y se recompone
+      derrota: () => [...tramo(50, 58, 120), ...tramo(59, 64, 150)],   // recibe el golpe, cae de rodillas, suelta el arco y cae
+    };
+  })();
+  // efectos del arquero (img/arquero/efectos.png): 0 flecha · 1 doble flecha · 2 lluvia · 3 flechas clavadas
+  const efectoArquero = (n, cls = '') => `<div class="ef-arquero ${cls}" style="background-position-x:${n * 100 / 3}%"></div>`;
+  function flechaArquero(n, alImpacto) {   // la flecha vuela del arquero al enemigo
+    const p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoArquero(n);
+    p.style.left = (slots[0].offsetLeft + 180) + 'px'; p.style.top = (slots[0].offsetTop + 90) + 'px'; arena.appendChild(p);
+    void p.offsetWidth;
+    p.style.left = (slots[1].offsetLeft + 40) + 'px'; p.style.top = (slots[1].offsetTop + 90) + 'px';
+    setTimeout(() => { p.remove(); alImpacto(); }, 300);
+  }
+  function lluviaFlechas(alImpacto) {   // cae sobre el enemigo y quedan las flechas clavadas
+    const p = document.createElement('div'); p.className = 'proyectil lluvia-arq'; p.innerHTML = efectoArquero(2, 'grande');
+    p.style.left = (slots[1].offsetLeft - 20) + 'px'; p.style.top = (slots[1].offsetTop - 200) + 'px'; arena.appendChild(p);
+    void p.offsetWidth;
+    p.style.top = (slots[1].offsetTop + 20) + 'px';
+    setTimeout(() => { p.innerHTML = efectoArquero(3, 'grande'); alImpacto(); setTimeout(() => p.remove(), 450); }, 320);
+  }
+  const ANIM_CLASE = { asesino: ANIM_ASESINO, arquero: ANIM_ARQUERO };   // clases con animaciones propias (las demás usan las del guerrero)
   const animClase = () => ANIM_CLASE[jugador.clase];
   function retrocedeHeroe() { const a = animClase(); if (a) guerrero.jugar(a.golpe()); }
   async function caeHeroe() {
@@ -124,7 +164,7 @@
   });
 
   const ataques = [
-    () => jugador.clase === 'mago' ? lanzarMaga() : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
+    () => jugador.clase === 'mago' ? lanzarMaga() : jugador.clase === 'arquero' ? guerrero.jugar(ANIM_ARQUERO.ataque(r => flechaArquero(0, r))) : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
     tipo => batalla.enemigo.cerbero ? ataqueCerbero(tipo) : batalla.enemigo.asmodeo ? ataqueAsmodeo(tipo) : batalla.enemigo.minotauro ? ataqueMinotauro(tipo) : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
       [1, 220], [2, 260, batalla.enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),

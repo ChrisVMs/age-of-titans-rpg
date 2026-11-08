@@ -92,6 +92,17 @@
       { nombre: 'Bola de fuego (proyectil)', hoja: { capas: ['img/maga/proyectil.png'], ancho: 217, alto: 218, total: 1, escala: .5 }, cuadros: [[0, 1000]] },
       { nombre: 'Recibir golpe', cuadros: [[0, 1000]], golpe: true },
     ] },
+    { id: 'arquero', nombre: 'Arquero', desc: 'Jugador · clase Arquero · 65 cuadros (reposo 0-9, ataque 10-19, doble 20-29, lluvia 30-39, golpe 40-49, derrota 50-64) · tools/tira_arquero.py', capas: ['img/arquero/tira.png?v=23'], ancho: 349, alto: 366, total: 65, escala: .8,
+      escalaCuadro: i => i < 50 ? .555 : .676, animaciones: [   // escalaCuadro y tiempos: los de SPRITE_CLASE.arquero y ANIM_ARQUERO
+      { nombre: 'Reposo', cuadros: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },
+      { nombre: 'Ataque (dispara desde su sitio)', cuadros: [[10, 90], [11, 100], [12, 100], [13, 100], [14, 120], [15, 180], [16, 90], [17, 110], [18, 110], [19, 110], [0, 600]] },
+      { nombre: 'Doble flecha (Disparo certero)', cuadros: [[20, 90], [21, 110], [22, 120], [23, 120], [24, 220], [25, 110], [27, 140], [28, 110], [29, 110], [0, 600]] },
+      { nombre: 'Lluvia de flechas (habilidad)', cuadros: [[30, 90], [31, 120], [33, 110], [34, 130], [35, 220], [36, 120], [37, 220], [38, 120], [39, 110], [0, 600]] },
+      { nombre: 'Flecha perforante (habilidad)', cuadros: [[10, 90], [11, 100], [12, 100], [13, 100], [14, 140], [15, 380], [16, 100], [17, 110], [18, 110], [19, 110], [0, 600]] },
+      { nombre: 'Flecha / doble / lluvia / clavadas (efectos)', hoja: { capas: ['img/arquero/efectos.png?v=23'], ancho: 524, alto: 520, total: 4, escala: .4 }, cuadros: [[0, 700], [1, 700], [2, 700], [3, 700]] },
+      { nombre: 'Recibir golpe', cuadros: [[40, 90], [41, 90], [42, 90], [43, 90], [44, 90], [45, 90], [46, 90], [47, 90], [48, 90], [49, 90], [0, 600]] },
+      { nombre: 'Derrota', cuadros: [[50, 120], [51, 120], [52, 120], [53, 120], [54, 120], [55, 120], [56, 120], [57, 120], [58, 120], [59, 150], [60, 150], [61, 150], [62, 150], [63, 150], [64, 150], [64, 1500]] },
+    ] },
     { id: 'asesino', nombre: 'Asesino', desc: 'Jugador · clase Asesino · 249 cuadros (ataque 0-19, sombra 20-39, derrota 40-54, retroceso 55-69, reposo 70-79, puñalada 80-99, preparación 100-108, intermedios RIFE desde la 109)', capas: ['img/asesino/tira.png?v=22'], ancho: 325, alto: 357, total: INTERMEDIOS_ASESINO.cuadros, escala: .8,
       escalaCuadro: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : i < 109 ? .88 : .84, animaciones: [   // escalaCuadro: las mismas que SPRITE_CLASE.asesino
       { nombre: 'Reposo', cuadros: conIntermedios([[70, 520], [71, 260], [72, 240], [73, 240], [74, 260], [75, 300], [79, 520], [75, 300], [74, 260], [73, 240], [72, 240], [71, 260]], 'reposo') },

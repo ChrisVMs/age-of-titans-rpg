@@ -82,3 +82,7 @@ referencia). Si el enemigo no lleva guadaña, pedir que el arma nueva siga el mi
 | `sucubo` | 3 | a succubus with dark purple skin, curled horns, bat wings, a black leather outfit and a whip of shadow |
 | `verdugo` (jefe) | 3 | an abyssal executioner: huge brute in a black iron hood and chains, a giant blood-red axe |
 | `senor` (jefe) | 3 | the Lord of the Abyss: towering demon with a crown of horns, obsidian armor with lava veins, a burning greatsword |
+
+## Arquero (2026-11-07)
+Prompts usados (referencia + 7 hojas, fondo magenta porque el traje es verde) en `trabajo/sprites-arquero/ESTADO.md`. Pedir el personaje
+a ~55 % del alto de la celda: a tamaño normal el arco largo se corta. Tira: `python tools/tira_arquero.py`.

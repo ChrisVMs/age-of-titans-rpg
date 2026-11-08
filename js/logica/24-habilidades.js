@@ -10,10 +10,10 @@
   ];
   // Arquero: mismas animaciones del guerrero hasta tener su sprite; la Maga lanza desde su sitio. aplica: estado que puede dejar el golpe.
   HAB_TODAS.push(
-    { id: 'disparo', clase: 'arquero', nombre: 'Disparo certero', icono: '🏹', turnos: 3, mult: 2.4, animacion: 'estocada' },
-    { id: 'lluvia', clase: 'arquero', nombre: 'Lluvia de flechas', icono: '🌧️', turnos: 4, mult: 1.6, animacion: 'tajo',
+    { id: 'disparo', clase: 'arquero', nombre: 'Disparo certero', icono: '🏹', turnos: 3, mult: 2.4, animacion: 'doble' },
+    { id: 'lluvia', clase: 'arquero', nombre: 'Lluvia de flechas', icono: '🌧️', turnos: 4, mult: 1.6, animacion: 'lluvia',
       aplica: { estado: 'sangrado', prob: .5, turnos: 3, pct: .15 } },
-    { id: 'perforante', clase: 'arquero', nombre: 'Flecha perforante', icono: '🗡️', turnos: 5, mult: 2.6, perfora: true, nodo: 'perforante', animacion: 'aplastante' },
+    { id: 'perforante', clase: 'arquero', nombre: 'Flecha perforante', icono: '🗡️', turnos: 5, mult: 2.6, perfora: true, nodo: 'perforante', animacion: 'perforante' },
     { id: 'bola', clase: 'mago', nombre: 'Bola de fuego', icono: '🔥', turnos: 3, mult: 2, animacion: 'bola',
       aplica: { estado: 'quemadura', prob: .5, turnos: 2, pct: .2 } },
     { id: 'lanza', clase: 'mago', nombre: 'Lanza de hielo', icono: '❄️', turnos: 4, mult: 1.7, animacion: 'lanza',

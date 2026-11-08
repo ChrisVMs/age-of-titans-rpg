@@ -73,6 +73,8 @@ def chroma_key(img, key=(0, 255, 0), tol=90, soft=60):
     key_dist = np.sqrt(((rgb - np.array(key, np.float32)) ** 2).sum(2))
 
     alpha = np.clip((key_dist - tol) / max(soft, 1), 0, 1)
+    if key[1] <= max(key[0], key[2]):   # fondo no verde (p. ej. magenta): el verde es del personaje, no se toca
+        return Image.fromarray(np.dstack([rgb.astype(np.uint8), (alpha * 255).astype(np.uint8)]), "RGBA")
     alpha = np.where(greenness > 80, np.minimum(alpha, 0.0), alpha)
 
     edge = (alpha > 0) & (alpha < 1) | ((alpha >= 1) & (greenness > 15))
@@ -139,6 +141,7 @@ def main():
     ap.add_argument("--inset", type=int, default=3,
                     help="píxeles a descartar junto a cada línea separadora (default 3)")
     ap.add_argument("--key", default="00FF00", help="color de fondo en hex (default 00FF00)")
+    ap.add_argument("--no-trim", action="store_true", help="no recorta el margen transparente (cada frame conserva su celda)")
     ap.add_argument("--uniform", action="store_true",
                     help="mismo canvas para todos los frames, alineados por la base")
     args = ap.parse_args()
@@ -185,7 +188,7 @@ def main():
             rt = x1 - (m if c < n_cols - 1 else 0)
             t = y0 + (m if r > 0 else 0)
             b = y1 - (m if r < n_rows - 1 else 0)
-            frames[(r, c)] = trim_alpha(chroma_key(img.crop((l, t, rt, b)), key))
+            recorte = chroma_key(img.crop((l, t, rt, b)), key); frames[(r, c)] = recorte if args.no_trim else trim_alpha(recorte)
 
     # 3) Canvas uniforme opcional (anclaje inferior-central)
     if args.uniform:
