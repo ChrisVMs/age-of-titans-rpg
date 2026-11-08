@@ -1,14 +1,13 @@
 # Cuadros intermedios con IA (RIFE)
 
-**Estado:** en curso · **Rama:** asesino-intermedios · **Actualizado:** 2026-11-07
+**Estado:** en curso · **Rama:** main · **Actualizado:** 2026-11-07
 
 ## Objetivo
 Quitar los saltos bruscos entre cuadros de los sprites sin cambiar su arte: generar cuadros intermedios entre cada par
 de cuadros con IA (RIFE). Alternativa al esqueleto 2D (`trabajo/esqueleto-2d/`), que nunca iguala los cuadros exactos.
 
 ## Próximo paso
-Que el usuario lo pruebe en el juego (web y Android) y en `animaciones.html`. Si convence, fusionar la rama
-`asesino-intermedios` en `main`; si no, volver a `main` (la rama queda aparte).
+Que el usuario lo pruebe en el juego (web y Android) y en `animaciones.html`. Para revertir: `git revert a8ba5be`.
 Luego, si se quiere: las skins del asesino (Espectro, Escarcha) y las habilidades (puñalada, paso, danza).
 
 ## Cómo retomar desde cero (otro agente)
@@ -30,7 +29,7 @@ Luego, si se quiere: las skins del asesino (Espectro, Escarcha) y las habilidade
 - `intercalar()` en `12-vista-del-guerrero.js`: el reposo y el ataque del asesino usan los intermedios (escala .84); las
   skins, con tiras de 109 casillas, siguen igual. `animaciones.html` con los mismos tiempos. `VERSION_IMG` 21.
 - Pruebas: escenarios y sin-pantalla bien; en sistemas falla «Clases: cadena…», que ya fallaba en `main` sin estos cambios.
-- Commit en la rama `asesino-intermedios` (a pedido del usuario, para poder revertir).
+- Commit a8ba5be en `main` (subido).
 
 **2026-11-07 · Claude (reposo)**
 - `interpolar.py` · secuencia `reposo` (ida y vuelta 70-75-79), `EN_BUCLE` (el último cuadro se interpola hacia el
