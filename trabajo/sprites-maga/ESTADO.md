@@ -12,6 +12,11 @@ Que el usuario la pruebe (duelo, grupo, campamento, Android). Ajustes posibles: 
 reemplazo de `PROMPT_SPRITE.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (punta del arma y cuerpo a cuerpo)**
+- Hechizos y flechas salen de la punta del arma: `punta` en `SPRITE_CLASE.mago/arquero` (medida en la tira) y
+  `puntaDisparo()` (18-habilidades.js), en duelo y en grupo. Comprobado en el navegador (punto en la gema del báculo).
+- Cuerpo a cuerpo en grupo: con sprites propios (más pequeños) el atacante se acerca a 110 px en vez de 170 (`DIST_CUERPO_SPRITE`).
+
 **2026-11-08 · Claude (tamaño estándar)**
 - Medido de pie en pantalla: asesino (y skins), arquero y maga ~158 px; guerrero 125 px. Usuario: bajar a los demás.
   `ESCALA_SPRITES` = .786 en `escalaDe` (12-vista-del-guerrero.js) para toda clase con sprite propio; la vitrina ya no

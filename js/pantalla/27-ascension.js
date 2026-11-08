@@ -73,7 +73,7 @@
       const capas = montarCapas(fr); conPerfil(u.perfil, () => pintarVista(capas));
       // su propio sprite (su skin, sus escalas y su reposo), no el tuyo
       const sp = conPerfil(u.perfil, () => spriteClase(u.clase));
-      u.pj = personaje(u.el, 296, i => escalaDe(sp, i), () => sp && sp.reposo); pintarVida(u.el, u.vida, u.vidaMax);
+      u.sprite = sp; u.pj = personaje(u.el, 296, i => escalaDe(sp, i), () => sp && sp.reposo); pintarVida(u.el, u.vida, u.vidaMax);
       pintarAura(u.el.querySelector('.sombra'), nivelAura(u.perfil));
       const m = conPerfil(u.perfil, mascotaActual); if (!m) return;   // la mascota va aparte (no se mueve en bloque con él)
       const caja = document.createElement('div'); caja.className = 'unidad unidad-mascota';
@@ -111,18 +111,22 @@
   });
 
   // ---- animaciones ----
+  const DIST_CUERPO = 170, DIST_CUERPO_SPRITE = 110;   // px entre atacante y objetivo al golpear (con sprites propios, más cerca)
   async function moverA(u, t) {   // se acerca al objetivo (cuerpo a cuerpo)
-    const dx = t.x - u.x + (u.lado === 0 ? -170 : 170), dy = t.y - u.y;
+    const d = u.sprite ? DIST_CUERPO_SPRITE : DIST_CUERPO, dx = t.x - u.x + (u.lado === 0 ? -d : d), dy = t.y - u.y;
     u.el.style.zIndex = 20; u.el.style.transform = `translate(${dx}px, ${dy}px)`; await wait(220);
   }
   async function volver(u) { u.el.style.transform = ''; await wait(220); u.el.style.zIndex = 2 + Math.round(u.y / 50); }
-  async function proyectil(u, t, icono) {
+  async function proyectil(u, t, icono, hab) {
     const p = document.createElement('div'); p.className = 'proyectil';
+    // sale de la punta del arma en el cuadro en que suelta (arquero y maga); si no, de una altura fija
+    const cuadro = u.clase === 'mago' ? { bola: 25, lanza: 35 }[hab && hab.animacion] || 15 : hab && hab.animacion === 'doble' ? 25 : 16;
+    const o = puntaDisparo(arenaG, u.el, u.sprite, cuadro, u.lado !== 0);
     const izq = u.lado === 0 ? '' : 'izq';
     if (u.clase === 'mago') p.innerHTML = efectoMaga(icono === '🔥' ? 1 : icono === '❄️' ? 2 : 0, izq);
     else if (u.clase === 'arquero') p.innerHTML = efectoArquero(icono === '🏹' ? 0 : 1, izq);
     else p.textContent = icono;
-    p.style.left = (u.x + (u.lado === 0 ? 180 : 40)) + 'px'; p.style.top = (u.y + 80) + 'px'; arenaG.appendChild(p);
+    p.style.left = (o ? o.x - (u.lado === 0 ? 35 : 95) : u.x + (u.lado === 0 ? 180 : 40)) + 'px'; p.style.top = (o ? o.y : u.y + 80) + 'px'; arenaG.appendChild(p);
     void p.offsetWidth;   // fuerza el layout para que la transición arranque (rAF no corre con la pestaña oculta)
     p.style.left = (t.x + 80) + 'px'; p.style.top = (t.y + 80) + 'px'; await wait(300); p.remove();
   }
@@ -141,7 +145,7 @@
       ? r => meteoroSobre(arenaG, t.x + 40, t.y + 20, u.lado === 0 ? 1 : -1, 'media').then(r)
       : hab && hab.animacion === 'lluvia'
       ? r => lluviaSobre(arenaG, u.x + (u.lado === 0 ? 160 : 0), u.y + 40, blancos.map(e => [e.x + 50, e.y + 40]), u.lado === 0 ? 1 : -1, 'media').then(r)
-      : r => proyectil(u, t, icono).then(r)) : undefined;
+      : r => proyectil(u, t, icono, hab).then(r)) : undefined;
     const impacto = u.pj.jugar(anim ? enGrupo(conPerfil(u.perfil, () => (hab && anim[hab.animacion] || anim.ataque)(disparo)), u, t)
       : [[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);
     if (lejos && !anim) await proyectil(u, t, icono);

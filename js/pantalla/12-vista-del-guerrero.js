@@ -16,11 +16,13 @@
   const SPRITE_CLASE = {
     // Maga: tira de 75 cuadros (celda 364x366, tools/tira_clase.py maga): reposo 0-9 · ataque 10-19 · bola 20-29 · lanza 30-39 ·
     // meteoro 40-49 · golpe 50-59 · derrota 60-74. Efectos aparte: img/maga/efectos.png
-    mago: { tira: TIRA_MAGA, cuadros: 75, celda: [364, 366], escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772 },   // reposo: como el arquero
+    mago: { tira: TIRA_MAGA, cuadros: 75, celda: [364, 366], escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772,
+            punta: { 15: [.926, .303], 25: [.95, .406], 35: [.761, .165] } },   // reposo: como el arquero
     // Arquero: tira de 65 cuadros (celda 349x366, tools/tira_clase.py arquero): reposo 0-9 · ataque 10-19 · doble 20-29 · lluvia 30-39 ·
     // golpe 40-49 · derrota 50-64 (esa hoja dibuja al personaje más pequeño). Efectos aparte: img/arquero/efectos.png
     // reposo: el cuadro 0 quieto con la respiración del CSS (sus cuadros de reposo cambian de tamaño entre sí)
-    arquero: { tira: TIRA_ARQUERO, cuadros: 65, celda: [349, 366], escala: i => i < 50 ? .555 : .676 },
+    // punta: dónde sale el disparo en el cuadro en que suelta ([x, y] en fracción de la celda; medido en la tira)
+    arquero: { tira: TIRA_ARQUERO, cuadros: 65, celda: [349, 366], escala: i => i < 50 ? .555 : .676, punta: { 16: [.834, .262], 25: [.739, .287] } },
     asesino: { tira: TIRA_ASESINO, cuadros: INTERMEDIOS_ASESINO.cuadros, celda: [325, 357],
                escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : i < 109 ? .88 : .84,   // ataque y sombra · derrota · retroceso · reposo · puñalada · preparación (108: intermedio) · intermedios RIFE (109+, todos a la escala del ataque) (tamaño como la Maga)
                // reposo: [cuadro, ms] de ida y vuelta (sin saltar del último al primero); se detiene más en los extremos. 76-78 cambian de postura de golpe

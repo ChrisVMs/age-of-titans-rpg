@@ -15,16 +15,16 @@
         [2, 170, , () => marcoGuerrero.classList.remove('carga')], [3, 90, , sonidoEspada], [4, 220, , r => { arco(); r(); }], [5, 120], [6, 200, 0], [7, 150]]),
     // Maga: lanza desde su sitio; cuanto más fuerte la habilidad, más tiempo conjura
     // Maga: lanza desde su sitio; el hechizo sale en el cuadro en que lo suelta
-    bola: () => guerrero.jugar(ANIM_MAGA.bola(r => hechizoMaga(1, r))),
-    lanza: () => guerrero.jugar(ANIM_MAGA.lanza(r => hechizoMaga(2, r))),
+    bola: () => guerrero.jugar(ANIM_MAGA.bola(r => hechizoMaga(1, r, 25))),
+    lanza: () => guerrero.jugar(ANIM_MAGA.lanza(r => hechizoMaga(2, r, 35))),
     meteoro: () => guerrero.jugar(ANIM_MAGA.meteoro(meteoroMaga)),
     punalada: () => guerrero.jugar(ANIM_ASESINO.punalada()),
     paso: () => guerrero.jugar(ANIM_ASESINO.paso()),
     danza: () => guerrero.jugar(ANIM_ASESINO.danza()),
     // Arquero: dispara desde su sitio (Disparo certero se dibuja como Doble flecha)
-    doble: () => guerrero.jugar(ANIM_ARQUERO.doble(r => flechaArquero(1, r))),
+    doble: () => guerrero.jugar(ANIM_ARQUERO.doble(r => flechaArquero(1, r, 25))),
     lluvia: () => guerrero.jugar(ANIM_ARQUERO.lluvia(lluviaFlechas)),
-    perforante: () => guerrero.jugar(ANIM_ARQUERO.perforante(r => flechaArquero(0, r))),
+    perforante: () => guerrero.jugar(ANIM_ARQUERO.perforante(r => flechaArquero(0, r, 16))),
   };
   // Asesino: cuadros de img/asesino/tira.png, en el orden de sus hojas (tools/hojas/asesino_*.jpg):
   // ataque 0-19 · sombra 20-39 · derrota 40-54 · retroceso 55-69 · reposo 70-79 · puñalada 80-99 · preparación 100-108 (108: intermedio entre 102 y 103). Va cuerpo a cuerpo.
@@ -74,11 +74,20 @@
       derrota: () => [...tramo(50, 58, 120), ...tramo(59, 64, 150)],   // recibe el golpe, cae de rodillas, suelta el arco y cae
     };
   })();
+  // Punto de la pantalla donde sale el disparo: la punta del arma en el cuadro `cuadro` (SPRITE_CLASE.<clase>.punta), medida
+  // sobre el dibujo tal como se ve (escala, espejo del rival y escala del escenario). cont: el escenario; el: la unidad.
+  function puntaDisparo(cont, el, sprite, cuadro, izq = false) {
+    const capa = el.querySelector('.capa-skin'), p = sprite && sprite.punta && sprite.punta[cuadro];
+    if (!capa || !p) return null;
+    const r = capa.getBoundingClientRect(), c = cont.getBoundingClientRect(), e = c.width / cont.offsetWidth || 1;
+    return { x: (r.left + (izq ? 1 - p[0] : p[0]) * r.width - c.left) / e, y: (r.top + p[1] * r.height - c.top) / e };
+  }
   // efectos del arquero (img/arquero/efectos.png): 0 flecha · 1 doble flecha · 2 lluvia · 3 flechas clavadas
   const efectoArquero = (n, cls = '') => `<div class="ef-arquero ${cls}" style="background-position-x:${n * 100 / 3}%"></div>`;
-  function flechaArquero(n, alImpacto) {   // la flecha vuela del arquero al enemigo
+  function flechaArquero(n, alImpacto, cuadro) {   // la flecha vuela del arquero (punta del arco en `cuadro`) al enemigo
     const p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoArquero(n);
-    p.style.left = (slots[0].offsetLeft + 180) + 'px'; p.style.top = (slots[0].offsetTop + 90) + 'px'; arena.appendChild(p);
+    const o = puntaDisparo(arena, slots[0], spriteClase(), cuadro) || { x: slots[0].offsetLeft + 180, y: slots[0].offsetTop + 90 };
+    p.style.left = (o.x - 35) + 'px'; p.style.top = o.y + 'px'; arena.appendChild(p);
     void p.offsetWidth;
     p.style.left = (slots[1].offsetLeft + 40) + 'px'; p.style.top = (slots[1].offsetTop + 90) + 'px';
     setTimeout(() => { p.remove(); alImpacto(); }, 300);
@@ -128,9 +137,10 @@
   })();
   // efectos de la maga (img/maga/efectos.png): 0 rayo ámbar · 1 bola de fuego · 2 lanza de hielo · 3 meteoro · 4 explosión
   const efectoMaga = (n, cls = '') => `<div class="ef-maga ${cls}" style="background-position-x:${n * 25}%"></div>`;
-  function hechizoMaga(n, alImpacto) {   // el hechizo vuela de la maga al enemigo
+  function hechizoMaga(n, alImpacto, cuadro) {   // el hechizo vuela de la maga (punta del báculo en `cuadro`) al enemigo
     const p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoMaga(n);
-    p.style.left = (slots[0].offsetLeft + 180) + 'px'; p.style.top = (slots[0].offsetTop + 90) + 'px'; arena.appendChild(p);
+    const o = puntaDisparo(arena, slots[0], spriteClase(), cuadro) || { x: slots[0].offsetLeft + 180, y: slots[0].offsetTop + 90 };
+    p.style.left = (o.x - 35) + 'px'; p.style.top = o.y + 'px'; arena.appendChild(p);
     void p.offsetWidth;
     p.style.left = (slots[1].offsetLeft + 40) + 'px'; p.style.top = (slots[1].offsetTop + 90) + 'px';
     setTimeout(() => { p.remove(); alImpacto(); }, 300);
@@ -199,7 +209,7 @@
   });
 
   const ataques = [
-    () => jugador.clase === 'mago' ? guerrero.jugar(ANIM_MAGA.ataque(r => hechizoMaga(0, r))) : jugador.clase === 'arquero' ? guerrero.jugar(ANIM_ARQUERO.ataque(r => flechaArquero(0, r))) : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
+    () => jugador.clase === 'mago' ? guerrero.jugar(ANIM_MAGA.ataque(r => hechizoMaga(0, r, 15))) : jugador.clase === 'arquero' ? guerrero.jugar(ANIM_ARQUERO.ataque(r => flechaArquero(0, r, 16))) : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
     tipo => batalla.enemigo.cerbero ? ataqueCerbero(tipo) : batalla.enemigo.asmodeo ? ataqueAsmodeo(tipo) : batalla.enemigo.minotauro ? ataqueMinotauro(tipo) : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
       [1, 220], [2, 260, batalla.enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),
