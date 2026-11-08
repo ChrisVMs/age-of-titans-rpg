@@ -12,6 +12,14 @@ Que el usuario lo pruebe en batalla (1 contra 1 y en grupo), campamento, web y A
 `lluviaFlechas`). Luego, si lo pide: cuadros intermedios con `prototipos/interpolar/PROCESO.md`.
 
 ## Última sesión
+**2026-11-07 · Claude (correcciones del usuario)**
+- Reposo rehecho en Gemini: la fila 2 de la hoja vieja estaba 6 px más alta (parecía ponerse de puntillas) y no respiraba.
+  Ahora: botas fijas y torso y capa que se mueven. El físico delgado se mantiene (decisión del usuario: solo rehacer el reposo).
+- En grupo (campaña) la flecha salía al empezar la animación y el daño llegaba antes del disparo: ahora `animHeroe` pasa el
+  disparo al cuadro en que suelta y el daño llega al caer la flecha.
+- Lluvia de flechas: volea hacia arriba (sale por arriba) y luego cae sobre todos los enemigos vivos (`lluviaSobre`). El daño
+  sigue siendo a un solo objetivo.
+
 **2026-11-07 · Claude (generado e integrado)**
 - Gemini (Chrome): referencia + 7 hojas en `tools/hojas/arquero_*.jpg`. Doble flecha corregida una vez (fondo gris, faltaba
   el arco); el reposo, una vez (personaje demasiado grande). Efectos con magenta más oscuro y separadores (se limpian).

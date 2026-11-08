@@ -130,9 +130,14 @@
     if (hab && !anim) { u.el.querySelector('.frames').classList.add('carga'); await wait(250); u.el.querySelector('.frames').classList.remove('carga'); }
     // animación propia: se acerca en el paso que avanza (la preparación, en su casilla)
     if (!lejos && !anim) await moverA(u, t);
-    const impacto = u.pj.jugar(anim ? enGrupo((hab && anim[hab.animacion] || anim.ataque)(), u, t)
+    // a distancia con animación propia (arquero): la flecha sale en el cuadro en que suelta, y el daño llega al caer
+    const icono = hab ? hab.icono : u.clase === 'arquero' ? '🏹' : '✨', vivos = batalla.grupo.enemigos.filter(e => e.vida > 0);
+    const disparo = lejos && anim ? (hab && hab.animacion === 'lluvia'
+      ? r => lluviaSobre(arenaG, u.x + (u.lado === 0 ? 160 : 0), u.y + 40, vivos.map(e => [e.x + 60, e.y + 20]), u.lado === 0 ? 1 : -1).then(r)
+      : r => proyectil(u, t, icono).then(r)) : undefined;
+    const impacto = u.pj.jugar(anim ? enGrupo((hab && anim[hab.animacion] || anim.ataque)(disparo), u, t)
       : [[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);
-    if (lejos) await proyectil(u, t, hab ? hab.icono : u.clase === 'arquero' ? '🏹' : '✨');
+    if (lejos && !anim) await proyectil(u, t, icono);
     await impacto;
     return lejos ? null : () => volver(u);
   }
