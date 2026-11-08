@@ -50,6 +50,11 @@ Todo lo que se haga debe ser fácil de probar, de mantener y de ampliar:
   Única excepción: la reducción a pixel art de `tools/pixelar.py` (mismo proceso para todos los cuadros de un personaje).
 - Guardar la hoja fuente en `tools/hojas/` y los frames en `img/<personaje>/`.
 
+## Cuadros intermedios (RIFE)
+- Al pasar una animación existente a cuadros intermedios, aplicar SIEMPRE el proceso de `prototipos/interpolar/PROCESO.md`
+  (secuencia exacta del juego, efectos aparte, intermedios según coincidencia, verificación con `tools/verificar_intermedios.py`).
+  Primero se ve en `prototipos/interpolar/`; al juego solo cuando el usuario lo pida.
+
 ## Iconos y fondos (HD)
 - Cuando el usuario pida un prompt de iconos o fondos, partir SIEMPRE de `PROMPT_ICONOS.md` (bloque común, prompts ya usados,
   consejos y pendientes) y, al generar uno nuevo, añadirlo ahí. Los sprites animados usan `PROMPT_SPRITE.md`.
