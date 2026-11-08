@@ -86,3 +86,7 @@ referencia). Si el enemigo no lleva guadaña, pedir que el arma nueva siga el mi
 ## Arquero (2026-11-07)
 Prompts usados (referencia + 7 hojas, fondo magenta porque el traje es verde) en `trabajo/sprites-arquero/ESTADO.md`. Pedir el personaje
 a ~55 % del alto de la celda: a tamaño normal el arco largo se corta. Tira: `python tools/tira_clase.py arquero`.
+
+## Reposo de las clases (estándar, 2026-11-08)
+No se pide hoja de reposo animada: el reposo es el primer cuadro (de pie, quieto) con la respiración del CSS. Las hojas
+de Gemini cambian de tamaño entre cuadros y el reposo parecía crecer y encoger. Basta con que el cuadro 1 de cada hoja sea el reposo.

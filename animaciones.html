@@ -85,7 +85,7 @@
     ] },
     { id: 'maga', nombre: 'Maga', desc: 'Jugador · clase Mago · 75 cuadros (reposo 0-9, ataque 10-19, bola 20-29, lanza 30-39, meteoro 40-49, golpe 50-59, derrota 60-74) · tools/tira_clase.py maga', capas: ['img/maga/tira.png?v=25'], ancho: 364, alto: 366, total: 75, escala: .8,
       escalaCuadro: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772, animaciones: [   // escalaCuadro y tiempos: los de SPRITE_CLASE.mago y ANIM_MAGA
-      { nombre: 'Reposo', cuadros: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },
+      { nombre: 'Reposo (quieto, respira)', cuadros: [[0, 1000]], respira: true },
       { nombre: 'Ataque (rayo desde su sitio)', cuadros: [[10, 90], [11, 100], [12, 110], [13, 120], [14, 150], [15, 160], [18, 120], [19, 110], [0, 600]] },
       { nombre: 'Bola de fuego (habilidad)', cuadros: [[20, 90], [21, 110], [22, 120], [23, 130], [24, 220], [25, 140], [26, 120], [27, 110], [28, 100], [29, 100], [0, 600]] },
       { nombre: 'Lanza de hielo (habilidad)', cuadros: [[30, 90], [31, 110], [32, 120], [33, 130], [34, 180], [35, 140], [37, 120], [38, 110], [39, 100], [0, 600]] },
@@ -96,7 +96,7 @@
     ] },
     { id: 'arquero', nombre: 'Arquero', desc: 'Jugador · clase Arquero · 65 cuadros (reposo 0-9, ataque 10-19, doble 20-29, lluvia 30-39, golpe 40-49, derrota 50-64) · tools/tira_clase.py arquero', capas: ['img/arquero/tira.png?v=24'], ancho: 349, alto: 366, total: 65, escala: .8,
       escalaCuadro: i => i < 50 ? .555 : .676, animaciones: [   // escalaCuadro y tiempos: los de SPRITE_CLASE.arquero y ANIM_ARQUERO
-      { nombre: 'Reposo', cuadros: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },
+      { nombre: 'Reposo (quieto, respira)', cuadros: [[0, 1000]], respira: true },
       { nombre: 'Ataque (dispara desde su sitio)', cuadros: [[10, 90], [11, 100], [12, 100], [13, 100], [14, 120], [15, 180], [16, 90], [17, 110], [18, 110], [19, 110], [0, 600]] },
       { nombre: 'Doble flecha (Disparo certero)', cuadros: [[20, 90], [21, 110], [22, 120], [23, 120], [24, 220], [25, 110], [27, 140], [28, 110], [29, 110], [0, 600]] },
       { nombre: 'Lluvia de flechas (habilidad)', cuadros: [[30, 90], [31, 120], [33, 110], [34, 130], [35, 220], [36, 120], [37, 220], [38, 120], [39, 110], [0, 600]] },

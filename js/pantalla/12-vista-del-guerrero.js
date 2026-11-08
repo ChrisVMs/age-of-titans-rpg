@@ -16,12 +16,11 @@
   const SPRITE_CLASE = {
     // Maga: tira de 75 cuadros (celda 364x366, tools/tira_clase.py maga): reposo 0-9 · ataque 10-19 · bola 20-29 · lanza 30-39 ·
     // meteoro 40-49 · golpe 50-59 · derrota 60-74. Efectos aparte: img/maga/efectos.png
-    mago: { tira: TIRA_MAGA, cuadros: 75, celda: [364, 366], escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772,
-            reposo: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },
+    mago: { tira: TIRA_MAGA, cuadros: 75, celda: [364, 366], escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772 },   // reposo: como el arquero
     // Arquero: tira de 65 cuadros (celda 349x366, tools/tira_clase.py arquero): reposo 0-9 · ataque 10-19 · doble 20-29 · lluvia 30-39 ·
     // golpe 40-49 · derrota 50-64 (esa hoja dibuja al personaje más pequeño). Efectos aparte: img/arquero/efectos.png
-    arquero: { tira: TIRA_ARQUERO, cuadros: 65, celda: [349, 366], escala: i => i < 50 ? .555 : .676,
-               reposo: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },
+    // reposo: el cuadro 0 quieto con la respiración del CSS (sus cuadros de reposo cambian de tamaño entre sí)
+    arquero: { tira: TIRA_ARQUERO, cuadros: 65, celda: [349, 366], escala: i => i < 50 ? .555 : .676 },
     asesino: { tira: TIRA_ASESINO, cuadros: INTERMEDIOS_ASESINO.cuadros, celda: [325, 357],
                escala: i => i < 40 ? .84 : i < 55 ? .74 : i < 70 ? .72 : i < 80 ? .58 : i < 100 ? .82 : i < 108 ? .57 : i < 109 ? .88 : .84,   // ataque y sombra · derrota · retroceso · reposo · puñalada · preparación (108: intermedio) · intermedios RIFE (109+, todos a la escala del ataque) (tamaño como la Maga)
                // reposo: [cuadro, ms] de ida y vuelta (sin saltar del último al primero); se detiene más en los extremos. 76-78 cambian de postura de golpe
@@ -30,7 +29,8 @@
   SPRITE_CLASE.asesino.reposo = intercalar(SPRITE_CLASE.asesino.reposo, 'reposo', SPRITE_CLASE.asesino);
   const spriteClase = (clase = jugador.clase) => { const k = clase === jugador.clase && skinActual(); return (k && k.sprite) || SPRITE_CLASE[clase]; };
   // escala del cuadro i en la tira de la clase (las tiras de 14 poses no la necesitan) y cuadros de su reposo animado
-  const escalaCuadro = (i, clase) => { const s = spriteClase(clase); return !s ? 1 : s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1; };
+  const escalaDe = (s, i) => !s ? 1 : s.escalas ? s.escalas[i] : s.escala ? s.escala(i) : 1;   // escala del cuadro i en un sprite dado
+  const escalaCuadro = (i, clase) => escalaDe(spriteClase(clase), i);
   const reposoClase = clase => { const s = spriteClase(clase); return s && s.reposo; };
   function montarGuerrero(cont) { vistasGuerrero.push(montarCapas(cont)); }
   // Reposo animado fuera de la batalla (campamento, vitrina): el mismo ciclo que en la batalla. La vista de la batalla

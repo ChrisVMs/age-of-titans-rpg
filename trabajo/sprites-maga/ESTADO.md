@@ -12,6 +12,13 @@ Que el usuario la pruebe (duelo, grupo, campamento, Android). Ajustes posibles: 
 reemplazo de `PROMPT_SPRITE.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (arena y reposo estándar)**
+- Rivales en grupo (arena, reyes) con su propio sprite: antes usaban el tuyo (tu skin y tus escalas). Un asesino rival con
+  Espectro recibía cuadros de intermedios que su tira no tiene (aparecía y desaparecía) y la escala de tu asesino (más pequeño).
+  `dibujarJugadorU` usa `spriteClase` y `escalaDe` con su perfil; sus animaciones, golpe y derrota se arman con `conPerfil`.
+- Reposo estándar (pedido del usuario): el personaje quieto (cuadro 0) con la respiración del CSS, sin cambiar de tamaño.
+  Arquero y Maga ya no usan sus cuadros de reposo (Gemini los dibujó a alturas distintas).
+
 **2026-11-08 · Claude**
 - Diseños: 3 propuestas (quedan como skins: `tools/hojas/maga_disenos.jpg`) y la base elegida, aprendiz sin capucha
   (`tools/hojas/maga_base_referencia.jpg`). Conversación de Gemini: `gemini.google.com/app/eaacaa78d419232d`.
@@ -25,6 +32,8 @@ reemplazo de `PROMPT_SPRITE.md`.
 - Verificación: `node pruebas/todo.js` como antes (solo «Clases: cadena…», previo); juego y `animaciones.html` sin errores.
 
 ## Decisiones
+- 2026-11-08 · Usuario: el reposo de toda clase nueva es el personaje quieto que solo respira (CSS), sin cambiar de tamaño.
+
 - 2026-11-08 · Usuario: los 3 diseños llamativos son skins; la base es la aprendiz, sin capucha.
 - 2026-11-08 · Usuario: habilidades sin cambios (ya están listas); retroceso no exagerado.
 

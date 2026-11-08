@@ -71,7 +71,9 @@
     const dibujarJugadorU = u => {
       const fr = u.el.querySelector('.frames'); fr.classList.add('guerrero');   // la base de capas; la clase con sprite propio lo pinta encima
       const capas = montarCapas(fr); conPerfil(u.perfil, () => pintarVista(capas));
-      u.pj = personajeClase(u.el, u.clase); pintarVida(u.el, u.vida, u.vidaMax);
+      // su propio sprite (su skin, sus escalas y su reposo), no el tuyo
+      const sp = conPerfil(u.perfil, () => spriteClase(u.clase));
+      u.pj = personaje(u.el, 296, i => escalaDe(sp, i), () => sp && sp.reposo); pintarVida(u.el, u.vida, u.vidaMax);
       pintarAura(u.el.querySelector('.sombra'), nivelAura(u.perfil));
       const m = conPerfil(u.perfil, mascotaActual); if (!m) return;   // la mascota va aparte (no se mueve en bloque con él)
       const caja = document.createElement('div'); caja.className = 'unidad unidad-mascota';
@@ -140,7 +142,7 @@
       : hab && hab.animacion === 'lluvia'
       ? r => lluviaSobre(arenaG, u.x + (u.lado === 0 ? 160 : 0), u.y + 40, blancos.map(e => [e.x + 50, e.y + 40]), u.lado === 0 ? 1 : -1, 'media').then(r)
       : r => proyectil(u, t, icono).then(r)) : undefined;
-    const impacto = u.pj.jugar(anim ? enGrupo((hab && anim[hab.animacion] || anim.ataque)(disparo), u, t)
+    const impacto = u.pj.jugar(anim ? enGrupo(conPerfil(u.perfil, () => (hab && anim[hab.animacion] || anim.ataque)(disparo)), u, t)
       : [[1, 110], [2, 110], [3, 80, , sonidoEspada], [4, 140, , r => r()], [5, 110], [6, 130], [7, 100]]);
     if (lejos && !anim) await proyectil(u, t, icono);
     await impacto;
@@ -155,10 +157,10 @@
   const enGrupo = (pasos, u, t) => pasos.map(([c, ms, mov, accion]) =>
     [c, ms, undefined, mov ? r => { moverA(u, t); if (accion) accion(r); } : accion]);
   // héroe con animaciones propias: retrocede al recibir el golpe; al caer, se ve la derrota antes de desaparecer
-  function retrocedeU(t) { const a = t.lado === 0 && ANIM_CLASE[t.clase]; if (a) t.pj.jugar(a.golpe()); }
+  function retrocedeU(t) { const a = t.lado === 0 && ANIM_CLASE[t.clase]; if (a) t.pj.jugar(conPerfil(t.perfil, a.golpe)); }
   async function caeU(u) {
     const a = u.lado === 0 && ANIM_CLASE[u.clase]; if (!a) return;
-    const pasos = a.derrota(); u.pj.setBase(pasos[pasos.length - 1][0]); u.pj.jugar(pasos);
+    const pasos = conPerfil(u.perfil, a.derrota); u.pj.setBase(pasos[pasos.length - 1][0]); u.pj.jugar(pasos);
     await wait(pasos.reduce((t, p) => t + p[1], 0) + 400);
   }
   function golpeVisual(t) { t.el.classList.remove('golpeado'); void t.el.offsetWidth; t.el.classList.add('golpeado'); setTimeout(() => t.el.classList.remove('golpeado'), 600); }
