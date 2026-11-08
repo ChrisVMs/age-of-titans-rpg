@@ -60,6 +60,10 @@ def suelo(a):   # sin márgenes vacíos
     m = a[..., 3] > 0; f = np.nonzero(m.any(1))[0]; c = np.nonzero(m.any(0))[0]
     return a[f.min():f.max() + 1, c.min():c.max() + 1]
 
+def pies(a):   # centro horizontal de los pies (últimas filas con contenido)
+    m = a[..., 3] > 0; b = np.nonzero(m.any(1))[0].max(); xs = np.nonzero(m[b - 25:b + 1].any(0))[0]
+    return (xs.min() + xs.max()) / 2
+
 def capucha(a):   # centro horizontal de la cabeza (primeras filas con contenido)
     m = a[..., 3] > 0; t = np.nonzero(m.any(1))[0].min(); xs = np.nonzero(m[t:t + 20].any(0))[0]
     return (xs.min() + xs.max()) / 2
@@ -77,7 +81,9 @@ os.makedirs(f'{T}/todos')
 for k, (h, a) in enumerate(fr):
     lienzo = np.zeros((a.shape[0], ANCHO, 4), np.uint8)
     tumbado = h == 'derrota' and k - [x for x, _ in fr].index('derrota') >= 10   # cuadros 10-14 de la derrota: en el suelo
-    x0 = (ANCHO - a.shape[1]) // 2 if tumbado else int(round(ANCHO / 2 - capucha(a)))
+    # el golpe se alinea por los pies (por la cabeza, los pies se deslizaban al echarse atrás): pies como en el reposo
+    x0 = ((ANCHO - a.shape[1]) // 2 if tumbado else int(round(ANCHO / 2 - capucha(fr[0][1]) + pies(fr[0][1]) - pies(a))) if h == 'golpe'
+          else int(round(ANCHO / 2 - capucha(a))))
     x0 = max(0, min(ANCHO - a.shape[1], x0)); lienzo[:, x0:x0 + a.shape[1]] = a
     Image.fromarray(lienzo).save(f'{T}/todos/{k:03d}.png')
 os.makedirs('img/arquero', exist_ok=True)

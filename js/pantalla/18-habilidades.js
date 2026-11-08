@@ -69,7 +69,7 @@
       // como el ataque, cargando más tiempo con brillo
       perforante: d => [[10, 90], [11, 100], [12, 100], [13, 100], [14, 140, , () => marcoGuerrero.classList.add('carga')],
         [15, 380, , () => sonidoEspada()], [16, 100, , r => { marcoGuerrero.classList.remove('carga'); soltar(d)(r); }], [17, 110], [18, 110], [19, 110]],
-      golpe: () => tramo(40, 49, 90),   // encaja el golpe, retrocede y se recompone
+      golpe: () => [[41, 90], [42, 110], [43, 100], [45, 110], [48, 90], [49, 80]],   // encaja el golpe y se recompone (pies quietos)
       derrota: () => [...tramo(50, 58, 120), ...tramo(59, 64, 150)],   // recibe el golpe, cae de rodillas, suelta el arco y cae
     };
   })();

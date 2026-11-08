@@ -12,6 +12,10 @@ Que el usuario lo pruebe en batalla (1 contra 1 y en grupo), campamento, web y A
 `lluviaFlechas`). Luego, si lo pide: cuadros intermedios con `prototipos/interpolar/PROCESO.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (retroceso)**
+- Golpe exagerado: centrado por la cabeza, los pies se deslizaban hasta 90 px. Ahora el golpe se alinea por los pies
+  (`pies` en `tira_arquero.py`) y la animación es más corta (6 cuadros, 580 ms en vez de 10 y 900 ms). `VERSION_IMG` 24.
+
 **2026-11-08 · Claude (lluvia del rival)**
 - La lluvia del arquero rival caía sobre su propio bando (`blancos` = siempre `enemigos`): ahora cae sobre el bando contrario.
   Volea y lluvia volteadas para el rival (`izq`). En grupo (arena) la lluvia es más pequeña (`media`, 140 px).
