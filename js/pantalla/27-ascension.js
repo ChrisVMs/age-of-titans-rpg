@@ -116,8 +116,9 @@
   async function volver(u) { u.el.style.transform = ''; await wait(220); u.el.style.zIndex = 2 + Math.round(u.y / 50); }
   async function proyectil(u, t, icono) {
     const p = document.createElement('div'); p.className = 'proyectil';
-    if (u.clase === 'mago') p.innerHTML = `<img src="${IMG_BOLA}" alt="" class="bola-maga${u.lado === 0 ? '' : ' izq'}">`;
-    else if (u.clase === 'arquero') p.innerHTML = efectoArquero(icono === '🏹' ? 0 : 1, u.lado === 0 ? '' : 'izq');
+    const izq = u.lado === 0 ? '' : 'izq';
+    if (u.clase === 'mago') p.innerHTML = efectoMaga(icono === '🔥' ? 1 : icono === '❄️' ? 2 : 0, izq);
+    else if (u.clase === 'arquero') p.innerHTML = efectoArquero(icono === '🏹' ? 0 : 1, izq);
     else p.textContent = icono;
     p.style.left = (u.x + (u.lado === 0 ? 180 : 40)) + 'px'; p.style.top = (u.y + 80) + 'px'; arenaG.appendChild(p);
     void p.offsetWidth;   // fuerza el layout para que la transición arranque (rAF no corre con la pestaña oculta)
@@ -134,7 +135,9 @@
     // la lluvia cae sobre el bando contrario al del arquero (el rival dispara hacia la izquierda, sobre tus héroes)
     const icono = hab ? hab.icono : u.clase === 'arquero' ? '🏹' : '✨';
     const blancos = (u.lado === 0 ? batalla.grupo.enemigos : batalla.grupo.heroes).filter(e => e.vida > 0);
-    const disparo = lejos && anim ? (hab && hab.animacion === 'lluvia'
+    const disparo = lejos && anim ? (hab && hab.animacion === 'meteoro'
+      ? r => meteoroSobre(arenaG, t.x + 40, t.y + 20, u.lado === 0 ? 1 : -1, 'media').then(r)
+      : hab && hab.animacion === 'lluvia'
       ? r => lluviaSobre(arenaG, u.x + (u.lado === 0 ? 160 : 0), u.y + 40, blancos.map(e => [e.x + 50, e.y + 40]), u.lado === 0 ? 1 : -1, 'media').then(r)
       : r => proyectil(u, t, icono).then(r)) : undefined;
     const impacto = u.pj.jugar(anim ? enGrupo((hab && anim[hab.animacion] || anim.ataque)(disparo), u, t)

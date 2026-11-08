@@ -22,6 +22,7 @@ interpolación de cuadros del ataque del asesino para quitar los saltos del spri
 | [Animación por esqueleto 2D (MVP)](esqueleto-2d/ESTADO.md) | en curso · **prioridad alta** | Pierna de atrás corregida y codos/rodillas que se curvan: que el usuario lo compare. Pipeline documentado para retomarlo. | 2026-11-07 · Claude |
 | [Cuadros intermedios con IA (RIFE)](interpolacion-cuadros/ESTADO.md) | en curso | Todas las animaciones del asesino en el juego: que el usuario las pruebe en web y Android (tira de 80 925 px). | 2026-11-07 · Claude |
 | [Sprites HD del Arquero](sprites-arquero/ESTADO.md) | en curso | En el juego: que el usuario lo pruebe (batalla, grupo, Android). | 2026-11-07 · Claude |
+| [Sprites HD de la Maga](sprites-maga/ESTADO.md) | en curso | En el juego: que el usuario la pruebe; luego sus 3 skins. | 2026-11-08 · Claude |
 | [Refactor del motor de combate](refactor-motor-combate/ESTADO.md) | finalizado | Nada pendiente | 2026-10-29 · Claude |
 | [Separar la lógica de la pantalla](separar-logica/ESTADO.md) | finalizado | Nada pendiente | 2026-10-28 · Claude |
 | [Contenido de nivel alto](contenido-nivel-alto/ESTADO.md) | pausado | Espera el arte: prompts listos y arte enchufable como dato | 2026-11-03 · Claude |

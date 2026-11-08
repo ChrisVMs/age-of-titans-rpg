@@ -85,4 +85,4 @@ referencia). Si el enemigo no lleva guadaña, pedir que el arma nueva siga el mi
 
 ## Arquero (2026-11-07)
 Prompts usados (referencia + 7 hojas, fondo magenta porque el traje es verde) en `trabajo/sprites-arquero/ESTADO.md`. Pedir el personaje
-a ~55 % del alto de la celda: a tamaño normal el arco largo se corta. Tira: `python tools/tira_arquero.py`.
+a ~55 % del alto de la celda: a tamaño normal el arco largo se corta. Tira: `python tools/tira_clase.py arquero`.

@@ -14,8 +14,11 @@
       .map(([c, ms, k]) => c === null ? [lista[k][0], ms, ...lista[k].slice(2)] : [c, ms]);
   }
   const SPRITE_CLASE = {
-    mago: { tira: TIRA_MAGA },
-    // Arquero: tira de 65 cuadros (celda 349x366, tools/tira_arquero.py): reposo 0-9 · ataque 10-19 · doble 20-29 · lluvia 30-39 ·
+    // Maga: tira de 75 cuadros (celda 364x366, tools/tira_clase.py maga): reposo 0-9 · ataque 10-19 · bola 20-29 · lanza 30-39 ·
+    // meteoro 40-49 · golpe 50-59 · derrota 60-74. Efectos aparte: img/maga/efectos.png
+    mago: { tira: TIRA_MAGA, cuadros: 75, celda: [364, 366], escala: i => i < 20 ? .633 : i < 30 ? .663 : i < 60 ? .618 : .772,
+            reposo: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },
+    // Arquero: tira de 65 cuadros (celda 349x366, tools/tira_clase.py arquero): reposo 0-9 · ataque 10-19 · doble 20-29 · lluvia 30-39 ·
     // golpe 40-49 · derrota 50-64 (esa hoja dibuja al personaje más pequeño). Efectos aparte: img/arquero/efectos.png
     arquero: { tira: TIRA_ARQUERO, cuadros: 65, celda: [349, 366], escala: i => i < 50 ? .555 : .676,
                reposo: [[0, 260], [1, 220], [2, 220], [3, 220], [4, 240], [5, 260], [6, 220], [7, 220], [8, 220], [9, 240]] },

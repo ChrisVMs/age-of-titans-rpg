@@ -14,9 +14,10 @@
         [1, 140, , () => marcoGuerrero.classList.add('carga')], [1, 350, 360],
         [2, 170, , () => marcoGuerrero.classList.remove('carga')], [3, 90, , sonidoEspada], [4, 220, , r => { arco(); r(); }], [5, 120], [6, 200, 0], [7, 150]]),
     // Maga: lanza desde su sitio; cuanto más fuerte la habilidad, más tiempo conjura
-    bola: () => lanzarMaga(300),
-    lanza: () => lanzarMaga(150),
-    meteoro: () => lanzarMaga(450),
+    // Maga: lanza desde su sitio; el hechizo sale en el cuadro en que lo suelta
+    bola: () => guerrero.jugar(ANIM_MAGA.bola(r => hechizoMaga(1, r))),
+    lanza: () => guerrero.jugar(ANIM_MAGA.lanza(r => hechizoMaga(2, r))),
+    meteoro: () => guerrero.jugar(ANIM_MAGA.meteoro(meteoroMaga)),
     punalada: () => guerrero.jugar(ANIM_ASESINO.punalada()),
     paso: () => guerrero.jugar(ANIM_ASESINO.paso()),
     danza: () => guerrero.jugar(ANIM_ASESINO.danza()),
@@ -110,18 +111,40 @@
     guerrero.jugar(pasos); await wait(pasos.reduce((t, p) => t + p[1], 0));
     guerrero.frames.classList.add('quieto');
   }
-  // Maga: prepara el bastón, conjura y suelta la bola de fuego
-  function bolaMaga(alImpacto) {
-    const p = document.createElement('div'); p.className = 'proyectil';
-    p.innerHTML = `<img src="${IMG_BOLA}" alt="" class="bola-maga">`;
-    p.style.left = (slots[0].offsetLeft + 200) + 'px'; p.style.top = (slots[0].offsetTop + 80) + 'px'; arena.appendChild(p);
+  // Maga: cuadros de img/maga/tira.png (ver SPRITE_CLASE.mago). Como el arquero: cada animación recibe qué hacer al soltar
+  // el hechizo (disparo(r): r = el impacto); sin él (en grupo) solo marca el impacto. Se saltan cuadros con restos o
+  // incoherentes: 16-17 (bolas sueltas), 36 (sin báculo), 68-70 (se levanta otra vez antes de caer).
+  const ANIM_MAGA = (() => {
+    const tramo = (a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [a + k, ms]);
+    const soltar = d => d || (r => r());
+    return {
+      ataque: d => [[10, 90], [11, 100], [12, 110], [13, 120], [14, 150, , sonidoLlamas], [15, 160, , soltar(d)], [18, 120], [19, 110]],
+      bola: d => [[20, 90], [21, 110], [22, 120], [23, 130], [24, 220, , sonidoLlamas], [25, 140, , soltar(d)], [26, 120], [27, 110], [28, 100], [29, 100]],
+      lanza: d => [[30, 90], [31, 110], [32, 120], [33, 130], [34, 180], [35, 140, , soltar(d)], [37, 120], [38, 110], [39, 100]],
+      meteoro: d => [[40, 90], [41, 110], [42, 130], [43, 160], [44, 220, , sonidoLlamas], [45, 220], [46, 140, , soltar(d)], [47, 160], [48, 110], [49, 100]],
+      golpe: () => [[51, 90], [52, 110], [53, 100], [55, 100], [58, 90], [59, 80]],   // se estremece y se recompone (pies quietos)
+      derrota: () => [...tramo(60, 67, 120), ...tramo(71, 74, 150)],
+    };
+  })();
+  // efectos de la maga (img/maga/efectos.png): 0 rayo ámbar · 1 bola de fuego · 2 lanza de hielo · 3 meteoro · 4 explosión
+  const efectoMaga = (n, cls = '') => `<div class="ef-maga ${cls}" style="background-position-x:${n * 25}%"></div>`;
+  function hechizoMaga(n, alImpacto) {   // el hechizo vuela de la maga al enemigo
+    const p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoMaga(n);
+    p.style.left = (slots[0].offsetLeft + 180) + 'px'; p.style.top = (slots[0].offsetTop + 90) + 'px'; arena.appendChild(p);
     void p.offsetWidth;
-    p.style.left = (slots[1].offsetLeft + 60) + 'px'; p.style.top = (slots[1].offsetTop + 80) + 'px';
+    p.style.left = (slots[1].offsetLeft + 40) + 'px'; p.style.top = (slots[1].offsetTop + 90) + 'px';
     setTimeout(() => { p.remove(); alImpacto(); }, 300);
   }
-  const lanzarMaga = (carga = 0) => guerrero.jugar([
-    [1, 150 + carga, , () => carga && marcoGuerrero.classList.add('carga')], [2, 120, , () => marcoGuerrero.classList.remove('carga')],
-    [3, 110, , sonidoLlamas], [4, 220, , bolaMaga], [5, 200], [6, 130], [7, 120]]);
+  // Meteoro: cae del cielo sobre el enemigo (x, y) y estalla. dir -1: lo lanza la maga rival (cae hacia la izquierda)
+  async function meteoroSobre(cont, x, y, dir = 1, tam = 'grande') {
+    const izq = dir < 0 ? ' izq' : '', p = document.createElement('div'); p.className = 'proyectil'; p.innerHTML = efectoMaga(3, tam + izq);
+    p.style.left = (x - 140 * dir) + 'px'; p.style.top = (y - 300) + 'px'; cont.appendChild(p);
+    void p.offsetWidth; p.style.left = x + 'px'; p.style.top = y + 'px';
+    await wait(300);
+    p.innerHTML = efectoMaga(4, tam); setTimeout(() => p.remove(), 450);
+  }
+  const meteoroMaga = alImpacto => meteoroSobre(arena, slots[1].offsetLeft - 20, slots[1].offsetTop).then(alImpacto);
+  ANIM_CLASE.mago = ANIM_MAGA;
   function estela() {
     const e = document.createElement('div'); e.className = 'estela';
     e.style.left = (slots[0].offsetLeft + 150) + 'px'; e.style.top = (slots[0].offsetTop + 120) + 'px'; e.style.width = '520px';
@@ -176,7 +199,7 @@
   });
 
   const ataques = [
-    () => jugador.clase === 'mago' ? lanzarMaga() : jugador.clase === 'arquero' ? guerrero.jugar(ANIM_ARQUERO.ataque(r => flechaArquero(0, r))) : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
+    () => jugador.clase === 'mago' ? guerrero.jugar(ANIM_MAGA.ataque(r => hechizoMaga(0, r))) : jugador.clase === 'arquero' ? guerrero.jugar(ANIM_ARQUERO.ataque(r => flechaArquero(0, r))) : animClase() ? guerrero.jugar(animClase().ataque()) : guerrero.jugar([            // avanza agachado, levanta la espada, tajo, impacto, regresa
       [1, 250, 360], [2, 170], [3, 90, , sonidoEspada], [4, 160, , r => r()], [5, 120], [6, 200, 0], [7, 150]]),
     tipo => batalla.enemigo.cerbero ? ataqueCerbero(tipo) : batalla.enemigo.asmodeo ? ataqueAsmodeo(tipo) : batalla.enemigo.minotauro ? ataqueMinotauro(tipo) : parca.jugar([   // dentro del espejo, +X es hacia el guerrero
       [1, 220], [2, 260, batalla.enemigo.avance || 410, sonidoGuadana], [3, 260, , r => r()], [4, 250, 0]]),

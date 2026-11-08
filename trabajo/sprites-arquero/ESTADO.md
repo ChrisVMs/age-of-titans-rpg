@@ -35,7 +35,7 @@ Que el usuario lo pruebe en batalla (1 contra 1 y en grupo), campamento, web y A
 **2026-11-07 · Claude (generado e integrado)**
 - Gemini (Chrome): referencia + 7 hojas en `tools/hojas/arquero_*.jpg`. Doble flecha corregida una vez (fondo gris, faltaba
   el arco); el reposo, una vez (personaje demasiado grande). Efectos con magenta más oscuro y separadores (se limpian).
-- `tools/tira_arquero.py` (nuevo): recorta con `split_sheet.py --key <fondo> --no-trim` (opción nueva; con fondo no verde
+- `tools/tira_clase.py arquero` (nuevo): recorta con `split_sheet.py --key <fondo> --no-trim` (opción nueva; con fondo no verde
   ya no se borra el verde del personaje), limpia magenta, restos de celdas vecinas y separadores, centra por la cabeza y
   une con `build_sheet.py`: `img/arquero/tira.png` (65 cuadros, 349x366) y `img/arquero/efectos.png` (4).
 - Juego: `SPRITE_CLASE.arquero` (escala .555, derrota .676), `ANIM_ARQUERO` (ataque, doble, lluvia, perforante, golpe,
