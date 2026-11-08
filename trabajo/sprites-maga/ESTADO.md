@@ -12,6 +12,12 @@ Que el usuario la pruebe (duelo, grupo, campamento, Android). Ajustes posibles: 
 reemplazo de `PROMPT_SPRITE.md`.
 
 ## Última sesión
+**2026-11-08 · Claude (intermedios RIFE, prototipo)**
+- `prototipos/interpolar/interpolar.py --clase maga`: las 6 animaciones de `ANIM_MAGA` (sin reposo: es el cuadro quieto) en
+  `salida/maga_*`; el visor muestra todas las clases (`datos.js` lee todo `salida/*.json`). Hojas de contactos sin manchas.
+- Falta: que el usuario las revise en `prototipos/interpolar/index.html`; para el juego, generalizar `intermedios_asesino.py`
+  y `verificar_intermedios.py` a la maga (PROCESO.md, paso 5).
+
 **2026-11-08 · Claude (punta del arma y cuerpo a cuerpo)**
 - Hechizos y flechas salen de la punta del arma: `punta` en `SPRITE_CLASE.mago/arquero` (medida en la tira) y
   `puntaDisparo()` (18-habilidades.js), en duelo y en grupo. Comprobado en el navegador (punto en la gema del báculo).

@@ -6,7 +6,8 @@ N cuadros intermedios entre cada par. RIFE trabaja en RGB: la transparencia se i
 premultiplicado sobre negro y el alfa como imagen gris) y se recompone. Los efectos (tajo, destello) van aparte y en los saltos grandes hay menos intermedios. Escribe salida/<nombre>/*.png y datos.js
 (lo carga index.html).
 
-Uso (desde la raíz):  python prototipos/interpolar/interpolar.py [intermedios=2] [secuencias…, p. ej. reposo]
+Uso (desde la raíz):  python prototipos/interpolar/interpolar.py [intermedios=2] [secuencias…, p. ej. reposo] [--clase maga]
+  Sin --clase, el asesino (salida/<secuencia>); con --clase maga, salida/maga_<secuencia> (sus SECUENCIAS en MAGA).
 """
 import glob, json, os, subprocess, sys, tempfile
 import numpy as np
@@ -30,13 +31,31 @@ SECUENCIAS = {'ataque': [[11, 110], [12, 90], [13, 90], [14, 110], [15, 180], [1
                           [53, 150], [54, 150]]}   # el último cuadro de cada una (70, el reposo) es la vuelta: el juego lo omite
 EN_BUCLE = {'reposo'}   # el último cuadro también se interpola hacia el primero
 SIN_EFECTOS = {'reposo'}   # sin tajo ni destello: lo azul claro son las dagas, que deben moverse (no fundirse)
-N = int(sys.argv[1]) if len(sys.argv) > 1 else 2
-SOLO = sys.argv[2:] or list(SECUENCIAS)   # p. ej. `interpolar.py 2 reposo` rehace solo esa
+BASE = .84   # escala del ataque: las demás casillas se colocan relativas a ella
 LIENZO = (int(CW * .9), int(CH * .9))   # todas las casillas al tamaño de pantalla de la de ataque (.84) con margen
+PREFIJO, TIRA = '', 'img/asesino/tira.png'
+# Maga (tools/tira_clase.py maga): las secuencias de ANIM_MAGA (18-habilidades.js), con la vuelta al reposo (cuadro 0) para
+# verla en el visor. Su reposo es el cuadro quieto con la respiración del CSS: no lleva intermedios.
+MAGA = {'ataque': [[10, 90], [11, 100], [12, 110], [13, 120], [14, 150], [15, 160], [18, 120], [19, 110], [0, 600]],
+        'bola': [[20, 90], [21, 110], [22, 120], [23, 130], [24, 220], [25, 140], [26, 120], [27, 110], [28, 100], [29, 100], [0, 600]],
+        'lanza': [[30, 90], [31, 110], [32, 120], [33, 130], [34, 180], [35, 140], [37, 120], [38, 110], [39, 100], [0, 600]],
+        'meteoro': [[40, 90], [41, 110], [42, 130], [43, 160], [44, 220], [45, 220], [46, 140], [47, 160], [48, 110], [49, 100], [0, 600]],
+        'golpe': [[51, 90], [52, 110], [53, 100], [55, 100], [58, 90], [59, 80], [0, 600]],
+        'derrota': [[60, 120], [61, 120], [62, 120], [63, 120], [64, 120], [65, 120], [66, 120], [67, 120], [71, 150], [72, 150], [73, 150], [74, 150]]}
+args = [a for a in sys.argv[1:]]
+if '--clase' in args:
+    k = args.index('--clase'); clase = args[k + 1]; del args[k:k + 2]
+    if clase == 'maga':
+        CW, CH, BASE, PREFIJO, TIRA, SECUENCIAS = 364, 366, .633, 'maga_', 'img/maga/tira.png', MAGA
+        esc = lambda i: .633 if i < 20 else .663 if i < 30 else .618 if i < 60 else .772   # = SPRITE_CLASE.mago.escala
+        LIENZO = (440, 400)   # la derrota (tendida y a más escala) es más ancha
+        EN_BUCLE, SIN_EFECTOS = set(), set()
+N = int(args[0]) if args else 2
+SOLO = args[1:] or list(SECUENCIAS)   # p. ej. `interpolar.py 2 reposo` rehace solo esa
 
-tira = Image.open(f'{RAIZ}/img/asesino/tira.png').convert('RGBA')
-def cuadro(c):   # casilla c como en el juego: escalada por esc(c)/esc(11) respecto al ataque, pies abajo al centro
-    im = tira.crop((c * CW, 0, (c + 1) * CW, CH)); f = esc(c) / .84
+tira = Image.open(f'{RAIZ}/{TIRA}').convert('RGBA')
+def cuadro(c):   # casilla c como en el juego: escalada por esc(c)/BASE respecto al ataque, pies abajo al centro
+    im = tira.crop((c * CW, 0, (c + 1) * CW, CH)); f = esc(c) / BASE
     im = im.resize((round(CW * f), round(CH * f)), Image.LANCZOS)
     out = Image.new('RGBA', LIENZO); out.alpha_composite(im, ((LIENZO[0] - im.width) // 2, LIENZO[1] - im.height)); return out
 
@@ -104,7 +123,7 @@ def intermedio(c1, c2, t, ra, aa, rb, ab, tmp):
     hechos[(c1, c2, t)] = juntar(rife(ra, rb, t, tmp), rife(aa, ab, t, tmp)); return hechos[(c1, c2, t)]
 
 for nombre in SOLO:
-    seq = SECUENCIAS[nombre]; od = f'{D}/salida/{nombre}'; os.makedirs(od, exist_ok=True); hechos.clear()
+    seq = SECUENCIAS[nombre]; nombre = PREFIJO + nombre; od = f'{D}/salida/{nombre}'; os.makedirs(od, exist_ok=True); hechos.clear()
     for f in glob.glob(f'{od}/*.png'): os.remove(f)
     orig, inter = [], []   # original: [archivo, ms]; con intermedios: [archivo, ms]
     with tempfile.TemporaryDirectory() as tmp:
@@ -124,5 +143,5 @@ for nombre in SOLO:
                 fi = f'{nombre}/{k:02d}_{j}.png'; im.save(f'{D}/salida/{fi}'); inter.append([fi, round(paso)])
             print(nombre, c, '->', c2, n, 'intermedios', '(efectos aparte)' if con_efecto else '', 'coincidencia %.2f' % coincidencia(a, b))
     json.dump({'nombre': nombre, 'original': orig, 'interpolado': inter, 'ancho': LIENZO[0], 'alto': LIENZO[1]}, open(f'{od}.json', 'w'))
-datos = {n: json.load(open(f'{D}/salida/{n}.json')) for n in SECUENCIAS if os.path.exists(f'{D}/salida/{n}.json')}
+datos = {os.path.basename(f)[:-5]: json.load(open(f)) for f in sorted(glob.glob(f'{D}/salida/*.json'))}   # todas las clases
 open(f'{D}/datos.js', 'w').write('const DATOS = ' + json.dumps(datos) + ';' + chr(10))
