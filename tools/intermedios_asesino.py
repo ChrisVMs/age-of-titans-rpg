@@ -12,7 +12,7 @@ from PIL import Image
 
 BASE, CW, CH = 109, 325, 357   # casillas originales del asesino
 SAL = 'prototipos/interpolar/salida'
-SECUENCIAS = ['ataque', 'reposo']
+SECUENCIAS = ['ataque', 'reposo', 'punalada', 'paso', 'danza', 'golpe', 'derrota']   # orden fijo: las nuevas, al final (no cambian las casillas de las anteriores)
 
 tira = Image.open('img/asesino/tira.png')
 T = tempfile.mkdtemp(); n = BASE

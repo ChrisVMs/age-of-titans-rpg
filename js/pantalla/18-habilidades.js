@@ -26,7 +26,7 @@
   const ANIM_ASESINO = (() => {
   const A = n => n, S = n => 20 + n, G = n => 40 + n, C = n => 55 + n, P = n => 80 + n, R = n => 100 + n;
   const tramo = (f, a, b, ms) => Array.from({ length: b - a + 1 }, (_, k) => [f(a + k), ms]);
-  return {
+  const anim = {
     // salta hacia el enemigo, barre con la cuchilla y vuelve a su sitio (cuadros 11-19)
     // con los cuadros intermedios de la tira (sin ellos, en las skins, los mismos 9 cuadros)
     ataque: () => intercalar([[A(11), 110, 360], [A(12), 90], [A(13), 90], [A(14), 110, , sonidoEspada],
@@ -45,6 +45,9 @@
     golpe: () => [[C(1), 160], [C(2), 180], [C(7), 140], [C(9), 120], [C(10), 120]],   // encaja el golpe, se encoge y se recompone
     derrota: () => [...tramo(G, 1, 9, 120), ...tramo(G, 10, 14, 150)],   // recibe el golpe, hinca la rodilla y cae
   };
+  // con los cuadros intermedios de la tira (prototipos/interpolar/PROCESO.md); sin ellos (las skins), los cuadros de siempre
+  for (const n of ['punalada', 'paso', 'danza', 'golpe', 'derrota']) { const f = anim[n]; anim[n] = () => intercalar(f(), n, spriteClase('asesino')); }
+  return anim;
   })();
   const ANIM_CLASE = { asesino: ANIM_ASESINO };   // clases con animaciones propias (las demás usan las del guerrero)
   const animClase = () => ANIM_CLASE[jugador.clase];
